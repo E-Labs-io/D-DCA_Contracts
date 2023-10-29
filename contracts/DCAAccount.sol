@@ -124,6 +124,20 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         _baseBalances[token_] += amount_;
     }
 
+    function UnFundAccount(IERC20 token_, uint256 amount_) public onlyOwner {
+        //Transfer the given amount of the given ERC20 token out of the DCAAccount
+        require(_baseBalances[token_] <= amount_, "Balance of token to low");
+        IERC20(token_).transfer(msg.sender, amount_);
+        _baseBalances[token_] -= amount_;
+    }
+
+    function WithdrawSavings(IERC20 token_, uint256 amount_) public onlyOwner {
+        //Transfer the given amount of the given ERC20 token out of the DCAAccount
+        require(_targetBalances[token_] <= amount_, "Balance of token to low");
+        IERC20(token_).transfer(msg.sender, amount_);
+        _targetBalances[token_] -= amount_;
+    }
+
     function GetBaseTokenCostPerBlock(
         IERC20 baseToken_
     ) public view returns (uint256) {

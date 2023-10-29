@@ -77,9 +77,7 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         emit ExecutedDCA(interval_);
     }
 
-    function ForceFeeFund() public override onlyAdmins {
-        
-    }
+    function ForceFeeFund() public override onlyAdmins {}
 
     function _setExecutionAddress(address newExecutionEOA_) internal {
         _executionEOAAddress = newExecutionEOA_;
