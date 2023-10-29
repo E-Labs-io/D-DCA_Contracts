@@ -4,7 +4,15 @@
   "description": "contracts to perform onChain DCA trades",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+        "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
+    "prettier": "prettier --write 'contracts/**/*.sol'",
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "hardhat": "npx hardhat node",
+    "deploy": "npm publish --access public",
+    "dev": "npx hardhat run  --network hardhat deploys/deploy.ts",
+    "deploy-baseGoerli": "npx hardhat run --network base-goerli deploys/deploy.ts",
+    "deploy-mumbai": "npx hardhat run --network mumbai deploys/deploy.ts"
   },
   "repository": {
     "type": "git",
@@ -24,7 +32,25 @@
   },
   "homepage": "https://github.com/E-Labs-io/D-DCA#readme",
   "devDependencies": {
+    "@chainlink/contracts": "^0.8.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.4",
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
-    "hardhat": "^2.18.3"
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "@primitivefi/hardhat-dodoc": "^0.2.3",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
+    "@types/node": "^20.8.9",
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.4",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.8.0",
+    "hardhat": "^2.18.3",
+    "hardhat-abi-exporter": "^2.10.1",
+    "hardhat-gas-reporter": "^1.0.9",
+    "keccak256": "^1.0.6",
+    "prettier": "^3.0.3",
+    "prettier-plugin-solidity": "^1.1.3",
+    "solidity-coverage": "^0.8.5"
   }
 }
