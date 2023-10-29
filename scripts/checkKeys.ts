@@ -1,5 +1,6 @@
 
 import dotenv from "dotenv";
+import { Network } from "ethers";
 dotenv.config();
 
 
@@ -19,8 +20,11 @@ export default function checkPrivateKeys(){
         polygon: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
         homestead: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
         sepolia: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+        optimism: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+        opGoerli: `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`
     };
 
   return { masterMnemonic, rcpEndPoints}
 
 }
+

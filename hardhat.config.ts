@@ -18,6 +18,9 @@ console.log("🟢 Hardhat : Mounted.");
 // Some quick checks to make sure our .env is working.
 const { rcpEndPoints, masterMnemonic } = checkPrivateKeys();
 
+const gasPrice = 1000000000;
+console.log("❗️Gas Price Set: ", gasPrice / 10 ** 9, "gwei");
+
 const config: HardhatUserConfig = {
     solidity: {
     version: "0.8.19",
