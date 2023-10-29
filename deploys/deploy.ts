@@ -3,6 +3,7 @@
 import hardhat, { ethers } from "hardhat";
 import deploymentFiles, {
   DeploymentReturn,
+  DeploymentStore,
   deploymentArgumentStore,
 } from "./deployers/deploymentModules";
 import { Addressable } from "ethers";
@@ -15,10 +16,11 @@ async function masterDeployer(deployments: string[]) {
   console.log(`🟠 Master Deployer: Deploying ${deployments.length} Contracts`);
   console.log("🟠 Deployer Address: ", deployer.address);
 
-  const deploymentAddresses: { [deployment: string]: string | Addressable }[] =
+  const deploymentAddresses: DeploymentStore[] =
     [];
 
-  await deployments.forEach(async (deployment) => {
+  for(let i=0; i < deployments.length; i++) {
+    const deployment = deployments[i]
     console.log("🟠 Deploying Contract: ", deployment);
     await deploymentFiles[deployment]({
       deployer,
@@ -27,23 +29,24 @@ async function masterDeployer(deployments: string[]) {
       constructorArguments: deploymentArgumentStore[deployment](
         deployer.address
       ),
+      prevDeployments: deploymentAddresses,
     }).then(async (address: DeploymentReturn) => {
       if (address !== false) {
-        await logDeployment(
+        logDeployment(
           deployment,
           address,
           deployer.address,
           await deployer.provider.getNetwork()
         );
-        deploymentAddresses.push({ deployment: address });
+        deploymentAddresses.push({ deployment: address, contractName: deployment });
       }
     });
-  });
+  };
 
   console.log("🟢 Finished Deploying Contracts", deploymentAddresses);
 }
 
-masterDeployer(["ChanceGame"]).catch((error) => {
+masterDeployer(["DCAExecutor", "DCAAccount"]).catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });

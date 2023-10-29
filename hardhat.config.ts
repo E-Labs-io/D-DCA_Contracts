@@ -2,8 +2,6 @@ import "@nomicfoundation/hardhat-toolbox";
 import "solidity-coverage";
 import "@primitivefi/hardhat-dodoc";
 import "@nomicfoundation/hardhat-toolbox";
-import "@truffle/dashboard-hardhat-plugin";
-import "hardhat-local-networks-config-plugin";
 import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-verify";
 
@@ -23,7 +21,7 @@ console.log("❗️Gas Price Set: ", gasPrice / 10 ** 9, "gwei");
 
 const config: HardhatUserConfig = {
     solidity: {
-    version: "0.8.19",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: true,
@@ -43,6 +41,8 @@ const config: HardhatUserConfig = {
   dodoc: {
     runOnCompile: true,
     debugMode: true,
+    include:[],
+    outputDir: './docs'
 
     // More options...
   },
@@ -56,6 +56,37 @@ const config: HardhatUserConfig = {
           apiURL: "https://api-goerli.basescan.org/api",
           browserURL: "https://goerli.basescan.org",
         },
+      }, {
+        network: "opGoerli",
+        chainId: 420,
+        urls: {
+          apiURL: "https://api-goerli-optimistic.etherscan.io/api",
+          browserURL: "https://goerli-optimism.etherscan.io",
+        },
+      },
+      {
+        network: "optimism",
+        chainId: 10,
+        urls: {
+          apiURL: "https://api-optimistic.etherscan.io/api",
+          browserURL: "https://optimistic.etherscan.io",
+        },
+      },
+        {
+        network: "arbGoerli",
+        chainId: 421613,
+        urls: {
+          apiURL: "https://api-goerli.arbiscan.io/api",
+          browserURL: "https://goerli.arbiscan.io",
+        },
+      },
+        {
+        network: "arbitrum",
+        chainId: 42161,
+        urls: {
+          apiURL: "https://api.arbiscan.io/api",
+          browserURL: "https://arbiscan.io",
+        },
       },
     ],
   },
@@ -67,6 +98,11 @@ const config: HardhatUserConfig = {
     cache: "./cache",
     artifacts: "./build/artifacts",
   },
+  gasReporter: {
+    currency: 'ETH',
+    gasPrice: 21,
+    enabled: true
+  },
 
   networks: {
     hardhat: {},
@@ -74,6 +110,30 @@ const config: HardhatUserConfig = {
       url: rcpEndPoints.baseGoerli,
       accounts: [masterMnemonic],
       chainId: 84531,
+      gasPrice: gasPrice,
+    },
+    opGoerli: {
+      url: rcpEndPoints.opGoerli,
+      accounts: [masterMnemonic],
+      chainId: 420,
+      gasPrice: gasPrice,
+    },
+    optimism: {
+      url: rcpEndPoints.optimism,
+      accounts: [masterMnemonic],
+      chainId: 10,
+      gasPrice: gasPrice,
+    },
+     arbGoerli: {
+      url: rcpEndPoints.arbGoerli,
+      accounts: [masterMnemonic],
+      chainId: 421613,
+      gasPrice: gasPrice,
+    },  
+    arbitrum: {
+      url: rcpEndPoints.arbitrim,
+      accounts: [masterMnemonic],
+      chainId: 42161,
       gasPrice: gasPrice,
     },
     sepolia: {

@@ -12,7 +12,9 @@
     "deploy": "npm publish --access public",
     "dev": "npx hardhat run  --network hardhat deploys/deploy.ts",
     "deploy-baseGoerli": "npx hardhat run --network base-goerli deploys/deploy.ts",
-    "deploy-mumbai": "npx hardhat run --network mumbai deploys/deploy.ts"
+    "deploy-opGoerli" :"npx hardhat run --network opGoerli deploys/deploy.ts" ,
+    "deploy-mumbai": "npx hardhat run --network mumbai deploys/deploy.ts",
+    "deploy-arbGoerli" :"npx hardhat run --network arbGoerli deploys/deploy.ts" 
   },
   "repository": {
     "type": "git",

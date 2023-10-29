@@ -1,0 +1,104 @@
+{
+    "methods": {
+        "CheckIfAdmin(address)": {
+            "stateMutability": "view",
+            "code": "function CheckIfAdmin(address addressToCheck_) external view returns (bool)",
+            "inputs": {
+                "addressToCheck_": {
+                    "type": "address"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "bool"
+                }
+            }
+        },
+        "addAdmin(address)": {
+            "stateMutability": "nonpayable",
+            "code": "function addAdmin(address newAdmin_) external nonpayable",
+            "inputs": {
+                "newAdmin_": {
+                    "type": "address"
+                }
+            },
+            "outputs": {}
+        },
+        "owner()": {
+            "stateMutability": "view",
+            "code": "function owner() external view returns (address)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "address"
+                }
+            },
+            "details": "Returns the address of the current owner."
+        },
+        "removeAdmin(address)": {
+            "stateMutability": "nonpayable",
+            "code": "function removeAdmin(address oldAdmin_) external nonpayable",
+            "inputs": {
+                "oldAdmin_": {
+                    "type": "address"
+                }
+            },
+            "outputs": {}
+        },
+        "renounceOwnership()": {
+            "stateMutability": "nonpayable",
+            "code": "function renounceOwnership() external nonpayable",
+            "inputs": {},
+            "outputs": {},
+            "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+        },
+        "transferOwnership(address)": {
+            "stateMutability": "nonpayable",
+            "code": "function transferOwnership(address newOwner) external nonpayable",
+            "inputs": {
+                "newOwner": {
+                    "type": "address"
+                }
+            },
+            "outputs": {},
+            "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+        }
+    },
+    "events": {
+        "OwnershipTransferred": {
+            "code": "event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)",
+            "inputs": {
+                "previousOwner": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "newOwner": {
+                    "type": "address",
+                    "indexed": true
+                }
+            }
+        }
+    },
+    "errors": {
+        "OwnableInvalidOwner": {
+            "code": "error OwnableInvalidOwner(address owner)",
+            "inputs": {
+                "owner": {
+                    "type": "address"
+                }
+            },
+            "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        },
+        "OwnableUnauthorizedAccount": {
+            "code": "error OwnableUnauthorizedAccount(address account)",
+            "inputs": {
+                "account": {
+                    "type": "address"
+                }
+            },
+            "details": "The caller account is not authorized to perform an operation."
+        }
+    },
+    "path": "/security",
+    "name": "OnlyAdmin"
+}

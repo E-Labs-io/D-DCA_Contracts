@@ -1,0 +1,31 @@
+{
+    "methods": {
+        "uniswapV3SwapCallback(int256,int256,bytes)": {
+            "stateMutability": "nonpayable",
+            "code": "function uniswapV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes data) external nonpayable",
+            "inputs": {
+                "amount0Delta": {
+                    "type": "int256",
+                    "description": "The amount of token0 that was sent (negative) or must be received (positive) by the pool by the end of the swap. If positive, the callback must send that amount of token0 to the pool."
+                },
+                "amount1Delta": {
+                    "type": "int256",
+                    "description": "The amount of token1 that was sent (negative) or must be received (positive) by the pool by the end of the swap. If positive, the callback must send that amount of token1 to the pool."
+                },
+                "data": {
+                    "type": "bytes",
+                    "description": "Any data passed through by the caller via the IUniswapV3PoolActions#swap call"
+                }
+            },
+            "outputs": {},
+            "notice": "Called to `msg.sender` after executing a swap via IUniswapV3Pool#swap.",
+            "details": "In the implementation you must pay the pool tokens owed for the swap. The caller of this method must be checked to be a UniswapV3Pool deployed by the canonical UniswapV3Factory. amount0Delta and amount1Delta can both be 0 if no tokens were swapped."
+        }
+    },
+    "events": {},
+    "errors": {},
+    "path": "v3-core/contracts/interfaces/callback",
+    "title": "Callback for IUniswapV3PoolActions#swap",
+    "notice": "Any contract that calls IUniswapV3PoolActions#swap must implement this interface",
+    "name": "IUniswapV3SwapCallback"
+}

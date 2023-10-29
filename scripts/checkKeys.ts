@@ -21,7 +21,10 @@ export default function checkPrivateKeys(){
         homestead: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
         sepolia: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
         optimism: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
-        opGoerli: `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`
+        opGoerli: `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+        arbGoerli:`https://arb-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+        arbitrim:`https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`
+
     };
 
   return { masterMnemonic, rcpEndPoints}

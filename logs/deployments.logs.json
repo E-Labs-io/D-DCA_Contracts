@@ -1,0 +1,82 @@
+[
+  {
+    "timestamp": "29/10/23, 22:37:09",
+    "contractName": "DCAAccount",
+    "contractAddress": "0x00C394eFDBbc759336AACD5050F1771B4a441B3A",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "arbGoerli",
+      "chainId": "421613"
+    }
+  },
+  {
+    "timestamp": "29/10/23, 22:36:39",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0xBbE4f013DC390A3a34abc702bFbCeFd3a3300cEb",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "arbGoerli",
+      "chainId": "421613"
+    }
+  },
+  {
+    "timestamp": "29/10/23, 17:14:04",
+    "contractName": "DCAAccount",
+    "contractAddress": "0x00C394eFDBbc759336AACD5050F1771B4a441B3A",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "op-goerli",
+      "chainId": "420"
+    }
+  },
+  {
+    "timestamp": "29/10/23, 17:13:31",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0xBbE4f013DC390A3a34abc702bFbCeFd3a3300cEb",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "op-goerli",
+      "chainId": "420"
+    }
+  },
+  {
+    "timestamp": "29/10/23, 17:10:52",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0xC53f44DE16e6FeED38E767f36645B70661B53b85",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "op-goerli",
+      "chainId": "420"
+    }
+  },
+  {
+    "timestamp": "29/10/23, 17:03:00",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0xFfF48618A6379d68Baed48373964C347c1eC1A48",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "op-goerli",
+      "chainId": "420"
+    }
+  },
+  {
+    "timestamp": "29/10/23, 17:00:59",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x7895825D6CAB2f6aC1DF6846a957D994DA8759C3",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "op-goerli",
+      "chainId": "420"
+    }
+  },
+  {
+    "timestamp": "29/10/23, 16:56:27",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x287059427D97beC70aB564637a821d3c7fD37ba5",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "op-goerli",
+      "chainId": "420"
+    }
+  }
+]

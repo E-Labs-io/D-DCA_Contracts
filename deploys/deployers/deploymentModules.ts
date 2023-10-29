@@ -1,7 +1,8 @@
 /** @format */
 import { AddressLike, Addressable } from "ethers";
-import ChanceRandom from "./deploy-chanceRandom";
-import { ChanceGameArguments } from "../deploymentArguments/Chance.arguments";
+import DCAAccountDeployer from "./deployer-DCAAccount";
+import GenericDeployer from "./deployer"
+import { DCAExecutorArguments, DCAAccountArguments } from "../deploymentArguments/DCA.arguments";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 export interface Deployment {
@@ -19,15 +20,21 @@ export interface DeploymentProps {
   delayTime: number;
   contractName: string;
   constructorArguments: any[];
+  prevDeployments: DeploymentStore[];
 }
+
+export type DeploymentStore = { [deployment: string]: string | Addressable, contractName: string };
 export type DeploymentReturn = string | Addressable | false;
 
 const deploymentFiles: Deployment = {
-  ChanceGame: ChanceRandom,
+  DCAExecutor: GenericDeployer,
+    DCAAccount: DCAAccountDeployer
+
 };
 
 export const deploymentArgumentStore: ArgumentStore = {
-  ChanceGame: ChanceGameArguments,
+  DCAExecutor: DCAExecutorArguments,
+  DCAAccount: DCAAccountArguments
 };
 
 export default deploymentFiles;

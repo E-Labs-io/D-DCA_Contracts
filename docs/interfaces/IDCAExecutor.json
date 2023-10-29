@@ -1,0 +1,75 @@
+{
+    "methods": {
+        "Execute(uint8)": {
+            "stateMutability": "nonpayable",
+            "code": "function Execute(enum IDCADataStructures.Interval interval_) external nonpayable",
+            "inputs": {
+                "interval_": {
+                    "type": "enum IDCADataStructures.Interval"
+                }
+            },
+            "outputs": {}
+        },
+        "ForceFeeFund()": {
+            "stateMutability": "nonpayable",
+            "code": "function ForceFeeFund() external nonpayable",
+            "inputs": {},
+            "outputs": {}
+        },
+        "Subscribe(tuple)": {
+            "stateMutability": "nonpayable",
+            "code": "function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable returns (bool sucsess)",
+            "inputs": {
+                "strategy_": {
+                    "type": "IDCADataStructures.Strategy"
+                }
+            },
+            "outputs": {
+                "sucsess": {
+                    "type": "bool"
+                }
+            }
+        },
+        "Unsubscribe(tuple)": {
+            "stateMutability": "nonpayable",
+            "code": "function Unsubscribe(IDCADataStructures.Strategy strategy_) external nonpayable returns (bool sucsess)",
+            "inputs": {
+                "strategy_": {
+                    "type": "IDCADataStructures.Strategy"
+                }
+            },
+            "outputs": {
+                "sucsess": {
+                    "type": "bool"
+                }
+            }
+        }
+    },
+    "events": {
+        "ExecutedDCA": {
+            "code": "event ExecutedDCA(enum IDCADataStructures.Interval interval_)",
+            "inputs": {
+                "interval_": {
+                    "type": "enum IDCADataStructures.Interval",
+                    "indexed": false
+                }
+            }
+        },
+        "ExecutionEOAAddressChange": {
+            "code": "event ExecutionEOAAddressChange(address newExecutionEOA_, address changer_)",
+            "inputs": {
+                "newExecutionEOA_": {
+                    "type": "address",
+                    "indexed": false
+                },
+                "changer_": {
+                    "type": "address",
+                    "indexed": false
+                }
+            }
+        }
+    },
+    "errors": {},
+    "path": "/interfaces",
+    "name": "IDCAExecutor"
+}
