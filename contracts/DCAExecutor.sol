@@ -10,7 +10,7 @@ import "./interfaces/IDCAAccount.sol";
 import "./security/onlyAdmin.sol";
 
 contract DCAExecutor is OnlyAdmin, IDCAExecutor {
-    //Mapping of all active strategy for the given interval
+    //Mapping of all _active strategy for the given interval
     mapping(Interval => Strategy[]) internal _strategies;
     //Mapping of interval times to the last execution block time
     mapping(Interval => uint256) internal _lastExecution;
@@ -18,14 +18,14 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     mapping(Interval => uint256) public IntervalTimings;
 
     FeeDistribution internal _feeData;
-    bool public Active = true;
+    bool private _active = true;
     address internal _executionEOAAddress;
 
-    uint256 private _totalActiveStrategies;
+    uint256 private _total_activeStrategies;
     uint256 private _totalIntervalsExecuted;
 
-    modifier isActive() {
-        require(Active, "DCA is on pause");
+    modifier is_active() {
+        require(_active, "DCA is on pause");
         _;
     }
     modifier inWindow(Interval interval_) {
@@ -53,9 +53,9 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
 
     function Subscribe(
         Strategy calldata strategy_
-    ) public override isActive returns (bool sucsess) {
+    ) public override is_active returns (bool sucsess) {
         //Adds the DCA account to the given strategy interval list.
-        _totalActiveStrategies += 1;
+        _total_activeStrategies += 1;
 
         return sucsess = true;
     }
@@ -64,14 +64,14 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         Strategy calldata strategy_
     ) public override returns (bool sucsess) {
         //Remove the given stragety from the list
-        _totalActiveStrategies -= 1;
+        _total_activeStrategies -= 1;
 
         return sucsess = true;
     }
 
     function Execute(
         Interval interval_
-    ) public override onlyAdmins isActive inWindow(interval_) {
+    ) public override onlyAdmins is_active inWindow(interval_) {
         _startIntervalExecution(interval_);
         //Trigger the execution of the given interval
         emit ExecutedDCA(interval_);
@@ -88,13 +88,15 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     function _startIntervalExecution(Interval interval_) private {
         Strategy[] memory intervalStrategies = _strategies[interval_];
 
-        //  Meed to work out a more efficient way of doing this
-        for (uint i = 0; i < intervalStrategies.length; i++) {
-            if (intervalStrategies[i].active)
-                _singleExecution(
-                    intervalStrategies[i].accountAddress,
-                    intervalStrategies[i].strategyId
-                );
+        unchecked {
+            //  Meed to work out a more efficient way of doing this
+            for (uint i = 0; i < intervalStrategies.length; i++) {
+                if (intervalStrategies[i].active)
+                    _singleExecution(
+                        intervalStrategies[i].accountAddress,
+                        intervalStrategies[i].strategyId
+                    );
+            }
         }
 
         _lastExecution[interval_] = block.timestamp;

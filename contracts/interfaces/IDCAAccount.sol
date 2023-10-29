@@ -30,4 +30,8 @@ interface IDCAAccount is IDCADataStructures {
     function GetBaseBalance(IERC20 token_) external returns (uint256);
 
     function GetTargetBalance(IERC20 token_) external returns (uint256);
+
+    function UnFundAccount(IERC20 token_, uint256 amount_) external;
+
+    function WithdrawSavings(IERC20 token_, uint256 amount_) external;
 }

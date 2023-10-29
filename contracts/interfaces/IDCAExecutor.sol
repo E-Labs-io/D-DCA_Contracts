@@ -18,4 +18,6 @@ interface IDCAExecutor is IDCADataStructures {
     function Execute(Interval interval_) external;
 
     function ForceFeeFund() external;
+
+    
 }
