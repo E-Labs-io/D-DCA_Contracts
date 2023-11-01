@@ -44,6 +44,50 @@ function FundAccount(contract IERC20 token_, uint256 amount_) external nonpayabl
 | token_ | contract IERC20 | undefined |
 | amount_ | uint256 | undefined |
 
+### GetBaseBalance
+
+```solidity
+function GetBaseBalance(contract IERC20 token_) external nonpayable returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | contract IERC20 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
+### GetTargetBalance
+
+```solidity
+function GetTargetBalance(contract IERC20 token_) external nonpayable returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | contract IERC20 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
 ### SetupStrategy
 
 ```solidity
@@ -65,7 +109,7 @@ function SetupStrategy(IDCADataStructures.Strategy newStrategy_, uint256 seedFun
 ### SubscribeStrategy
 
 ```solidity
-function SubscribeStrategy(uint256 stratogyId_) external nonpayable returns (bool success)
+function SubscribeStrategy(uint256 strategyId_) external nonpayable
 ```
 
 
@@ -76,18 +120,29 @@ function SubscribeStrategy(uint256 stratogyId_) external nonpayable returns (boo
 
 | Name | Type | Description |
 |---|---|---|
-| stratogyId_ | uint256 | undefined |
+| strategyId_ | uint256 | undefined |
 
-#### Returns
+### UnFundAccount
+
+```solidity
+function UnFundAccount(contract IERC20 token_, uint256 amount_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| success | bool | undefined |
+| token_ | contract IERC20 | undefined |
+| amount_ | uint256 | undefined |
 
 ### UnsubscribeStrategy
 
 ```solidity
-function UnsubscribeStrategy(uint256 stratogyId) external nonpayable returns (bool success)
+function UnsubscribeStrategy(uint256 stratogyId) external nonpayable
 ```
 
 
@@ -100,11 +155,22 @@ function UnsubscribeStrategy(uint256 stratogyId) external nonpayable returns (bo
 |---|---|---|
 | stratogyId | uint256 | undefined |
 
-#### Returns
+### WithdrawSavings
+
+```solidity
+function WithdrawSavings(contract IERC20 token_, uint256 amount_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| success | bool | undefined |
+| token_ | contract IERC20 | undefined |
+| amount_ | uint256 | undefined |
 
 
 
@@ -162,7 +228,7 @@ event StrategyUnsubscribed(uint256 strategyId_)
 ### StratogyExecuted
 
 ```solidity
-event StratogyExecuted(uint256 strategyId_)
+event StratogyExecuted(uint256 indexed strategyId_)
 ```
 
 
@@ -173,7 +239,7 @@ event StratogyExecuted(uint256 strategyId_)
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_  | uint256 | undefined |
+| strategyId_ `indexed` | uint256 | undefined |
 
 
 

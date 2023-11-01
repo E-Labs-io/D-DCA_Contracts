@@ -1,9 +1,14 @@
+/** @format */
+
 import "@nomicfoundation/hardhat-toolbox";
 import "solidity-coverage";
 import "@primitivefi/hardhat-dodoc";
 import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-verify";
+import "@nomicfoundation/hardhat-ethers";
+
+import "./tasks";
 
 import { HardhatUserConfig } from "hardhat/config";
 import dotenv from "dotenv";
@@ -20,7 +25,7 @@ const gasPrice = 1000000000;
 console.log("❗️Gas Price Set: ", gasPrice / 10 ** 9, "gwei");
 
 const config: HardhatUserConfig = {
-    solidity: {
+  solidity: {
     version: "0.8.20",
     settings: {
       optimizer: {
@@ -40,9 +45,9 @@ const config: HardhatUserConfig = {
   },
   dodoc: {
     runOnCompile: true,
-    debugMode: true,
-    include:[],
-    outputDir: './docs'
+    debugMode: false,
+    include: [],
+    outputDir: "./docs",
 
     // More options...
   },
@@ -56,7 +61,8 @@ const config: HardhatUserConfig = {
           apiURL: "https://api-goerli.basescan.org/api",
           browserURL: "https://goerli.basescan.org",
         },
-      }, {
+      },
+      {
         network: "opGoerli",
         chainId: 420,
         urls: {
@@ -72,7 +78,7 @@ const config: HardhatUserConfig = {
           browserURL: "https://optimistic.etherscan.io",
         },
       },
-        {
+      {
         network: "arbGoerli",
         chainId: 421613,
         urls: {
@@ -80,7 +86,7 @@ const config: HardhatUserConfig = {
           browserURL: "https://goerli.arbiscan.io",
         },
       },
-        {
+      {
         network: "arbitrum",
         chainId: 42161,
         urls: {
@@ -99,13 +105,13 @@ const config: HardhatUserConfig = {
     artifacts: "./build/artifacts",
   },
   gasReporter: {
-    currency: 'ETH',
+    currency: "ETH",
     gasPrice: 21,
-    enabled: true
+    enabled: true,
+    outputFile: "./reports",
   },
 
   networks: {
-    hardhat: {},
     "base-goerli": {
       url: rcpEndPoints.baseGoerli,
       accounts: [masterMnemonic],
@@ -124,12 +130,12 @@ const config: HardhatUserConfig = {
       chainId: 10,
       gasPrice: gasPrice,
     },
-     arbGoerli: {
+    arbGoerli: {
       url: rcpEndPoints.arbGoerli,
       accounts: [masterMnemonic],
       chainId: 421613,
       gasPrice: gasPrice,
-    },  
+    },
     arbitrum: {
       url: rcpEndPoints.arbitrim,
       accounts: [masterMnemonic],

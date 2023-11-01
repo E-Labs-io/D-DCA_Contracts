@@ -1,8 +1,11 @@
 /** @format */
 import { AddressLike, Addressable } from "ethers";
 import DCAAccountDeployer from "./deployer-DCAAccount";
-import GenericDeployer from "./deployer"
-import { DCAExecutorArguments, DCAAccountArguments } from "../deploymentArguments/DCA.arguments";
+import GenericDeployer from "./deployer";
+import {
+  DCAExecutorArguments,
+  DCAAccountArguments,
+} from "../deploymentArguments/DCA.arguments";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 export interface Deployment {
@@ -23,18 +26,20 @@ export interface DeploymentProps {
   prevDeployments: DeploymentStore[];
 }
 
-export type DeploymentStore = { [deployment: string]: string | Addressable, contractName: string };
+export type DeploymentStore = {
+  deployment: string | Addressable;
+  contractName: string;
+};
 export type DeploymentReturn = string | Addressable | false;
 
 const deploymentFiles: Deployment = {
   DCAExecutor: GenericDeployer,
-    DCAAccount: DCAAccountDeployer
-
+  DCAAccount: DCAAccountDeployer,
 };
 
 export const deploymentArgumentStore: ArgumentStore = {
   DCAExecutor: DCAExecutorArguments,
-  DCAAccount: DCAAccountArguments
+  DCAAccount: DCAAccountArguments,
 };
 
 export default deploymentFiles;

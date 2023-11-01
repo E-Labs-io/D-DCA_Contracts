@@ -4,7 +4,7 @@ import "./IDCADataStructures.sol";
 import "./IDCAExecutor.sol";
 
 interface IDCAAccount is IDCADataStructures {
-    event StratogyExecuted(uint256 strategyId_);
+    event StratogyExecuted(uint256 indexed strategyId_);
     event DCAExecutorChanged(address newAddress_);
     event StrategySubscribed(uint256 strategyId_, address executor_);
     event StrategyUnsubscribed(uint256 strategyId_);
@@ -18,12 +18,12 @@ interface IDCAAccount is IDCADataStructures {
     ) external;
 
     function SubscribeStrategy(
-        uint256 stratogyId_
-    ) external returns (bool success);
+        uint256 strategyId_
+    ) external;
 
     function UnsubscribeStrategy(
         uint256 stratogyId
-    ) external returns (bool success);
+    ) external;
 
     function FundAccount(IERC20 token_, uint256 amount_) external;
 

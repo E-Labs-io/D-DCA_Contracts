@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 abstract contract OnlyExecutor is Ownable {
     address private _executor;
 
-    constructor(address executorAddress_)  {
+    constructor(address executorAddress_) {
         _executor = executorAddress_;
     }
 
@@ -20,5 +20,9 @@ abstract contract OnlyExecutor is Ownable {
 
     function removeExecutor() public onlyOwner {
         _executor = address(0x0);
+    }
+
+    function changeExecutor(address newExecutorAddress_) public onlyOwner {
+        _executor = address(newExecutorAddress_);
     }
 }

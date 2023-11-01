@@ -25,6 +25,7 @@ import type {
 export interface OnlyExecutorInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "changeExecutor"
       | "owner"
       | "removeExecutor"
       | "renounceOwnership"
@@ -33,6 +34,10 @@ export interface OnlyExecutorInterface extends Interface {
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "changeExecutor",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeExecutor",
@@ -47,6 +52,10 @@ export interface OnlyExecutorInterface extends Interface {
     values: [AddressLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "changeExecutor",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeExecutor",
@@ -118,6 +127,12 @@ export interface OnlyExecutor extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  changeExecutor: TypedContractMethod<
+    [newExecutorAddress_: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
@@ -134,6 +149,13 @@ export interface OnlyExecutor extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "changeExecutor"
+  ): TypedContractMethod<
+    [newExecutorAddress_: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

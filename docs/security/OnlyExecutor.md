@@ -10,6 +10,22 @@
 
 ## Methods
 
+### changeExecutor
+
+```solidity
+function changeExecutor(address newExecutorAddress_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newExecutorAddress_ | address | undefined |
+
 ### owner
 
 ```solidity

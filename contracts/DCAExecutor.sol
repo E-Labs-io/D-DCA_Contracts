@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
+pragma experimental ABIEncoderV2;
 
-// Uncomment this line to use console.log
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IDCAExecutor.sol";
@@ -12,16 +11,19 @@ import "./security/onlyAdmin.sol";
 contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     //Mapping of all _active strategy for the given interval
     mapping(Interval => Strategy[]) internal _strategies;
+    // DCAAccount Address => Account Strat Id => local id
+    mapping(address => mapping(uint256 => uint256)) internal _localStratId;
     //Mapping of interval times to the last execution block time
     mapping(Interval => uint256) internal _lastExecution;
     // Mapping of Interval enum to block amounts
-    mapping(Interval => uint256) public IntervalTimings;
+    mapping(Interval => uint256) internal IntervalTimings;
 
     FeeDistribution internal _feeData;
-    bool private _active = true;
+
+    bool internal _active = true;
     address internal _executionEOAAddress;
 
-    uint256 private _total_activeStrategies;
+    uint256 private _totalActiveStrategies;
     uint256 private _totalIntervalsExecuted;
 
     modifier is_active() {
@@ -43,41 +45,57 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     ) onlyAdmins() {
         _feeData = feeDistrobution_;
         _setExecutionAddress(executionEOA_);
-        //  Set the interval block amounts
-        IntervalTimings[Interval.TestInterval] = 20;
-        IntervalTimings[Interval.OneDay] = 5760;
-        IntervalTimings[Interval.TwoDays] = 11520;
-        IntervalTimings[Interval.OneWeek] = 40320;
-        IntervalTimings[Interval.OneMonth] = 172800;
+        _setIntervalBlockAmounts();
     }
 
     function Subscribe(
         Strategy calldata strategy_
-    ) public override is_active returns (bool sucsess) {
+    ) external override is_active returns (bool sucsess) {
         //Adds the DCA account to the given strategy interval list.
-        _total_activeStrategies += 1;
-
-        return sucsess = true;
+        _subscribeAccount(strategy_);
+        _totalActiveStrategies += 1;
+        return true;
     }
 
     function Unsubscribe(
         Strategy calldata strategy_
-    ) public override returns (bool sucsess) {
+    ) external override returns (bool sucsess) {
         //Remove the given stragety from the list
-        _total_activeStrategies -= 1;
-
+        _totalActiveStrategies -= 1;
+        _unSubscribeAccount(strategy_);
         return sucsess = true;
     }
 
     function Execute(
         Interval interval_
-    ) public override onlyAdmins is_active inWindow(interval_) {
+    ) external override onlyAdmins is_active inWindow(interval_) {
         _startIntervalExecution(interval_);
-        //Trigger the execution of the given interval
         emit ExecutedDCA(interval_);
     }
 
-    function ForceFeeFund() public override onlyAdmins {}
+    function ForceFeeFund() external override onlyAdmins {}
+
+    function GetTotalActiveStrategys() public view returns (uint256) {
+        return _totalActiveStrategies;
+    }
+
+    function GetIntervalsStrategys(
+        Interval interval_
+    ) public view returns (Strategy[] memory) {
+        return _strategies[interval_];
+    }
+
+    function _subscribeAccount(Strategy calldata strategy_) internal {
+        uint256 id = _strategies[strategy_.interval].length;
+        _strategies[strategy_.interval].push(strategy_);
+        _localStratId[strategy_.accountAddress][strategy_.strategyId] = id;
+        emit DCAAccontSubscription(strategy_, true);
+    }
+
+    function _unSubscribeAccount(Strategy calldata strategy_) private {
+        _removeStratageyFromArray(strategy_);
+        emit DCAAccontSubscription(strategy_, true);
+    }
 
     function _setExecutionAddress(address newExecutionEOA_) internal {
         _executionEOAAddress = newExecutionEOA_;
@@ -85,18 +103,15 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         emit ExecutionEOAAddressChange(newExecutionEOA_, msg.sender);
     }
 
-    function _startIntervalExecution(Interval interval_) private {
+    function _startIntervalExecution(Interval interval_) internal {
         Strategy[] memory intervalStrategies = _strategies[interval_];
-
-        unchecked {
-            //  Meed to work out a more efficient way of doing this
-            for (uint i = 0; i < intervalStrategies.length; i++) {
-                if (intervalStrategies[i].active)
-                    _singleExecution(
-                        intervalStrategies[i].accountAddress,
-                        intervalStrategies[i].strategyId
-                    );
-            }
+        //  Meed to work out a more efficient way of doing this
+        for (uint i = 0; i < intervalStrategies.length; i++) {
+            if (intervalStrategies[i].active)
+                _singleExecution(
+                    intervalStrategies[i].accountAddress,
+                    intervalStrategies[i].strategyId
+                );
         }
 
         _lastExecution[interval_] = block.timestamp;
@@ -108,5 +123,37 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         uint strategyId_
     ) private {
         IDCAAccount(accountAddress_).Execute(strategyId_, _feeData.feeAmount);
+    }
+
+    function _setIntervalBlockAmounts() internal {
+        //  Set the interval block amounts
+        IntervalTimings[Interval.TestInterval] = 20;
+        IntervalTimings[Interval.OneDay] = 5760;
+        IntervalTimings[Interval.TwoDays] = 11520;
+        IntervalTimings[Interval.OneWeek] = 40320;
+        IntervalTimings[Interval.OneMonth] = 172800;
+    }
+
+    function _removeStratageyFromArray(Strategy calldata strategy_) private {
+        //  Get the index of the strategy to remove from the local store
+        //  Get the last element in the array
+        uint256 local = _localStratId[strategy_.accountAddress][
+            strategy_.strategyId
+        ];
+        Strategy memory movingStrat = _strategies[strategy_.interval][
+            _strategies[strategy_.interval].length - 1
+        ];
+
+        //  Check the strategy to remove isnt the last
+        if (_strategies[strategy_.interval].length - 1 != local) {
+            //  If its not, set as moved strat
+            //  Update the moved strat local Id
+            _strategies[strategy_.interval][local] = movingStrat;
+            _localStratId[movingStrat.accountAddress][
+                movingStrat.strategyId
+            ] = local;
+        }
+        //  Remove the last element
+        _strategies[strategy_.interval].pop();
     }
 }

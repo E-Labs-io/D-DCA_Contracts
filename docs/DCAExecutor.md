@@ -10,23 +10,6 @@
 
 ## Methods
 
-### Active
-
-```solidity
-function Active() external view returns (bool)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
-
 ### CheckIfAdmin
 
 ```solidity
@@ -76,10 +59,10 @@ function ForceFeeFund() external nonpayable
 
 
 
-### IntervalTimings
+### GetIntervalsStrategys
 
 ```solidity
-function IntervalTimings(enum IDCADataStructures.Interval) external view returns (uint256)
+function GetIntervalsStrategys(enum IDCADataStructures.Interval interval_) external view returns (struct IDCADataStructures.Strategy[])
 ```
 
 
@@ -90,7 +73,24 @@ function IntervalTimings(enum IDCADataStructures.Interval) external view returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | enum IDCADataStructures.Interval | undefined |
+| interval_ | enum IDCADataStructures.Interval | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | IDCADataStructures.Strategy[] | undefined |
+
+### GetTotalActiveStrategys
+
+```solidity
+function GetTotalActiveStrategys() external view returns (uint256)
+```
+
+
+
+
+
 
 #### Returns
 
@@ -222,10 +222,10 @@ function transferOwnership(address newOwner) external nonpayable
 
 ## Events
 
-### ExecutedDCA
+### DCAAccontSubscription
 
 ```solidity
-event ExecutedDCA(enum IDCADataStructures.Interval interval_)
+event DCAAccontSubscription(IDCADataStructures.Strategy interval_, bool active_)
 ```
 
 
@@ -236,7 +236,24 @@ event ExecutedDCA(enum IDCADataStructures.Interval interval_)
 
 | Name | Type | Description |
 |---|---|---|
-| interval_  | enum IDCADataStructures.Interval | undefined |
+| interval_  | IDCADataStructures.Strategy | undefined |
+| active_  | bool | undefined |
+
+### ExecutedDCA
+
+```solidity
+event ExecutedDCA(enum IDCADataStructures.Interval indexed interval_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| interval_ `indexed` | enum IDCADataStructures.Interval | undefined |
 
 ### ExecutionEOAAddressChange
 

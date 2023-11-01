@@ -13,7 +13,107 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        components: [
+          {
+            internalType: "address",
+            name: "accountAddress",
+            type: "address",
+          },
+          {
+            components: [
+              {
+                internalType: "contract IERC20",
+                name: "tokenAddress",
+                type: "address",
+              },
+              {
+                internalType: "uint8",
+                name: "decimals",
+                type: "uint8",
+              },
+              {
+                internalType: "string",
+                name: "ticker",
+                type: "string",
+              },
+            ],
+            internalType: "struct IDCADataStructures.TokeData",
+            name: "baseToken",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "contract IERC20",
+                name: "tokenAddress",
+                type: "address",
+              },
+              {
+                internalType: "uint8",
+                name: "decimals",
+                type: "uint8",
+              },
+              {
+                internalType: "string",
+                name: "ticker",
+                type: "string",
+              },
+            ],
+            internalType: "struct IDCADataStructures.TokeData",
+            name: "targetToken",
+            type: "tuple",
+          },
+          {
+            internalType: "enum IDCADataStructures.Interval",
+            name: "interval",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "strategyId",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "reinvest",
+            type: "bool",
+          },
+          {
+            internalType: "bool",
+            name: "active",
+            type: "bool",
+          },
+          {
+            internalType: "address",
+            name: "revestContract",
+            type: "address",
+          },
+        ],
         indexed: false,
+        internalType: "struct IDCADataStructures.Strategy",
+        name: "interval_",
+        type: "tuple",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "active_",
+        type: "bool",
+      },
+    ],
+    name: "DCAAccontSubscription",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "enum IDCADataStructures.Interval",
         name: "interval_",
         type: "uint8",

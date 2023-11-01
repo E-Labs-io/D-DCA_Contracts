@@ -6,7 +6,6 @@ import deploymentFiles, {
   DeploymentStore,
   deploymentArgumentStore,
 } from "./deployers/deploymentModules";
-import { Addressable } from "ethers";
 import logDeployment from "../scripts/saveDeployLog";
 
 async function masterDeployer(deployments: string[]) {
@@ -16,11 +15,10 @@ async function masterDeployer(deployments: string[]) {
   console.log(`🟠 Master Deployer: Deploying ${deployments.length} Contracts`);
   console.log("🟠 Deployer Address: ", deployer.address);
 
-  const deploymentAddresses: DeploymentStore[] =
-    [];
+  const deploymentAddresses: DeploymentStore[] = [];
 
-  for(let i=0; i < deployments.length; i++) {
-    const deployment = deployments[i]
+  for (let i = 0; i < deployments.length; i++) {
+    const deployment = deployments[i];
     console.log("🟠 Deploying Contract: ", deployment);
     await deploymentFiles[deployment]({
       deployer,
@@ -38,10 +36,13 @@ async function masterDeployer(deployments: string[]) {
           deployer.address,
           await deployer.provider.getNetwork()
         );
-        deploymentAddresses.push({ deployment: address, contractName: deployment });
+        deploymentAddresses.push({
+          deployment: address,
+          contractName: deployment,
+        });
       }
     });
-  };
+  }
 
   console.log("🟢 Finished Deploying Contracts", deploymentAddresses);
 }

@@ -58,7 +58,7 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint256",
         name: "strategyId_",
         type: "uint256",
@@ -100,6 +100,44 @@ const _abi = [
     ],
     name: "FundAccount",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20",
+        name: "token_",
+        type: "address",
+      },
+    ],
+    name: "GetBaseBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20",
+        name: "token_",
+        type: "address",
+      },
+    ],
+    name: "GetTargetBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -211,18 +249,30 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "stratogyId_",
+        name: "strategyId_",
         type: "uint256",
       },
     ],
     name: "SubscribeStrategy",
-    outputs: [
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
-        internalType: "bool",
-        name: "success",
-        type: "bool",
+        internalType: "contract IERC20",
+        name: "token_",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount_",
+        type: "uint256",
       },
     ],
+    name: "UnFundAccount",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -235,13 +285,25 @@ const _abi = [
       },
     ],
     name: "UnsubscribeStrategy",
-    outputs: [
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
-        internalType: "bool",
-        name: "success",
-        type: "bool",
+        internalType: "contract IERC20",
+        name: "token_",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount_",
+        type: "uint256",
       },
     ],
+    name: "WithdrawSavings",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

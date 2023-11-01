@@ -1,5 +1,65 @@
 [
   {
+    "timestamp": "01/11/23, 14:41:11",
+    "contractName": "DCAAccount",
+    "contractAddress": "0xA6d362c04CFb1A4867366DB9800F011Cd26d57F2",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "arbGoerli",
+      "chainId": "421613"
+    }
+  },
+  {
+    "timestamp": "01/11/23, 14:40:40",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x20B78b7a1f59692AAf1f02eAADAB851b588e8121",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "arbGoerli",
+      "chainId": "421613"
+    }
+  },
+  {
+    "timestamp": "01/11/23, 14:33:18",
+    "contractName": "DCAAccount",
+    "contractAddress": "0xb3B9F8Fb41c70E680Ec46eb9DfF1803B2A31d352",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "arbGoerli",
+      "chainId": "421613"
+    }
+  },
+  {
+    "timestamp": "01/11/23, 14:32:37",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x8f0C795c4Fb88D101d36a523e06De22614D60858",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "arbGoerli",
+      "chainId": "421613"
+    }
+  },
+  {
+    "timestamp": "31/10/23, 17:18:06",
+    "contractName": "DCAAccount",
+    "contractAddress": "0x861ac86AC6dc792941a66dD2a530A79e5b9e2d7C",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "arbGoerli",
+      "chainId": "421613"
+    }
+  },
+  {
+    "timestamp": "31/10/23, 17:17:36",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0xD08487f956Ba89A3dd70ad37DeF5822f61B9d63a",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "arbGoerli",
+      "chainId": "421613"
+    }
+  },
+  {
     "timestamp": "29/10/23, 22:37:09",
     "contractName": "DCAAccount",
     "contractAddress": "0x00C394eFDBbc759336AACD5050F1771B4a441B3A",

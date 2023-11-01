@@ -5,7 +5,8 @@ import "./IDCADataStructures.sol";
 
 interface IDCAExecutor is IDCADataStructures {
     event ExecutionEOAAddressChange(address newExecutionEOA_, address changer_);
-    event ExecutedDCA(Interval interval_);
+    event ExecutedDCA(Interval indexed interval_);
+    event DCAAccontSubscription(Strategy interval_, bool active_);
 
     function Subscribe(
         Strategy calldata strategy_

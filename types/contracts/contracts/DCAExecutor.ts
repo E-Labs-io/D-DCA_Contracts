@@ -21,9 +21,37 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../common";
+} from "../common";
 
 export declare namespace IDCADataStructures {
+  export type FeeDistributionStruct = {
+    amountToExecutor: BigNumberish;
+    amountToComputing: BigNumberish;
+    amountToAdmin: BigNumberish;
+    feeAmount: BigNumberish;
+    executionAddress: AddressLike;
+    computingAddress: AddressLike;
+    adminAddress: AddressLike;
+  };
+
+  export type FeeDistributionStructOutput = [
+    amountToExecutor: bigint,
+    amountToComputing: bigint,
+    amountToAdmin: bigint,
+    feeAmount: bigint,
+    executionAddress: string,
+    computingAddress: string,
+    adminAddress: string
+  ] & {
+    amountToExecutor: bigint;
+    amountToComputing: bigint;
+    amountToAdmin: bigint;
+    feeAmount: bigint;
+    executionAddress: string;
+    computingAddress: string;
+    adminAddress: string;
+  };
+
   export type TokeDataStruct = {
     tokenAddress: AddressLike;
     decimals: BigNumberish;
@@ -71,9 +99,21 @@ export declare namespace IDCADataStructures {
   };
 }
 
-export interface IDCAExecutorInterface extends Interface {
+export interface DCAExecutorInterface extends Interface {
   getFunction(
-    nameOrSignature: "Execute" | "ForceFeeFund" | "Subscribe" | "Unsubscribe"
+    nameOrSignature:
+      | "CheckIfAdmin"
+      | "Execute"
+      | "ForceFeeFund"
+      | "GetIntervalsStrategys"
+      | "GetTotalActiveStrategys"
+      | "Subscribe"
+      | "Unsubscribe"
+      | "addAdmin"
+      | "owner"
+      | "removeAdmin"
+      | "renounceOwnership"
+      | "transferOwnership"
   ): FunctionFragment;
 
   getEvent(
@@ -81,14 +121,27 @@ export interface IDCAExecutorInterface extends Interface {
       | "DCAAccontSubscription"
       | "ExecutedDCA"
       | "ExecutionEOAAddressChange"
+      | "OwnershipTransferred"
   ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "CheckIfAdmin",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "Execute",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ForceFeeFund",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "GetIntervalsStrategys",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "GetTotalActiveStrategys",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -99,15 +152,58 @@ export interface IDCAExecutorInterface extends Interface {
     functionFragment: "Unsubscribe",
     values: [IDCADataStructures.StrategyStruct]
   ): string;
+  encodeFunctionData(
+    functionFragment: "addAdmin",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "removeAdmin",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [AddressLike]
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "CheckIfAdmin",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ForceFeeFund",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "GetIntervalsStrategys",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "GetTotalActiveStrategys",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "Subscribe", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "Unsubscribe",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "addAdmin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
 }
@@ -159,11 +255,24 @@ export namespace ExecutionEOAAddressChangeEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface IDCAExecutor extends BaseContract {
-  connect(runner?: ContractRunner | null): IDCAExecutor;
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [previousOwner: string, newOwner: string];
+  export interface OutputObject {
+    previousOwner: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export interface DCAExecutor extends BaseContract {
+  connect(runner?: ContractRunner | null): DCAExecutor;
   waitForDeployment(): Promise<this>;
 
-  interface: IDCAExecutorInterface;
+  interface: DCAExecutorInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -202,9 +311,23 @@ export interface IDCAExecutor extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  CheckIfAdmin: TypedContractMethod<
+    [addressToCheck_: AddressLike],
+    [boolean],
+    "view"
+  >;
+
   Execute: TypedContractMethod<[interval_: BigNumberish], [void], "nonpayable">;
 
   ForceFeeFund: TypedContractMethod<[], [void], "nonpayable">;
+
+  GetIntervalsStrategys: TypedContractMethod<
+    [interval_: BigNumberish],
+    [IDCADataStructures.StrategyStructOutput[]],
+    "view"
+  >;
+
+  GetTotalActiveStrategys: TypedContractMethod<[], [bigint], "view">;
 
   Subscribe: TypedContractMethod<
     [strategy_: IDCADataStructures.StrategyStruct],
@@ -218,16 +341,47 @@ export interface IDCAExecutor extends BaseContract {
     "nonpayable"
   >;
 
+  addAdmin: TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+
+  owner: TypedContractMethod<[], [string], "view">;
+
+  removeAdmin: TypedContractMethod<
+    [oldAdmin_: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "CheckIfAdmin"
+  ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "Execute"
   ): TypedContractMethod<[interval_: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "ForceFeeFund"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "GetIntervalsStrategys"
+  ): TypedContractMethod<
+    [interval_: BigNumberish],
+    [IDCADataStructures.StrategyStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "GetTotalActiveStrategys"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "Subscribe"
   ): TypedContractMethod<
@@ -242,6 +396,21 @@ export interface IDCAExecutor extends BaseContract {
     [boolean],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "addAdmin"
+  ): TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "removeAdmin"
+  ): TypedContractMethod<[oldAdmin_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   getEvent(
     key: "DCAAccontSubscription"
@@ -263,6 +432,13 @@ export interface IDCAExecutor extends BaseContract {
     ExecutionEOAAddressChangeEvent.InputTuple,
     ExecutionEOAAddressChangeEvent.OutputTuple,
     ExecutionEOAAddressChangeEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
   >;
 
   filters: {
@@ -297,6 +473,17 @@ export interface IDCAExecutor extends BaseContract {
       ExecutionEOAAddressChangeEvent.InputTuple,
       ExecutionEOAAddressChangeEvent.OutputTuple,
       ExecutionEOAAddressChangeEvent.OutputObject
+    >;
+
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
     >;
   };
 }

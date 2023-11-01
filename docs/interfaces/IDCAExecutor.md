@@ -85,10 +85,10 @@ function Unsubscribe(IDCADataStructures.Strategy strategy_) external nonpayable 
 
 ## Events
 
-### ExecutedDCA
+### DCAAccontSubscription
 
 ```solidity
-event ExecutedDCA(enum IDCADataStructures.Interval interval_)
+event DCAAccontSubscription(IDCADataStructures.Strategy interval_, bool active_)
 ```
 
 
@@ -99,7 +99,24 @@ event ExecutedDCA(enum IDCADataStructures.Interval interval_)
 
 | Name | Type | Description |
 |---|---|---|
-| interval_  | enum IDCADataStructures.Interval | undefined |
+| interval_  | IDCADataStructures.Strategy | undefined |
+| active_  | bool | undefined |
+
+### ExecutedDCA
+
+```solidity
+event ExecutedDCA(enum IDCADataStructures.Interval indexed interval_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| interval_ `indexed` | enum IDCADataStructures.Interval | undefined |
 
 ### ExecutionEOAAddressChange
 

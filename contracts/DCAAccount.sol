@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
+pragma experimental ABIEncoderV2;
 
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-import "hardhat/console.sol";
 import "./interfaces/IDCADataStructures.sol";
 import "./interfaces/IDCAAccount.sol";
 import "./interfaces/IDCAExecutor.sol";
@@ -43,13 +43,12 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     ) OnlyExecutor(address(executorAddress_)) Ownable(address(msg.sender)) {
         _changeDefaultExecutor(IDCAExecutor(executorAddress_));
         SWAP_ROUTER = ISwapRouter(swapRouter_);
-        unchecked {
-            IntervalTimings[Interval.TestInterval] = 20;
-            IntervalTimings[Interval.OneDay] = 5760;
-            IntervalTimings[Interval.TwoDays] = 11520;
-            IntervalTimings[Interval.OneWeek] = 40320;
-            IntervalTimings[Interval.OneMonth] = 172800;
-        }
+
+        IntervalTimings[Interval.TestInterval] = 20;
+        IntervalTimings[Interval.OneDay] = 5760;
+        IntervalTimings[Interval.TwoDays] = 11520;
+        IntervalTimings[Interval.OneWeek] = 40320;
+        IntervalTimings[Interval.OneMonth] = 172800;
     }
 
     // Public Functions
@@ -79,9 +78,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         if (subscribeToExecutor_) _subscribeToExecutor(newStrategy_);
     }
 
-    function SubscribeStrategy(
-        uint256 strategyId_
-    ) public override onlyOwner returns (bool success) {
+    function SubscribeStrategy(uint256 strategyId_) public override onlyOwner {
         //Add the given strategy, once checking there are funds
         //to the default DCAExecutor
         require(
@@ -93,7 +90,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function UnsubscribeStrategy(
         uint256 strategyId_
-    ) public override onlyOwner returns (bool success) {
+    ) public override onlyOwner {
         //remove the given strategy from its active executor
         require(
             strategies_[strategyId_].active,
@@ -162,11 +159,17 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         return _targetBalances[token_];
     }
 
+    function GetStrategyData(
+        uint256 strategyId_
+    ) public view returns (Strategy memory) {
+        return strategies_[strategyId_];
+    }
+
     // Internal & Private functions
     function _executeDCATrade(
         uint256 strategyId_,
         uint256 feeAmount_
-    ) internal returns (bool success) {
+    ) internal {
         //Example of how this might work using Uniswap
         //Get the stragegy
         Strategy memory selectedStrat = strategies_[strategyId_];
@@ -175,7 +178,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         if (
             _baseBalances[selectedStrat.baseToken.tokenAddress] <
             selectedStrat.amount
-        ) return success = false;
+        ) return;
         //  Work out the fee amounts
         uint256 feeAmount = _calculateFee(
             selectedStrat.baseToken,
@@ -204,8 +207,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
             .amount;
         _lastExecution[selectedStrat.strategyId] = block.timestamp;
         _totalIntervalsExecuted += 1;
-
-        return success = true;
+        emit StratogyExecuted(selectedStrat.strategyId);
     }
 
     function _subscribeToExecutor(Strategy memory newStrategy_) private {

@@ -51,6 +51,19 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newExecutorAddress_",
+        type: "address",
+      },
+    ],
+    name: "changeExecutor",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [
