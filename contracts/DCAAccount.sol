@@ -224,13 +224,12 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         }
 
         tradeAmount = selectedStrat.amount - feeAmount;
-        /* 
-        if (!_checkSendAllowance(baseToken, address(SWAP_ROUTER), tradeAmount))
-            _approveSwapSpend(baseToken, tradeAmount);
 
-        //  The call to `exactInputSingle` executes the swap.
+        _approveSwapSpend(baseToken, tradeAmount);
+
+        //  Make the swap on uniswap
         amountIn = _swap(baseToken, targetToken, tradeAmount);
-
+        /*
         //  Update some tracking metrics
         //  Update balance & time track
         _targetBalances[selectedStrat.baseToken.tokenAddress] += amountIn;
@@ -305,14 +304,29 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function _transferFee(uint256 feeAmount_, address tokenAddress_) internal {
         // Transfer teh fee to the DCAExecutpr
-        IERC20(tokenAddress_).transfer(address(_executorAddress), feeAmount_);
+        require(
+            IERC20(tokenAddress_).transfer(
+                address(_executorAddress),
+                feeAmount_
+            ),
+            "Fee transfer failed"
+        );
     }
 
-    function _approveSwapSpend(
-        address tokenAddress_,
-        uint256 amount_
-    ) internal {
-        IERC20(tokenAddress_).approve(address(SWAP_ROUTER), amount_);
+    function _approveSwapSpend(address baseToken_, uint256 amount_) internal {
+        IERC20 token = IERC20(baseToken_);
+        uint256 currentAllowance = token.allowance(
+            address(this),
+            address(SWAP_ROUTER)
+        );
+
+        if (currentAllowance < amount_) {
+            // Set the new allowance
+            require(
+                token.approve(address(SWAP_ROUTER), amount_),
+                "Approve failed"
+            );
+        }
     }
 
     function _checkSendAllowance(
