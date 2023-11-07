@@ -5,54 +5,55 @@ import { ChainName, tokenAddress } from "../bin/tokenAddress";
 import { AddressLike } from "ethers";
 
 const taskId = "setup-strategy";
+const taskDescription = "Approve, Fund and Setup strategy";
 
-task(taskId, "Approve, Fund and Setup strategy").setAction(
-  async (_args, hre) => {
-    const DCAAccount = "0xCC0b1045695C098E19E6C8A1BBD33f7c6d8862C8";
+task(taskId, taskDescription).setAction(async (_args, hre) => {
+  const DCAAccount = "0x027d97052829429E1C518a8Dd3A7b7D5c26E141F";
 
-    console.log(`🟢 [TASK] ${taskId} : Mounted`);
-    console.log(`🟢 [TASK] ${taskId} : Setting Strategy for : `, DCAAccount);
-    const [owner] = await hre.ethers.getSigners();
-    const network = hre.network;
+  console.log(`🟢 [TASK] ${taskId} : Mounted`);
+  console.log(`🟢 [TASK] ${taskId} : Setting Strategy for : `, DCAAccount);
+  const [owner] = await hre.ethers.getSigners();
+  const network = hre.network;
 
-    const usdcAddress = tokenAddress.usdc[
-      network.name as ChainName
-    ] as AddressLike;
+  //  Verify the contract
 
-    //    Approve USDC for contrtact spend
-    const usdcContract = await hre.ethers.getContractAt(
-      "IERC20",
-      await usdcAddress,
-      owner
-    );
-    await usdcContract.approve(DCAAccount, hre.ethers.parseUnits("100", 6));
-    console.log(`🟢 [TASK] ${taskId} : Token Spend Approved`);
+  const usdcAddress = tokenAddress.usdc[
+    network.name as ChainName
+  ] as AddressLike;
 
-    // Deploy Strategy
-    const DCAAccountContract = await hre.ethers.getContractAt(
-      "DCAAccount",
-      DCAAccount,
-      owner
-    );
+  //    Approve USDC for contrtact spend
+  const usdcContract = await hre.ethers.getContractAt(
+    "IERC20",
+    await usdcAddress,
+    owner
+  );
+  await usdcContract.approve(DCAAccount, hre.ethers.parseUnits("100", 6));
+  console.log(`🟢 [TASK] ${taskId} : Token Spend Approved`);
 
-    await DCAAccountContract.SetupStrategy(
-      newStrat(DCAAccount, hre.network.name),
-      0,
-      false
-    );
-    console.log(`🟢 [TASK] ${taskId} : New strategy set up`);
+  // Deploy Strategy
+  const DCAAccountContract = await hre.ethers.getContractAt(
+    "DCAAccount",
+    DCAAccount,
+    owner
+  );
 
-    //  Fund DCAAccount
-    const fund = await DCAAccountContract.FundAccount(
-      usdcAddress,
-      hre.ethers.parseUnits("20", 6)
-    );
-    await fund.wait();
-    console.log(`🟢 [TASK] ${taskId} : Account Funded`);
+  await DCAAccountContract.SetupStrategy(
+    newStrat(DCAAccount, hre.network.name),
+    0,
+    false
+  );
+  console.log(`🟢 [TASK] ${taskId} : New strategy set up`);
 
-    //  Subscribe the strategy
-    const sub = await DCAAccountContract.SubscribeStrategy(0);
-    await sub.wait();
-    console.log(`🟢 [TASK] ${taskId} : Strategy Subscribed`);
-  }
-);
+  //  Fund DCAAccount
+  const fund = await DCAAccountContract.FundAccount(
+    usdcAddress,
+    hre.ethers.parseUnits("20", 6)
+  );
+  await fund.wait();
+  console.log(`🟢 [TASK] ${taskId} : Account Funded`);
+
+  //  Subscribe the strategy
+  const sub = await DCAAccountContract.SubscribeStrategy(0);
+  await sub.wait();
+  console.log(`🟢 [TASK] ${taskId} : Strategy Subscribed`);
+});

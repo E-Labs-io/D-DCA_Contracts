@@ -1,7 +1,5 @@
 /** @format */
 
-import hardhat, { ethers } from "hardhat";
-
 import { Addressable, ZeroAddress } from "ethers";
 import {
   DeploymentProps,
@@ -9,6 +7,7 @@ import {
 } from "../../types/deployment/deploymentArguments";
 import delay from "../../scripts/helpers/delay";
 import verifyContractOnScan from "../../scripts/helpers/verifyOnScan";
+import { ethers } from "hardhat";
 
 export default async function deploy({
   deployer,

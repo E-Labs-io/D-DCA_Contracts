@@ -3,11 +3,11 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "solidity-coverage";
 import "@primitivefi/hardhat-dodoc";
-import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-verify";
 import "@nomicfoundation/hardhat-ethers";
 import "hardhat-gas-reporter";
+import "tsconfig-paths/register";
 
 import "./tasks";
 
@@ -31,7 +31,7 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200,
+        runs: 1000,
       },
     },
   },

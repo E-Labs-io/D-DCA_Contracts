@@ -1,7 +1,6 @@
 /** @format */
 
 import dotenv from "dotenv";
-import { Network } from "ethers";
 dotenv.config();
 
 export default function checkPrivateKeys() {
