@@ -22,7 +22,7 @@ const _abi = [
           {
             components: [
               {
-                internalType: "contract IERC20",
+                internalType: "address",
                 name: "tokenAddress",
                 type: "address",
               },
@@ -44,7 +44,7 @@ const _abi = [
           {
             components: [
               {
-                internalType: "contract IERC20",
+                internalType: "address",
                 name: "tokenAddress",
                 type: "address",
               },
@@ -173,7 +173,7 @@ const _abi = [
           {
             components: [
               {
-                internalType: "contract IERC20",
+                internalType: "address",
                 name: "tokenAddress",
                 type: "address",
               },
@@ -195,7 +195,7 @@ const _abi = [
           {
             components: [
               {
-                internalType: "contract IERC20",
+                internalType: "address",
                 name: "tokenAddress",
                 type: "address",
               },
@@ -273,7 +273,7 @@ const _abi = [
           {
             components: [
               {
-                internalType: "contract IERC20",
+                internalType: "address",
                 name: "tokenAddress",
                 type: "address",
               },
@@ -295,7 +295,7 @@ const _abi = [
           {
             components: [
               {
-                internalType: "contract IERC20",
+                internalType: "address",
                 name: "tokenAddress",
                 type: "address",
               },

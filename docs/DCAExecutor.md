@@ -81,6 +81,30 @@ function GetIntervalsStrategys(enum IDCADataStructures.Interval interval_) exter
 |---|---|---|
 | _0 | IDCADataStructures.Strategy[] | undefined |
 
+### GetSpesificStrategy
+
+```solidity
+function GetSpesificStrategy(address dcaAccountAddress_, enum IDCADataStructures.Interval interval_, uint256 accountStrategyId_) external view returns (struct IDCADataStructures.Strategy)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| dcaAccountAddress_ | address | undefined |
+| interval_ | enum IDCADataStructures.Interval | undefined |
+| accountStrategyId_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | IDCADataStructures.Strategy | undefined |
+
 ### GetTotalActiveStrategys
 
 ```solidity

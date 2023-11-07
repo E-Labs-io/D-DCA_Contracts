@@ -9,12 +9,15 @@
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
     "hardhat": "npx hardhat node",
-    "deploy": "npm publish --access public",
-    "dev": "npx hardhat run  --network hardhat deploys/deploy.ts",
-    "deploy-baseGoerli": "npx hardhat run --network base-goerli deploys/deploy.ts",
-    "deploy-opGoerli": "npx hardhat run --network opGoerli deploys/deploy.ts",
-    "deploy-mumbai": "npx hardhat run --network mumbai deploys/deploy.ts",
-    "deploy-arbGoerli": "npx hardhat run --network arbGoerli deploys/deploy.ts"
+    "deploy": "npm hardhat run deployments/deploy.ts",
+    "dev": "npx hardhat run  --network hardhat deployments/deploy.ts",
+    "deploy-baseGoerli": "npx hardhat run --network base-goerli deployments/deploy.ts",
+    "deploy-opGoerli": "npx hardhat run --network opGoerli deployments/deploy.ts",
+    "deploy-mumbai": "npx hardhat run --network mumbai deployments/deploy.ts",
+    "deploy-arbGoerli": "npx hardhat run --network arbGoerli deployments/deploy.ts",
+    "deploy-sepolia": "npx hardhat run --network sepolia deployments/deploy.ts",
+    "deploy-ethGoerli": "npx hardhat run --network ethGoerli deployments/deploy.ts",
+    "deploy-local": "npx hardhat run --network localhost deployments/deploy.ts"
   },
   "repository": {
     "type": "git",

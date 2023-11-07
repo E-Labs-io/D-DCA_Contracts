@@ -31,14 +31,14 @@ interface IDCADataStructures {
         TokeData targetToken;
         Interval interval;
         uint256 amount;
-        uint strategyId;
+        uint256 strategyId;
         bool reinvest;
         bool active;
         address revestContract; // should this be call data to execute?
     }
 
     struct TokeData {
-        IERC20 tokenAddress;
+        address tokenAddress;
         uint8 decimals;
         string ticker;
     }

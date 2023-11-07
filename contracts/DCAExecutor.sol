@@ -85,6 +85,17 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         return _strategies[interval_];
     }
 
+    function GetSpesificStrategy(
+        address dcaAccountAddress_,
+        Interval interval_,
+        uint256 accountStrategyId_
+    ) public view returns (Strategy memory) {
+        return
+            _strategies[interval_][
+                _localStratId[dcaAccountAddress_][accountStrategyId_]
+            ];
+    }
+
     function _subscribeAccount(Strategy calldata strategy_) internal {
         uint256 id = _strategies[strategy_.interval].length;
         _strategies[strategy_.interval].push(strategy_);

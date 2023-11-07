@@ -7,6 +7,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-verify";
 import "@nomicfoundation/hardhat-ethers";
+import "hardhat-gas-reporter";
 
 import "./tasks";
 
@@ -19,7 +20,7 @@ dotenv.config();
 console.log("🟢 Hardhat : Mounted.");
 
 // Some quick checks to make sure our .env is working.
-const { rcpEndPoints, masterMnemonic } = checkPrivateKeys();
+const { rcpEndPoints, masterMnemonic, devRecovery } = checkPrivateKeys();
 
 const gasPrice = 1000000000;
 console.log("❗️Gas Price Set: ", gasPrice / 10 ** 9, "gwei");
@@ -55,7 +56,7 @@ const config: HardhatUserConfig = {
     apiKey: process.env.ETHERSCAN_API_KEY!,
     customChains: [
       {
-        network: "base-goerli",
+        network: "baseGoerli",
         chainId: 84531,
         urls: {
           apiURL: "https://api-goerli.basescan.org/api",
@@ -94,6 +95,22 @@ const config: HardhatUserConfig = {
           browserURL: "https://arbiscan.io",
         },
       },
+      {
+        network: "ethSepolia",
+        chainId: 11155111,
+        urls: {
+          apiURL: "https://api-sepolia.etherscan.io/api",
+          browserURL: "https://sepolia.etherscan.io",
+        },
+      },
+      {
+        network: "ethGoerli",
+        chainId: 5,
+        urls: {
+          apiURL: "https://api-goerli.etherscan.io/api",
+          browserURL: "https://goerli.etherscan.io",
+        },
+      },
     ],
   },
 
@@ -106,13 +123,20 @@ const config: HardhatUserConfig = {
   },
   gasReporter: {
     currency: "ETH",
-    gasPrice: 21,
+    gasPrice: 1000000000 ** 9,
     enabled: true,
     outputFile: "./reports",
   },
 
   networks: {
-    "base-goerli": {
+    hardhat: {
+      chainId: 420,
+      accounts: { mnemonic: devRecovery, initialIndex: 0, count: 5 },
+      forking: {
+        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      },
+    },
+    baseGoerli: {
       url: rcpEndPoints.baseGoerli,
       accounts: [masterMnemonic],
       chainId: 84531,
@@ -142,8 +166,8 @@ const config: HardhatUserConfig = {
       chainId: 42161,
       gasPrice: gasPrice,
     },
-    sepolia: {
-      url: rcpEndPoints.sepolia,
+    ethSepolia: {
+      url: rcpEndPoints.ethSepolia,
       accounts: [masterMnemonic],
       chainId: 11155111,
       gasPrice: gasPrice,
@@ -154,16 +178,22 @@ const config: HardhatUserConfig = {
       accounts: [masterMnemonic],
       gasPrice: gasPrice,
     },
-    mainnet: {
-      url: rcpEndPoints.homestead,
+    eth: {
+      url: rcpEndPoints.eth,
       chainId: 1,
       accounts: [masterMnemonic],
+      gasPrice: gasPrice,
+    },
+    ethGoerli: {
+      url: rcpEndPoints.ethGoerli,
+      accounts: [masterMnemonic],
+      chainId: 5,
       gasPrice: gasPrice,
     },
     localhost: {
       url: "http://127.0.0.1:8545",
       chainId: 420,
-      accounts: [masterMnemonic],
+      accounts: { mnemonic: devRecovery, initialIndex: 0, count: 5 },
       gasPrice: gasPrice,
     },
   },

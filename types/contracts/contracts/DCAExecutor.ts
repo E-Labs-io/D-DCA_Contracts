@@ -106,6 +106,7 @@ export interface DCAExecutorInterface extends Interface {
       | "Execute"
       | "ForceFeeFund"
       | "GetIntervalsStrategys"
+      | "GetSpesificStrategy"
       | "GetTotalActiveStrategys"
       | "Subscribe"
       | "Unsubscribe"
@@ -139,6 +140,10 @@ export interface DCAExecutorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "GetIntervalsStrategys",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "GetSpesificStrategy",
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "GetTotalActiveStrategys",
@@ -181,6 +186,10 @@ export interface DCAExecutorInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "GetIntervalsStrategys",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "GetSpesificStrategy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -327,6 +336,16 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
+  GetSpesificStrategy: TypedContractMethod<
+    [
+      dcaAccountAddress_: AddressLike,
+      interval_: BigNumberish,
+      accountStrategyId_: BigNumberish
+    ],
+    [IDCADataStructures.StrategyStructOutput],
+    "view"
+  >;
+
   GetTotalActiveStrategys: TypedContractMethod<[], [bigint], "view">;
 
   Subscribe: TypedContractMethod<
@@ -377,6 +396,17 @@ export interface DCAExecutor extends BaseContract {
   ): TypedContractMethod<
     [interval_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "GetSpesificStrategy"
+  ): TypedContractMethod<
+    [
+      dcaAccountAddress_: AddressLike,
+      interval_: BigNumberish,
+      accountStrategyId_: BigNumberish
+    ],
+    [IDCADataStructures.StrategyStructOutput],
     "view"
   >;
   getFunction(

@@ -1,8 +1,10 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 pragma experimental ABIEncoderV2;
 
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
+
 import "./interfaces/IDCADataStructures.sol";
 import "./interfaces/IDCAAccount.sol";
 import "./interfaces/IDCAExecutor.sol";
@@ -13,27 +15,20 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     // Thought on tracking balances, do we
     // a) base & target are mixed according to the token
     // b) separate accounting for base & target funds
-    //   Option A
-    mapping(IERC20 => uint256) private _balances;
     //   Option B
-    mapping(IERC20 => uint256) private _baseBalances;
-    mapping(IERC20 => uint256) private _targetBalances;
+    mapping(address => uint256) private _baseBalances;
+    mapping(address => uint256) private _targetBalances;
 
     mapping(uint256 => uint256) internal _lastExecution; // strategyId to block number
-    mapping(IERC20 => uint256) internal _costPerBlock;
+    mapping(address => uint256) internal _costPerBlock;
     // Mapping of Interval enum to block amounts
     mapping(Interval => uint256) public IntervalTimings;
 
     IDCAExecutor internal _executorAddress;
 
-    uint24 private _poolFee = 3000;
+    uint24 private _poolFee = 10000;
     uint256 private _totalIntervalsExecuted;
     uint256 private _totalActiveStrategies;
-
-    address constant WETH = 0xe39Ab88f8A4777030A534146A9Ca3B52bd5D43A3;
-    address constant USDC = 0xd513E4537510C75E24f941f159B7CAFA74E7B3B9;
-    address constant DAI = 0xe73C6dA65337ef99dBBc014C7858973Eba40a10b;
-    address constant USDT = 0x8dA9412AbB78db20d0B496573D9066C474eA21B8;
 
     ISwapRouter immutable SWAP_ROUTER;
 
@@ -51,20 +46,49 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         IntervalTimings[Interval.OneMonth] = 172800;
     }
 
+    /**
+     * @dev swaps from base token for set amount into any amount of target token
+     * @notice ONLY FOR DEVELOPMENT
+     * @param baseToken_ {address}  token address of the token to swap from
+     * @param targetToken_ {address} token address of the token to recieve
+     * @param amount_ {uint256} amount returned from the swap
+     */
+
+    function TestSwap(
+        address baseToken_,
+        address targetToken_,
+        uint256 amount_
+    ) external onlyOwner returns (uint256 amountIn) {
+        if (!_checkSendAllowance(baseToken_, address(SWAP_ROUTER), amount_))
+            _approveSwapSpend(baseToken_, amount_);
+
+        amountIn = _swap(baseToken_, targetToken_, amount_);
+    }
+
+    /**
+     * @dev Executes the given strategy with the given fee amount.
+     *      Can only be done by the executor.
+     * @param strategyId_ the id of the strategy to execute
+     * @param feeAmount_ the amount of fee to pay to the executor
+     */
     // Public Functions
-    function Execute(
-        uint256 strategyId_,
-        uint256 feeAmount_
-    ) public override onlyExecutor {
+    function Execute(uint256 strategyId_, uint16 feeAmount_) external override {
         require(strategies_[strategyId_].active, "Strategy is not active");
         _executeDCATrade(strategyId_, feeAmount_);
     }
 
+    /**
+     * @dev Add a new strategy to the account
+     *      Only the owner can call.
+     * @param newStrategy_ teh data for the strategy, based on the Strategy Struct
+     * @param seedFunds_  Amount of the based token to fund with, 0 for none
+     * @param subscribeToExecutor_ Wether to subscribe to the executor at setup
+     */
     function SetupStrategy(
         Strategy memory newStrategy_,
         uint256 seedFunds_,
         bool subscribeToExecutor_
-    ) public override onlyOwner {
+    ) external override onlyOwner {
         //Adds a new strategy to the system
         //Transfers the given amount of the base token to the account
         //If true subscribes the strategy to the default executor
@@ -78,7 +102,9 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         if (subscribeToExecutor_) _subscribeToExecutor(newStrategy_);
     }
 
-    function SubscribeStrategy(uint256 strategyId_) public override onlyOwner {
+    function SubscribeStrategy(
+        uint256 strategyId_
+    ) external override onlyOwner {
         //Add the given strategy, once checking there are funds
         //to the default DCAExecutor
         require(
@@ -90,7 +116,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function UnsubscribeStrategy(
         uint256 strategyId_
-    ) public override onlyOwner {
+    ) external override onlyOwner {
         //remove the given strategy from its active executor
         require(
             strategies_[strategyId_].active,
@@ -101,7 +127,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function ExecutorDeactivateStrategy(
         uint256 strategyId_
-    ) public onlyExecutor {
+    ) external onlyExecutor {
         Strategy memory oldStrategy = strategies_[strategyId_];
         _costPerBlock[
             oldStrategy.baseToken.tokenAddress
@@ -113,7 +139,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     }
 
     function FundAccount(
-        IERC20 token_,
+        address token_,
         uint256 amount_
     ) public override onlyOwner {
         //Transfer the given amount of the given ERC20 token to the DCAAccount
@@ -121,14 +147,17 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         _baseBalances[token_] += amount_;
     }
 
-    function UnFundAccount(IERC20 token_, uint256 amount_) public onlyOwner {
+    function UnFundAccount(address token_, uint256 amount_) public onlyOwner {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
         require(_baseBalances[token_] <= amount_, "Balance of token to low");
         IERC20(token_).transfer(msg.sender, amount_);
         _baseBalances[token_] -= amount_;
     }
 
-    function WithdrawSavings(IERC20 token_, uint256 amount_) public onlyOwner {
+    function WithdrawSavings(
+        address token_,
+        uint256 amount_
+    ) external onlyOwner {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
         require(_targetBalances[token_] <= amount_, "Balance of token to low");
         IERC20(token_).transfer(msg.sender, amount_);
@@ -136,78 +165,82 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     }
 
     function GetBaseTokenCostPerBlock(
-        IERC20 baseToken_
-    ) public view returns (uint256) {
+        address baseToken_
+    ) external view returns (uint256) {
         return _costPerBlock[baseToken_];
     }
 
     function GetBaseTokenRemainingBlocks(
-        IERC20 baseToken_
-    ) public view returns (uint256) {
+        address baseToken_
+    ) external view returns (uint256) {
         return _baseBalances[baseToken_] / _costPerBlock[baseToken_];
     }
 
     function GetBaseBalance(
-        IERC20 token_
-    ) public view override returns (uint256) {
+        address token_
+    ) external view override returns (uint256) {
         return _baseBalances[token_];
     }
 
     function GetTargetBalance(
-        IERC20 token_
-    ) public view override returns (uint256) {
+        address token_
+    ) external view override returns (uint256) {
         return _targetBalances[token_];
     }
 
     function GetStrategyData(
         uint256 strategyId_
-    ) public view returns (Strategy memory) {
+    ) external view returns (Strategy memory) {
         return strategies_[strategyId_];
     }
 
     // Internal & Private functions
-    function _executeDCATrade(
-        uint256 strategyId_,
-        uint256 feeAmount_
-    ) internal {
+    function _executeDCATrade(uint256 strategyId_, uint16 feeAmount_) internal {
         //Example of how this might work using Uniswap
         //Get the stragegy
         Strategy memory selectedStrat = strategies_[strategyId_];
+        address baseToken = selectedStrat.baseToken.tokenAddress;
+        address targetToken = selectedStrat.targetToken.tokenAddress;
+        uint256 feeAmount = 0;
+        uint256 tradeAmount = 0;
+        uint256 amountIn = 0;
 
         //Check there is the balance
-        if (
-            _baseBalances[selectedStrat.baseToken.tokenAddress] <
-            selectedStrat.amount
-        ) return;
-        //  Work out the fee amounts
-        uint256 feeAmount = _calculateFee(
-            selectedStrat.baseToken,
-            selectedStrat.amount,
-            feeAmount_
-        );
-        uint256 tradeAmount = selectedStrat.amount - feeAmount;
-
-        // Approve the router to spend the token in Uniswap.
-        _approveSwapSpend(selectedStrat.baseToken.tokenAddress, tradeAmount);
-        // Transfer teh fee to the DCAExecutpr
-        _transferFee(feeAmount, selectedStrat.baseToken.tokenAddress);
-
-        ISwapRouter.ExactInputSingleParams memory params = _buildSwapParams(
-            selectedStrat.baseToken.tokenAddress,
-            selectedStrat.targetToken.tokenAddress,
-            tradeAmount
+        require(
+            _baseBalances[baseToken] >= selectedStrat.amount,
+            "Base Balance too low"
         );
 
-        // The call to `exactInputSingle` executes the swap.
-        // Update balance & timetrack
-        uint256 amountOut = SWAP_ROUTER.exactInputSingle(params);
+        if (feeAmount_ > 0) {
+            //  Work out the fee amounts
+            feeAmount = _calculateFee(
+                selectedStrat.baseToken,
+                selectedStrat.amount,
+                feeAmount_
+            );
+
+            // Transfer the fee to the DCAExecutpr
+            _transferFee(feeAmount, baseToken);
+        }
+
+        tradeAmount = selectedStrat.amount - feeAmount;
+        /* 
+        if (!_checkSendAllowance(baseToken, address(SWAP_ROUTER), tradeAmount))
+            _approveSwapSpend(baseToken, tradeAmount);
+
+        //  The call to `exactInputSingle` executes the swap.
+        amountIn = _swap(baseToken, targetToken, tradeAmount);
+
         //  Update some tracking metrics
-        _targetBalances[selectedStrat.baseToken.tokenAddress] += amountOut;
+        //  Update balance & time track
+        _targetBalances[selectedStrat.baseToken.tokenAddress] += amountIn;
         _baseBalances[selectedStrat.targetToken.tokenAddress] -= selectedStrat
             .amount;
+
         _lastExecution[selectedStrat.strategyId] = block.timestamp;
-        _totalIntervalsExecuted += 1;
-        emit StratogyExecuted(selectedStrat.strategyId);
+        _totalIntervalsExecuted += 1; */
+
+        emit StrategyExecuted(strategyId_, amountIn);
     }
 
     function _subscribeToExecutor(Strategy memory newStrategy_) private {
@@ -256,39 +289,70 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     function _calculateFee(
         TokeData memory strategyBaseToken_,
         uint256 strategyAmount_,
-        uint256 feeAmount_
-    ) internal returns (uint256 feeAmount) {
-        // Need some logic to handel conversion of percent to the baseToken decimal places
-        feeAmount = strategyAmount_ / feeAmount_;
+        uint16 feePercent_
+    ) internal pure returns (uint256 feeAmount) {
+        // Convert the feePercent_ to the correct decimal places
+        // Assuming feePercent_ is in terms of 10,000 (where 10000 = 100%, 100 = 1%, etc.)
+        uint256 feeDecimal = feePercent_ *
+            10 ** (strategyBaseToken_.decimals - 2);
+
+        // Calculate the fee amount
+        feeAmount =
+            (strategyAmount_ * feeDecimal) /
+            10 ** (strategyBaseToken_.decimals);
         return feeAmount;
     }
 
-    function _transferFee(uint256 feeAmount_, IERC20 tokenAddress_) internal {
+    function _transferFee(uint256 feeAmount_, address tokenAddress_) internal {
         // Transfer teh fee to the DCAExecutpr
-        tokenAddress_.transfer(address(_executorAddress), feeAmount_);
+        IERC20(tokenAddress_).transfer(address(_executorAddress), feeAmount_);
     }
 
-    function _approveSwapSpend(IERC20 tokenAddress_, uint256 amount_) private {
-        tokenAddress_.approve(address(SWAP_ROUTER), amount_);
-    }
-
-    function _buildSwapParams(
-        IERC20 baseToken_,
-        IERC20 targetToken_,
+    function _approveSwapSpend(
+        address tokenAddress_,
         uint256 amount_
-    ) internal returns (ISwapRouter.ExactInputSingleParams memory) {
-        // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
-        // We also set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
-        return
-            ISwapRouter.ExactInputSingleParams({
-                tokenIn: address(baseToken_),
-                tokenOut: address(targetToken_),
+    ) internal {
+        IERC20(tokenAddress_).approve(address(SWAP_ROUTER), amount_);
+    }
+
+    function _checkSendAllowance(
+        address baseToken_,
+        address spender_,
+        uint256 neededAllowance_
+    ) internal view returns (bool) {
+        uint256 actualAllowance = IERC20(baseToken_).allowance(
+            address(this),
+            spender_
+        );
+        return actualAllowance >= neededAllowance_;
+    }
+
+    /**
+     * @dev swaps from base token for set amount into any amount of target token
+     * @param baseToken_ {address}  token address of the token to swap from
+     * @param targetToken_ {address} token address of the token to recieve
+     * @param amount_ {uint256} amount returned from the swap
+     * @return {uint256} amount returned by the swap
+     */
+
+    function _swap(
+        address baseToken_,
+        address targetToken_,
+        uint256 amount_
+    ) internal returns (uint256) {
+        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
+            .ExactInputSingleParams({
+                tokenIn: baseToken_,
+                tokenOut: targetToken_,
                 fee: _poolFee,
                 recipient: address(this),
-                deadline: block.timestamp,
+                deadline: block.timestamp + 5 minutes,
                 amountIn: amount_,
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0
             });
+
+        //  The call to `exactInputSingle` executes the swap.
+        return SWAP_ROUTER.exactInputSingle(params);
     }
 }

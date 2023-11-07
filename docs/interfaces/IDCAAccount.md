@@ -13,7 +13,7 @@
 ### Execute
 
 ```solidity
-function Execute(uint256 strategyId_, uint256 feeAmount_) external nonpayable
+function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable
 ```
 
 
@@ -25,12 +25,12 @@ function Execute(uint256 strategyId_, uint256 feeAmount_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | undefined |
-| feeAmount_ | uint256 | undefined |
+| feeAmount_ | uint16 | undefined |
 
 ### FundAccount
 
 ```solidity
-function FundAccount(contract IERC20 token_, uint256 amount_) external nonpayable
+function FundAccount(address token_, uint256 amount_) external nonpayable
 ```
 
 
@@ -41,13 +41,13 @@ function FundAccount(contract IERC20 token_, uint256 amount_) external nonpayabl
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 | amount_ | uint256 | undefined |
 
 ### GetBaseBalance
 
 ```solidity
-function GetBaseBalance(contract IERC20 token_) external nonpayable returns (uint256)
+function GetBaseBalance(address token_) external nonpayable returns (uint256)
 ```
 
 
@@ -58,7 +58,7 @@ function GetBaseBalance(contract IERC20 token_) external nonpayable returns (uin
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 
 #### Returns
 
@@ -69,7 +69,7 @@ function GetBaseBalance(contract IERC20 token_) external nonpayable returns (uin
 ### GetTargetBalance
 
 ```solidity
-function GetTargetBalance(contract IERC20 token_) external nonpayable returns (uint256)
+function GetTargetBalance(address token_) external nonpayable returns (uint256)
 ```
 
 
@@ -80,7 +80,7 @@ function GetTargetBalance(contract IERC20 token_) external nonpayable returns (u
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 
 #### Returns
 
@@ -125,7 +125,7 @@ function SubscribeStrategy(uint256 strategyId_) external nonpayable
 ### UnFundAccount
 
 ```solidity
-function UnFundAccount(contract IERC20 token_, uint256 amount_) external nonpayable
+function UnFundAccount(address token_, uint256 amount_) external nonpayable
 ```
 
 
@@ -136,7 +136,7 @@ function UnFundAccount(contract IERC20 token_, uint256 amount_) external nonpaya
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 | amount_ | uint256 | undefined |
 
 ### UnsubscribeStrategy
@@ -158,7 +158,7 @@ function UnsubscribeStrategy(uint256 stratogyId) external nonpayable
 ### WithdrawSavings
 
 ```solidity
-function WithdrawSavings(contract IERC20 token_, uint256 amount_) external nonpayable
+function WithdrawSavings(address token_, uint256 amount_) external nonpayable
 ```
 
 
@@ -169,7 +169,7 @@ function WithdrawSavings(contract IERC20 token_, uint256 amount_) external nonpa
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 | amount_ | uint256 | undefined |
 
 
@@ -191,6 +191,23 @@ event DCAExecutorChanged(address newAddress_)
 | Name | Type | Description |
 |---|---|---|
 | newAddress_  | address | undefined |
+
+### StrategyExecuted
+
+```solidity
+event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ `indexed` | uint256 | the id fo the executed strategy |
+| amountIn_ `indexed` | uint256 | amount received from the swap |
 
 ### StrategySubscribed
 
@@ -224,22 +241,6 @@ event StrategyUnsubscribed(uint256 strategyId_)
 | Name | Type | Description |
 |---|---|---|
 | strategyId_  | uint256 | undefined |
-
-### StratogyExecuted
-
-```solidity
-event StratogyExecuted(uint256 indexed strategyId_)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId_ `indexed` | uint256 | undefined |
 
 
 

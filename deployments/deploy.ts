@@ -10,10 +10,14 @@ import logDeployment from "../scripts/saveDeployLog";
 
 async function masterDeployer(deployments: string[]) {
   const [deployer] = await ethers.getSigners();
-  const delayTime = 20000;
+  const network = await ethers.provider.getNetwork();
+
+  const delayTime = 35000;
+
   console.log("🟠 Master Deployer: Mounted");
+  console.log("🟠 Master Deployer: ", deployer.address);
   console.log(`🟠 Master Deployer: Deploying ${deployments.length} Contracts`);
-  console.log("🟠 Deployer Address: ", deployer.address);
+  console.log("🟠 Master Deployer: Deploying to : ", network.name);
 
   const deploymentAddresses: DeploymentStore[] = [];
 
@@ -25,17 +29,13 @@ async function masterDeployer(deployments: string[]) {
       delayTime,
       contractName: deployment,
       constructorArguments: deploymentArgumentStore[deployment](
-        deployer.address
+        deployer.address,
+        network.name
       ),
       prevDeployments: deploymentAddresses,
     }).then(async (address: DeploymentReturn) => {
       if (address !== false) {
-        logDeployment(
-          deployment,
-          address,
-          deployer.address,
-          await deployer.provider.getNetwork()
-        );
+        logDeployment(deployment, address, deployer.address, network);
         deploymentAddresses.push({
           deployment: address,
           contractName: deployment,
@@ -47,7 +47,9 @@ async function masterDeployer(deployments: string[]) {
   console.log("🟢 Finished Deploying Contracts", deploymentAddresses);
 }
 
-masterDeployer(["DCAExecutor", "DCAAccount"]).catch((error) => {
+masterDeployer(["DCAAccount"]).catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+// "DCAExecutor",

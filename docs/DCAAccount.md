@@ -13,19 +13,19 @@
 ### Execute
 
 ```solidity
-function Execute(uint256 strategyId_, uint256 feeAmount_) external nonpayable
+function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable
 ```
 
 
 
-
+*Executes the given strategy with the given fee amount.      Can only be done by the executor.*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_ | uint256 | undefined |
-| feeAmount_ | uint256 | undefined |
+| strategyId_ | uint256 | the id of the strategy to execute |
+| feeAmount_ | uint16 | the amount of fee to pay to the executor |
 
 ### ExecutorDeactivateStrategy
 
@@ -46,7 +46,7 @@ function ExecutorDeactivateStrategy(uint256 strategyId_) external nonpayable
 ### FundAccount
 
 ```solidity
-function FundAccount(contract IERC20 token_, uint256 amount_) external nonpayable
+function FundAccount(address token_, uint256 amount_) external nonpayable
 ```
 
 
@@ -57,13 +57,13 @@ function FundAccount(contract IERC20 token_, uint256 amount_) external nonpayabl
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 | amount_ | uint256 | undefined |
 
 ### GetBaseBalance
 
 ```solidity
-function GetBaseBalance(contract IERC20 token_) external view returns (uint256)
+function GetBaseBalance(address token_) external view returns (uint256)
 ```
 
 
@@ -74,7 +74,7 @@ function GetBaseBalance(contract IERC20 token_) external view returns (uint256)
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 
 #### Returns
 
@@ -85,7 +85,7 @@ function GetBaseBalance(contract IERC20 token_) external view returns (uint256)
 ### GetBaseTokenCostPerBlock
 
 ```solidity
-function GetBaseTokenCostPerBlock(contract IERC20 baseToken_) external view returns (uint256)
+function GetBaseTokenCostPerBlock(address baseToken_) external view returns (uint256)
 ```
 
 
@@ -96,7 +96,7 @@ function GetBaseTokenCostPerBlock(contract IERC20 baseToken_) external view retu
 
 | Name | Type | Description |
 |---|---|---|
-| baseToken_ | contract IERC20 | undefined |
+| baseToken_ | address | undefined |
 
 #### Returns
 
@@ -107,7 +107,7 @@ function GetBaseTokenCostPerBlock(contract IERC20 baseToken_) external view retu
 ### GetBaseTokenRemainingBlocks
 
 ```solidity
-function GetBaseTokenRemainingBlocks(contract IERC20 baseToken_) external view returns (uint256)
+function GetBaseTokenRemainingBlocks(address baseToken_) external view returns (uint256)
 ```
 
 
@@ -118,7 +118,7 @@ function GetBaseTokenRemainingBlocks(contract IERC20 baseToken_) external view r
 
 | Name | Type | Description |
 |---|---|---|
-| baseToken_ | contract IERC20 | undefined |
+| baseToken_ | address | undefined |
 
 #### Returns
 
@@ -151,7 +151,7 @@ function GetStrategyData(uint256 strategyId_) external view returns (struct IDCA
 ### GetTargetBalance
 
 ```solidity
-function GetTargetBalance(contract IERC20 token_) external view returns (uint256)
+function GetTargetBalance(address token_) external view returns (uint256)
 ```
 
 
@@ -162,7 +162,7 @@ function GetTargetBalance(contract IERC20 token_) external view returns (uint256
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 
 #### Returns
 
@@ -226,10 +226,34 @@ function SubscribeStrategy(uint256 strategyId_) external nonpayable
 |---|---|---|
 | strategyId_ | uint256 | undefined |
 
+### TestSwap
+
+```solidity
+function TestSwap(address baseToken_, address targetToken_, uint256 amount_) external nonpayable returns (uint256 amountIn)
+```
+
+ONLY FOR DEVELOPMENT
+
+*swaps from base token for set amount into any amount of target token*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseToken_ | address | {address}  token address of the token to swap from |
+| targetToken_ | address | {address} token address of the token to recieve |
+| amount_ | uint256 | {uint256} amount returned from the swap |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amountIn | uint256 | undefined |
+
 ### UnFundAccount
 
 ```solidity
-function UnFundAccount(contract IERC20 token_, uint256 amount_) external nonpayable
+function UnFundAccount(address token_, uint256 amount_) external nonpayable
 ```
 
 
@@ -240,7 +264,7 @@ function UnFundAccount(contract IERC20 token_, uint256 amount_) external nonpaya
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 | amount_ | uint256 | undefined |
 
 ### UnsubscribeStrategy
@@ -262,7 +286,7 @@ function UnsubscribeStrategy(uint256 strategyId_) external nonpayable
 ### WithdrawSavings
 
 ```solidity
-function WithdrawSavings(contract IERC20 token_, uint256 amount_) external nonpayable
+function WithdrawSavings(address token_, uint256 amount_) external nonpayable
 ```
 
 
@@ -273,7 +297,7 @@ function WithdrawSavings(contract IERC20 token_, uint256 amount_) external nonpa
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | contract IERC20 | undefined |
+| token_ | address | undefined |
 | amount_ | uint256 | undefined |
 
 ### changeExecutor
@@ -384,6 +408,23 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 | previousOwner `indexed` | address | undefined |
 | newOwner `indexed` | address | undefined |
 
+### StrategyExecuted
+
+```solidity
+event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ `indexed` | uint256 | the id fo the executed strategy |
+| amountIn_ `indexed` | uint256 | amount received from the swap |
+
 ### StrategySubscribed
 
 ```solidity
@@ -416,22 +457,6 @@ event StrategyUnsubscribed(uint256 strategyId_)
 | Name | Type | Description |
 |---|---|---|
 | strategyId_  | uint256 | undefined |
-
-### StratogyExecuted
-
-```solidity
-event StratogyExecuted(uint256 indexed strategyId_)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId_ `indexed` | uint256 | undefined |
 
 
 

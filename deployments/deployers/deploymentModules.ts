@@ -15,7 +15,10 @@ export interface Deployment {
 }
 
 export interface ArgumentStore {
-  [key: string]: (deployerAddress: string | Addressable) => any;
+  [key: string]: (
+    deployerAddress: string | Addressable,
+    network: string
+  ) => any;
 }
 
 export interface DeploymentProps {

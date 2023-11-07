@@ -88,9 +88,9 @@ export interface IDCAAccountInterface extends Interface {
   getEvent(
     nameOrSignatureOrTopic:
       | "DCAExecutorChanged"
+      | "StrategyExecuted"
       | "StrategySubscribed"
       | "StrategyUnsubscribed"
-      | "StratogyExecuted"
   ): EventFragment;
 
   encodeFunctionData(
@@ -177,6 +177,19 @@ export namespace DCAExecutorChangedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace StrategyExecutedEvent {
+  export type InputTuple = [strategyId_: BigNumberish, amountIn_: BigNumberish];
+  export type OutputTuple = [strategyId_: bigint, amountIn_: bigint];
+  export interface OutputObject {
+    strategyId_: bigint;
+    amountIn_: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace StrategySubscribedEvent {
   export type InputTuple = [strategyId_: BigNumberish, executor_: AddressLike];
   export type OutputTuple = [strategyId_: bigint, executor_: string];
@@ -191,18 +204,6 @@ export namespace StrategySubscribedEvent {
 }
 
 export namespace StrategyUnsubscribedEvent {
-  export type InputTuple = [strategyId_: BigNumberish];
-  export type OutputTuple = [strategyId_: bigint];
-  export interface OutputObject {
-    strategyId_: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace StratogyExecutedEvent {
   export type InputTuple = [strategyId_: BigNumberish];
   export type OutputTuple = [strategyId_: bigint];
   export interface OutputObject {
@@ -379,6 +380,13 @@ export interface IDCAAccount extends BaseContract {
     DCAExecutorChangedEvent.OutputObject
   >;
   getEvent(
+    key: "StrategyExecuted"
+  ): TypedContractEvent<
+    StrategyExecutedEvent.InputTuple,
+    StrategyExecutedEvent.OutputTuple,
+    StrategyExecutedEvent.OutputObject
+  >;
+  getEvent(
     key: "StrategySubscribed"
   ): TypedContractEvent<
     StrategySubscribedEvent.InputTuple,
@@ -392,13 +400,6 @@ export interface IDCAAccount extends BaseContract {
     StrategyUnsubscribedEvent.OutputTuple,
     StrategyUnsubscribedEvent.OutputObject
   >;
-  getEvent(
-    key: "StratogyExecuted"
-  ): TypedContractEvent<
-    StratogyExecutedEvent.InputTuple,
-    StratogyExecutedEvent.OutputTuple,
-    StratogyExecutedEvent.OutputObject
-  >;
 
   filters: {
     "DCAExecutorChanged(address)": TypedContractEvent<
@@ -410,6 +411,17 @@ export interface IDCAAccount extends BaseContract {
       DCAExecutorChangedEvent.InputTuple,
       DCAExecutorChangedEvent.OutputTuple,
       DCAExecutorChangedEvent.OutputObject
+    >;
+
+    "StrategyExecuted(uint256,uint256)": TypedContractEvent<
+      StrategyExecutedEvent.InputTuple,
+      StrategyExecutedEvent.OutputTuple,
+      StrategyExecutedEvent.OutputObject
+    >;
+    StrategyExecuted: TypedContractEvent<
+      StrategyExecutedEvent.InputTuple,
+      StrategyExecutedEvent.OutputTuple,
+      StrategyExecutedEvent.OutputObject
     >;
 
     "StrategySubscribed(uint256,address)": TypedContractEvent<
@@ -432,17 +444,6 @@ export interface IDCAAccount extends BaseContract {
       StrategyUnsubscribedEvent.InputTuple,
       StrategyUnsubscribedEvent.OutputTuple,
       StrategyUnsubscribedEvent.OutputObject
-    >;
-
-    "StratogyExecuted(uint256)": TypedContractEvent<
-      StratogyExecutedEvent.InputTuple,
-      StratogyExecutedEvent.OutputTuple,
-      StratogyExecutedEvent.OutputObject
-    >;
-    StratogyExecuted: TypedContractEvent<
-      StratogyExecutedEvent.InputTuple,
-      StratogyExecutedEvent.OutputTuple,
-      StratogyExecutedEvent.OutputObject
     >;
   };
 }

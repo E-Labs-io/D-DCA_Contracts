@@ -26,6 +26,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "amountIn_",
+        type: "uint256",
+      },
+    ],
+    name: "StrategyExecuted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: "uint256",
         name: "strategyId_",
@@ -55,19 +74,6 @@ const _abi = [
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "strategyId_",
-        type: "uint256",
-      },
-    ],
-    name: "StratogyExecuted",
-    type: "event",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -75,9 +81,9 @@ const _abi = [
         type: "uint256",
       },
       {
-        internalType: "uint256",
+        internalType: "uint16",
         name: "feeAmount_",
-        type: "uint256",
+        type: "uint16",
       },
     ],
     name: "Execute",
@@ -88,7 +94,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "address",
         name: "token_",
         type: "address",
       },
@@ -106,7 +112,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "address",
         name: "token_",
         type: "address",
       },
@@ -125,7 +131,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "address",
         name: "token_",
         type: "address",
       },
@@ -153,7 +159,7 @@ const _abi = [
           {
             components: [
               {
-                internalType: "contract IERC20",
+                internalType: "address",
                 name: "tokenAddress",
                 type: "address",
               },
@@ -175,7 +181,7 @@ const _abi = [
           {
             components: [
               {
-                internalType: "contract IERC20",
+                internalType: "address",
                 name: "tokenAddress",
                 type: "address",
               },
@@ -261,7 +267,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "address",
         name: "token_",
         type: "address",
       },
@@ -292,7 +298,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "address",
         name: "token_",
         type: "address",
       },
