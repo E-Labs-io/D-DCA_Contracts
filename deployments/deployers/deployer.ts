@@ -1,13 +1,13 @@
 /** @format */
 
-import hardhat, { ethers } from "hardhat";
-
 import { Addressable } from "ethers";
-import { DeploymentProps } from "./deploymentModules";
 import delay from "../../scripts/helpers/delay";
 import verifyContractOnScan from "../../scripts/helpers/verifyOnScan";
+import { DeploymentProps } from "~/types/deployment/deploymentArguments";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 export default async function deploy({
+  hre,
   deployer,
   delayTime,
   contractName,
@@ -15,7 +15,7 @@ export default async function deploy({
   prevDeployments,
 }: DeploymentProps): Promise<string | Addressable | false> {
   try {
-    const deployedContract = await ethers.deployContract(
+    const deployedContract = await hre.ethers.deployContract(
       contractName,
       constructorArguments,
       deployer
@@ -25,10 +25,14 @@ export default async function deploy({
       `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`
     );
 
-    const network = await ethers.provider.getNetwork();
+    const network = await hre.ethers.provider.getNetwork();
     if (network.name !== "hardhat") {
       await delay(delayTime);
-      await verifyContractOnScan(deployedContract.target, constructorArguments);
+      await verifyContractOnScan(
+        hre.run,
+        deployedContract.target,
+        constructorArguments
+      );
     }
 
     return deployedContract.target;

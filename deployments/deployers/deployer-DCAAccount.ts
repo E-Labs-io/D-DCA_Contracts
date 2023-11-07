@@ -7,9 +7,9 @@ import {
 } from "../../types/deployment/deploymentArguments";
 import delay from "../../scripts/helpers/delay";
 import verifyContractOnScan from "../../scripts/helpers/verifyOnScan";
-import { ethers } from "hardhat";
 
 export default async function deploy({
+  hre,
   deployer,
   delayTime,
   contractName,
@@ -28,7 +28,7 @@ export default async function deploy({
       };
     constructorArguments[0] = DCAExec.deployment;
 
-    const deployedContract = await ethers.deployContract(
+    const deployedContract = await hre.ethers.deployContract(
       contractName,
       constructorArguments,
       deployer
@@ -38,10 +38,14 @@ export default async function deploy({
       `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`
     );
 
-    const network = await ethers.provider.getNetwork();
+    const network = await hre.ethers.provider.getNetwork();
     if (network.name !== "hardhat") {
       await delay(delayTime);
-      await verifyContractOnScan(deployedContract.target, constructorArguments);
+      await verifyContractOnScan(
+        hre.run,
+        deployedContract.target,
+        constructorArguments
+      );
     }
 
     return deployedContract.target;

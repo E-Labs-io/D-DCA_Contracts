@@ -27,7 +27,8 @@ export function DCAAccountArguments(
   deployer: string | Addressable,
   networkName: string
 ): any[] {
-  const executorAddress_: AddressLike = "";
+  const executorAddress_: AddressLike =
+    "0x715fa641F8c82B91ad15C0dC92ea5c32CA5DDDFC";
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter[networkName as ChainName]!;
 

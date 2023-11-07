@@ -1,6 +1,5 @@
 /** @format */
 
-import hardhat, { ethers } from "hardhat";
 import deploymentFiles, {
   deploymentArgumentStore,
 } from "./deployers/deploymentModules";
@@ -9,12 +8,16 @@ import {
   DeploymentReturn,
   DeploymentStore,
 } from "../types/deployment/deploymentArguments";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-async function masterDeployer(deployments: string[]) {
-  const [deployer] = await ethers.getSigners();
-  const network = await ethers.provider.getNetwork();
+export default async function masterDeployer(
+  hre: HardhatRuntimeEnvironment,
+  deployments: string[]
+) {
+  const [deployer] = await hre.ethers.getSigners();
+  const network = await hre.ethers.provider.getNetwork();
 
-  const delayTime = 35000;
+  const delayTime = 30000;
 
   console.log("🟠 Master Deployer: Mounted");
   console.log("🟠 Master Deployer: ", deployer.address);
@@ -27,6 +30,7 @@ async function masterDeployer(deployments: string[]) {
     const deployment = deployments[i];
     console.log("🟠 Deploying Contract: ", deployment);
     await deploymentFiles[deployment]({
+      hre,
       deployer,
       delayTime,
       contractName: deployment,
@@ -48,10 +52,3 @@ async function masterDeployer(deployments: string[]) {
 
   console.log("🟢 Finished Deploying Contracts", deploymentAddresses);
 }
-
-masterDeployer(["DCAAccountFactory"]).catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
-
-// "DCAExecutor",

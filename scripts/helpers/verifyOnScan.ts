@@ -1,19 +1,18 @@
 /** @format */
 
 import { Addressable } from "ethers";
-import hardhat from "hardhat";
+import { RunTaskFunction } from "hardhat/types";
 
 async function verifyContractOnScan(
+  run: RunTaskFunction,
   contractAddress: string | Addressable,
   args: any[]
 ) {
   console.log("🟡 Starting Contract Verification");
-  await hardhat
-    .run("verify:verify", {
-      address: contractAddress,
-      constructorArguments: args,
-    })
-    .then(() => console.log("🟢 Scan Verified "));
+  await run("verify:verify", {
+    address: contractAddress,
+    constructorArguments: args,
+  }).then(() => console.log("🟢 Scan Verified "));
 }
 
 export default verifyContractOnScan;
