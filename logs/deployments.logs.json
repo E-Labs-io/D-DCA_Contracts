@@ -1,5 +1,35 @@
 [
   {
+    "timestamp": "07/11/23, 19:16:34",
+    "contractName": "DCAAccount",
+    "contractAddress": "0xa933a40A848602c3A57fbe3fc11A7C6eF9641810",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "07/11/23, 19:15:48",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x9d21c2925916C2e0150E4721075f201c94F77536",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "07/11/23, 18:55:24",
+    "contractName": "DCAAccount",
+    "contractAddress": "0x18797FD2De25f3Ae7df58Bb4bF65feE3A4220adA",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
     "timestamp": "07/11/23, 18:54:38",
     "contractName": "DCAExecutor",
     "contractAddress": "0x886A0AC5775fd03692767b70Ee128f5e78BB4538",

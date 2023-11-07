@@ -96,8 +96,9 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
             ];
     }
 
-    function _subscribeAccount(Strategy calldata strategy_) internal {
+    function _subscribeAccount(Strategy memory strategy_) internal {
         uint256 id = _strategies[strategy_.interval].length;
+        strategy_.active = true;
         _strategies[strategy_.interval].push(strategy_);
         _localStratId[strategy_.accountAddress][strategy_.strategyId] = id;
         emit DCAAccontSubscription(strategy_, true);
@@ -117,7 +118,7 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     function _startIntervalExecution(Interval interval_) internal {
         Strategy[] memory intervalStrategies = _strategies[interval_];
         //  Meed to work out a more efficient way of doing this
-        for (uint i = 0; i < intervalStrategies.length; i++) {
+        for (uint256 i = 0; i < intervalStrategies.length; i++) {
             if (intervalStrategies[i].active)
                 _singleExecution(
                     intervalStrategies[i].accountAddress,
@@ -131,7 +132,7 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
 
     function _singleExecution(
         address accountAddress_,
-        uint strategyId_
+        uint256 strategyId_
     ) private {
         IDCAAccount(accountAddress_).Execute(strategyId_, _feeData.feeAmount);
     }
@@ -145,7 +146,7 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         IntervalTimings[Interval.OneMonth] = 172800;
     }
 
-    function _removeStratageyFromArray(Strategy calldata strategy_) private {
+    function _removeStratageyFromArray(Strategy memory strategy_) private {
         //  Get the index of the strategy to remove from the local store
         //  Get the last element in the array
         uint256 local = _localStratId[strategy_.accountAddress][

@@ -9,7 +9,7 @@ export function DCAExecutorArguments(
   networkName: string
 ): any[] {
   const feeDistrobution_: IDCADataStructures.FeeDistributionStruct = {
-    amountToAdmin: 20, //  20%
+    amountToAdmin: 2000, //  20%
     amountToComputing: 4500, //  45%
     amountToExecutor: 3500, //  35%
     feeAmount: 20, //  0.2%
