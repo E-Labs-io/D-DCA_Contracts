@@ -31,6 +31,19 @@ export function DCAAccountArguments(
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter[networkName as ChainName]!;
 
+  const owner_: AddressLike = deployer;
+
+  return [executorAddress_, swapRouter_, owner_];
+}
+
+export function DCAAccountFactoryArguments(
+  deployer: string | Addressable,
+  networkName: string
+): any[] {
+  const executorAddress_: AddressLike = "";
+  const swapRouter_: AddressLike =
+    tokenAddress.swapRouter[networkName as ChainName]!;
+
   return [executorAddress_, swapRouter_];
 }
 

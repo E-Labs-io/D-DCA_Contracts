@@ -8,7 +8,7 @@ const taskId = "setup-strategy";
 
 task(taskId, "Approve, Fund and Setup strategy").setAction(
   async (_args, hre) => {
-    const DCAAccount = "0xA28beCFFcA5F3a272860Ccdb44be8700A0492EDD";
+    const DCAAccount = "0xCC0b1045695C098E19E6C8A1BBD33f7c6d8862C8";
 
     console.log(`🟢 [TASK] ${taskId} : Mounted`);
     console.log(`🟢 [TASK] ${taskId} : Setting Strategy for : `, DCAAccount);
@@ -26,7 +26,7 @@ task(taskId, "Approve, Fund and Setup strategy").setAction(
       owner
     );
     await usdcContract.approve(DCAAccount, hre.ethers.parseUnits("100", 6));
-    console.log("🟢 USDC spend approved");
+    console.log(`🟢 [TASK] ${taskId} : Token Spend Approved`);
 
     // Deploy Strategy
     const DCAAccountContract = await hre.ethers.getContractAt(
@@ -40,7 +40,7 @@ task(taskId, "Approve, Fund and Setup strategy").setAction(
       0,
       false
     );
-    console.log("🟢 New strategy set up");
+    console.log(`🟢 [TASK] ${taskId} : New strategy set up`);
 
     //  Fund DCAAccount
     const fund = await DCAAccountContract.FundAccount(
@@ -48,11 +48,11 @@ task(taskId, "Approve, Fund and Setup strategy").setAction(
       hre.ethers.parseUnits("20", 6)
     );
     await fund.wait();
-    console.log("🟢 Account funded with token");
+    console.log(`🟢 [TASK] ${taskId} : Account Funded`);
 
     //  Subscribe the strategy
     const sub = await DCAAccountContract.SubscribeStrategy(0);
     await sub.wait();
-    console.log("🟢 Strategy Subscribed");
+    console.log(`🟢 [TASK] ${taskId} : Strategy Subscribed`);
   }
 );

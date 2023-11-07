@@ -34,6 +34,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DCAAccount__factory>;
     getContractFactory(
+      name: "DCAAccountFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DCAAccountFactory__factory>;
+    getContractFactory(
       name: "DCAExecutor",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DCAExecutor__factory>;
@@ -80,6 +84,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.DCAAccount>;
     getContractAt(
+      name: "DCAAccountFactory",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DCAAccountFactory>;
+    getContractAt(
       name: "DCAExecutor",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -126,6 +135,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCAAccount>;
     deployContract(
+      name: "DCAAccountFactory",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAAccountFactory>;
+    deployContract(
       name: "DCAExecutor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCAExecutor>;
@@ -171,6 +184,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCAAccount>;
+    deployContract(
+      name: "DCAAccountFactory",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAAccountFactory>;
     deployContract(
       name: "DCAExecutor",
       args: any[],

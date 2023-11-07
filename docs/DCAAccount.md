@@ -229,7 +229,7 @@ function SubscribeStrategy(uint256 strategyId_) external nonpayable
 ### TestSwap
 
 ```solidity
-function TestSwap(address baseToken_, address targetToken_, uint256 amount_) external nonpayable returns (uint256 amountIn)
+function TestSwap(address baseToken_, address targetToken_, uint256 amount_) external nonpayable
 ```
 
 ONLY FOR DEVELOPMENT
@@ -243,12 +243,6 @@ ONLY FOR DEVELOPMENT
 | baseToken_ | address | {address}  token address of the token to swap from |
 | targetToken_ | address | {address} token address of the token to recieve |
 | amount_ | uint256 | {uint256} amount returned from the swap |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| amountIn | uint256 | undefined |
 
 ### UnFundAccount
 

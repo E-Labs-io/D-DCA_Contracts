@@ -6,4 +6,5 @@ export type { interfaces };
 import type * as security from "./security";
 export type { security };
 export type { DCAAccount } from "./DCAAccount";
+export type { DCAAccountFactory } from "./DCAAccountFactory";
 export type { DCAExecutor } from "./DCAExecutor";

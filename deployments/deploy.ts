@@ -2,11 +2,13 @@
 
 import hardhat, { ethers } from "hardhat";
 import deploymentFiles, {
-  DeploymentReturn,
-  DeploymentStore,
   deploymentArgumentStore,
 } from "./deployers/deploymentModules";
 import logDeployment from "../scripts/saveDeployLog";
+import {
+  DeploymentReturn,
+  DeploymentStore,
+} from "../types/deployment/deploymentArguments";
 
 async function masterDeployer(deployments: string[]) {
   const [deployer] = await ethers.getSigners();
@@ -47,7 +49,7 @@ async function masterDeployer(deployments: string[]) {
   console.log("🟢 Finished Deploying Contracts", deploymentAddresses);
 }
 
-masterDeployer(["DCAAccount"]).catch((error) => {
+masterDeployer(["DCAAccountFactory"]).catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });

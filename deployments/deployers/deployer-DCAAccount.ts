@@ -3,7 +3,10 @@
 import hardhat, { ethers } from "hardhat";
 
 import { Addressable, ZeroAddress } from "ethers";
-import { DeploymentProps, DeploymentStore } from "./deploymentModules";
+import {
+  DeploymentProps,
+  DeploymentStore,
+} from "../../types/deployment/deploymentArguments";
 import delay from "../../scripts/helpers/delay";
 import verifyContractOnScan from "../../scripts/helpers/verifyOnScan";
 

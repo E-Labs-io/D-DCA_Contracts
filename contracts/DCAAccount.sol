@@ -34,8 +34,9 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     constructor(
         address executorAddress_,
-        address swapRouter_
-    ) OnlyExecutor(address(executorAddress_)) Ownable(address(msg.sender)) {
+        address swapRouter_,
+        address owner_
+    ) OnlyExecutor(executorAddress_) Ownable(owner_) {
         _changeDefaultExecutor(IDCAExecutor(executorAddress_));
         SWAP_ROUTER = ISwapRouter(swapRouter_);
 
@@ -44,6 +45,16 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         IntervalTimings[Interval.TwoDays] = 11520;
         IntervalTimings[Interval.OneWeek] = 40320;
         IntervalTimings[Interval.OneMonth] = 172800;
+    }
+
+    modifier inWindow(uint256 strategyId_) {
+        require(
+            _lastExecution[strategyId_] +
+                IntervalTimings[strategies_[strategyId_].interval] <
+                block.timestamp,
+            "DCA Interval not met"
+        );
+        _;
     }
 
     /**
@@ -58,11 +69,9 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         address baseToken_,
         address targetToken_,
         uint256 amount_
-    ) external onlyOwner returns (uint256 amountIn) {
-        if (!_checkSendAllowance(baseToken_, address(SWAP_ROUTER), amount_))
-            _approveSwapSpend(baseToken_, amount_);
-
-        amountIn = _swap(baseToken_, targetToken_, amount_);
+    ) external onlyOwner {
+        _approveSwapSpend(baseToken_, amount_);
+        _swap(baseToken_, targetToken_, amount_);
     }
 
     /**
@@ -72,7 +81,10 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
      * @param feeAmount_ the amount of fee to pay to the executor
      */
     // Public Functions
-    function Execute(uint256 strategyId_, uint16 feeAmount_) external override {
+    function Execute(
+        uint256 strategyId_,
+        uint16 feeAmount_
+    ) external override onlyExecutor inWindow(strategyId_) {
         require(strategies_[strategyId_].active, "Strategy is not active");
         _executeDCATrade(strategyId_, feeAmount_);
     }
@@ -149,7 +161,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function UnFundAccount(address token_, uint256 amount_) public onlyOwner {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
-        require(_baseBalances[token_] <= amount_, "Balance of token to low");
+        require(_baseBalances[token_] >= amount_, "Balance of token to low");
         IERC20(token_).transfer(msg.sender, amount_);
         _baseBalances[token_] -= amount_;
     }
@@ -159,7 +171,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         uint256 amount_
     ) external onlyOwner {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
-        require(_targetBalances[token_] <= amount_, "Balance of token to low");
+        require(_targetBalances[token_] >= amount_, "Balance of token to low");
         IERC20(token_).transfer(msg.sender, amount_);
         _targetBalances[token_] -= amount_;
     }
@@ -229,15 +241,14 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
         //  Make the swap on uniswap
         amountIn = _swap(baseToken, targetToken, tradeAmount);
-        /*
+
         //  Update some tracking metrics
         //  Update balance & time track
-        _targetBalances[selectedStrat.baseToken.tokenAddress] += amountIn;
-        _baseBalances[selectedStrat.targetToken.tokenAddress] -= selectedStrat
-            .amount;
+        _targetBalances[targetToken] += amountIn;
+        _baseBalances[baseToken] -= selectedStrat.amount;
 
         _lastExecution[selectedStrat.strategyId] = block.timestamp;
-        _totalIntervalsExecuted += 1; */
+        _totalIntervalsExecuted += 1;
 
         emit StrategyExecuted(strategyId_, amountIn);
     }

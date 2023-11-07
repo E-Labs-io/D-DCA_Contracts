@@ -18,6 +18,8 @@ export type { ISwapRouter } from "./@uniswap/v3-periphery/contracts/interfaces/I
 export { ISwapRouter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter__factory";
 export type { DCAAccount } from "./contracts/DCAAccount";
 export { DCAAccount__factory } from "./factories/contracts/DCAAccount__factory";
+export type { DCAAccountFactory } from "./contracts/DCAAccountFactory";
+export { DCAAccountFactory__factory } from "./factories/contracts/DCAAccountFactory__factory";
 export type { DCAExecutor } from "./contracts/DCAExecutor";
 export { DCAExecutor__factory } from "./factories/contracts/DCAExecutor__factory";
 export type { IDCAAccount } from "./contracts/interfaces/IDCAAccount";

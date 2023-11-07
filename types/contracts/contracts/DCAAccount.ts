@@ -426,7 +426,7 @@ export interface DCAAccount extends BaseContract {
 
   TestSwap: TypedContractMethod<
     [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [bigint],
+    [void],
     "nonpayable"
   >;
 
@@ -527,7 +527,7 @@ export interface DCAAccount extends BaseContract {
     nameOrSignature: "TestSwap"
   ): TypedContractMethod<
     [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [bigint],
+    [void],
     "nonpayable"
   >;
   getFunction(
