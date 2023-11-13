@@ -11,26 +11,26 @@ import "./interfaces/IDCAExecutor.sol";
 import "./security/onlyExecutor.sol";
 
 contract DCAAccount is OnlyExecutor, IDCAAccount {
-    Strategy[] private strategies_;
-    // Thought on tracking balances, do we
-    // a) base & target are mixed according to the token
-    // b) separate accounting for base & target funds
-    //   Option B
+    mapping(uint256 => Strategy) private _strategies;
+
     mapping(address => uint256) private _baseBalances;
     mapping(address => uint256) private _targetBalances;
 
     mapping(uint256 => uint256) internal _lastExecution; // strategyId to block number
-    mapping(address => uint256) internal _costPerBlock;
+    mapping(address => uint256) internal _costPerBlock; //  Base currency
+
     // Mapping of Interval enum to block amounts
+    // Should move to a library using constants
     mapping(Interval => uint256) public IntervalTimings;
 
     IDCAExecutor internal _executorAddress;
+    ISwapRouter immutable SWAP_ROUTER;
 
     uint24 private _poolFee = 10000;
+
     uint256 private _totalIntervalsExecuted;
     uint256 private _totalActiveStrategies;
-
-    ISwapRouter immutable SWAP_ROUTER;
+    uint256 private _strategyCount;
 
     constructor(
         address executorAddress_,
@@ -50,7 +50,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     modifier inWindow(uint256 strategyId_) {
         require(
             _lastExecution[strategyId_] +
-                IntervalTimings[strategies_[strategyId_].interval] <
+                IntervalTimings[_strategies[strategyId_].interval] <
                 block.timestamp,
             "DCA Interval not met"
         );
@@ -85,7 +85,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         uint256 strategyId_,
         uint16 feeAmount_
     ) external override onlyExecutor inWindow(strategyId_) {
-        require(strategies_[strategyId_].active, "Strategy is not active");
+        require(_strategies[strategyId_].active, "Strategy is not active");
         _executeDCATrade(strategyId_, feeAmount_);
     }
 
@@ -101,17 +101,19 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         uint256 seedFunds_,
         bool subscribeToExecutor_
     ) external override onlyOwner {
+        _strategyCount++;
         //Adds a new strategy to the system
         //Transfers the given amount of the base token to the account
         //If true subscribes the strategy to the default executor
-        newStrategy_.strategyId = strategies_.length;
+        newStrategy_.strategyId = _strategyCount;
         newStrategy_.accountAddress = address(this);
         newStrategy_.active = false;
-        strategies_.push(newStrategy_);
+        _strategies[_strategyCount] = newStrategy_;
 
         if (seedFunds_ > 0)
             FundAccount(newStrategy_.baseToken.tokenAddress, seedFunds_);
         if (subscribeToExecutor_) _subscribeToExecutor(newStrategy_);
+        _strategyCount++;
     }
 
     function SubscribeStrategy(
@@ -120,10 +122,10 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         //Add the given strategy, once checking there are funds
         //to the default DCAExecutor
         require(
-            !strategies_[strategyId_].active,
+            !_strategies[strategyId_].active,
             "Strategy is already Subscribed"
         );
-        _subscribeToExecutor(strategies_[strategyId_]);
+        _subscribeToExecutor(_strategies[strategyId_]);
     }
 
     function UnsubscribeStrategy(
@@ -131,7 +133,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     ) external override onlyOwner {
         //remove the given strategy from its active executor
         require(
-            strategies_[strategyId_].active,
+            _strategies[strategyId_].active,
             "Strategy is already Unsubscribed"
         );
         _unsubscribeToExecutor(strategyId_);
@@ -140,11 +142,11 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     function ExecutorDeactivateStrategy(
         uint256 strategyId_
     ) external onlyExecutor {
-        Strategy memory oldStrategy = strategies_[strategyId_];
+        Strategy memory oldStrategy = _strategies[strategyId_];
         _costPerBlock[
             oldStrategy.baseToken.tokenAddress
         ] -= _calculateCostPerBlock(oldStrategy.amount, oldStrategy.interval);
-        strategies_[oldStrategy.strategyId].active = false;
+        _strategies[oldStrategy.strategyId].active = false;
         _totalActiveStrategies -= 1;
 
         emit StrategyUnsubscribed(oldStrategy.strategyId);
@@ -176,6 +178,19 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         _targetBalances[token_] -= amount_;
     }
 
+    function SetStrategyReinvest(
+        uint256 strategyId_,
+        bool activate_,
+        bytes memory callData_
+    ) external override {
+        if (activate_) {
+            _strategies[strategyId_].reinvest = true;
+            _strategies[strategyId_].reinvestCallData = callData_;
+        } else {
+            _strategies[strategyId_].reinvest = false;
+        }
+    }
+
     function GetBaseTokenCostPerBlock(
         address baseToken_
     ) external view returns (uint256) {
@@ -203,14 +218,14 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     function GetStrategyData(
         uint256 strategyId_
     ) external view returns (Strategy memory) {
-        return strategies_[strategyId_];
+        return _strategies[strategyId_];
     }
 
     // Internal & Private functions
     function _executeDCATrade(uint256 strategyId_, uint16 feeAmount_) internal {
         //Example of how this might work using Uniswap
         //Get the stragegy
-        Strategy memory selectedStrat = strategies_[strategyId_];
+        Strategy memory selectedStrat = _strategies[strategyId_];
         address baseToken = selectedStrat.baseToken.tokenAddress;
         address targetToken = selectedStrat.targetToken.tokenAddress;
         uint256 feeAmount = 0;
@@ -242,6 +257,12 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         //  Make the swap on uniswap
         amountIn = _swap(baseToken, targetToken, tradeAmount);
 
+        //  Check if there is a reinvest
+        //  Execute the reinvest
+        if (selectedStrat.reinvest) {
+            _executeReinvest(selectedStrat.reinvestCallData, amountIn);
+        }
+
         //  Update some tracking metrics
         //  Update balance & time track
         _targetBalances[targetToken] += amountIn;
@@ -250,7 +271,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         _lastExecution[selectedStrat.strategyId] = block.timestamp;
         _totalIntervalsExecuted += 1;
 
-        emit StrategyExecuted(strategyId_, amountIn);
+        emit StrategyExecuted(strategyId_, amountIn, selectedStrat.reinvest);
     }
 
     function _subscribeToExecutor(Strategy memory newStrategy_) private {
@@ -259,7 +280,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         ] += _calculateCostPerBlock(newStrategy_.amount, newStrategy_.interval);
 
         _executorAddress.Subscribe(newStrategy_);
-        strategies_[newStrategy_.strategyId].active = true;
+        _strategies[newStrategy_.strategyId].active = true;
         _totalActiveStrategies += 1;
         emit StrategySubscribed(
             newStrategy_.strategyId,
@@ -268,13 +289,13 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     }
 
     function _unsubscribeToExecutor(uint256 strategyId_) private {
-        Strategy memory oldStrategy = strategies_[strategyId_];
+        Strategy memory oldStrategy = _strategies[strategyId_];
         _costPerBlock[
             oldStrategy.baseToken.tokenAddress
         ] -= _calculateCostPerBlock(oldStrategy.amount, oldStrategy.interval);
 
         _executorAddress.Unsubscribe(oldStrategy);
-        strategies_[oldStrategy.strategyId].active = false;
+        _strategies[oldStrategy.strategyId].active = false;
         _totalActiveStrategies -= 1;
         emit StrategyUnsubscribed(oldStrategy.strategyId);
     }
@@ -379,5 +400,13 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
         //  The call to `exactInputSingle` executes the swap.
         return SWAP_ROUTER.exactInputSingle(params);
+    }
+
+    function _executeReinvest(
+        bytes memory callData_,
+        uint256 amount_
+    ) internal {
+        // Decode and execute the callData
+        // Ensure safety checks and validations
     }
 }

@@ -11,7 +11,8 @@ interface IDCAAccount is IDCADataStructures {
      */
     event StrategyExecuted(
         uint256 indexed strategyId_,
-        uint256 indexed amountIn_
+        uint256 indexed amountIn_,
+        bool reInvest_
     );
     event DCAExecutorChanged(address newAddress_);
     event StrategySubscribed(uint256 strategyId_, address executor_);
@@ -38,4 +39,10 @@ interface IDCAAccount is IDCADataStructures {
     function UnFundAccount(address token_, uint256 amount_) external;
 
     function WithdrawSavings(address token_, uint256 amount_) external;
+
+    function SetStrategyReinvest(
+        uint256 strategyId_,
+        bool activate_,
+        bytes memory callData_
+    ) external;
 }

@@ -5,7 +5,7 @@ import masterDeployer from "~/deployments/deploy";
 
 const taskId = "deployContracts";
 const taskDescription = "Deploy the given contracts";
-const contractsToDeploy = ["DCAExecutor", "DCAAccount"];
+const contractsToDeploy = ["DCAExecutor", "DCAFactory"];
 
 // "DCAExecutor", "DCAAccount", "DCAAccountFactory"
 

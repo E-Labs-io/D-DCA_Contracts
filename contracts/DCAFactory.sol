@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "./DCAAccount.sol";
 
-contract DCAAccountFactory {
+contract DCAFactory {
     // Event to emit when a new DCAAccount is created.
     event DCAAccountCreated(address indexed owner, address dcaAccount);
 

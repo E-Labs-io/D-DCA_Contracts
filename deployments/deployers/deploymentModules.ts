@@ -14,13 +14,13 @@ import {
 const deploymentFiles: Deployment = {
   DCAExecutor: GenericDeployer,
   DCAAccount: DCAAccountDeployer,
-  DCAAccountFactory: DCAAccountDeployer,
+  DCAFactory: DCAAccountDeployer,
 };
 
 export const deploymentArgumentStore: ArgumentStore = {
   DCAExecutor: DCAExecutorArguments,
   DCAAccount: DCAAccountArguments,
-  DCAAccountFactory: DCAAccountFactoryArguments,
+  DCAFactory: DCAAccountFactoryArguments,
 };
 
 export default deploymentFiles;

@@ -20,7 +20,7 @@ export default async function masterDeployer(
   const delayTime = 30000;
 
   console.log("🟠 Master Deployer: Mounted");
-  console.log("🟠 Master Deployer: ", deployer.address);
+  console.log(`🟠 Master Deployer: ${deployer.address}`);
   console.log(`🟠 Master Deployer: Deploying ${deployments.length} Contracts`);
   console.log("🟠 Master Deployer: Deploying to : ", network.name);
 
