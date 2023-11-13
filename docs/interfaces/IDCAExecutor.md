@@ -13,7 +13,7 @@
 ### Execute
 
 ```solidity
-function Execute(enum IDCADataStructures.Interval interval_) external nonpayable
+function Execute(address DCAAccount_, uint256 strategyId_) external nonpayable
 ```
 
 
@@ -24,18 +24,41 @@ function Execute(enum IDCADataStructures.Interval interval_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| interval_ | enum IDCADataStructures.Interval | undefined |
+| DCAAccount_ | address | undefined |
+| strategyId_ | uint256 | undefined |
 
-### ForceFeeFund
+### ExecuteBatch
 
 ```solidity
-function ForceFeeFund() external nonpayable
+function ExecuteBatch(address[] DCAAccount_, uint256[] strategyId_) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| DCAAccount_ | address[] | undefined |
+| strategyId_ | uint256[] | undefined |
+
+### ForceFeeFund
+
+```solidity
+function ForceFeeFund(address tokenAddress) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenAddress | address | undefined |
 
 ### Subscribe
 
@@ -85,10 +108,10 @@ function Unsubscribe(IDCADataStructures.Strategy strategy_) external nonpayable 
 
 ## Events
 
-### DCAAccontSubscription
+### DCAAccountSubscription
 
 ```solidity
-event DCAAccontSubscription(IDCADataStructures.Strategy interval_, bool active_)
+event DCAAccountSubscription(address DCAAccountAddress_, uint256 strategyId_, bool active_)
 ```
 
 
@@ -99,13 +122,14 @@ event DCAAccontSubscription(IDCADataStructures.Strategy interval_, bool active_)
 
 | Name | Type | Description |
 |---|---|---|
-| interval_  | IDCADataStructures.Strategy | undefined |
+| DCAAccountAddress_  | address | undefined |
+| strategyId_  | uint256 | undefined |
 | active_  | bool | undefined |
 
 ### ExecutedDCA
 
 ```solidity
-event ExecutedDCA(enum IDCADataStructures.Interval indexed interval_)
+event ExecutedDCA(address indexed account_, uint256 indexed strategyId_)
 ```
 
 
@@ -116,12 +140,13 @@ event ExecutedDCA(enum IDCADataStructures.Interval indexed interval_)
 
 | Name | Type | Description |
 |---|---|---|
-| interval_ `indexed` | enum IDCADataStructures.Interval | undefined |
+| account_ `indexed` | address | undefined |
+| strategyId_ `indexed` | uint256 | undefined |
 
 ### ExecutionEOAAddressChange
 
 ```solidity
-event ExecutionEOAAddressChange(address newExecutionEOA_, address changer_)
+event ExecutionEOAAddressChange(address indexed newExecutionEOA_, address changer_)
 ```
 
 
@@ -132,8 +157,25 @@ event ExecutionEOAAddressChange(address newExecutionEOA_, address changer_)
 
 | Name | Type | Description |
 |---|---|---|
-| newExecutionEOA_  | address | undefined |
+| newExecutionEOA_ `indexed` | address | undefined |
 | changer_  | address | undefined |
+
+### FeesDistributed
+
+```solidity
+event FeesDistributed(address indexed token_, uint256 indexed amount_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ `indexed` | address | undefined |
+| amount_ `indexed` | uint256 | undefined |
 
 
 

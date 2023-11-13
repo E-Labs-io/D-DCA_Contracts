@@ -71,9 +71,9 @@ export declare namespace IDCADataStructures {
     interval: BigNumberish;
     amount: BigNumberish;
     strategyId: BigNumberish;
-    reinvest: boolean;
     active: boolean;
-    revestContract: AddressLike;
+    reinvest: boolean;
+    reinvestCallData: BytesLike;
   };
 
   export type StrategyStructOutput = [
@@ -83,9 +83,9 @@ export declare namespace IDCADataStructures {
     interval: bigint,
     amount: bigint,
     strategyId: bigint,
-    reinvest: boolean,
     active: boolean,
-    revestContract: string
+    reinvest: boolean,
+    reinvestCallData: string
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -93,9 +93,9 @@ export declare namespace IDCADataStructures {
     interval: bigint;
     amount: bigint;
     strategyId: bigint;
-    reinvest: boolean;
     active: boolean;
-    revestContract: string;
+    reinvest: boolean;
+    reinvestCallData: string;
   };
 }
 
@@ -104,8 +104,8 @@ export interface DCAExecutorInterface extends Interface {
     nameOrSignature:
       | "CheckIfAdmin"
       | "Execute"
+      | "ExecuteBatch"
       | "ForceFeeFund"
-      | "GetIntervalsStrategys"
       | "GetSpesificStrategy"
       | "GetTotalActiveStrategys"
       | "Subscribe"
@@ -119,9 +119,10 @@ export interface DCAExecutorInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "DCAAccontSubscription"
+      | "DCAAccountSubscription"
       | "ExecutedDCA"
       | "ExecutionEOAAddressChange"
+      | "FeesDistributed"
       | "OwnershipTransferred"
   ): EventFragment;
 
@@ -131,19 +132,19 @@ export interface DCAExecutorInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "Execute",
-    values: [BigNumberish]
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ExecuteBatch",
+    values: [AddressLike[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "ForceFeeFund",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetIntervalsStrategys",
-    values: [BigNumberish]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "GetSpesificStrategy",
-    values: [AddressLike, BigNumberish, BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "GetTotalActiveStrategys",
@@ -181,11 +182,11 @@ export interface DCAExecutorInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "ForceFeeFund",
+    functionFragment: "ExecuteBatch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "GetIntervalsStrategys",
+    functionFragment: "ForceFeeFund",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -217,17 +218,20 @@ export interface DCAExecutorInterface extends Interface {
   ): Result;
 }
 
-export namespace DCAAccontSubscriptionEvent {
+export namespace DCAAccountSubscriptionEvent {
   export type InputTuple = [
-    interval_: IDCADataStructures.StrategyStruct,
+    DCAAccountAddress_: AddressLike,
+    strategyId_: BigNumberish,
     active_: boolean
   ];
   export type OutputTuple = [
-    interval_: IDCADataStructures.StrategyStructOutput,
+    DCAAccountAddress_: string,
+    strategyId_: bigint,
     active_: boolean
   ];
   export interface OutputObject {
-    interval_: IDCADataStructures.StrategyStructOutput;
+    DCAAccountAddress_: string;
+    strategyId_: bigint;
     active_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -237,10 +241,11 @@ export namespace DCAAccontSubscriptionEvent {
 }
 
 export namespace ExecutedDCAEvent {
-  export type InputTuple = [interval_: BigNumberish];
-  export type OutputTuple = [interval_: bigint];
+  export type InputTuple = [account_: AddressLike, strategyId_: BigNumberish];
+  export type OutputTuple = [account_: string, strategyId_: bigint];
   export interface OutputObject {
-    interval_: bigint;
+    account_: string;
+    strategyId_: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -257,6 +262,19 @@ export namespace ExecutionEOAAddressChangeEvent {
   export interface OutputObject {
     newExecutionEOA_: string;
     changer_: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace FeesDistributedEvent {
+  export type InputTuple = [token_: AddressLike, amount_: BigNumberish];
+  export type OutputTuple = [token_: string, amount_: bigint];
+  export interface OutputObject {
+    token_: string;
+    amount_: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -326,22 +344,26 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
-  Execute: TypedContractMethod<[interval_: BigNumberish], [void], "nonpayable">;
+  Execute: TypedContractMethod<
+    [DCAAccount_: AddressLike, strategyId_: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-  ForceFeeFund: TypedContractMethod<[], [void], "nonpayable">;
+  ExecuteBatch: TypedContractMethod<
+    [DCAAccount_: AddressLike[], strategyId_: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
 
-  GetIntervalsStrategys: TypedContractMethod<
-    [interval_: BigNumberish],
-    [IDCADataStructures.StrategyStructOutput[]],
-    "view"
+  ForceFeeFund: TypedContractMethod<
+    [tokenAddress_: AddressLike],
+    [void],
+    "nonpayable"
   >;
 
   GetSpesificStrategy: TypedContractMethod<
-    [
-      dcaAccountAddress_: AddressLike,
-      interval_: BigNumberish,
-      accountStrategyId_: BigNumberish
-    ],
+    [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput],
     "view"
   >;
@@ -387,25 +409,25 @@ export interface DCAExecutor extends BaseContract {
   ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "Execute"
-  ): TypedContractMethod<[interval_: BigNumberish], [void], "nonpayable">;
+  ): TypedContractMethod<
+    [DCAAccount_: AddressLike, strategyId_: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "ExecuteBatch"
+  ): TypedContractMethod<
+    [DCAAccount_: AddressLike[], strategyId_: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "ForceFeeFund"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "GetIntervalsStrategys"
-  ): TypedContractMethod<
-    [interval_: BigNumberish],
-    [IDCADataStructures.StrategyStructOutput[]],
-    "view"
-  >;
+  ): TypedContractMethod<[tokenAddress_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "GetSpesificStrategy"
   ): TypedContractMethod<
-    [
-      dcaAccountAddress_: AddressLike,
-      interval_: BigNumberish,
-      accountStrategyId_: BigNumberish
-    ],
+    [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput],
     "view"
   >;
@@ -443,11 +465,11 @@ export interface DCAExecutor extends BaseContract {
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   getEvent(
-    key: "DCAAccontSubscription"
+    key: "DCAAccountSubscription"
   ): TypedContractEvent<
-    DCAAccontSubscriptionEvent.InputTuple,
-    DCAAccontSubscriptionEvent.OutputTuple,
-    DCAAccontSubscriptionEvent.OutputObject
+    DCAAccountSubscriptionEvent.InputTuple,
+    DCAAccountSubscriptionEvent.OutputTuple,
+    DCAAccountSubscriptionEvent.OutputObject
   >;
   getEvent(
     key: "ExecutedDCA"
@@ -464,6 +486,13 @@ export interface DCAExecutor extends BaseContract {
     ExecutionEOAAddressChangeEvent.OutputObject
   >;
   getEvent(
+    key: "FeesDistributed"
+  ): TypedContractEvent<
+    FeesDistributedEvent.InputTuple,
+    FeesDistributedEvent.OutputTuple,
+    FeesDistributedEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -472,18 +501,18 @@ export interface DCAExecutor extends BaseContract {
   >;
 
   filters: {
-    "DCAAccontSubscription(tuple,bool)": TypedContractEvent<
-      DCAAccontSubscriptionEvent.InputTuple,
-      DCAAccontSubscriptionEvent.OutputTuple,
-      DCAAccontSubscriptionEvent.OutputObject
+    "DCAAccountSubscription(address,uint256,bool)": TypedContractEvent<
+      DCAAccountSubscriptionEvent.InputTuple,
+      DCAAccountSubscriptionEvent.OutputTuple,
+      DCAAccountSubscriptionEvent.OutputObject
     >;
-    DCAAccontSubscription: TypedContractEvent<
-      DCAAccontSubscriptionEvent.InputTuple,
-      DCAAccontSubscriptionEvent.OutputTuple,
-      DCAAccontSubscriptionEvent.OutputObject
+    DCAAccountSubscription: TypedContractEvent<
+      DCAAccountSubscriptionEvent.InputTuple,
+      DCAAccountSubscriptionEvent.OutputTuple,
+      DCAAccountSubscriptionEvent.OutputObject
     >;
 
-    "ExecutedDCA(uint8)": TypedContractEvent<
+    "ExecutedDCA(address,uint256)": TypedContractEvent<
       ExecutedDCAEvent.InputTuple,
       ExecutedDCAEvent.OutputTuple,
       ExecutedDCAEvent.OutputObject
@@ -503,6 +532,17 @@ export interface DCAExecutor extends BaseContract {
       ExecutionEOAAddressChangeEvent.InputTuple,
       ExecutionEOAAddressChangeEvent.OutputTuple,
       ExecutionEOAAddressChangeEvent.OutputObject
+    >;
+
+    "FeesDistributed(address,uint256)": TypedContractEvent<
+      FeesDistributedEvent.InputTuple,
+      FeesDistributedEvent.OutputTuple,
+      FeesDistributedEvent.OutputObject
+    >;
+    FeesDistributed: TypedContractEvent<
+      FeesDistributedEvent.InputTuple,
+      FeesDistributedEvent.OutputTuple,
+      FeesDistributedEvent.OutputObject
     >;
 
     "OwnershipTransferred(address,address)": TypedContractEvent<

@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../common";
+} from "../../../common";
 
 export declare namespace IDCADataStructures {
   export type TokeDataStruct = {
@@ -43,9 +43,9 @@ export declare namespace IDCADataStructures {
     interval: BigNumberish;
     amount: BigNumberish;
     strategyId: BigNumberish;
-    active: boolean;
     reinvest: boolean;
-    reinvestCallData: BytesLike;
+    active: boolean;
+    revestContract: AddressLike;
   };
 
   export type StrategyStructOutput = [
@@ -55,9 +55,9 @@ export declare namespace IDCADataStructures {
     interval: bigint,
     amount: bigint,
     strategyId: bigint,
-    active: boolean,
     reinvest: boolean,
-    reinvestCallData: string
+    active: boolean,
+    revestContract: string
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -65,9 +65,9 @@ export declare namespace IDCADataStructures {
     interval: bigint;
     amount: bigint;
     strategyId: bigint;
-    active: boolean;
     reinvest: boolean;
-    reinvestCallData: string;
+    active: boolean;
+    revestContract: string;
   };
 }
 
@@ -83,7 +83,6 @@ export interface DCAAccountInterface extends Interface {
       | "GetStrategyData"
       | "GetTargetBalance"
       | "IntervalTimings"
-      | "SetStrategyReinvest"
       | "SetupStrategy"
       | "SubscribeStrategy"
       | "TestSwap"
@@ -141,10 +140,6 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "IntervalTimings",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "SetStrategyReinvest",
-    values: [BigNumberish, boolean, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "SetupStrategy",
@@ -222,10 +217,6 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "SetStrategyReinvest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "SetupStrategy",
     data: BytesLike
   ): Result;
@@ -291,20 +282,11 @@ export namespace OwnershipTransferredEvent {
 }
 
 export namespace StrategyExecutedEvent {
-  export type InputTuple = [
-    strategyId_: BigNumberish,
-    amountIn_: BigNumberish,
-    reInvest_: boolean
-  ];
-  export type OutputTuple = [
-    strategyId_: bigint,
-    amountIn_: bigint,
-    reInvest_: boolean
-  ];
+  export type InputTuple = [strategyId_: BigNumberish, amountIn_: BigNumberish];
+  export type OutputTuple = [strategyId_: bigint, amountIn_: bigint];
   export interface OutputObject {
     strategyId_: bigint;
     amountIn_: bigint;
-    reInvest_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -426,12 +408,6 @@ export interface DCAAccount extends BaseContract {
 
   IntervalTimings: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
 
-  SetStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
-    [void],
-    "nonpayable"
-  >;
-
   SetupStrategy: TypedContractMethod<
     [
       newStrategy_: IDCADataStructures.StrategyStruct,
@@ -533,13 +509,6 @@ export interface DCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "IntervalTimings"
   ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "SetStrategyReinvest"
-  ): TypedContractMethod<
-    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "SetupStrategy"
   ): TypedContractMethod<
@@ -657,7 +626,7 @@ export interface DCAAccount extends BaseContract {
       OwnershipTransferredEvent.OutputObject
     >;
 
-    "StrategyExecuted(uint256,uint256,bool)": TypedContractEvent<
+    "StrategyExecuted(uint256,uint256)": TypedContractEvent<
       StrategyExecutedEvent.InputTuple,
       StrategyExecutedEvent.OutputTuple,
       StrategyExecutedEvent.OutputObject

@@ -6,7 +6,7 @@ import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
   IDCAAccount,
   IDCAAccountInterface,
-} from "../../../contracts/interfaces/IDCAAccount";
+} from "../../../../contracts/flatContracts/flatDCAAccount.sol/IDCAAccount";
 
 const _abi = [
   {
@@ -36,12 +36,6 @@ const _abi = [
         internalType: "uint256",
         name: "amountIn_",
         type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "reInvest_",
-        type: "bool",
       },
     ],
     name: "StrategyExecuted",
@@ -156,29 +150,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "strategyId_",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "activate_",
-        type: "bool",
-      },
-      {
-        internalType: "bytes",
-        name: "callData_",
-        type: "bytes",
-      },
-    ],
-    name: "SetStrategyReinvest",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         components: [
           {
             internalType: "address",
@@ -246,18 +217,18 @@ const _abi = [
           },
           {
             internalType: "bool",
-            name: "active",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
             name: "reinvest",
             type: "bool",
           },
           {
-            internalType: "bytes",
-            name: "reinvestCallData",
-            type: "bytes",
+            internalType: "bool",
+            name: "active",
+            type: "bool",
+          },
+          {
+            internalType: "address",
+            name: "revestContract",
+            type: "address",
           },
         ],
         internalType: "struct IDCADataStructures.Strategy",

@@ -192,24 +192,6 @@ function IntervalTimings(enum IDCADataStructures.Interval) external view returns
 |---|---|---|
 | _0 | uint256 | undefined |
 
-### SetStrategyReinvest
-
-```solidity
-function SetStrategyReinvest(uint256 strategyId_, bool activate_, bytes callData_) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId_ | uint256 | undefined |
-| activate_ | bool | undefined |
-| callData_ | bytes | undefined |
-
 ### SetupStrategy
 
 ```solidity
@@ -423,7 +405,7 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 ### StrategyExecuted
 
 ```solidity
-event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_, bool reInvest_)
+event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_)
 ```
 
 
@@ -436,7 +418,6 @@ event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_, b
 |---|---|---|
 | strategyId_ `indexed` | uint256 | the id fo the executed strategy |
 | amountIn_ `indexed` | uint256 | amount received from the swap |
-| reInvest_  | bool | undefined |
 
 ### StrategySubscribed
 

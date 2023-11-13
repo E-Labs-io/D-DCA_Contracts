@@ -43,9 +43,9 @@ export declare namespace IDCADataStructures {
     interval: BigNumberish;
     amount: BigNumberish;
     strategyId: BigNumberish;
-    reinvest: boolean;
     active: boolean;
-    revestContract: AddressLike;
+    reinvest: boolean;
+    reinvestCallData: BytesLike;
   };
 
   export type StrategyStructOutput = [
@@ -55,9 +55,9 @@ export declare namespace IDCADataStructures {
     interval: bigint,
     amount: bigint,
     strategyId: bigint,
-    reinvest: boolean,
     active: boolean,
-    revestContract: string
+    reinvest: boolean,
+    reinvestCallData: string
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -65,9 +65,9 @@ export declare namespace IDCADataStructures {
     interval: bigint;
     amount: bigint;
     strategyId: bigint;
-    reinvest: boolean;
     active: boolean;
-    revestContract: string;
+    reinvest: boolean;
+    reinvestCallData: string;
   };
 }
 
@@ -78,6 +78,7 @@ export interface IDCAAccountInterface extends Interface {
       | "FundAccount"
       | "GetBaseBalance"
       | "GetTargetBalance"
+      | "SetStrategyReinvest"
       | "SetupStrategy"
       | "SubscribeStrategy"
       | "UnFundAccount"
@@ -108,6 +109,10 @@ export interface IDCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "GetTargetBalance",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "SetStrategyReinvest",
+    values: [BigNumberish, boolean, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "SetupStrategy",
@@ -141,6 +146,10 @@ export interface IDCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "GetTargetBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "SetStrategyReinvest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -178,11 +187,20 @@ export namespace DCAExecutorChangedEvent {
 }
 
 export namespace StrategyExecutedEvent {
-  export type InputTuple = [strategyId_: BigNumberish, amountIn_: BigNumberish];
-  export type OutputTuple = [strategyId_: bigint, amountIn_: bigint];
+  export type InputTuple = [
+    strategyId_: BigNumberish,
+    amountIn_: BigNumberish,
+    reInvest_: boolean
+  ];
+  export type OutputTuple = [
+    strategyId_: bigint,
+    amountIn_: bigint,
+    reInvest_: boolean
+  ];
   export interface OutputObject {
     strategyId_: bigint;
     amountIn_: bigint;
+    reInvest_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -282,6 +300,12 @@ export interface IDCAAccount extends BaseContract {
     "nonpayable"
   >;
 
+  SetStrategyReinvest: TypedContractMethod<
+    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+
   SetupStrategy: TypedContractMethod<
     [
       newStrategy_: IDCADataStructures.StrategyStruct,
@@ -340,6 +364,13 @@ export interface IDCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "GetTargetBalance"
   ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "SetStrategyReinvest"
+  ): TypedContractMethod<
+    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "SetupStrategy"
   ): TypedContractMethod<
@@ -413,7 +444,7 @@ export interface IDCAAccount extends BaseContract {
       DCAExecutorChangedEvent.OutputObject
     >;
 
-    "StrategyExecuted(uint256,uint256)": TypedContractEvent<
+    "StrategyExecuted(uint256,uint256,bool)": TypedContractEvent<
       StrategyExecutedEvent.InputTuple,
       StrategyExecutedEvent.OutputTuple,
       StrategyExecutedEvent.OutputObject

@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../common";
+} from "../../../common";
 
 export declare namespace IDCADataStructures {
   export type TokeDataStruct = {
@@ -43,9 +43,9 @@ export declare namespace IDCADataStructures {
     interval: BigNumberish;
     amount: BigNumberish;
     strategyId: BigNumberish;
-    active: boolean;
     reinvest: boolean;
-    reinvestCallData: BytesLike;
+    active: boolean;
+    revestContract: AddressLike;
   };
 
   export type StrategyStructOutput = [
@@ -55,9 +55,9 @@ export declare namespace IDCADataStructures {
     interval: bigint,
     amount: bigint,
     strategyId: bigint,
-    active: boolean,
     reinvest: boolean,
-    reinvestCallData: string
+    active: boolean,
+    revestContract: string
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -65,42 +65,29 @@ export declare namespace IDCADataStructures {
     interval: bigint;
     amount: bigint;
     strategyId: bigint;
-    active: boolean;
     reinvest: boolean;
-    reinvestCallData: string;
+    active: boolean;
+    revestContract: string;
   };
 }
 
-export interface DCAAccountInterface extends Interface {
+export interface IDCAAccountInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "Execute"
-      | "ExecutorDeactivateStrategy"
       | "FundAccount"
       | "GetBaseBalance"
-      | "GetBaseTokenCostPerBlock"
-      | "GetBaseTokenRemainingBlocks"
-      | "GetStrategyData"
       | "GetTargetBalance"
-      | "IntervalTimings"
-      | "SetStrategyReinvest"
       | "SetupStrategy"
       | "SubscribeStrategy"
-      | "TestSwap"
       | "UnFundAccount"
       | "UnsubscribeStrategy"
       | "WithdrawSavings"
-      | "changeExecutor"
-      | "owner"
-      | "removeExecutor"
-      | "renounceOwnership"
-      | "transferOwnership"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
       | "DCAExecutorChanged"
-      | "OwnershipTransferred"
       | "StrategyExecuted"
       | "StrategySubscribed"
       | "StrategyUnsubscribed"
@@ -111,10 +98,6 @@ export interface DCAAccountInterface extends Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "ExecutorDeactivateStrategy",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "FundAccount",
     values: [AddressLike, BigNumberish]
   ): string;
@@ -123,28 +106,8 @@ export interface DCAAccountInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "GetBaseTokenCostPerBlock",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetBaseTokenRemainingBlocks",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetStrategyData",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "GetTargetBalance",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "IntervalTimings",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "SetStrategyReinvest",
-    values: [BigNumberish, boolean, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "SetupStrategy",
@@ -155,10 +118,6 @@ export interface DCAAccountInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "TestSwap",
-    values: [AddressLike, AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "UnFundAccount",
     values: [AddressLike, BigNumberish]
   ): string;
@@ -170,29 +129,8 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "WithdrawSavings",
     values: [AddressLike, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "changeExecutor",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "removeExecutor",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
-  ): string;
 
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "ExecutorDeactivateStrategy",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "FundAccount",
     data: BytesLike
@@ -202,27 +140,7 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "GetBaseTokenCostPerBlock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetBaseTokenRemainingBlocks",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetStrategyData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "GetTargetBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "IntervalTimings",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "SetStrategyReinvest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -233,7 +151,6 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "SubscribeStrategy",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "TestSwap", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "UnFundAccount",
     data: BytesLike
@@ -244,23 +161,6 @@ export interface DCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "WithdrawSavings",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeExecutor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeExecutor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
 }
@@ -277,34 +177,12 @@ export namespace DCAExecutorChangedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace StrategyExecutedEvent {
-  export type InputTuple = [
-    strategyId_: BigNumberish,
-    amountIn_: BigNumberish,
-    reInvest_: boolean
-  ];
-  export type OutputTuple = [
-    strategyId_: bigint,
-    amountIn_: bigint,
-    reInvest_: boolean
-  ];
+  export type InputTuple = [strategyId_: BigNumberish, amountIn_: BigNumberish];
+  export type OutputTuple = [strategyId_: bigint, amountIn_: bigint];
   export interface OutputObject {
     strategyId_: bigint;
     amountIn_: bigint;
-    reInvest_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -337,11 +215,11 @@ export namespace StrategyUnsubscribedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface DCAAccount extends BaseContract {
-  connect(runner?: ContractRunner | null): DCAAccount;
+export interface IDCAAccount extends BaseContract {
+  connect(runner?: ContractRunner | null): IDCAAccount;
   waitForDeployment(): Promise<this>;
 
-  interface: DCAAccountInterface;
+  interface: IDCAAccountInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -386,49 +264,21 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
-  ExecutorDeactivateStrategy: TypedContractMethod<
-    [strategyId_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   FundAccount: TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
     [void],
     "nonpayable"
   >;
 
-  GetBaseBalance: TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-
-  GetBaseTokenCostPerBlock: TypedContractMethod<
-    [baseToken_: AddressLike],
+  GetBaseBalance: TypedContractMethod<
+    [token_: AddressLike],
     [bigint],
-    "view"
-  >;
-
-  GetBaseTokenRemainingBlocks: TypedContractMethod<
-    [baseToken_: AddressLike],
-    [bigint],
-    "view"
-  >;
-
-  GetStrategyData: TypedContractMethod<
-    [strategyId_: BigNumberish],
-    [IDCADataStructures.StrategyStructOutput],
-    "view"
+    "nonpayable"
   >;
 
   GetTargetBalance: TypedContractMethod<
     [token_: AddressLike],
     [bigint],
-    "view"
-  >;
-
-  IntervalTimings: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
-
-  SetStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
-    [void],
     "nonpayable"
   >;
 
@@ -436,7 +286,7 @@ export interface DCAAccount extends BaseContract {
     [
       newStrategy_: IDCADataStructures.StrategyStruct,
       seedFunds_: BigNumberish,
-      subscribeToExecutor_: boolean
+      subscribeToEcecutor_: boolean
     ],
     [void],
     "nonpayable"
@@ -448,12 +298,6 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
-  TestSwap: TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   UnFundAccount: TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
     [void],
@@ -461,31 +305,13 @@ export interface DCAAccount extends BaseContract {
   >;
 
   UnsubscribeStrategy: TypedContractMethod<
-    [strategyId_: BigNumberish],
+    [stratogyId: BigNumberish],
     [void],
     "nonpayable"
   >;
 
   WithdrawSavings: TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
-  changeExecutor: TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  owner: TypedContractMethod<[], [string], "view">;
-
-  removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
-
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
-
-  transferOwnership: TypedContractMethod<
-    [newOwner: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -502,9 +328,6 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "ExecutorDeactivateStrategy"
-  ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "FundAccount"
   ): TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
@@ -513,40 +336,17 @@ export interface DCAAccount extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "GetBaseBalance"
-  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "GetBaseTokenCostPerBlock"
-  ): TypedContractMethod<[baseToken_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "GetBaseTokenRemainingBlocks"
-  ): TypedContractMethod<[baseToken_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "GetStrategyData"
-  ): TypedContractMethod<
-    [strategyId_: BigNumberish],
-    [IDCADataStructures.StrategyStructOutput],
-    "view"
-  >;
+  ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "GetTargetBalance"
-  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "IntervalTimings"
-  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "SetStrategyReinvest"
-  ): TypedContractMethod<
-    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "SetupStrategy"
   ): TypedContractMethod<
     [
       newStrategy_: IDCADataStructures.StrategyStruct,
       seedFunds_: BigNumberish,
-      subscribeToExecutor_: boolean
+      subscribeToEcecutor_: boolean
     ],
     [void],
     "nonpayable"
@@ -554,13 +354,6 @@ export interface DCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "SubscribeStrategy"
   ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "TestSwap"
-  ): TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "UnFundAccount"
   ): TypedContractMethod<
@@ -570,7 +363,7 @@ export interface DCAAccount extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "UnsubscribeStrategy"
-  ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
+  ): TypedContractMethod<[stratogyId: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "WithdrawSavings"
   ): TypedContractMethod<
@@ -578,25 +371,6 @@ export interface DCAAccount extends BaseContract {
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "changeExecutor"
-  ): TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "owner"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "removeExecutor"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   getEvent(
     key: "DCAExecutorChanged"
@@ -604,13 +378,6 @@ export interface DCAAccount extends BaseContract {
     DCAExecutorChangedEvent.InputTuple,
     DCAExecutorChangedEvent.OutputTuple,
     DCAExecutorChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
     key: "StrategyExecuted"
@@ -646,18 +413,7 @@ export interface DCAAccount extends BaseContract {
       DCAExecutorChangedEvent.OutputObject
     >;
 
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-
-    "StrategyExecuted(uint256,uint256,bool)": TypedContractEvent<
+    "StrategyExecuted(uint256,uint256)": TypedContractEvent<
       StrategyExecutedEvent.InputTuple,
       StrategyExecutedEvent.OutputTuple,
       StrategyExecutedEvent.OutputObject
