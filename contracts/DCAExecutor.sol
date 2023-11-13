@@ -9,12 +9,11 @@ import "./interfaces/IDCAAccount.sol";
 import "./security/onlyAdmin.sol";
 
 contract DCAExecutor is OnlyAdmin, IDCAExecutor {
-    //Mapping of all _active strategy for the given interval
-    mapping(Interval => Strategy[]) internal _strategies;
-    // DCAAccount Address => Account Strat Id => local id
-    mapping(address => mapping(uint256 => uint256)) internal _localStratId;
+    //  Mapping of all account strategy that subscribe
+    //  DCAAccount => StrategyId => Strategy Data
+    mapping(address => mapping(uint256 => Strategy)) internal _strategies;
     //Mapping of interval times to the last execution block time
-    mapping(Interval => uint256) internal _lastExecution;
+    mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
     // Mapping of Interval enum to block amounts
     mapping(Interval => uint256) internal IntervalTimings;
 
@@ -30,9 +29,12 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         require(_active, "DCA is on pause");
         _;
     }
-    modifier inWindow(Interval interval_) {
+    modifier inWindow(address DCAAccount_, uint256 strategyId_) {
         require(
-            _lastExecution[interval_] + IntervalTimings[interval_] <
+            _lastExecution[DCAAccount_][strategyId_] +
+                IntervalTimings[
+                    _strategies[DCAAccount_][strategyId_].interval
+                ] <
                 block.timestamp,
             "DCA Interval not met"
         );
@@ -53,7 +55,7 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     ) external override is_active returns (bool sucsess) {
         //Adds the DCA account to the given strategy interval list.
         _subscribeAccount(strategy_);
-        _totalActiveStrategies += 1;
+        _totalActiveStrategies++;
         return true;
     }
 
@@ -61,52 +63,98 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         Strategy calldata strategy_
     ) external override returns (bool sucsess) {
         //Remove the given stragety from the list
-        _totalActiveStrategies -= 1;
+        _totalActiveStrategies--;
         _unSubscribeAccount(strategy_);
         return sucsess = true;
     }
 
     function Execute(
-        Interval interval_
-    ) external override onlyAdmins is_active inWindow(interval_) {
-        _startIntervalExecution(interval_);
-        emit ExecutedDCA(interval_);
+        address DCAAccount_,
+        uint256 strategyId_
+    )
+        external
+        override
+        onlyAdmins
+        is_active
+        inWindow(DCAAccount_, strategyId_)
+    {
+        _singleExecution(DCAAccount_, strategyId_);
+        emit ExecutedDCA(DCAAccount_, strategyId_);
     }
 
-    function ForceFeeFund() external override onlyAdmins {}
+    function ExecuteBatch(
+        address[] memory DCAAccount_,
+        uint256[] memory strategyId_
+    ) external override onlyAdmins is_active {
+        require(DCAAccount_.length <= 10, "Maximum 10 executions allowed");
+        require(
+            DCAAccount_.length == strategyId_.length,
+            "Accounts & Strategy count don't match"
+        );
+        for (uint256 i = 0; i < DCAAccount_.length; i++) {
+            // Check the DCA Interval, continue to the next iteration if not met
+            if (
+                _lastExecution[DCAAccount_[i]][strategyId_[i]] +
+                    IntervalTimings[
+                        _strategies[DCAAccount_[i]][strategyId_[i]].interval
+                    ] >=
+                block.timestamp
+            ) {
+                continue;
+            }
+
+            // Try to execute and catch any failure without interrupting the loop
+            bool success = _singleExecution(DCAAccount_[i], strategyId_[i]);
+            if (success) emit ExecutedDCA(DCAAccount_[i], strategyId_[i]);
+        }
+    }
+
+    function ForceFeeFund(address tokenAddress_) external override onlyAdmins {
+        IERC20 token = IERC20(tokenAddress_);
+        uint256 balance = token.balanceOf(address(this));
+        if (balance > 0) {
+            (
+                uint256 executorFee,
+                uint256 computingFee,
+                uint256 adminFee
+            ) = _calculateFeeSplits(balance);
+
+            _transferFee(_feeData.executionAddress, executorFee, token);
+            _transferFee(_feeData.computingAddress, computingFee, token);
+            _transferFee(_feeData.adminAddress, adminFee, token);
+            emit FeesDistributed(tokenAddress_, balance);
+        }
+    }
 
     function GetTotalActiveStrategys() public view returns (uint256) {
         return _totalActiveStrategies;
     }
 
-    function GetIntervalsStrategys(
-        Interval interval_
-    ) public view returns (Strategy[] memory) {
-        return _strategies[interval_];
-    }
-
     function GetSpesificStrategy(
         address dcaAccountAddress_,
-        Interval interval_,
         uint256 accountStrategyId_
     ) public view returns (Strategy memory) {
-        return
-            _strategies[interval_][
-                _localStratId[dcaAccountAddress_][accountStrategyId_]
-            ];
+        return _strategies[dcaAccountAddress_][accountStrategyId_];
     }
 
     function _subscribeAccount(Strategy memory strategy_) internal {
-        uint256 id = _strategies[strategy_.interval].length;
         strategy_.active = true;
-        _strategies[strategy_.interval].push(strategy_);
-        _localStratId[strategy_.accountAddress][strategy_.strategyId] = id;
-        emit DCAAccontSubscription(strategy_, true);
+        _strategies[strategy_.accountAddress][strategy_.strategyId] = strategy_;
+        emit DCAAccountSubscription(
+            strategy_.accountAddress,
+            strategy_.strategyId,
+            true
+        );
     }
 
     function _unSubscribeAccount(Strategy calldata strategy_) private {
-        _removeStratageyFromArray(strategy_);
-        emit DCAAccontSubscription(strategy_, true);
+        _strategies[strategy_.accountAddress][strategy_.strategyId]
+            .active = false;
+        emit DCAAccountSubscription(
+            strategy_.accountAddress,
+            strategy_.strategyId,
+            false
+        );
     }
 
     function _setExecutionAddress(address newExecutionEOA_) internal {
@@ -115,26 +163,45 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         emit ExecutionEOAAddressChange(newExecutionEOA_, msg.sender);
     }
 
-    function _startIntervalExecution(Interval interval_) internal {
-        Strategy[] memory intervalStrategies = _strategies[interval_];
-        //  Meed to work out a more efficient way of doing this
-        for (uint256 i = 0; i < intervalStrategies.length; i++) {
-            if (intervalStrategies[i].active)
-                _singleExecution(
-                    intervalStrategies[i].accountAddress,
-                    intervalStrategies[i].strategyId
-                );
-        }
-
-        _lastExecution[interval_] = block.timestamp;
-        _totalIntervalsExecuted += 1;
-    }
-
     function _singleExecution(
         address accountAddress_,
         uint256 strategyId_
-    ) private {
-        IDCAAccount(accountAddress_).Execute(strategyId_, _feeData.feeAmount);
+    ) internal returns (bool) {
+        try
+            IDCAAccount(accountAddress_).Execute(
+                strategyId_,
+                _feeData.feeAmount
+            )
+        {
+            _lastExecution[accountAddress_][strategyId_] = block.timestamp;
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    // Calculates the fee splits based on the provided balance
+    function _calculateFeeSplits(
+        uint256 balance
+    )
+        internal
+        view
+        returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
+    {
+        // Calculate individual fees
+        executorFee = (balance * _feeData.amountToExecutor) / 10000;
+        computingFee = (balance * _feeData.amountToComputing) / 10000;
+        adminFee = (balance * _feeData.amountToAdmin) / 10000;
+
+        return (executorFee, computingFee, adminFee);
+    }
+
+    function _transferFee(
+        address to_,
+        uint256 amount_,
+        IERC20 token_
+    ) internal {
+        token_.transfer(to_, amount_);
     }
 
     function _setIntervalBlockAmounts() internal {
@@ -144,28 +211,5 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         IntervalTimings[Interval.TwoDays] = 11520;
         IntervalTimings[Interval.OneWeek] = 40320;
         IntervalTimings[Interval.OneMonth] = 172800;
-    }
-
-    function _removeStratageyFromArray(Strategy memory strategy_) private {
-        //  Get the index of the strategy to remove from the local store
-        //  Get the last element in the array
-        uint256 local = _localStratId[strategy_.accountAddress][
-            strategy_.strategyId
-        ];
-        Strategy memory movingStrat = _strategies[strategy_.interval][
-            _strategies[strategy_.interval].length - 1
-        ];
-
-        //  Check the strategy to remove isnt the last
-        if (_strategies[strategy_.interval].length - 1 != local) {
-            //  If its not, set as moved strat
-            //  Update the moved strat local Id
-            _strategies[strategy_.interval][local] = movingStrat;
-            _localStratId[movingStrat.accountAddress][
-                movingStrat.strategyId
-            ] = local;
-        }
-        //  Remove the last element
-        _strategies[strategy_.interval].pop();
     }
 }

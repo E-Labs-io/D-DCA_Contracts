@@ -15,9 +15,10 @@ interface IDCADataStructures {
 
     struct FeeDistribution {
         //These may move to s struct or set of if more call data is needed
-        uint16 amountToExecutor; //In percent
-        uint16 amountToComputing; //In percent
-        uint16 amountToAdmin;
+        //  Executor, Computing and Admin fees should add up to 100%
+        uint16 amountToExecutor; //In percent (where 10000 = 100%, 100 = 1%, etc.)
+        uint16 amountToComputing; //In percent (where 10000 = 100%, 100 = 1%, etc.)
+        uint16 amountToAdmin; //In percent (where 10000 = 100%, 100 = 1%, etc.)
         uint16 feeAmount; //In percent
         address executionAddress;
         address computingAddress; //need to look into how distributed computing payments work

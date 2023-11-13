@@ -4,9 +4,19 @@ pragma solidity ^0.8.20;
 import "./IDCADataStructures.sol";
 
 interface IDCAExecutor is IDCADataStructures {
-    event ExecutionEOAAddressChange(address newExecutionEOA_, address changer_);
-    event ExecutedDCA(Interval indexed interval_);
-    event DCAAccontSubscription(Strategy interval_, bool active_);
+    event ExecutionEOAAddressChange(
+        address indexed newExecutionEOA_,
+        address changer_
+    );
+    event ExecutedDCA(address indexed account_, uint256 indexed strategyId_);
+
+    event DCAAccountSubscription(
+        address DCAAccountAddress_,
+        uint256 strategyId_,
+        bool active_
+    );
+
+    event FeesDistributed(address indexed token_, uint256 indexed amount_);
 
     function Subscribe(
         Strategy calldata strategy_
@@ -16,9 +26,12 @@ interface IDCAExecutor is IDCADataStructures {
         Strategy calldata strategy_
     ) external returns (bool sucsess);
 
-    function Execute(Interval interval_) external;
+    function Execute(address DCAAccount_, uint256 strategyId_) external;
 
-    function ForceFeeFund() external;
+    function ExecuteBatch(
+        address[] memory DCAAccount_,
+        uint256[] memory strategyId_
+    ) external;
 
-    
+    function ForceFeeFund(address tokenAddress) external;
 }
