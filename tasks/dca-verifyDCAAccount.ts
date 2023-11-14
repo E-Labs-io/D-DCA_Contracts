@@ -6,7 +6,7 @@ const taskId = "verifyDCAAccount";
 
 task(taskId, "Register the DCAAccount Contract to block explorer").setAction(
   async (_args, hre) => {
-    const DCAAccount = "0xE0B049A2E77D26135fa30ad6BCB4c6660c6C434e";
+    const DCAAccount = "0xB13c80BB18699e88d8df14e401BD73A4Dccb0Fc2";
 
     console.log(`🟢 [TASK] ${taskId} : Mounted`);
     console.log(`🟢 [TASK] ${taskId} : Verifying Contract : `, DCAAccount);

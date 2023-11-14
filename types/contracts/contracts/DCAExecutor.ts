@@ -103,9 +103,9 @@ export interface DCAExecutorInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "CheckIfAdmin"
+      | "DistributeFees"
       | "Execute"
       | "ExecuteBatch"
-      | "ForceFeeFund"
       | "GetSpesificStrategy"
       | "GetTotalActiveStrategys"
       | "Subscribe"
@@ -131,16 +131,16 @@ export interface DCAExecutorInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "DistributeFees",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "Execute",
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ExecuteBatch",
     values: [AddressLike[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ForceFeeFund",
-    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "GetSpesificStrategy",
@@ -180,13 +180,13 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "CheckIfAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "DistributeFees",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ExecuteBatch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ForceFeeFund",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -344,6 +344,12 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
+  DistributeFees: TypedContractMethod<
+    [tokenAddress_: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   Execute: TypedContractMethod<
     [DCAAccount_: AddressLike, strategyId_: BigNumberish],
     [void],
@@ -352,12 +358,6 @@ export interface DCAExecutor extends BaseContract {
 
   ExecuteBatch: TypedContractMethod<
     [DCAAccount_: AddressLike[], strategyId_: BigNumberish[]],
-    [void],
-    "nonpayable"
-  >;
-
-  ForceFeeFund: TypedContractMethod<
-    [tokenAddress_: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -408,6 +408,9 @@ export interface DCAExecutor extends BaseContract {
     nameOrSignature: "CheckIfAdmin"
   ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
   getFunction(
+    nameOrSignature: "DistributeFees"
+  ): TypedContractMethod<[tokenAddress_: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "Execute"
   ): TypedContractMethod<
     [DCAAccount_: AddressLike, strategyId_: BigNumberish],
@@ -421,9 +424,6 @@ export interface DCAExecutor extends BaseContract {
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "ForceFeeFund"
-  ): TypedContractMethod<[tokenAddress_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "GetSpesificStrategy"
   ): TypedContractMethod<

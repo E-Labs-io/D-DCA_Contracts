@@ -32,6 +32,22 @@ function CheckIfAdmin(address addressToCheck_) external view returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
+### DistributeFees
+
+```solidity
+function DistributeFees(address tokenAddress_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenAddress_ | address | undefined |
+
 ### Execute
 
 ```solidity
@@ -65,22 +81,6 @@ function ExecuteBatch(address[] DCAAccount_, uint256[] strategyId_) external non
 |---|---|---|
 | DCAAccount_ | address[] | undefined |
 | strategyId_ | uint256[] | undefined |
-
-### ForceFeeFund
-
-```solidity
-function ForceFeeFund(address tokenAddress_) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| tokenAddress_ | address | undefined |
 
 ### GetSpesificStrategy
 

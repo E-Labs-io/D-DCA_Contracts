@@ -33,5 +33,5 @@ interface IDCAExecutor is IDCADataStructures {
         uint256[] memory strategyId_
     ) external;
 
-    function ForceFeeFund(address tokenAddress) external;
+    function DistributeFees(address tokenAddress) external;
 }

@@ -109,7 +109,9 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         }
     }
 
-    function ForceFeeFund(address tokenAddress_) external override onlyAdmins {
+    function DistributeFees(
+        address tokenAddress_
+    ) external override onlyAdmins {
         IERC20 token = IERC20(tokenAddress_);
         uint256 balance = token.balanceOf(address(this));
         if (balance > 0) {

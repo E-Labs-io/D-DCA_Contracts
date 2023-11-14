@@ -10,6 +10,22 @@
 
 ## Methods
 
+### DistributeFees
+
+```solidity
+function DistributeFees(address tokenAddress) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenAddress | address | undefined |
+
 ### Execute
 
 ```solidity
@@ -43,22 +59,6 @@ function ExecuteBatch(address[] DCAAccount_, uint256[] strategyId_) external non
 |---|---|---|
 | DCAAccount_ | address[] | undefined |
 | strategyId_ | uint256[] | undefined |
-
-### ForceFeeFund
-
-```solidity
-function ForceFeeFund(address tokenAddress) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| tokenAddress | address | undefined |
 
 ### Subscribe
 

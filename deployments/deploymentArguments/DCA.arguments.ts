@@ -1,8 +1,8 @@
 /** @format */
 
 import { AddressLike, Addressable, ZeroAddress } from "ethers";
-import { IDCADataStructures } from "../../types/contracts/contracts/DSAExecutor";
 import { ChainName, tokenAddress } from "../../bin/tokenAddress";
+import { IDCADataStructures } from "~/types/contracts/contracts/DCAExecutor";
 
 export function DCAExecutorArguments(
   deployer: string | Addressable,
@@ -12,7 +12,7 @@ export function DCAExecutorArguments(
     amountToAdmin: 2000, //  20%
     amountToComputing: 4500, //  45%
     amountToExecutor: 3500, //  35%
-    feeAmount: 20, //  0.2%
+    feeAmount: 30, //  0.2%
     executionAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     computingAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     adminAddress: deployer,
@@ -28,7 +28,7 @@ export function DCAAccountArguments(
   networkName: string
 ): any[] {
   const executorAddress_: AddressLike =
-    "0x715fa641F8c82B91ad15C0dC92ea5c32CA5DDDFC";
+    "0xfC73Ad879EB3F30FE58d2794e83BAac9e0717E0D";
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter[networkName as ChainName]!;
 
@@ -68,7 +68,7 @@ export const newStrat = (
     amount: 1000000,
     reinvest: false,
     active: false,
-    revestContract: "0x0000000000000000000000000000000000000000",
+    reinvestCallData: "0x0000000000000000000000000000000000000000",
     strategyId: 0,
   };
 };

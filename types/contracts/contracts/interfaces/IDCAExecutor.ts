@@ -74,9 +74,9 @@ export declare namespace IDCADataStructures {
 export interface IDCAExecutorInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "DistributeFees"
       | "Execute"
       | "ExecuteBatch"
-      | "ForceFeeFund"
       | "Subscribe"
       | "Unsubscribe"
   ): FunctionFragment;
@@ -90,16 +90,16 @@ export interface IDCAExecutorInterface extends Interface {
   ): EventFragment;
 
   encodeFunctionData(
+    functionFragment: "DistributeFees",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "Execute",
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ExecuteBatch",
     values: [AddressLike[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ForceFeeFund",
-    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "Subscribe",
@@ -110,13 +110,13 @@ export interface IDCAExecutorInterface extends Interface {
     values: [IDCADataStructures.StrategyStruct]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DistributeFees",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ExecuteBatch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ForceFeeFund",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "Subscribe", data: BytesLike): Result;
@@ -233,6 +233,12 @@ export interface IDCAExecutor extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  DistributeFees: TypedContractMethod<
+    [tokenAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   Execute: TypedContractMethod<
     [DCAAccount_: AddressLike, strategyId_: BigNumberish],
     [void],
@@ -241,12 +247,6 @@ export interface IDCAExecutor extends BaseContract {
 
   ExecuteBatch: TypedContractMethod<
     [DCAAccount_: AddressLike[], strategyId_: BigNumberish[]],
-    [void],
-    "nonpayable"
-  >;
-
-  ForceFeeFund: TypedContractMethod<
-    [tokenAddress: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -268,6 +268,9 @@ export interface IDCAExecutor extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "DistributeFees"
+  ): TypedContractMethod<[tokenAddress: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "Execute"
   ): TypedContractMethod<
     [DCAAccount_: AddressLike, strategyId_: BigNumberish],
@@ -281,9 +284,6 @@ export interface IDCAExecutor extends BaseContract {
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "ForceFeeFund"
-  ): TypedContractMethod<[tokenAddress: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "Subscribe"
   ): TypedContractMethod<

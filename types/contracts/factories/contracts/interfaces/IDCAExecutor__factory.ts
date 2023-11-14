@@ -95,6 +95,19 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
+    ],
+    name: "DistributeFees",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "DCAAccount_",
         type: "address",
       },
@@ -123,19 +136,6 @@ const _abi = [
       },
     ],
     name: "ExecuteBatch",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address",
-      },
-    ],
-    name: "ForceFeeFund",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
