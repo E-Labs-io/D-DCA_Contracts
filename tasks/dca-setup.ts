@@ -8,7 +8,7 @@ const taskId = "setup-strategy";
 const taskDescription = "Approve, Fund and Setup strategy";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
-  const DCAAccount = "0xB13c80BB18699e88d8df14e401BD73A4Dccb0Fc2";
+  const DCAAccount = "0x319D95543e48Df2d30Ab3731467dF90d67c5E067";
 
   console.log(`🟢 [TASK] ${taskId} : Mounted`);
   console.log(`🟢 [TASK] ${taskId} : Setting Strategy for : `, DCAAccount);
@@ -53,7 +53,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   console.log(`🟢 [TASK] ${taskId} : Account Funded`);
 
   //  Subscribe the strategy
-  const sub = await DCAAccountContract.SubscribeStrategy(0);
+  const sub = await DCAAccountContract.SubscribeStrategy(1);
   await sub.wait();
   console.log(`🟢 [TASK] ${taskId} : Strategy Subscribed`);
 });

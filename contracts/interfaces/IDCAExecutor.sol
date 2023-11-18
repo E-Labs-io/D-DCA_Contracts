@@ -13,6 +13,7 @@ interface IDCAExecutor is IDCADataStructures {
     event DCAAccountSubscription(
         address DCAAccountAddress_,
         uint256 strategyId_,
+        Interval strategyInterval_,
         bool active_
     );
 

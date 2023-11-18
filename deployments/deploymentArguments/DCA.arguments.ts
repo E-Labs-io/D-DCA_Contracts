@@ -64,11 +64,11 @@ export const newStrat = (
       decimals: 18,
       ticker: "WETH",
     },
-    interval: 0,
+    interval: 1,
     amount: 1000000,
     reinvest: false,
     active: false,
     reinvestCallData: "0x0000000000000000000000000000000000000000",
-    strategyId: 0,
+    strategyId: 2,
   };
 };

@@ -100,6 +100,7 @@ export interface DCAAccountInterface extends Interface {
   getEvent(
     nameOrSignatureOrTopic:
       | "DCAExecutorChanged"
+      | "NewStrategyCreated"
       | "OwnershipTransferred"
       | "StrategyExecuted"
       | "StrategySubscribed"
@@ -270,6 +271,18 @@ export namespace DCAExecutorChangedEvent {
   export type OutputTuple = [newAddress_: string];
   export interface OutputObject {
     newAddress_: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace NewStrategyCreatedEvent {
+  export type InputTuple = [strategyId_: BigNumberish];
+  export type OutputTuple = [strategyId_: bigint];
+  export interface OutputObject {
+    strategyId_: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -606,6 +619,13 @@ export interface DCAAccount extends BaseContract {
     DCAExecutorChangedEvent.OutputObject
   >;
   getEvent(
+    key: "NewStrategyCreated"
+  ): TypedContractEvent<
+    NewStrategyCreatedEvent.InputTuple,
+    NewStrategyCreatedEvent.OutputTuple,
+    NewStrategyCreatedEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -644,6 +664,17 @@ export interface DCAAccount extends BaseContract {
       DCAExecutorChangedEvent.InputTuple,
       DCAExecutorChangedEvent.OutputTuple,
       DCAExecutorChangedEvent.OutputObject
+    >;
+
+    "NewStrategyCreated(uint256)": TypedContractEvent<
+      NewStrategyCreatedEvent.InputTuple,
+      NewStrategyCreatedEvent.OutputTuple,
+      NewStrategyCreatedEvent.OutputObject
+    >;
+    NewStrategyCreated: TypedContractEvent<
+      NewStrategyCreatedEvent.InputTuple,
+      NewStrategyCreatedEvent.OutputTuple,
+      NewStrategyCreatedEvent.OutputObject
     >;
 
     "OwnershipTransferred(address,address)": TypedContractEvent<

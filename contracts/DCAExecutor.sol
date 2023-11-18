@@ -145,6 +145,7 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         emit DCAAccountSubscription(
             strategy_.accountAddress,
             strategy_.strategyId,
+            strategy_.interval,
             true
         );
     }
@@ -155,6 +156,7 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         emit DCAAccountSubscription(
             strategy_.accountAddress,
             strategy_.strategyId,
+            strategy_.interval,
             false
         );
     }

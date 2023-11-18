@@ -1,5 +1,135 @@
 [
   {
+    "timestamp": "14/11/23, 14:33:01",
+    "contractName": "DCAFactory",
+    "contractAddress": "0x6f018Bd7026cA269b30b4D64829E45bbC590e32E",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 14:32:10",
+    "contractName": "DCAAccount",
+    "contractAddress": "0xdd93d3D782116d28aa8ccF01FDA443D7B3cc47CB",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 14:31:12",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x6f08c03C0724A6c08b116b3479Afa293B6253E46",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:46:43",
+    "contractName": "DCAFactory",
+    "contractAddress": "0xfAc89743025f68D857c089b3c11101C9763e8912",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:45:48",
+    "contractName": "DCAAccount",
+    "contractAddress": "0xC37d23C852D22e400c835774293Cdb8F7aa239A1",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:44:54",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x9aE3e5cbb6A31e4963a5d0de08Cc03C134792456",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:39:43",
+    "contractName": "DCAFactory",
+    "contractAddress": "0x7c4d2d452F76c3632a7ab727bbfcB23E77E30940",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:38:53",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x1E05B11a8802c794878890d50383C925feFFe5bA",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:37:19",
+    "contractName": "DCAFactory",
+    "contractAddress": "0x95B4642767298C62426Dac224aE3c10F657d6d82",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:36:30",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x8506c7c781D0db7aDF05881d23C83f856F7c8113",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:22:47",
+    "contractName": "DCAFactory",
+    "contractAddress": "0xE0cF5C9C1E6EE099d29aAbB79B2bb275fE29BAa2",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:21:55",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x85Be3Dbe3E9601436A6bf0cC88FdF1ebf48DACb1",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "14/11/23, 00:16:35",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x95ed29026aB872dec7f97bD2C15DA72af80b4A8b",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
     "timestamp": "13/11/23, 23:45:02",
     "contractName": "DCAFactory",
     "contractAddress": "0x33fa40D7B6776DB799c0a394f3efB6E2CC7d6604",

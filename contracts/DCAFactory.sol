@@ -5,7 +5,7 @@ import "./DCAAccount.sol";
 
 contract DCAFactory {
     // Event to emit when a new DCAAccount is created.
-    event DCAAccountCreated(address indexed owner, address dcaAccount);
+    event DCAAccountCreated(address indexed owner, address indexed dcaAccount);
 
     // Mapping to keep track of accounts created by each user.
     mapping(address => address[]) public userDCAAccounts;

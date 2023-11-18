@@ -113,6 +113,9 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         if (seedFunds_ > 0)
             FundAccount(newStrategy_.baseToken.tokenAddress, seedFunds_);
         if (subscribeToExecutor_) _subscribeToExecutor(newStrategy_);
+
+        emit NewStrategyCreated(_strategyCount);
+
         _strategyCount++;
     }
 
@@ -121,9 +124,14 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     ) external override onlyOwner {
         //Add the given strategy, once checking there are funds
         //to the default DCAExecutor
+
+        Strategy memory givenStrategy = _strategies[strategyId_];
+        require(!givenStrategy.active, "Strategy is already Subscribed");
+
         require(
-            !_strategies[strategyId_].active,
-            "Strategy is already Subscribed"
+            _baseBalances[givenStrategy.baseToken.tokenAddress] >=
+                (givenStrategy.amount * 5),
+            "Need to have 5 executions funded to subscribe"
         );
         _subscribeToExecutor(_strategies[strategyId_]);
     }

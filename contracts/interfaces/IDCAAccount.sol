@@ -14,9 +14,13 @@ interface IDCAAccount is IDCADataStructures {
         uint256 indexed amountIn_,
         bool reInvest_
     );
-    event DCAExecutorChanged(address newAddress_);
-    event StrategySubscribed(uint256 strategyId_, address executor_);
-    event StrategyUnsubscribed(uint256 strategyId_);
+    event DCAExecutorChanged(address indexed newAddress_);
+    event StrategySubscribed(
+        uint256 indexed strategyId_,
+        address indexed executor_
+    );
+    event StrategyUnsubscribed(uint256 indexed strategyId_);
+    event NewStrategyCreated(uint256 indexed strategyId_);
 
     function Execute(uint256 strategyId_, uint16 feeAmount_) external;
 
