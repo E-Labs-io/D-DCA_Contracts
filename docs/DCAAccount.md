@@ -13,7 +13,7 @@
 ### Execute
 
 ```solidity
-function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable
+function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable returns (bool)
 ```
 
 
@@ -26,6 +26,12 @@ function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable
 |---|---|---|
 | strategyId_ | uint256 | the id of the strategy to execute |
 | feeAmount_ | uint16 | the amount of fee to pay to the executor |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### ExecutorDeactivateStrategy
 
@@ -195,7 +201,7 @@ function IntervalTimings(enum IDCADataStructures.Interval) external view returns
 ### SetStrategyReinvest
 
 ```solidity
-function SetStrategyReinvest(uint256 strategyId_, bool activate_, bytes callData_) external nonpayable
+function SetStrategyReinvest(uint256 strategyId_, IDCADataStructures.Reinvest reinvest_) external nonpayable
 ```
 
 
@@ -207,8 +213,7 @@ function SetStrategyReinvest(uint256 strategyId_, bool activate_, bytes callData
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | undefined |
-| activate_ | bool | undefined |
-| callData_ | bytes | undefined |
+| reinvest_ | IDCADataStructures.Reinvest | undefined |
 
 ### SetupStrategy
 
@@ -243,24 +248,6 @@ function SubscribeStrategy(uint256 strategyId_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | undefined |
-
-### TestSwap
-
-```solidity
-function TestSwap(address baseToken_, address targetToken_, uint256 amount_) external nonpayable
-```
-
-ONLY FOR DEVELOPMENT
-
-*swaps from base token for set amount into any amount of target token*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| baseToken_ | address | {address}  token address of the token to swap from |
-| targetToken_ | address | {address} token address of the token to recieve |
-| amount_ | uint256 | {uint256} amount returned from the swap |
 
 ### UnFundAccount
 
@@ -390,7 +377,7 @@ function transferOwnership(address newOwner) external nonpayable
 ### DCAExecutorChanged
 
 ```solidity
-event DCAExecutorChanged(address newAddress_)
+event DCAExecutorChanged(address indexed newAddress_)
 ```
 
 
@@ -401,7 +388,23 @@ event DCAExecutorChanged(address newAddress_)
 
 | Name | Type | Description |
 |---|---|---|
-| newAddress_  | address | undefined |
+| newAddress_ `indexed` | address | undefined |
+
+### NewStrategyCreated
+
+```solidity
+event NewStrategyCreated(uint256 indexed strategyId_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ `indexed` | uint256 | undefined |
 
 ### OwnershipTransferred
 
@@ -441,7 +444,7 @@ event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_, b
 ### StrategySubscribed
 
 ```solidity
-event StrategySubscribed(uint256 strategyId_, address executor_)
+event StrategySubscribed(uint256 indexed strategyId_, address indexed executor_)
 ```
 
 
@@ -452,13 +455,13 @@ event StrategySubscribed(uint256 strategyId_, address executor_)
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_  | uint256 | undefined |
-| executor_  | address | undefined |
+| strategyId_ `indexed` | uint256 | undefined |
+| executor_ `indexed` | address | undefined |
 
 ### StrategyUnsubscribed
 
 ```solidity
-event StrategyUnsubscribed(uint256 strategyId_)
+event StrategyUnsubscribed(uint256 indexed strategyId_)
 ```
 
 
@@ -469,7 +472,7 @@ event StrategyUnsubscribed(uint256 strategyId_)
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_  | uint256 | undefined |
+| strategyId_ `indexed` | uint256 | undefined |
 
 
 

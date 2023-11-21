@@ -6,7 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 interface IDCADataStructures {
     // Define an enum to represent the interval type
     enum Interval {
-        TestInterval, //Only for development 20blocks
+        TestIntervalOneMin, //Only for development 4 Blocks
+        TestIntervalFiveMins, //Only for development 20 Blocks
         OneDay, // 1 day = 5760 blocks
         TwoDays, // 2 days = 11520 blocks
         OneWeek, // 1 week = 40320 blocks
@@ -34,13 +35,18 @@ interface IDCADataStructures {
         uint256 amount;
         uint256 strategyId;
         bool active;
-        bool reinvest;
-        bytes reinvestCallData;
+        Reinvest reinvest;
     }
 
     struct TokeData {
         address tokenAddress;
         uint8 decimals;
         string ticker;
+    }
+
+    struct Reinvest {
+        bool active;
+        bytes depositReinvestMethod;
+        bytes withdrawReinvestMethod;
     }
 }

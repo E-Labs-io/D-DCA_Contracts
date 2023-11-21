@@ -22,7 +22,10 @@ interface IDCAAccount is IDCADataStructures {
     event StrategyUnsubscribed(uint256 indexed strategyId_);
     event NewStrategyCreated(uint256 indexed strategyId_);
 
-    function Execute(uint256 strategyId_, uint16 feeAmount_) external;
+    function Execute(
+        uint256 strategyId_,
+        uint16 feeAmount_
+    ) external returns (bool);
 
     function SetupStrategy(
         Strategy calldata newStrategy_,
@@ -32,7 +35,7 @@ interface IDCAAccount is IDCADataStructures {
 
     function SubscribeStrategy(uint256 strategyId_) external;
 
-    function UnsubscribeStrategy(uint256 stratogyId) external;
+    function UnsubscribeStrategy(uint256 strategyId_) external;
 
     function FundAccount(address token_, uint256 amount_) external;
 
@@ -44,9 +47,10 @@ interface IDCAAccount is IDCADataStructures {
 
     function WithdrawSavings(address token_, uint256 amount_) external;
 
+    function ExecutorDeactivateStrategy(uint256 strategyId_) external;
+
     function SetStrategyReinvest(
         uint256 strategyId_,
-        bool activate_,
-        bytes memory callData_
+        Reinvest memory reinvest_
     ) external;
 }

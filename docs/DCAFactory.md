@@ -73,7 +73,7 @@ function userDCAAccounts(address, uint256) external view returns (address)
 ### DCAAccountCreated
 
 ```solidity
-event DCAAccountCreated(address indexed owner, address dcaAccount)
+event DCAAccountCreated(address indexed owner, address indexed dcaAccount)
 ```
 
 
@@ -85,7 +85,7 @@ event DCAAccountCreated(address indexed owner, address dcaAccount)
 | Name | Type | Description |
 |---|---|---|
 | owner `indexed` | address | undefined |
-| dcaAccount  | address | undefined |
+| dcaAccount `indexed` | address | undefined |
 
 
 

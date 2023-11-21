@@ -24,6 +24,22 @@ import type {
 } from "../../common";
 
 export declare namespace IDCADataStructures {
+  export type ReinvestStruct = {
+    active: boolean;
+    depositReinvestMethod: BytesLike;
+    withdrawReinvestMethod: BytesLike;
+  };
+
+  export type ReinvestStructOutput = [
+    active: boolean,
+    depositReinvestMethod: string,
+    withdrawReinvestMethod: string
+  ] & {
+    active: boolean;
+    depositReinvestMethod: string;
+    withdrawReinvestMethod: string;
+  };
+
   export type TokeDataStruct = {
     tokenAddress: AddressLike;
     decimals: BigNumberish;
@@ -44,8 +60,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: boolean;
-    reinvestCallData: BytesLike;
+    reinvest: IDCADataStructures.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -56,8 +71,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: boolean,
-    reinvestCallData: string
+    reinvest: IDCADataStructures.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -66,8 +80,7 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: boolean;
-    reinvestCallData: string;
+    reinvest: IDCADataStructures.ReinvestStructOutput;
   };
 }
 
@@ -75,6 +88,7 @@ export interface IDCAAccountInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "Execute"
+      | "ExecutorDeactivateStrategy"
       | "FundAccount"
       | "GetBaseBalance"
       | "GetTargetBalance"
@@ -100,6 +114,10 @@ export interface IDCAAccountInterface extends Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "ExecutorDeactivateStrategy",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "FundAccount",
     values: [AddressLike, BigNumberish]
   ): string;
@@ -113,7 +131,7 @@ export interface IDCAAccountInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "SetStrategyReinvest",
-    values: [BigNumberish, boolean, BytesLike]
+    values: [BigNumberish, IDCADataStructures.ReinvestStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "SetupStrategy",
@@ -137,6 +155,10 @@ export interface IDCAAccountInterface extends Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ExecutorDeactivateStrategy",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "FundAccount",
     data: BytesLike
@@ -291,6 +313,12 @@ export interface IDCAAccount extends BaseContract {
 
   Execute: TypedContractMethod<
     [strategyId_: BigNumberish, feeAmount_: BigNumberish],
+    [boolean],
+    "nonpayable"
+  >;
+
+  ExecutorDeactivateStrategy: TypedContractMethod<
+    [strategyId_: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -314,7 +342,7 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   SetStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
+    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -342,7 +370,7 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   UnsubscribeStrategy: TypedContractMethod<
-    [stratogyId: BigNumberish],
+    [strategyId_: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -361,9 +389,12 @@ export interface IDCAAccount extends BaseContract {
     nameOrSignature: "Execute"
   ): TypedContractMethod<
     [strategyId_: BigNumberish, feeAmount_: BigNumberish],
-    [void],
+    [boolean],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "ExecutorDeactivateStrategy"
+  ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "FundAccount"
   ): TypedContractMethod<
@@ -380,7 +411,7 @@ export interface IDCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "SetStrategyReinvest"
   ): TypedContractMethod<
-    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
+    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -407,7 +438,7 @@ export interface IDCAAccount extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "UnsubscribeStrategy"
-  ): TypedContractMethod<[stratogyId: BigNumberish], [void], "nonpayable">;
+  ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "WithdrawSavings"
   ): TypedContractMethod<

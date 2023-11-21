@@ -106,6 +106,25 @@ const _abi = [
       },
     ],
     name: "Execute",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+    ],
+    name: "ExecutorDeactivateStrategy",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -174,14 +193,26 @@ const _abi = [
         type: "uint256",
       },
       {
-        internalType: "bool",
-        name: "activate_",
-        type: "bool",
-      },
-      {
-        internalType: "bytes",
-        name: "callData_",
-        type: "bytes",
+        components: [
+          {
+            internalType: "bool",
+            name: "active",
+            type: "bool",
+          },
+          {
+            internalType: "bytes",
+            name: "depositReinvestMethod",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes",
+            name: "withdrawReinvestMethod",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct IDCADataStructures.Reinvest",
+        name: "reinvest_",
+        type: "tuple",
       },
     ],
     name: "SetStrategyReinvest",
@@ -263,14 +294,26 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "bool",
+            components: [
+              {
+                internalType: "bool",
+                name: "active",
+                type: "bool",
+              },
+              {
+                internalType: "bytes",
+                name: "depositReinvestMethod",
+                type: "bytes",
+              },
+              {
+                internalType: "bytes",
+                name: "withdrawReinvestMethod",
+                type: "bytes",
+              },
+            ],
+            internalType: "struct IDCADataStructures.Reinvest",
             name: "reinvest",
-            type: "bool",
-          },
-          {
-            internalType: "bytes",
-            name: "reinvestCallData",
-            type: "bytes",
+            type: "tuple",
           },
         ],
         internalType: "struct IDCADataStructures.Strategy",
@@ -328,7 +371,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "stratogyId",
+        name: "strategyId_",
         type: "uint256",
       },
     ],

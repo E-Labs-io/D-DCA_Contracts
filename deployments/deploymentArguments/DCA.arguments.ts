@@ -65,10 +65,13 @@ export const newStrat = (
       ticker: "WETH",
     },
     interval: 1,
-    amount: 1000000,
-    reinvest: false,
+    amount: 10000000,
+    reinvest: {
+      active: false,
+      depositReinvestMethod: "0x0000000000000000000000000000000000000000",
+      withdrawReinvestMethod: "0x0000000000000000000000000000000000000000",
+    },
     active: false,
-    reinvestCallData: "0x0000000000000000000000000000000000000000",
-    strategyId: 2,
+    strategyId: 3,
   };
 };

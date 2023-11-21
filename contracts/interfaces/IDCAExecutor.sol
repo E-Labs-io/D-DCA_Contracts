@@ -11,10 +11,10 @@ interface IDCAExecutor is IDCADataStructures {
     event ExecutedDCA(address indexed account_, uint256 indexed strategyId_);
 
     event DCAAccountSubscription(
-        address DCAAccountAddress_,
-        uint256 strategyId_,
+        address indexed DCAAccountAddress_,
+        uint256 indexed strategyId_,
         Interval strategyInterval_,
-        bool active_
+        bool indexed active_
     );
 
     event FeesDistributed(address indexed token_, uint256 indexed amount_);
@@ -24,7 +24,8 @@ interface IDCAExecutor is IDCADataStructures {
     ) external returns (bool sucsess);
 
     function Unsubscribe(
-        Strategy calldata strategy_
+        address DCAAccountAddress_,
+        uint256 strategyId_
     ) external returns (bool sucsess);
 
     function Execute(address DCAAccount_, uint256 strategyId_) external;
@@ -35,4 +36,9 @@ interface IDCAExecutor is IDCADataStructures {
     ) external;
 
     function DistributeFees(address tokenAddress) external;
+
+    function ForceUnsubscribe(
+        address DCAAccount_,
+        uint256 strategyId_
+    ) external;
 }

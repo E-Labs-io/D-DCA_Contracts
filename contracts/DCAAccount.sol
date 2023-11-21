@@ -40,11 +40,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         _changeDefaultExecutor(IDCAExecutor(executorAddress_));
         SWAP_ROUTER = ISwapRouter(swapRouter_);
 
-        IntervalTimings[Interval.TestInterval] = 20;
-        IntervalTimings[Interval.OneDay] = 5760;
-        IntervalTimings[Interval.TwoDays] = 11520;
-        IntervalTimings[Interval.OneWeek] = 40320;
-        IntervalTimings[Interval.OneMonth] = 172800;
+        _setIntervalBlockAmounts();
     }
 
     modifier inWindow(uint256 strategyId_) {
@@ -58,23 +54,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     }
 
     /**
-     * @dev swaps from base token for set amount into any amount of target token
-     * @notice ONLY FOR DEVELOPMENT
-     * @param baseToken_ {address}  token address of the token to swap from
-     * @param targetToken_ {address} token address of the token to recieve
-     * @param amount_ {uint256} amount returned from the swap
-     */
-
-    function TestSwap(
-        address baseToken_,
-        address targetToken_,
-        uint256 amount_
-    ) external onlyOwner {
-        _approveSwapSpend(baseToken_, amount_);
-        _swap(baseToken_, targetToken_, amount_);
-    }
-
-    /**
      * @dev Executes the given strategy with the given fee amount.
      *      Can only be done by the executor.
      * @param strategyId_ the id of the strategy to execute
@@ -84,9 +63,11 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     function Execute(
         uint256 strategyId_,
         uint16 feeAmount_
-    ) external override onlyExecutor inWindow(strategyId_) {
+    ) external override onlyExecutor inWindow(strategyId_) returns (bool) {
         require(_strategies[strategyId_].active, "Strategy is not active");
-        _executeDCATrade(strategyId_, feeAmount_);
+        bool success = _executeDCATrade(strategyId_, feeAmount_);
+
+        return success;
     }
 
     /**
@@ -115,8 +96,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         if (subscribeToExecutor_) _subscribeToExecutor(newStrategy_);
 
         emit NewStrategyCreated(_strategyCount);
-
-        _strategyCount++;
     }
 
     function SubscribeStrategy(
@@ -149,7 +128,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function ExecutorDeactivateStrategy(
         uint256 strategyId_
-    ) external onlyExecutor {
+    ) external override onlyExecutor {
         Strategy memory oldStrategy = _strategies[strategyId_];
         _costPerBlock[
             oldStrategy.baseToken.tokenAddress
@@ -188,15 +167,9 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function SetStrategyReinvest(
         uint256 strategyId_,
-        bool activate_,
-        bytes memory callData_
+        Reinvest memory reinvest_
     ) external override {
-        if (activate_) {
-            _strategies[strategyId_].reinvest = true;
-            _strategies[strategyId_].reinvestCallData = callData_;
-        } else {
-            _strategies[strategyId_].reinvest = false;
-        }
+        _strategies[strategyId_].reinvest = reinvest_;
     }
 
     function GetBaseTokenCostPerBlock(
@@ -230,7 +203,10 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     }
 
     // Internal & Private functions
-    function _executeDCATrade(uint256 strategyId_, uint16 feeAmount_) internal {
+    function _executeDCATrade(
+        uint256 strategyId_,
+        uint16 feeAmount_
+    ) internal returns (bool) {
         //Example of how this might work using Uniswap
         //Get the stragegy
         Strategy memory selectedStrat = _strategies[strategyId_];
@@ -264,22 +240,32 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
         //  Make the swap on uniswap
         amountIn = _swap(baseToken, targetToken, tradeAmount);
+        if (amountIn > 0) {
+            //  Check if there is a reinvest
+            //  Execute the reinvest
+            if (selectedStrat.reinvest.active) {
+                _executeReinvest(
+                    selectedStrat.reinvest,
+                    selectedStrat.targetToken.tokenAddress,
+                    amountIn
+                );
+            }
 
-        //  Check if there is a reinvest
-        //  Execute the reinvest
-        if (selectedStrat.reinvest) {
-            _executeReinvest(selectedStrat.reinvestCallData, amountIn);
-        }
+            //  Update some tracking metrics
+            //  Update balance & time track
+            _targetBalances[targetToken] += amountIn;
+            _baseBalances[baseToken] -= selectedStrat.amount;
 
-        //  Update some tracking metrics
-        //  Update balance & time track
-        _targetBalances[targetToken] += amountIn;
-        _baseBalances[baseToken] -= selectedStrat.amount;
+            _lastExecution[selectedStrat.strategyId] = block.timestamp;
+            _totalIntervalsExecuted += 1;
 
-        _lastExecution[selectedStrat.strategyId] = block.timestamp;
-        _totalIntervalsExecuted += 1;
-
-        emit StrategyExecuted(strategyId_, amountIn, selectedStrat.reinvest);
+            emit StrategyExecuted(
+                strategyId_,
+                amountIn,
+                selectedStrat.reinvest.active
+            );
+            return true;
+        } else return false;
     }
 
     function _subscribeToExecutor(Strategy memory newStrategy_) private {
@@ -302,7 +288,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
             oldStrategy.baseToken.tokenAddress
         ] -= _calculateCostPerBlock(oldStrategy.amount, oldStrategy.interval);
 
-        _executorAddress.Unsubscribe(oldStrategy);
+        _executorAddress.Unsubscribe(address(this), strategyId_);
         _strategies[oldStrategy.strategyId].active = false;
         _totalActiveStrategies -= 1;
         emit StrategyUnsubscribed(oldStrategy.strategyId);
@@ -411,10 +397,30 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     }
 
     function _executeReinvest(
-        bytes memory callData_,
+        Reinvest memory reinvest_,
+        address targetTokenAddress_,
         uint256 amount_
     ) internal {
-        // Decode and execute the callData
+        // Decode and execute the reinvest deposit function
         // Ensure safety checks and validations
+        // Approve reinvester contract to spend
+    }
+
+    function _withdrawReinvest(
+        Reinvest memory reinvestm,
+        address targetTokenAddress_,
+        uint256 amount_
+    ) internal {
+        // Decode and execute the reinvest withdraw function
+    }
+
+    function _setIntervalBlockAmounts() internal {
+        //  Set the interval block amounts
+        IntervalTimings[Interval.TestIntervalOneMin] = 4;
+        IntervalTimings[Interval.TestIntervalFiveMins] = 20;
+        IntervalTimings[Interval.OneDay] = 5760;
+        IntervalTimings[Interval.TwoDays] = 11520;
+        IntervalTimings[Interval.OneWeek] = 40320;
+        IntervalTimings[Interval.OneMonth] = 172800;
     }
 }

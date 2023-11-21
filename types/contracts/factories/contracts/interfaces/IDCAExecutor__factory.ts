@@ -13,19 +13,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
         name: "DCAAccountAddress_",
         type: "address",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint256",
         name: "strategyId_",
         type: "uint256",
       },
       {
         indexed: false,
+        internalType: "enum IDCADataStructures.Interval",
+        name: "strategyInterval_",
+        type: "uint8",
+      },
+      {
+        indexed: true,
         internalType: "bool",
         name: "active_",
         type: "bool",
@@ -143,100 +149,18 @@ const _abi = [
   {
     inputs: [
       {
-        components: [
-          {
-            internalType: "address",
-            name: "accountAddress",
-            type: "address",
-          },
-          {
-            components: [
-              {
-                internalType: "address",
-                name: "tokenAddress",
-                type: "address",
-              },
-              {
-                internalType: "uint8",
-                name: "decimals",
-                type: "uint8",
-              },
-              {
-                internalType: "string",
-                name: "ticker",
-                type: "string",
-              },
-            ],
-            internalType: "struct IDCADataStructures.TokeData",
-            name: "baseToken",
-            type: "tuple",
-          },
-          {
-            components: [
-              {
-                internalType: "address",
-                name: "tokenAddress",
-                type: "address",
-              },
-              {
-                internalType: "uint8",
-                name: "decimals",
-                type: "uint8",
-              },
-              {
-                internalType: "string",
-                name: "ticker",
-                type: "string",
-              },
-            ],
-            internalType: "struct IDCADataStructures.TokeData",
-            name: "targetToken",
-            type: "tuple",
-          },
-          {
-            internalType: "enum IDCADataStructures.Interval",
-            name: "interval",
-            type: "uint8",
-          },
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "strategyId",
-            type: "uint256",
-          },
-          {
-            internalType: "bool",
-            name: "active",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "reinvest",
-            type: "bool",
-          },
-          {
-            internalType: "bytes",
-            name: "reinvestCallData",
-            type: "bytes",
-          },
-        ],
-        internalType: "struct IDCADataStructures.Strategy",
-        name: "strategy_",
-        type: "tuple",
+        internalType: "address",
+        name: "DCAAccount_",
+        type: "address",
       },
-    ],
-    name: "Subscribe",
-    outputs: [
       {
-        internalType: "bool",
-        name: "sucsess",
-        type: "bool",
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
       },
     ],
+    name: "ForceUnsubscribe",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -314,19 +238,55 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "bool",
+            components: [
+              {
+                internalType: "bool",
+                name: "active",
+                type: "bool",
+              },
+              {
+                internalType: "bytes",
+                name: "depositReinvestMethod",
+                type: "bytes",
+              },
+              {
+                internalType: "bytes",
+                name: "withdrawReinvestMethod",
+                type: "bytes",
+              },
+            ],
+            internalType: "struct IDCADataStructures.Reinvest",
             name: "reinvest",
-            type: "bool",
-          },
-          {
-            internalType: "bytes",
-            name: "reinvestCallData",
-            type: "bytes",
+            type: "tuple",
           },
         ],
         internalType: "struct IDCADataStructures.Strategy",
         name: "strategy_",
         type: "tuple",
+      },
+    ],
+    name: "Subscribe",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "sucsess",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "DCAAccountAddress_",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
       },
     ],
     name: "Unsubscribe",

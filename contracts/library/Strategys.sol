@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 library Strategies {
-    uint256 constant ONEMINUTE = 4;
+    uint256 constant ONEMINUTE = 4; // ONLY FOR TESTING
     uint256 constant ONEHOUR = 240;
     uint256 constant ONEDAY = 5760;
     uint256 constant TWODAYS = 11520;

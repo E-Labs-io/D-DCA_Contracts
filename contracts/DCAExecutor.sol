@@ -60,11 +60,12 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     }
 
     function Unsubscribe(
-        Strategy calldata strategy_
+        address DCAAccountAddress_,
+        uint256 strategyId_
     ) external override returns (bool sucsess) {
         //Remove the given stragety from the list
         _totalActiveStrategies--;
-        _unSubscribeAccount(strategy_);
+        _unSubscribeAccount(DCAAccountAddress_, strategyId_);
         return sucsess = true;
     }
 
@@ -78,8 +79,8 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         is_active
         inWindow(DCAAccount_, strategyId_)
     {
-        _singleExecution(DCAAccount_, strategyId_);
-        emit ExecutedDCA(DCAAccount_, strategyId_);
+        bool sucsess = _singleExecution(DCAAccount_, strategyId_);
+        if (sucsess) emit ExecutedDCA(DCAAccount_, strategyId_);
     }
 
     function ExecuteBatch(
@@ -128,6 +129,25 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         }
     }
 
+    function ForceUnsubscribe(
+        address DCAAccount_,
+        uint256 strategyId_
+    ) external onlyAdmins {
+        require(
+            _strategies[DCAAccount_][strategyId_].active,
+            "Executor : Account already unsubscribed"
+        );
+
+        _strategies[DCAAccount_][strategyId_].active = false;
+        IDCAAccount(DCAAccount_).ExecutorDeactivateStrategy(strategyId_);
+        emit DCAAccountSubscription(
+            DCAAccount_,
+            strategyId_,
+            _strategies[DCAAccount_][strategyId_].interval,
+            false
+        );
+    }
+
     function GetTotalActiveStrategys() public view returns (uint256) {
         return _totalActiveStrategies;
     }
@@ -150,13 +170,15 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         );
     }
 
-    function _unSubscribeAccount(Strategy calldata strategy_) private {
-        _strategies[strategy_.accountAddress][strategy_.strategyId]
-            .active = false;
+    function _unSubscribeAccount(
+        address DCAAccountAddress_,
+        uint256 strategyId_
+    ) private {
+        _strategies[DCAAccountAddress_][strategyId_].active = false;
         emit DCAAccountSubscription(
-            strategy_.accountAddress,
-            strategy_.strategyId,
-            strategy_.interval,
+            DCAAccountAddress_,
+            strategyId_,
+            _strategies[DCAAccountAddress_][strategyId_].interval,
             false
         );
     }
@@ -171,17 +193,14 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         address accountAddress_,
         uint256 strategyId_
     ) internal returns (bool) {
-        try
-            IDCAAccount(accountAddress_).Execute(
-                strategyId_,
-                _feeData.feeAmount
-            )
-        {
+        bool sucsess = IDCAAccount(accountAddress_).Execute(
+            strategyId_,
+            _feeData.feeAmount
+        );
+
+        if (sucsess)
             _lastExecution[accountAddress_][strategyId_] = block.timestamp;
-            return true;
-        } catch {
-            return false;
-        }
+        return sucsess;
     }
 
     // Calculates the fee splits based on the provided balance
@@ -210,7 +229,8 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
 
     function _setIntervalBlockAmounts() internal {
         //  Set the interval block amounts
-        IntervalTimings[Interval.TestInterval] = 20;
+        IntervalTimings[Interval.TestIntervalOneMin] = 4;
+        IntervalTimings[Interval.TestIntervalFiveMins] = 20;
         IntervalTimings[Interval.OneDay] = 5760;
         IntervalTimings[Interval.TwoDays] = 11520;
         IntervalTimings[Interval.OneWeek] = 40320;

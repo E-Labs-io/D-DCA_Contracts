@@ -36,6 +36,22 @@ export declare namespace IDCADataStructures {
     ticker: string
   ] & { tokenAddress: string; decimals: bigint; ticker: string };
 
+  export type ReinvestStruct = {
+    active: boolean;
+    depositReinvestMethod: BytesLike;
+    withdrawReinvestMethod: BytesLike;
+  };
+
+  export type ReinvestStructOutput = [
+    active: boolean,
+    depositReinvestMethod: string,
+    withdrawReinvestMethod: string
+  ] & {
+    active: boolean;
+    depositReinvestMethod: string;
+    withdrawReinvestMethod: string;
+  };
+
   export type StrategyStruct = {
     accountAddress: AddressLike;
     baseToken: IDCADataStructures.TokeDataStruct;
@@ -44,8 +60,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: boolean;
-    reinvestCallData: BytesLike;
+    reinvest: IDCADataStructures.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -56,8 +71,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: boolean,
-    reinvestCallData: string
+    reinvest: IDCADataStructures.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -66,8 +80,7 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: boolean;
-    reinvestCallData: string;
+    reinvest: IDCADataStructures.ReinvestStructOutput;
   };
 }
 
@@ -86,7 +99,6 @@ export interface DCAAccountInterface extends Interface {
       | "SetStrategyReinvest"
       | "SetupStrategy"
       | "SubscribeStrategy"
-      | "TestSwap"
       | "UnFundAccount"
       | "UnsubscribeStrategy"
       | "WithdrawSavings"
@@ -145,7 +157,7 @@ export interface DCAAccountInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "SetStrategyReinvest",
-    values: [BigNumberish, boolean, BytesLike]
+    values: [BigNumberish, IDCADataStructures.ReinvestStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "SetupStrategy",
@@ -154,10 +166,6 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "SubscribeStrategy",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "TestSwap",
-    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "UnFundAccount",
@@ -234,7 +242,6 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "SubscribeStrategy",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "TestSwap", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "UnFundAccount",
     data: BytesLike
@@ -395,7 +402,7 @@ export interface DCAAccount extends BaseContract {
 
   Execute: TypedContractMethod<
     [strategyId_: BigNumberish, feeAmount_: BigNumberish],
-    [void],
+    [boolean],
     "nonpayable"
   >;
 
@@ -440,7 +447,7 @@ export interface DCAAccount extends BaseContract {
   IntervalTimings: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
 
   SetStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
+    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -457,12 +464,6 @@ export interface DCAAccount extends BaseContract {
 
   SubscribeStrategy: TypedContractMethod<
     [strategyId_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
-  TestSwap: TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -511,7 +512,7 @@ export interface DCAAccount extends BaseContract {
     nameOrSignature: "Execute"
   ): TypedContractMethod<
     [strategyId_: BigNumberish, feeAmount_: BigNumberish],
-    [void],
+    [boolean],
     "nonpayable"
   >;
   getFunction(
@@ -549,7 +550,7 @@ export interface DCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "SetStrategyReinvest"
   ): TypedContractMethod<
-    [strategyId_: BigNumberish, activate_: boolean, callData_: BytesLike],
+    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -567,13 +568,6 @@ export interface DCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "SubscribeStrategy"
   ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "TestSwap"
-  ): TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "UnFundAccount"
   ): TypedContractMethod<

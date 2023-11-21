@@ -60,6 +60,23 @@ function ExecuteBatch(address[] DCAAccount_, uint256[] strategyId_) external non
 | DCAAccount_ | address[] | undefined |
 | strategyId_ | uint256[] | undefined |
 
+### ForceUnsubscribe
+
+```solidity
+function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| DCAAccount_ | address | undefined |
+| strategyId_ | uint256 | undefined |
+
 ### Subscribe
 
 ```solidity
@@ -85,7 +102,7 @@ function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable re
 ### Unsubscribe
 
 ```solidity
-function Unsubscribe(IDCADataStructures.Strategy strategy_) external nonpayable returns (bool sucsess)
+function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable returns (bool sucsess)
 ```
 
 
@@ -96,7 +113,8 @@ function Unsubscribe(IDCADataStructures.Strategy strategy_) external nonpayable 
 
 | Name | Type | Description |
 |---|---|---|
-| strategy_ | IDCADataStructures.Strategy | undefined |
+| DCAAccountAddress_ | address | undefined |
+| strategyId_ | uint256 | undefined |
 
 #### Returns
 
@@ -111,7 +129,7 @@ function Unsubscribe(IDCADataStructures.Strategy strategy_) external nonpayable 
 ### DCAAccountSubscription
 
 ```solidity
-event DCAAccountSubscription(address DCAAccountAddress_, uint256 strategyId_, bool active_)
+event DCAAccountSubscription(address indexed DCAAccountAddress_, uint256 indexed strategyId_, enum IDCADataStructures.Interval strategyInterval_, bool indexed active_)
 ```
 
 
@@ -122,9 +140,10 @@ event DCAAccountSubscription(address DCAAccountAddress_, uint256 strategyId_, bo
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccountAddress_  | address | undefined |
-| strategyId_  | uint256 | undefined |
-| active_  | bool | undefined |
+| DCAAccountAddress_ `indexed` | address | undefined |
+| strategyId_ `indexed` | uint256 | undefined |
+| strategyInterval_  | enum IDCADataStructures.Interval | undefined |
+| active_ `indexed` | bool | undefined |
 
 ### ExecutedDCA
 

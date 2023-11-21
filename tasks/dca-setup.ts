@@ -8,7 +8,7 @@ const taskId = "setup-strategy";
 const taskDescription = "Approve, Fund and Setup strategy";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
-  const DCAAccount = "0x319D95543e48Df2d30Ab3731467dF90d67c5E067";
+  const DCAAccount = "0xef7028AbF314CAF59Fe400D8B4C0D30F33730161";
 
   console.log(`🟢 [TASK] ${taskId} : Mounted`);
   console.log(`🟢 [TASK] ${taskId} : Setting Strategy for : `, DCAAccount);
@@ -36,24 +36,26 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     DCAAccount,
     owner
   );
-
-  await DCAAccountContract.SetupStrategy(
-    newStrat(DCAAccount, hre.network.name),
-    0,
-    false
-  );
-  console.log(`🟢 [TASK] ${taskId} : New strategy set up`);
+  let go = false;
+  if (go) {
+    await DCAAccountContract.SetupStrategy(
+      newStrat(DCAAccount, hre.network.name),
+      0,
+      false
+    );
+    console.log(`🟢 [TASK] ${taskId} : New strategy set up`);
+  }
 
   //  Fund DCAAccount
   const fund = await DCAAccountContract.FundAccount(
     usdcAddress,
-    hre.ethers.parseUnits("20", 6)
+    hre.ethers.parseUnits("50", 6)
   );
   await fund.wait();
   console.log(`🟢 [TASK] ${taskId} : Account Funded`);
 
   //  Subscribe the strategy
-  const sub = await DCAAccountContract.SubscribeStrategy(1);
+  const sub = await DCAAccountContract.SubscribeStrategy(2);
   await sub.wait();
   console.log(`🟢 [TASK] ${taskId} : Strategy Subscribed`);
 });

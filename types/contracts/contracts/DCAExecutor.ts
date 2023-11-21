@@ -64,6 +64,22 @@ export declare namespace IDCADataStructures {
     ticker: string
   ] & { tokenAddress: string; decimals: bigint; ticker: string };
 
+  export type ReinvestStruct = {
+    active: boolean;
+    depositReinvestMethod: BytesLike;
+    withdrawReinvestMethod: BytesLike;
+  };
+
+  export type ReinvestStructOutput = [
+    active: boolean,
+    depositReinvestMethod: string,
+    withdrawReinvestMethod: string
+  ] & {
+    active: boolean;
+    depositReinvestMethod: string;
+    withdrawReinvestMethod: string;
+  };
+
   export type StrategyStruct = {
     accountAddress: AddressLike;
     baseToken: IDCADataStructures.TokeDataStruct;
@@ -72,8 +88,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: boolean;
-    reinvestCallData: BytesLike;
+    reinvest: IDCADataStructures.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -84,8 +99,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: boolean,
-    reinvestCallData: string
+    reinvest: IDCADataStructures.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -94,8 +108,7 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: boolean;
-    reinvestCallData: string;
+    reinvest: IDCADataStructures.ReinvestStructOutput;
   };
 }
 
@@ -106,6 +119,7 @@ export interface DCAExecutorInterface extends Interface {
       | "DistributeFees"
       | "Execute"
       | "ExecuteBatch"
+      | "ForceUnsubscribe"
       | "GetSpesificStrategy"
       | "GetTotalActiveStrategys"
       | "Subscribe"
@@ -143,6 +157,10 @@ export interface DCAExecutorInterface extends Interface {
     values: [AddressLike[], BigNumberish[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "ForceUnsubscribe",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "GetSpesificStrategy",
     values: [AddressLike, BigNumberish]
   ): string;
@@ -156,7 +174,7 @@ export interface DCAExecutorInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "Unsubscribe",
-    values: [IDCADataStructures.StrategyStruct]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "addAdmin",
@@ -187,6 +205,10 @@ export interface DCAExecutorInterface extends Interface {
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ExecuteBatch",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ForceUnsubscribe",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -222,16 +244,19 @@ export namespace DCAAccountSubscriptionEvent {
   export type InputTuple = [
     DCAAccountAddress_: AddressLike,
     strategyId_: BigNumberish,
+    strategyInterval_: BigNumberish,
     active_: boolean
   ];
   export type OutputTuple = [
     DCAAccountAddress_: string,
     strategyId_: bigint,
+    strategyInterval_: bigint,
     active_: boolean
   ];
   export interface OutputObject {
     DCAAccountAddress_: string;
     strategyId_: bigint;
+    strategyInterval_: bigint;
     active_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -362,6 +387,12 @@ export interface DCAExecutor extends BaseContract {
     "nonpayable"
   >;
 
+  ForceUnsubscribe: TypedContractMethod<
+    [DCAAccount_: AddressLike, strategyId_: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   GetSpesificStrategy: TypedContractMethod<
     [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput],
@@ -377,7 +408,7 @@ export interface DCAExecutor extends BaseContract {
   >;
 
   Unsubscribe: TypedContractMethod<
-    [strategy_: IDCADataStructures.StrategyStruct],
+    [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
     [boolean],
     "nonpayable"
   >;
@@ -425,6 +456,13 @@ export interface DCAExecutor extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "ForceUnsubscribe"
+  ): TypedContractMethod<
+    [DCAAccount_: AddressLike, strategyId_: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "GetSpesificStrategy"
   ): TypedContractMethod<
     [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
@@ -444,7 +482,7 @@ export interface DCAExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "Unsubscribe"
   ): TypedContractMethod<
-    [strategy_: IDCADataStructures.StrategyStruct],
+    [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
     [boolean],
     "nonpayable"
   >;
@@ -501,7 +539,7 @@ export interface DCAExecutor extends BaseContract {
   >;
 
   filters: {
-    "DCAAccountSubscription(address,uint256,bool)": TypedContractEvent<
+    "DCAAccountSubscription(address,uint256,uint8,bool)": TypedContractEvent<
       DCAAccountSubscriptionEvent.InputTuple,
       DCAAccountSubscriptionEvent.OutputTuple,
       DCAAccountSubscriptionEvent.OutputObject
