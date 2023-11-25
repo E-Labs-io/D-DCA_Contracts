@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../library/Reinvest.sol";
 
 interface IDCADataStructures {
     // Define an enum to represent the interval type
+    // Interval enum as you defined
     enum Interval {
-        TestIntervalOneMin, //Only for development 4 Blocks
-        TestIntervalFiveMins, //Only for development 20 Blocks
+        TestIntervalOneMin, //Only for development 4 blocks
+        TestIntervalFiveMins, //Only for development 20 blocks
         OneDay, // 1 day = 5760 blocks
         TwoDays, // 2 days = 11520 blocks
         OneWeek, // 1 week = 40320 blocks
@@ -35,18 +36,12 @@ interface IDCADataStructures {
         uint256 amount;
         uint256 strategyId;
         bool active;
-        Reinvest reinvest;
+        DCAReinvest.Reinvest reinvest;
     }
 
     struct TokeData {
         address tokenAddress;
         uint8 decimals;
         string ticker;
-    }
-
-    struct Reinvest {
-        bool active;
-        bytes depositReinvestMethod;
-        bytes withdrawReinvestMethod;
     }
 }

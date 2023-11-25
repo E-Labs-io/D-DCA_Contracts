@@ -68,16 +68,19 @@ export declare namespace IDCADataStructures {
     active: boolean;
     depositReinvestMethod: BytesLike;
     withdrawReinvestMethod: BytesLike;
+    reinvestSpender: AddressLike;
   };
 
   export type ReinvestStructOutput = [
     active: boolean,
     depositReinvestMethod: string,
-    withdrawReinvestMethod: string
+    withdrawReinvestMethod: string,
+    reinvestSpender: string
   ] & {
     active: boolean;
     depositReinvestMethod: string;
     withdrawReinvestMethod: string;
+    reinvestSpender: string;
   };
 
   export type StrategyStruct = {
@@ -120,11 +123,12 @@ export interface DCAExecutorInterface extends Interface {
       | "Execute"
       | "ExecuteBatch"
       | "ForceUnsubscribe"
-      | "GetSpesificStrategy"
-      | "GetTotalActiveStrategys"
       | "Subscribe"
       | "Unsubscribe"
       | "addAdmin"
+      | "getSpecificStrategy"
+      | "getTotalActiveStrategys"
+      | "getTotalExecutions"
       | "owner"
       | "removeAdmin"
       | "renounceOwnership"
@@ -161,14 +165,6 @@ export interface DCAExecutorInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "GetSpesificStrategy",
-    values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetTotalActiveStrategys",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "Subscribe",
     values: [IDCADataStructures.StrategyStruct]
   ): string;
@@ -179,6 +175,18 @@ export interface DCAExecutorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "addAdmin",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSpecificStrategy",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalActiveStrategys",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalExecutions",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -211,20 +219,24 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "ForceUnsubscribe",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetSpesificStrategy",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetTotalActiveStrategys",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "Subscribe", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "Unsubscribe",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getSpecificStrategy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalActiveStrategys",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalExecutions",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeAdmin",
@@ -393,14 +405,6 @@ export interface DCAExecutor extends BaseContract {
     "nonpayable"
   >;
 
-  GetSpesificStrategy: TypedContractMethod<
-    [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
-    [IDCADataStructures.StrategyStructOutput],
-    "view"
-  >;
-
-  GetTotalActiveStrategys: TypedContractMethod<[], [bigint], "view">;
-
   Subscribe: TypedContractMethod<
     [strategy_: IDCADataStructures.StrategyStruct],
     [boolean],
@@ -414,6 +418,16 @@ export interface DCAExecutor extends BaseContract {
   >;
 
   addAdmin: TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+
+  getSpecificStrategy: TypedContractMethod<
+    [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
+    [IDCADataStructures.StrategyStructOutput],
+    "view"
+  >;
+
+  getTotalActiveStrategys: TypedContractMethod<[], [bigint], "view">;
+
+  getTotalExecutions: TypedContractMethod<[], [bigint], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -463,16 +477,6 @@ export interface DCAExecutor extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "GetSpesificStrategy"
-  ): TypedContractMethod<
-    [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
-    [IDCADataStructures.StrategyStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "GetTotalActiveStrategys"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "Subscribe"
   ): TypedContractMethod<
     [strategy_: IDCADataStructures.StrategyStruct],
@@ -489,6 +493,19 @@ export interface DCAExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "addAdmin"
   ): TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getSpecificStrategy"
+  ): TypedContractMethod<
+    [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
+    [IDCADataStructures.StrategyStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getTotalActiveStrategys"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getTotalExecutions"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

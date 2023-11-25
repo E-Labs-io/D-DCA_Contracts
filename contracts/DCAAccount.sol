@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-pragma experimental ABIEncoderV2;
-
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 
@@ -9,8 +7,12 @@ import "./interfaces/IDCADataStructures.sol";
 import "./interfaces/IDCAAccount.sol";
 import "./interfaces/IDCAExecutor.sol";
 import "./security/onlyExecutor.sol";
+import "./library/Strategys.sol";
 
 contract DCAAccount is OnlyExecutor, IDCAAccount {
+    using Strategies for uint256;
+    using Strategies for Strategy;
+
     mapping(uint256 => Strategy) private _strategies;
 
     mapping(address => uint256) private _baseBalances;
@@ -21,10 +23,9 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     // Mapping of Interval enum to block amounts
     // Should move to a library using constants
-    mapping(Interval => uint256) public IntervalTimings;
 
     IDCAExecutor internal _executorAddress;
-    ISwapRouter immutable SWAP_ROUTER;
+    ISwapRouter private SWAP_ROUTER;
 
     uint24 private _poolFee = 10000;
 
@@ -39,18 +40,21 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     ) OnlyExecutor(executorAddress_) Ownable(owner_) {
         _changeDefaultExecutor(IDCAExecutor(executorAddress_));
         SWAP_ROUTER = ISwapRouter(swapRouter_);
-
-        _setIntervalBlockAmounts();
     }
 
     modifier inWindow(uint256 strategyId_) {
         require(
-            _lastExecution[strategyId_] +
-                IntervalTimings[_strategies[strategyId_].interval] <
-                block.timestamp,
-            "DCA Interval not met"
+            Strategies._isStrategyInWindow(
+                _lastExecution[strategyId_],
+                _strategies[strategyId_].interval
+            ),
+            "DCAAccount : [inWindow] Strategy Interval not met"
         );
         _;
+    }
+
+    function updateSwapAddress(address swapRouter_) public onlyOwner {
+        SWAP_ROUTER = ISwapRouter(swapRouter_);
     }
 
     /**
@@ -64,10 +68,11 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         uint256 strategyId_,
         uint16 feeAmount_
     ) external override onlyExecutor inWindow(strategyId_) returns (bool) {
-        require(_strategies[strategyId_].active, "Strategy is not active");
-        bool success = _executeDCATrade(strategyId_, feeAmount_);
-
-        return success;
+        require(
+            _strategies[strategyId_].active,
+            "DCAAccount : [Execute] Strategy is not active"
+        );
+        return _executeDCATrade(strategyId_, feeAmount_);
     }
 
     /**
@@ -78,22 +83,27 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
      * @param subscribeToExecutor_ Wether to subscribe to the executor at setup
      */
     function SetupStrategy(
-        Strategy memory newStrategy_,
+        IDCADataStructures.Strategy memory newStrategy_,
         uint256 seedFunds_,
         bool subscribeToExecutor_
     ) external override onlyOwner {
+        require(
+            newStrategy_._isValidStrategy(),
+            "DCAAccount : [SetupStrategy] Invalid strategy data"
+        );
+
         _strategyCount++;
-        //Adds a new strategy to the system
-        //Transfers the given amount of the base token to the account
-        //If true subscribes the strategy to the default executor
         newStrategy_.strategyId = _strategyCount;
         newStrategy_.accountAddress = address(this);
         newStrategy_.active = false;
         _strategies[_strategyCount] = newStrategy_;
 
-        if (seedFunds_ > 0)
+        if (seedFunds_ > 0) {
             FundAccount(newStrategy_.baseToken.tokenAddress, seedFunds_);
-        if (subscribeToExecutor_) _subscribeToExecutor(newStrategy_);
+        }
+        if (subscribeToExecutor_) {
+            _subscribeToExecutor(newStrategy_);
+        }
 
         emit NewStrategyCreated(_strategyCount);
     }
@@ -105,12 +115,15 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         //to the default DCAExecutor
 
         Strategy memory givenStrategy = _strategies[strategyId_];
-        require(!givenStrategy.active, "Strategy is already Subscribed");
+        require(
+            !givenStrategy.active,
+            "DCAAccount : [SubscribeStrategy] Strategy is already Subscribed"
+        );
 
         require(
             _baseBalances[givenStrategy.baseToken.tokenAddress] >=
                 (givenStrategy.amount * 5),
-            "Need to have 5 executions funded to subscribe"
+            "DCAAccount : [SubscribeStrategy] Need to have 5 executions funded to subscribe"
         );
         _subscribeToExecutor(_strategies[strategyId_]);
     }
@@ -121,7 +134,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         //remove the given strategy from its active executor
         require(
             _strategies[strategyId_].active,
-            "Strategy is already Unsubscribed"
+            "DCAAccount : [UnsubscribeStrategy] Strategy is already Unsubscribed"
         );
         _unsubscribeToExecutor(strategyId_);
     }
@@ -136,7 +149,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         _strategies[oldStrategy.strategyId].active = false;
         _totalActiveStrategies -= 1;
 
-        emit StrategyUnsubscribed(oldStrategy.strategyId);
+        emit StrategyUnsubscribed(strategyId_);
     }
 
     function FundAccount(
@@ -150,9 +163,12 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function UnFundAccount(address token_, uint256 amount_) public onlyOwner {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
-        require(_baseBalances[token_] >= amount_, "Balance of token to low");
-        IERC20(token_).transfer(msg.sender, amount_);
+        require(
+            _baseBalances[token_] >= amount_,
+            "DCAAccount : [UnFundAccount] Balance of token to low"
+        );
         _baseBalances[token_] -= amount_;
+        IERC20(token_).transfer(msg.sender, amount_);
     }
 
     function WithdrawSavings(
@@ -160,9 +176,12 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         uint256 amount_
     ) external onlyOwner {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
-        require(_targetBalances[token_] >= amount_, "Balance of token to low");
-        IERC20(token_).transfer(msg.sender, amount_);
+        require(
+            _targetBalances[token_] >= amount_,
+            "DCAAccount : [WithdrawSavings] Balance of token to low"
+        );
         _targetBalances[token_] -= amount_;
+        IERC20(token_).transfer(msg.sender, amount_);
     }
 
     function SetStrategyReinvest(
@@ -202,70 +221,66 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         return _strategies[strategyId_];
     }
 
+    function getTimeTillWindow(
+        uint256 strategyId_
+    )
+        public
+        view
+        returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
+    {
+        lastEx = _lastExecution[strategyId_];
+        IDCADataStructures.Interval inter = _strategies[strategyId_].interval;
+
+        secondsLeft = Strategies._secondsLeftTilLWindow(lastEx, inter);
+
+        checkReturn = Strategies._isStrategyInWindow(lastEx, inter);
+
+        return (lastEx, secondsLeft, checkReturn);
+    }
+
     // Internal & Private functions
     function _executeDCATrade(
         uint256 strategyId_,
         uint16 feeAmount_
     ) internal returns (bool) {
-        //Example of how this might work using Uniswap
-        //Get the stragegy
-        Strategy memory selectedStrat = _strategies[strategyId_];
-        address baseToken = selectedStrat.baseToken.tokenAddress;
-        address targetToken = selectedStrat.targetToken.tokenAddress;
-        uint256 feeAmount = 0;
-        uint256 tradeAmount = 0;
-        uint256 amountIn = 0;
-
-        //Check there is the balance
-        require(
-            _baseBalances[baseToken] >= selectedStrat.amount,
-            "Base Balance too low"
-        );
+        Strategy memory strategy = _strategies[strategyId_];
+        uint256 fee = Strategies._calculateFee(strategy.amount, feeAmount_, 18); // Assuming token has 18 decimals
+        uint256 tradeAmount = strategy.amount - fee;
 
         if (feeAmount_ > 0) {
-            //  Work out the fee amounts
-            feeAmount = _calculateFee(
-                selectedStrat.baseToken,
-                selectedStrat.amount,
-                feeAmount_
-            );
-
-            // Transfer the fee to the DCAExecutpr
-            _transferFee(feeAmount, baseToken);
+            _transferFee(fee, strategy.baseToken.tokenAddress);
         }
 
-        tradeAmount = selectedStrat.amount - feeAmount;
+        _approveSwapSpend(strategy.baseToken.tokenAddress, tradeAmount);
+        uint256 amountIn = _swap(
+            strategy.baseToken.tokenAddress,
+            strategy.targetToken.tokenAddress,
+            tradeAmount
+        );
 
-        _approveSwapSpend(baseToken, tradeAmount);
-
-        //  Make the swap on uniswap
-        amountIn = _swap(baseToken, targetToken, tradeAmount);
         if (amountIn > 0) {
-            //  Check if there is a reinvest
-            //  Execute the reinvest
-            if (selectedStrat.reinvest.active) {
+            if (strategy.reinvest.active) {
                 _executeReinvest(
-                    selectedStrat.reinvest,
-                    selectedStrat.targetToken.tokenAddress,
+                    strategy.reinvest,
+                    strategy.targetToken.tokenAddress,
                     amountIn
                 );
             }
 
-            //  Update some tracking metrics
-            //  Update balance & time track
-            _targetBalances[targetToken] += amountIn;
-            _baseBalances[baseToken] -= selectedStrat.amount;
-
-            _lastExecution[selectedStrat.strategyId] = block.timestamp;
-            _totalIntervalsExecuted += 1;
+            _targetBalances[strategy.targetToken.tokenAddress] += amountIn;
+            _baseBalances[strategy.baseToken.tokenAddress] -= strategy.amount;
+            _lastExecution[strategyId_] = block.timestamp;
+            _totalIntervalsExecuted++;
 
             emit StrategyExecuted(
                 strategyId_,
                 amountIn,
-                selectedStrat.reinvest.active
+                strategy.reinvest.active
             );
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     function _subscribeToExecutor(Strategy memory newStrategy_) private {
@@ -290,7 +305,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
         _executorAddress.Unsubscribe(address(this), strategyId_);
         _strategies[oldStrategy.strategyId].active = false;
-        _totalActiveStrategies -= 1;
+        _totalActiveStrategies--;
         emit StrategyUnsubscribed(oldStrategy.strategyId);
     }
 
@@ -307,8 +322,8 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     function _calculateCostPerBlock(
         uint256 amount_,
         Interval interval_
-    ) internal view returns (uint256) {
-        return amount_ / IntervalTimings[interval_];
+    ) internal pure returns (uint256) {
+        return amount_ / Strategies._getIntervalBlockAmount(interval_);
     }
 
     function _calculateFee(
@@ -367,6 +382,18 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         return actualAllowance >= neededAllowance_;
     }
 
+    function SWAP(
+        address baseToken_,
+        address targetToken_,
+        uint256 amount_
+    ) public {
+        bool sucsess = IERC20(baseToken_).approve(
+            address(SWAP_ROUTER),
+            amount_
+        );
+        if (sucsess) _swap(baseToken_, targetToken_, amount_);
+    }
+
     /**
      * @dev swaps from base token for set amount into any amount of target token
      * @param baseToken_ {address}  token address of the token to swap from
@@ -374,7 +401,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
      * @param amount_ {uint256} amount returned from the swap
      * @return {uint256} amount returned by the swap
      */
-
     function _swap(
         address baseToken_,
         address targetToken_,
@@ -412,15 +438,5 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         uint256 amount_
     ) internal {
         // Decode and execute the reinvest withdraw function
-    }
-
-    function _setIntervalBlockAmounts() internal {
-        //  Set the interval block amounts
-        IntervalTimings[Interval.TestIntervalOneMin] = 4;
-        IntervalTimings[Interval.TestIntervalFiveMins] = 20;
-        IntervalTimings[Interval.OneDay] = 5760;
-        IntervalTimings[Interval.TwoDays] = 11520;
-        IntervalTimings[Interval.OneWeek] = 40320;
-        IntervalTimings[Interval.OneMonth] = 172800;
     }
 }

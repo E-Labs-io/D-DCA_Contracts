@@ -176,10 +176,10 @@ function GetTargetBalance(address token_) external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined |
 
-### IntervalTimings
+### SWAP
 
 ```solidity
-function IntervalTimings(enum IDCADataStructures.Interval) external view returns (uint256)
+function SWAP(address baseToken_, address targetToken_, uint256 amount_) external nonpayable
 ```
 
 
@@ -190,13 +190,9 @@ function IntervalTimings(enum IDCADataStructures.Interval) external view returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | enum IDCADataStructures.Interval | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| baseToken_ | address | undefined |
+| targetToken_ | address | undefined |
+| amount_ | uint256 | undefined |
 
 ### SetStrategyReinvest
 
@@ -315,6 +311,30 @@ function changeExecutor(address newExecutorAddress_) external nonpayable
 |---|---|---|
 | newExecutorAddress_ | address | undefined |
 
+### getTimeTillWindow
+
+```solidity
+function getTimeTillWindow(uint256 strategyId_) external view returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| lastEx | uint256 | undefined |
+| secondsLeft | uint256 | undefined |
+| checkReturn | bool | undefined |
+
 ### owner
 
 ```solidity
@@ -369,6 +389,22 @@ function transferOwnership(address newOwner) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | newOwner | address | undefined |
+
+### updateSwapAddress
+
+```solidity
+function updateSwapAddress(address swapRouter_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| swapRouter_ | address | undefined |
 
 
 

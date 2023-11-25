@@ -40,16 +40,19 @@ export declare namespace IDCADataStructures {
     active: boolean;
     depositReinvestMethod: BytesLike;
     withdrawReinvestMethod: BytesLike;
+    reinvestSpender: AddressLike;
   };
 
   export type ReinvestStructOutput = [
     active: boolean,
     depositReinvestMethod: string,
-    withdrawReinvestMethod: string
+    withdrawReinvestMethod: string,
+    reinvestSpender: string
   ] & {
     active: boolean;
     depositReinvestMethod: string;
     withdrawReinvestMethod: string;
+    reinvestSpender: string;
   };
 
   export type StrategyStruct = {

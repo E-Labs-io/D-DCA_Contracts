@@ -254,6 +254,11 @@ const _abi = [
                 name: "withdrawReinvestMethod",
                 type: "bytes",
               },
+              {
+                internalType: "address",
+                name: "reinvestSpender",
+                type: "address",
+              },
             ],
             internalType: "struct IDCADataStructures.Reinvest",
             name: "reinvest",

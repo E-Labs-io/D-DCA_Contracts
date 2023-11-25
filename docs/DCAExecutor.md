@@ -99,10 +99,71 @@ function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external non
 | DCAAccount_ | address | undefined |
 | strategyId_ | uint256 | undefined |
 
-### GetSpesificStrategy
+### Subscribe
 
 ```solidity
-function GetSpesificStrategy(address dcaAccountAddress_, uint256 accountStrategyId_) external view returns (struct IDCADataStructures.Strategy)
+function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable returns (bool success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategy_ | IDCADataStructures.Strategy | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| success | bool | undefined |
+
+### Unsubscribe
+
+```solidity
+function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable returns (bool success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| DCAAccountAddress_ | address | undefined |
+| strategyId_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| success | bool | undefined |
+
+### addAdmin
+
+```solidity
+function addAdmin(address newAdmin_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newAdmin_ | address | undefined |
+
+### getSpecificStrategy
+
+```solidity
+function getSpecificStrategy(address dcaAccountAddress_, uint256 accountStrategyId_) external view returns (struct IDCADataStructures.Strategy)
 ```
 
 
@@ -122,10 +183,10 @@ function GetSpesificStrategy(address dcaAccountAddress_, uint256 accountStrategy
 |---|---|---|
 | _0 | IDCADataStructures.Strategy | undefined |
 
-### GetTotalActiveStrategys
+### getTotalActiveStrategys
 
 ```solidity
-function GetTotalActiveStrategys() external view returns (uint256)
+function getTotalActiveStrategys() external view returns (uint256)
 ```
 
 
@@ -139,66 +200,22 @@ function GetTotalActiveStrategys() external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined |
 
-### Subscribe
+### getTotalExecutions
 
 ```solidity
-function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable returns (bool sucsess)
+function getTotalExecutions() external view returns (uint256)
 ```
 
 
 
 
 
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategy_ | IDCADataStructures.Strategy | undefined |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| sucsess | bool | undefined |
-
-### Unsubscribe
-
-```solidity
-function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable returns (bool sucsess)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| DCAAccountAddress_ | address | undefined |
-| strategyId_ | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| sucsess | bool | undefined |
-
-### addAdmin
-
-```solidity
-function addAdmin(address newAdmin_) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newAdmin_ | address | undefined |
+| _0 | uint256 | undefined |
 
 ### owner
 

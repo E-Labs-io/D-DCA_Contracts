@@ -12,13 +12,13 @@ export function DCAExecutorArguments(
     amountToAdmin: 2000, //  20%
     amountToComputing: 4500, //  45%
     amountToExecutor: 3500, //  35%
-    feeAmount: 30, //  0.2%
+    feeAmount: 30, //  0.3%
     executionAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     computingAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     adminAddress: deployer,
   };
   const executionEOA_: AddressLike =
-    "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1";
+    "0xe272653f2FF11D1F7bd24cdE149a29f4110d03B1";
 
   return [feeDistrobution_, executionEOA_];
 }
@@ -64,14 +64,15 @@ export const newStrat = (
       decimals: 18,
       ticker: "WETH",
     },
-    interval: 1,
+    interval: 0,
     amount: 10000000,
     reinvest: {
       active: false,
       depositReinvestMethod: "0x0000000000000000000000000000000000000000",
       withdrawReinvestMethod: "0x0000000000000000000000000000000000000000",
+      reinvestSpender: "0x0000000000000000000000000000000000000000",
     },
     active: false,
-    strategyId: 3,
+    strategyId: 1,
   };
 };
