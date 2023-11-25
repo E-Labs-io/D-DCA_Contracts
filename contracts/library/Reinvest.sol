@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./Codes.sol";
+
 library DCAReinvest {
+    using ReinvestCodes for uint8;
     struct Reinvest {
         bool active;
         uint256 investCode;
@@ -19,8 +22,11 @@ library DCAReinvest {
     function _executeInvest(
         Reinvest memory reinvestData_,
         address baseToken_,
-        uint256 amount_
-    ) internal returns (uint256) {}
+        uint256 amount_,
+        uint8 code_
+    ) internal returns (uint256) {
+        if (code_ == ReinvestCodes.CUSTOM) {}
+    }
 
     function executeWithdraw(
         Reinvest memory reinvestData_,
