@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "@aave/core-v3": "^1.18.0",
+    "@openzeppelin/contracts-upgradeable": "^5.0.1",
     "hardhat-ethernal": "^3.2.5"
   }
 }
