@@ -36,25 +36,6 @@ export declare namespace IDCADataStructures {
     ticker: string
   ] & { tokenAddress: string; decimals: bigint; ticker: string };
 
-  export type ReinvestStruct = {
-    active: boolean;
-    depositReinvestMethod: BytesLike;
-    withdrawReinvestMethod: BytesLike;
-    reinvestSpender: AddressLike;
-  };
-
-  export type ReinvestStructOutput = [
-    active: boolean,
-    depositReinvestMethod: string,
-    withdrawReinvestMethod: string,
-    reinvestSpender: string
-  ] & {
-    active: boolean;
-    depositReinvestMethod: string;
-    withdrawReinvestMethod: string;
-    reinvestSpender: string;
-  };
-
   export type StrategyStruct = {
     accountAddress: AddressLike;
     baseToken: IDCADataStructures.TokeDataStruct;
@@ -63,7 +44,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: IDCADataStructures.ReinvestStruct;
+    reinvest: DCAReinvest.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -74,7 +55,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: IDCADataStructures.ReinvestStructOutput
+    reinvest: DCAReinvest.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -83,7 +64,31 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: IDCADataStructures.ReinvestStructOutput;
+    reinvest: DCAReinvest.ReinvestStructOutput;
+  };
+}
+
+export declare namespace DCAReinvest {
+  export type ReinvestStruct = {
+    active: boolean;
+    investCode: BigNumberish;
+    depositReinvestMethod: BytesLike;
+    withdrawReinvestMethod: BytesLike;
+    reinvestSpender: AddressLike;
+  };
+
+  export type ReinvestStructOutput = [
+    active: boolean,
+    investCode: bigint,
+    depositReinvestMethod: string,
+    withdrawReinvestMethod: string,
+    reinvestSpender: string
+  ] & {
+    active: boolean;
+    investCode: bigint;
+    depositReinvestMethod: string;
+    withdrawReinvestMethod: string;
+    reinvestSpender: string;
   };
 }
 
@@ -93,23 +98,23 @@ export interface DCAAccountInterface extends Interface {
       | "Execute"
       | "ExecutorDeactivateStrategy"
       | "FundAccount"
-      | "GetBaseBalance"
-      | "GetBaseTokenCostPerBlock"
-      | "GetBaseTokenRemainingBlocks"
-      | "GetStrategyData"
-      | "GetTargetBalance"
       | "SWAP"
-      | "SetStrategyReinvest"
       | "SetupStrategy"
       | "SubscribeStrategy"
       | "UnFundAccount"
       | "UnsubscribeStrategy"
       | "WithdrawSavings"
       | "changeExecutor"
+      | "getBaseBalance"
+      | "getBaseTokenCostPerBlock"
+      | "getBaseTokenRemainingBlocks"
+      | "getStrategyData"
+      | "getTargetBalance"
       | "getTimeTillWindow"
       | "owner"
       | "removeExecutor"
       | "renounceOwnership"
+      | "setStrategyReinvest"
       | "transferOwnership"
       | "updateSwapAddress"
   ): FunctionFragment;
@@ -137,32 +142,8 @@ export interface DCAAccountInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "GetBaseBalance",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetBaseTokenCostPerBlock",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetBaseTokenRemainingBlocks",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetStrategyData",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetTargetBalance",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "SWAP",
     values: [AddressLike, AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "SetStrategyReinvest",
-    values: [BigNumberish, IDCADataStructures.ReinvestStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "SetupStrategy",
@@ -189,6 +170,26 @@ export interface DCAAccountInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getBaseBalance",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBaseTokenCostPerBlock",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBaseTokenRemainingBlocks",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStrategyData",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTargetBalance",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTimeTillWindow",
     values: [BigNumberish]
   ): string;
@@ -200,6 +201,10 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setStrategyReinvest",
+    values: [BigNumberish, DCAReinvest.ReinvestStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -219,31 +224,7 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "FundAccount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetBaseBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetBaseTokenCostPerBlock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetBaseTokenRemainingBlocks",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetStrategyData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetTargetBalance",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "SWAP", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "SetStrategyReinvest",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "SetupStrategy",
     data: BytesLike
@@ -269,6 +250,26 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getBaseBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBaseTokenCostPerBlock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBaseTokenRemainingBlocks",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStrategyData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTargetBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getTimeTillWindow",
     data: BytesLike
   ): Result;
@@ -279,6 +280,10 @@ export interface DCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setStrategyReinvest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -436,40 +441,8 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
-  GetBaseBalance: TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-
-  GetBaseTokenCostPerBlock: TypedContractMethod<
-    [baseToken_: AddressLike],
-    [bigint],
-    "view"
-  >;
-
-  GetBaseTokenRemainingBlocks: TypedContractMethod<
-    [baseToken_: AddressLike],
-    [bigint],
-    "view"
-  >;
-
-  GetStrategyData: TypedContractMethod<
-    [strategyId_: BigNumberish],
-    [IDCADataStructures.StrategyStructOutput],
-    "view"
-  >;
-
-  GetTargetBalance: TypedContractMethod<
-    [token_: AddressLike],
-    [bigint],
-    "view"
-  >;
-
   SWAP: TypedContractMethod<
     [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
-  SetStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -514,6 +487,32 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
+  getBaseBalance: TypedContractMethod<[token_: AddressLike], [bigint], "view">;
+
+  getBaseTokenCostPerBlock: TypedContractMethod<
+    [token_: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  getBaseTokenRemainingBlocks: TypedContractMethod<
+    [token_: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  getStrategyData: TypedContractMethod<
+    [strategyId_: BigNumberish],
+    [IDCADataStructures.StrategyStructOutput],
+    "view"
+  >;
+
+  getTargetBalance: TypedContractMethod<
+    [token_: AddressLike],
+    [bigint],
+    "view"
+  >;
+
   getTimeTillWindow: TypedContractMethod<
     [strategyId_: BigNumberish],
     [
@@ -531,6 +530,12 @@ export interface DCAAccount extends BaseContract {
   removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+
+  setStrategyReinvest: TypedContractMethod<
+    [strategyId_: BigNumberish, reinvest_: DCAReinvest.ReinvestStruct],
+    [void],
+    "nonpayable"
+  >;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -566,35 +571,9 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "GetBaseBalance"
-  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "GetBaseTokenCostPerBlock"
-  ): TypedContractMethod<[baseToken_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "GetBaseTokenRemainingBlocks"
-  ): TypedContractMethod<[baseToken_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "GetStrategyData"
-  ): TypedContractMethod<
-    [strategyId_: BigNumberish],
-    [IDCADataStructures.StrategyStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "GetTargetBalance"
-  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-  getFunction(
     nameOrSignature: "SWAP"
   ): TypedContractMethod<
     [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "SetStrategyReinvest"
-  ): TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -637,6 +616,25 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "getBaseBalance"
+  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getBaseTokenCostPerBlock"
+  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getBaseTokenRemainingBlocks"
+  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getStrategyData"
+  ): TypedContractMethod<
+    [strategyId_: BigNumberish],
+    [IDCADataStructures.StrategyStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getTargetBalance"
+  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
+  getFunction(
     nameOrSignature: "getTimeTillWindow"
   ): TypedContractMethod<
     [strategyId_: BigNumberish],
@@ -658,6 +656,13 @@ export interface DCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setStrategyReinvest"
+  ): TypedContractMethod<
+    [strategyId_: BigNumberish, reinvest_: DCAReinvest.ReinvestStruct],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;

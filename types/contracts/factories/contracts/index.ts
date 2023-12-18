@@ -2,6 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as interfaces from "./interfaces";
+export * as library from "./library";
+export * as protocols from "./protocols";
 export * as security from "./security";
 export { DCAAccount__factory } from "./DCAAccount__factory";
 export { DCAExecutor__factory } from "./DCAExecutor__factory";

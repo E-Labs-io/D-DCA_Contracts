@@ -3,6 +3,10 @@
 /* eslint-disable */
 import type * as interfaces from "./interfaces";
 export type { interfaces };
+import type * as library from "./library";
+export type { library };
+import type * as protocols from "./protocols";
+export type { protocols };
 import type * as security from "./security";
 export type { security };
 export type { DCAAccount } from "./DCAAccount";

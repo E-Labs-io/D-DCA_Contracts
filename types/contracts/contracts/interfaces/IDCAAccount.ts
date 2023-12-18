@@ -24,25 +24,6 @@ import type {
 } from "../../common";
 
 export declare namespace IDCADataStructures {
-  export type ReinvestStruct = {
-    active: boolean;
-    depositReinvestMethod: BytesLike;
-    withdrawReinvestMethod: BytesLike;
-    reinvestSpender: AddressLike;
-  };
-
-  export type ReinvestStructOutput = [
-    active: boolean,
-    depositReinvestMethod: string,
-    withdrawReinvestMethod: string,
-    reinvestSpender: string
-  ] & {
-    active: boolean;
-    depositReinvestMethod: string;
-    withdrawReinvestMethod: string;
-    reinvestSpender: string;
-  };
-
   export type TokeDataStruct = {
     tokenAddress: AddressLike;
     decimals: BigNumberish;
@@ -63,7 +44,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: IDCADataStructures.ReinvestStruct;
+    reinvest: DCAReinvest.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -74,7 +55,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: IDCADataStructures.ReinvestStructOutput
+    reinvest: DCAReinvest.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -83,7 +64,31 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: IDCADataStructures.ReinvestStructOutput;
+    reinvest: DCAReinvest.ReinvestStructOutput;
+  };
+}
+
+export declare namespace DCAReinvest {
+  export type ReinvestStruct = {
+    active: boolean;
+    investCode: BigNumberish;
+    depositReinvestMethod: BytesLike;
+    withdrawReinvestMethod: BytesLike;
+    reinvestSpender: AddressLike;
+  };
+
+  export type ReinvestStructOutput = [
+    active: boolean,
+    investCode: bigint,
+    depositReinvestMethod: string,
+    withdrawReinvestMethod: string,
+    reinvestSpender: string
+  ] & {
+    active: boolean;
+    investCode: bigint;
+    depositReinvestMethod: string;
+    withdrawReinvestMethod: string;
+    reinvestSpender: string;
   };
 }
 
@@ -93,14 +98,14 @@ export interface IDCAAccountInterface extends Interface {
       | "Execute"
       | "ExecutorDeactivateStrategy"
       | "FundAccount"
-      | "GetBaseBalance"
-      | "GetTargetBalance"
-      | "SetStrategyReinvest"
       | "SetupStrategy"
       | "SubscribeStrategy"
       | "UnFundAccount"
       | "UnsubscribeStrategy"
       | "WithdrawSavings"
+      | "getBaseBalance"
+      | "getTargetBalance"
+      | "setStrategyReinvest"
   ): FunctionFragment;
 
   getEvent(
@@ -125,18 +130,6 @@ export interface IDCAAccountInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "GetBaseBalance",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "GetTargetBalance",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "SetStrategyReinvest",
-    values: [BigNumberish, IDCADataStructures.ReinvestStruct]
-  ): string;
-  encodeFunctionData(
     functionFragment: "SetupStrategy",
     values: [IDCADataStructures.StrategyStruct, BigNumberish, boolean]
   ): string;
@@ -156,6 +149,18 @@ export interface IDCAAccountInterface extends Interface {
     functionFragment: "WithdrawSavings",
     values: [AddressLike, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getBaseBalance",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTargetBalance",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setStrategyReinvest",
+    values: [BigNumberish, DCAReinvest.ReinvestStruct]
+  ): string;
 
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
@@ -164,18 +169,6 @@ export interface IDCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "FundAccount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetBaseBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "GetTargetBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "SetStrategyReinvest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -196,6 +189,18 @@ export interface IDCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "WithdrawSavings",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBaseBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTargetBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setStrategyReinvest",
     data: BytesLike
   ): Result;
 }
@@ -332,29 +337,11 @@ export interface IDCAAccount extends BaseContract {
     "nonpayable"
   >;
 
-  GetBaseBalance: TypedContractMethod<
-    [token_: AddressLike],
-    [bigint],
-    "nonpayable"
-  >;
-
-  GetTargetBalance: TypedContractMethod<
-    [token_: AddressLike],
-    [bigint],
-    "nonpayable"
-  >;
-
-  SetStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
-    [void],
-    "nonpayable"
-  >;
-
   SetupStrategy: TypedContractMethod<
     [
       newStrategy_: IDCADataStructures.StrategyStruct,
       seedFunds_: BigNumberish,
-      subscribeToEcecutor_: boolean
+      subscribeToExecutor_: boolean
     ],
     [void],
     "nonpayable"
@@ -384,6 +371,24 @@ export interface IDCAAccount extends BaseContract {
     "nonpayable"
   >;
 
+  getBaseBalance: TypedContractMethod<
+    [token_: AddressLike],
+    [bigint],
+    "nonpayable"
+  >;
+
+  getTargetBalance: TypedContractMethod<
+    [token_: AddressLike],
+    [bigint],
+    "nonpayable"
+  >;
+
+  setStrategyReinvest: TypedContractMethod<
+    [strategyId_: BigNumberish, reinvest_: DCAReinvest.ReinvestStruct],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -406,25 +411,12 @@ export interface IDCAAccount extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "GetBaseBalance"
-  ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
-  getFunction(
-    nameOrSignature: "GetTargetBalance"
-  ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
-  getFunction(
-    nameOrSignature: "SetStrategyReinvest"
-  ): TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
     nameOrSignature: "SetupStrategy"
   ): TypedContractMethod<
     [
       newStrategy_: IDCADataStructures.StrategyStruct,
       seedFunds_: BigNumberish,
-      subscribeToEcecutor_: boolean
+      subscribeToExecutor_: boolean
     ],
     [void],
     "nonpayable"
@@ -446,6 +438,19 @@ export interface IDCAAccount extends BaseContract {
     nameOrSignature: "WithdrawSavings"
   ): TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "getBaseBalance"
+  ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getTargetBalance"
+  ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setStrategyReinvest"
+  ): TypedContractMethod<
+    [strategyId_: BigNumberish, reinvest_: DCAReinvest.ReinvestStruct],
     [void],
     "nonpayable"
   >;

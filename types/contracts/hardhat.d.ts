@@ -50,6 +50,42 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDCAExecutor__factory>;
     getContractFactory(
+      name: "AaveV3Reinvest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AaveV3Reinvest__factory>;
+    getContractFactory(
+      name: "CompoundV3Reinvest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CompoundV3Reinvest__factory>;
+    getContractFactory(
+      name: "CometCore",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CometCore__factory>;
+    getContractFactory(
+      name: "CometExt",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CometExt__factory>;
+    getContractFactory(
+      name: "CometExtInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CometExtInterface__factory>;
+    getContractFactory(
+      name: "CometInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CometInterface__factory>;
+    getContractFactory(
+      name: "CometMainInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CometMainInterface__factory>;
+    getContractFactory(
+      name: "CometMath",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CometMath__factory>;
+    getContractFactory(
+      name: "CometStorage",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CometStorage__factory>;
+    getContractFactory(
       name: "OnlyAdmin",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OnlyAdmin__factory>;
@@ -104,6 +140,51 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IDCAExecutor>;
     getContractAt(
+      name: "AaveV3Reinvest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AaveV3Reinvest>;
+    getContractAt(
+      name: "CompoundV3Reinvest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CompoundV3Reinvest>;
+    getContractAt(
+      name: "CometCore",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CometCore>;
+    getContractAt(
+      name: "CometExt",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CometExt>;
+    getContractAt(
+      name: "CometExtInterface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CometExtInterface>;
+    getContractAt(
+      name: "CometInterface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CometInterface>;
+    getContractAt(
+      name: "CometMainInterface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CometMainInterface>;
+    getContractAt(
+      name: "CometMath",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CometMath>;
+    getContractAt(
+      name: "CometStorage",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CometStorage>;
+    getContractAt(
       name: "OnlyAdmin",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -151,6 +232,42 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDCAExecutor>;
     deployContract(
+      name: "AaveV3Reinvest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AaveV3Reinvest>;
+    deployContract(
+      name: "CompoundV3Reinvest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CompoundV3Reinvest>;
+    deployContract(
+      name: "CometCore",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometCore>;
+    deployContract(
+      name: "CometExt",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometExt>;
+    deployContract(
+      name: "CometExtInterface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometExtInterface>;
+    deployContract(
+      name: "CometInterface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometInterface>;
+    deployContract(
+      name: "CometMainInterface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometMainInterface>;
+    deployContract(
+      name: "CometMath",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometMath>;
+    deployContract(
+      name: "CometStorage",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometStorage>;
+    deployContract(
       name: "OnlyAdmin",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyAdmin>;
@@ -204,6 +321,51 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDCAExecutor>;
+    deployContract(
+      name: "AaveV3Reinvest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AaveV3Reinvest>;
+    deployContract(
+      name: "CompoundV3Reinvest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CompoundV3Reinvest>;
+    deployContract(
+      name: "CometCore",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometCore>;
+    deployContract(
+      name: "CometExt",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometExt>;
+    deployContract(
+      name: "CometExtInterface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometExtInterface>;
+    deployContract(
+      name: "CometInterface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometInterface>;
+    deployContract(
+      name: "CometMainInterface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometMainInterface>;
+    deployContract(
+      name: "CometMath",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometMath>;
+    deployContract(
+      name: "CometStorage",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CometStorage>;
     deployContract(
       name: "OnlyAdmin",
       args: any[],

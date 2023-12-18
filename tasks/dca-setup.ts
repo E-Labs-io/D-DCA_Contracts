@@ -8,7 +8,7 @@ const taskId = "setup-strategy";
 const taskDescription = "Approve, Fund and Setup strategy";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
-  const DCAAccount = "0xEAd1D749f34b391e057f460b42E6c7f7b4beC5c1";
+  const DCAAccount = "0xD629781AFCD5672969F009aed60f6603bdebda22";
 
   console.log(`🟢 [TASK] ${taskId} : Mounted`);
   console.log(`🟢 [TASK] ${taskId} : Setting Strategy for : `, DCAAccount);

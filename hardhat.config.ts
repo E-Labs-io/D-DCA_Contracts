@@ -8,6 +8,7 @@ import "@nomicfoundation/hardhat-verify";
 import "@nomicfoundation/hardhat-ethers";
 import "hardhat-gas-reporter";
 import "tsconfig-paths/register";
+import "hardhat-ethernal";
 
 import "./tasks";
 
@@ -51,6 +52,11 @@ const config: HardhatUserConfig = {
     outputDir: "./docs",
 
     // More options...
+  },
+  ethernal: {
+    apiToken: process.env.ETHERNAL_API_TOKEN,
+    disableSync: false, // If set to true, plugin will not sync blocks & txs
+    disableTrace: false,
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY!,
@@ -131,9 +137,8 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 420,
-      accounts: { mnemonic: devRecovery, initialIndex: 0, count: 5 },
       forking: {
-        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+        url: `https://arb1.arbitrum.io/rpc`,
       },
     },
     baseGoerli: {

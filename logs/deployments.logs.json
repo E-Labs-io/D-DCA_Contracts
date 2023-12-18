@@ -1,5 +1,95 @@
 [
   {
+    "timestamp": "16/12/23, 14:49:14",
+    "contractName": "DCAFactory",
+    "contractAddress": "0x6053cA02DCd3D71B0987b4DC2a39b3dDA04647C7",
+    "deployerAddress": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "network": {
+      "name": "hardhat",
+      "chainId": "420"
+    }
+  },
+  {
+    "timestamp": "16/12/23, 14:49:14",
+    "contractName": "DCAAccount",
+    "contractAddress": "0xD629781AFCD5672969F009aed60f6603bdebda22",
+    "deployerAddress": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "network": {
+      "name": "hardhat",
+      "chainId": "420"
+    }
+  },
+  {
+    "timestamp": "16/12/23, 14:49:13",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x39A41BAaf5cED9245a22fEA1b349D1E658992216",
+    "deployerAddress": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "network": {
+      "name": "hardhat",
+      "chainId": "420"
+    }
+  },
+  {
+    "timestamp": "16/12/23, 14:34:35",
+    "contractName": "DCAFactory",
+    "contractAddress": "0x1605147fD7c125C4Dc87ee14362c683c3fAFCA15",
+    "deployerAddress": "0xeB0f86aF2f65296AaAb68428d6d82009ec0A19F0",
+    "network": {
+      "name": "hardhat",
+      "chainId": "42161"
+    }
+  },
+  {
+    "timestamp": "16/12/23, 14:34:35",
+    "contractName": "DCAAccount",
+    "contractAddress": "0x47cb306CAC5E92be9B56D86E51AE5C862647Df45",
+    "deployerAddress": "0xeB0f86aF2f65296AaAb68428d6d82009ec0A19F0",
+    "network": {
+      "name": "hardhat",
+      "chainId": "42161"
+    }
+  },
+  {
+    "timestamp": "16/12/23, 14:34:35",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x1d9d1305E74F3bee9438e8Cd43A90eD633ac1d4c",
+    "deployerAddress": "0xeB0f86aF2f65296AaAb68428d6d82009ec0A19F0",
+    "network": {
+      "name": "hardhat",
+      "chainId": "42161"
+    }
+  },
+  {
+    "timestamp": "16/12/23, 14:29:04",
+    "contractName": "DCAFactory",
+    "contractAddress": "0x1605147fD7c125C4Dc87ee14362c683c3fAFCA15",
+    "deployerAddress": "0xeB0f86aF2f65296AaAb68428d6d82009ec0A19F0",
+    "network": {
+      "name": "hardhat",
+      "chainId": "42161"
+    }
+  },
+  {
+    "timestamp": "16/12/23, 14:29:04",
+    "contractName": "DCAAccount",
+    "contractAddress": "0x47cb306CAC5E92be9B56D86E51AE5C862647Df45",
+    "deployerAddress": "0xeB0f86aF2f65296AaAb68428d6d82009ec0A19F0",
+    "network": {
+      "name": "hardhat",
+      "chainId": "42161"
+    }
+  },
+  {
+    "timestamp": "16/12/23, 14:29:03",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x1d9d1305E74F3bee9438e8Cd43A90eD633ac1d4c",
+    "deployerAddress": "0xeB0f86aF2f65296AaAb68428d6d82009ec0A19F0",
+    "network": {
+      "name": "hardhat",
+      "chainId": "42161"
+    }
+  },
+  {
     "timestamp": "24/11/23, 12:00:39",
     "contractName": "DCAFactory",
     "contractAddress": "0xaAa34a44B8E4736D62107BB62d24E6D5ce6Be064",

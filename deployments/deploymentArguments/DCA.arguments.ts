@@ -68,6 +68,7 @@ export const newStrat = (
     amount: 10000000,
     reinvest: {
       active: false,
+      investCode: "0x00",
       depositReinvestMethod: "0x0000000000000000000000000000000000000000",
       withdrawReinvestMethod: "0x0000000000000000000000000000000000000000",
       reinvestSpender: "0x0000000000000000000000000000000000000000",

@@ -16,15 +16,15 @@
 function DistributeFees(address tokenAddress) external nonpayable
 ```
 
+Distributes the acuminated fee&#39;s from the DCAExecutor
 
-
-
+*will use the in-contract fee&#39;s data to split the funds and transfer to needed wallets.*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress | address | undefined |
+| tokenAddress | address | {address} Address of the token in the fee&#39;s pool to be distributed |
 
 ### Execute
 
@@ -32,7 +32,7 @@ function DistributeFees(address tokenAddress) external nonpayable
 function Execute(address DCAAccount_, uint256 strategyId_) external nonpayable
 ```
 
-
+Called by the external Executor service wallet only, triggers the specified strategy
 
 
 
@@ -40,8 +40,8 @@ function Execute(address DCAAccount_, uint256 strategyId_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccount_ | address | undefined |
-| strategyId_ | uint256 | undefined |
+| DCAAccount_ | address | {address} Address of the DCAAccount holding the strategy to execute |
+| strategyId_ | uint256 | {uint256} ID of the strategy to execute |
 
 ### ExecuteBatch
 
@@ -49,16 +49,16 @@ function Execute(address DCAAccount_, uint256 strategyId_) external nonpayable
 function ExecuteBatch(address[] DCAAccount_, uint256[] strategyId_) external nonpayable
 ```
 
+Called by the external Executor service wallet only, triggers the specified strategy&#39;s
 
-
-
+*testing for now, will execute a max of 10 strategies at a time*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccount_ | address[] | undefined |
-| strategyId_ | uint256[] | undefined |
+| DCAAccount_ | address[] | {address[]} Address of the DCAAccount holding the strategy to execute |
+| strategyId_ | uint256[] | {uint256[]} ID of the strategy to execute |
 
 ### ForceUnsubscribe
 
@@ -66,7 +66,7 @@ function ExecuteBatch(address[] DCAAccount_, uint256[] strategyId_) external non
 function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external nonpayable
 ```
 
-
+Used by the Executor service to remove a strategy from the DCAExecutor      Used mostly for unfunded and failing accounts.
 
 
 
@@ -74,8 +74,8 @@ function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external non
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccount_ | address | undefined |
-| strategyId_ | uint256 | undefined |
+| DCAAccount_ | address | {address} Address of the DCAAccount to be unsubscribed |
+| strategyId_ | uint256 | {uint256} ID of the strategy to be unsubscribed |
 
 ### Subscribe
 
@@ -105,7 +105,7 @@ function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable re
 function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable returns (bool sucsess)
 ```
 
-
+Called by the DCAAccount to remove itself from the executor
 
 
 
@@ -113,14 +113,14 @@ function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external n
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccountAddress_ | address | undefined |
-| strategyId_ | uint256 | undefined |
+| DCAAccountAddress_ | address | {address} Address of the unsubscribing DCAAccount |
+| strategyId_ | uint256 | {uint256} ID of the strategy being unsubscribed |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| sucsess | bool | undefined |
+| sucsess | bool | {bool} If the unsubscribe completed |
 
 
 
@@ -132,7 +132,7 @@ function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external n
 event DCAAccountSubscription(address indexed DCAAccountAddress_, uint256 indexed strategyId_, enum IDCADataStructures.Interval strategyInterval_, bool indexed active_)
 ```
 
-
+Emitted when a new strategy subscribes or unsubscribes to the executor
 
 
 
@@ -140,10 +140,10 @@ event DCAAccountSubscription(address indexed DCAAccountAddress_, uint256 indexed
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccountAddress_ `indexed` | address | undefined |
-| strategyId_ `indexed` | uint256 | undefined |
-| strategyInterval_  | enum IDCADataStructures.Interval | undefined |
-| active_ `indexed` | bool | undefined |
+| DCAAccountAddress_ `indexed` | address | {address} address of the DCAAccount subscribing |
+| strategyId_ `indexed` | uint256 | {uint256} ID of the strategy to (un-)subscribe |
+| strategyInterval_  | enum IDCADataStructures.Interval | {Interval} Interval state of how ofter to be executed |
+| active_ `indexed` | bool | {bool} wether the strategy is being subscribed (true) or unsubscribed (false) |
 
 ### ExecutedDCA
 
@@ -151,7 +151,7 @@ event DCAAccountSubscription(address indexed DCAAccountAddress_, uint256 indexed
 event ExecutedDCA(address indexed account_, uint256 indexed strategyId_)
 ```
 
-
+Emitted once a strategy has finished executing
 
 
 
@@ -159,8 +159,8 @@ event ExecutedDCA(address indexed account_, uint256 indexed strategyId_)
 
 | Name | Type | Description |
 |---|---|---|
-| account_ `indexed` | address | undefined |
-| strategyId_ `indexed` | uint256 | undefined |
+| account_ `indexed` | address | {address} Address of the DCAAccount |
+| strategyId_ `indexed` | uint256 | {uint256} ID of teh strategy executed |
 
 ### ExecutionEOAAddressChange
 
@@ -168,7 +168,7 @@ event ExecutedDCA(address indexed account_, uint256 indexed strategyId_)
 event ExecutionEOAAddressChange(address indexed newExecutionEOA_, address changer_)
 ```
 
-
+emitted when the default Executor service address is changed
 
 
 
@@ -176,8 +176,8 @@ event ExecutionEOAAddressChange(address indexed newExecutionEOA_, address change
 
 | Name | Type | Description |
 |---|---|---|
-| newExecutionEOA_ `indexed` | address | undefined |
-| changer_  | address | undefined |
+| newExecutionEOA_ `indexed` | address | {address} the new address of the Executor Service EOA or Multi |
+| changer_  | address | {address} address of the wallet implementing change |
 
 ### FeesDistributed
 
@@ -185,7 +185,7 @@ event ExecutionEOAAddressChange(address indexed newExecutionEOA_, address change
 event FeesDistributed(address indexed token_, uint256 indexed amount_)
 ```
 
-
+Emitted each time the protocol fees are distributed
 
 
 
@@ -193,8 +193,8 @@ event FeesDistributed(address indexed token_, uint256 indexed amount_)
 
 | Name | Type | Description |
 |---|---|---|
-| token_ `indexed` | address | undefined |
-| amount_ `indexed` | uint256 | undefined |
+| token_ `indexed` | address | {address} address of the token being distributed |
+| amount_ `indexed` | uint256 | {uint256} amount of the total token distributed |
 
 
 

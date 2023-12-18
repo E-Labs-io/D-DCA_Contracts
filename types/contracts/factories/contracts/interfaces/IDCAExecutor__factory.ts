@@ -245,6 +245,11 @@ const _abi = [
                 type: "bool",
               },
               {
+                internalType: "uint8",
+                name: "investCode",
+                type: "uint8",
+              },
+              {
                 internalType: "bytes",
                 name: "depositReinvestMethod",
                 type: "bytes",
@@ -260,7 +265,7 @@ const _abi = [
                 type: "address",
               },
             ],
-            internalType: "struct IDCADataStructures.Reinvest",
+            internalType: "struct DCAReinvest.Reinvest",
             name: "reinvest",
             type: "tuple",
           },

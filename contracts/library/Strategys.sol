@@ -12,7 +12,7 @@ library Strategies {
     uint256 constant ONEWEEK = 1 weeks;
     uint256 constant ONEMONTH = 4 weeks;
 
-    uint256 constant BLOCK_TIME = 15;
+    uint256 constant BLOCK_TIME = 15 seconds;
 
     /**
      *

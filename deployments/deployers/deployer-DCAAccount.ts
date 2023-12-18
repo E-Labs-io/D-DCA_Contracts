@@ -46,6 +46,12 @@ export default async function deploy({
         deployedContract.target,
         constructorArguments
       );
+    } else {
+      await hre.ethernal.push({
+        name: contractName,
+        address: deployedContract.target as string,
+        workspace: "hardhat",
+      });
     }
 
     return deployedContract.target;

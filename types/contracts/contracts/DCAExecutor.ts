@@ -64,25 +64,6 @@ export declare namespace IDCADataStructures {
     ticker: string
   ] & { tokenAddress: string; decimals: bigint; ticker: string };
 
-  export type ReinvestStruct = {
-    active: boolean;
-    depositReinvestMethod: BytesLike;
-    withdrawReinvestMethod: BytesLike;
-    reinvestSpender: AddressLike;
-  };
-
-  export type ReinvestStructOutput = [
-    active: boolean,
-    depositReinvestMethod: string,
-    withdrawReinvestMethod: string,
-    reinvestSpender: string
-  ] & {
-    active: boolean;
-    depositReinvestMethod: string;
-    withdrawReinvestMethod: string;
-    reinvestSpender: string;
-  };
-
   export type StrategyStruct = {
     accountAddress: AddressLike;
     baseToken: IDCADataStructures.TokeDataStruct;
@@ -91,7 +72,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: IDCADataStructures.ReinvestStruct;
+    reinvest: DCAReinvest.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -102,7 +83,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: IDCADataStructures.ReinvestStructOutput
+    reinvest: DCAReinvest.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -111,7 +92,31 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: IDCADataStructures.ReinvestStructOutput;
+    reinvest: DCAReinvest.ReinvestStructOutput;
+  };
+}
+
+export declare namespace DCAReinvest {
+  export type ReinvestStruct = {
+    active: boolean;
+    investCode: BigNumberish;
+    depositReinvestMethod: BytesLike;
+    withdrawReinvestMethod: BytesLike;
+    reinvestSpender: AddressLike;
+  };
+
+  export type ReinvestStructOutput = [
+    active: boolean,
+    investCode: bigint,
+    depositReinvestMethod: string,
+    withdrawReinvestMethod: string,
+    reinvestSpender: string
+  ] & {
+    active: boolean;
+    investCode: bigint;
+    depositReinvestMethod: string;
+    withdrawReinvestMethod: string;
+    reinvestSpender: string;
   };
 }
 

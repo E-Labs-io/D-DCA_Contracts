@@ -150,84 +150,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "token_",
-        type: "address",
-      },
-    ],
-    name: "GetBaseBalance",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token_",
-        type: "address",
-      },
-    ],
-    name: "GetTargetBalance",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "strategyId_",
-        type: "uint256",
-      },
-      {
-        components: [
-          {
-            internalType: "bool",
-            name: "active",
-            type: "bool",
-          },
-          {
-            internalType: "bytes",
-            name: "depositReinvestMethod",
-            type: "bytes",
-          },
-          {
-            internalType: "bytes",
-            name: "withdrawReinvestMethod",
-            type: "bytes",
-          },
-          {
-            internalType: "address",
-            name: "reinvestSpender",
-            type: "address",
-          },
-        ],
-        internalType: "struct IDCADataStructures.Reinvest",
-        name: "reinvest_",
-        type: "tuple",
-      },
-    ],
-    name: "SetStrategyReinvest",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         components: [
           {
             internalType: "address",
@@ -306,6 +228,11 @@ const _abi = [
                 type: "bool",
               },
               {
+                internalType: "uint8",
+                name: "investCode",
+                type: "uint8",
+              },
+              {
                 internalType: "bytes",
                 name: "depositReinvestMethod",
                 type: "bytes",
@@ -321,7 +248,7 @@ const _abi = [
                 type: "address",
               },
             ],
-            internalType: "struct IDCADataStructures.Reinvest",
+            internalType: "struct DCAReinvest.Reinvest",
             name: "reinvest",
             type: "tuple",
           },
@@ -337,7 +264,7 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "subscribeToEcecutor_",
+        name: "subscribeToExecutor_",
         type: "bool",
       },
     ],
@@ -404,6 +331,89 @@ const _abi = [
       },
     ],
     name: "WithdrawSavings",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token_",
+        type: "address",
+      },
+    ],
+    name: "getBaseBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token_",
+        type: "address",
+      },
+    ],
+    name: "getTargetBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "bool",
+            name: "active",
+            type: "bool",
+          },
+          {
+            internalType: "uint8",
+            name: "investCode",
+            type: "uint8",
+          },
+          {
+            internalType: "bytes",
+            name: "depositReinvestMethod",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes",
+            name: "withdrawReinvestMethod",
+            type: "bytes",
+          },
+          {
+            internalType: "address",
+            name: "reinvestSpender",
+            type: "address",
+          },
+        ],
+        internalType: "struct DCAReinvest.Reinvest",
+        name: "reinvest_",
+        type: "tuple",
+      },
+    ],
+    name: "setStrategyReinvest",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
