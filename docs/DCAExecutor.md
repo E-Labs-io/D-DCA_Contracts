@@ -80,7 +80,7 @@ Used by the Executor service to remove a strategy from the DCAExecutor      Used
 ### Subscribe
 
 ```solidity
-function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable returns (bool success)
+function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable
 ```
 
 
@@ -93,16 +93,10 @@ function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable re
 |---|---|---|
 | strategy_ | IDCADataStructures.Strategy | undefined |
 
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| success | bool | undefined |
-
 ### Unsubscribe
 
 ```solidity
-function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable returns (bool success)
+function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable
 ```
 
 Called by the DCAAccount to remove itself from the executor
@@ -113,14 +107,8 @@ Called by the DCAAccount to remove itself from the executor
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccountAddress_ | address | {address} Address of the unsubscribing DCAAccount |
-| strategyId_ | uint256 | {uint256} ID of the strategy being unsubscribed |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| success | bool | {bool} If the unsubscribe completed |
+| DCAAccountAddress_ | address | Address of the unsubscribing DCAAccount |
+| strategyId_ | uint256 | ID of the strategy being unsubscribed |
 
 ### addAdmin
 
@@ -137,6 +125,22 @@ function addAdmin(address newAdmin_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | newAdmin_ | address | undefined |
+
+### changeExecutor
+
+```solidity
+function changeExecutor(address newExecutorAddress_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newExecutorAddress_ | address | undefined |
 
 ### checkIfAdmin
 
@@ -159,6 +163,23 @@ function checkIfAdmin(address addressToCheck_) external view returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined |
+
+### getExecutorAddress
+
+```solidity
+function getExecutorAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### getSpecificStrategy
 
@@ -249,6 +270,17 @@ function removeAdmin(address oldAdmin_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | oldAdmin_ | address | undefined |
+
+### removeExecutor
+
+```solidity
+function removeExecutor() external nonpayable
+```
+
+
+
+
+
 
 ### renounceOwnership
 
@@ -351,22 +383,6 @@ Emitted each time the protocol fees are distributed
 | token_ `indexed` | address | {address} address of the token being distributed |
 | amount_ `indexed` | uint256 | {uint256} amount of the total token distributed |
 
-### Initialized
-
-```solidity
-event Initialized(uint64 version)
-```
-
-
-
-*Triggered when the contract has been initialized or reinitialized.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| version  | uint64 | undefined |
-
 ### OwnershipTransferred
 
 ```solidity
@@ -387,28 +403,6 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 
 
 ## Errors
-
-### InvalidInitialization
-
-```solidity
-error InvalidInitialization()
-```
-
-
-
-*The contract is already initialized.*
-
-
-### NotInitializing
-
-```solidity
-error NotInitializing()
-```
-
-
-
-*The contract is not initializing.*
-
 
 ### OwnableInvalidOwner
 

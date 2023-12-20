@@ -28,10 +28,25 @@ export interface DCAFactoryInterface extends Interface {
     nameOrSignature:
       | "createDCAAccount"
       | "getDCAAccountsOfUser"
+      | "getFactoryPauseState"
+      | "owner"
+      | "reInvestLogicContract"
+      | "renounceOwnership"
+      | "setFactoryPauseState"
+      | "transferOwnership"
+      | "updateExecutorAddress"
+      | "updateReinvestLibraryAddress"
       | "userDCAAccounts"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "DCAAccountCreated"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "DCAAccountCreated"
+      | "DCAExecutorAddressChanged"
+      | "DCAFactoryPauseStateChange"
+      | "DCAReinvestContractAddressChanged"
+      | "OwnershipTransferred"
+  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "createDCAAccount",
@@ -39,6 +54,35 @@ export interface DCAFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getDCAAccountsOfUser",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFactoryPauseState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "reInvestLogicContract",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFactoryPauseState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateExecutorAddress",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateReinvestLibraryAddress",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -55,6 +99,35 @@ export interface DCAFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getFactoryPauseState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "reInvestLogicContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFactoryPauseState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateExecutorAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateReinvestLibraryAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "userDCAAccounts",
     data: BytesLike
   ): Result;
@@ -66,6 +139,55 @@ export namespace DCAAccountCreatedEvent {
   export interface OutputObject {
     owner: string;
     dcaAccount: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace DCAExecutorAddressChangedEvent {
+  export type InputTuple = [newAddress: AddressLike];
+  export type OutputTuple = [newAddress: string];
+  export interface OutputObject {
+    newAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace DCAFactoryPauseStateChangeEvent {
+  export type InputTuple = [isPaused: boolean];
+  export type OutputTuple = [isPaused: boolean];
+  export interface OutputObject {
+    isPaused: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace DCAReinvestContractAddressChangedEvent {
+  export type InputTuple = [newLibraryAddress: AddressLike];
+  export type OutputTuple = [newLibraryAddress: string];
+  export interface OutputObject {
+    newLibraryAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [previousOwner: string, newOwner: string];
+  export interface OutputObject {
+    previousOwner: string;
+    newOwner: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -124,6 +246,34 @@ export interface DCAFactory extends BaseContract {
     "view"
   >;
 
+  getFactoryPauseState: TypedContractMethod<[], [boolean], "view">;
+
+  owner: TypedContractMethod<[], [string], "view">;
+
+  reInvestLogicContract: TypedContractMethod<[], [string], "view">;
+
+  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+
+  setFactoryPauseState: TypedContractMethod<[], [void], "nonpayable">;
+
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updateExecutorAddress: TypedContractMethod<
+    [_newExecutorAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updateReinvestLibraryAddress: TypedContractMethod<
+    [newAddress_: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   userDCAAccounts: TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
     [string],
@@ -141,6 +291,34 @@ export interface DCAFactory extends BaseContract {
     nameOrSignature: "getDCAAccountsOfUser"
   ): TypedContractMethod<[user: AddressLike], [string[]], "view">;
   getFunction(
+    nameOrSignature: "getFactoryPauseState"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "reInvestLogicContract"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setFactoryPauseState"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateExecutorAddress"
+  ): TypedContractMethod<
+    [_newExecutorAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateReinvestLibraryAddress"
+  ): TypedContractMethod<[newAddress_: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "userDCAAccounts"
   ): TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
@@ -155,6 +333,34 @@ export interface DCAFactory extends BaseContract {
     DCAAccountCreatedEvent.OutputTuple,
     DCAAccountCreatedEvent.OutputObject
   >;
+  getEvent(
+    key: "DCAExecutorAddressChanged"
+  ): TypedContractEvent<
+    DCAExecutorAddressChangedEvent.InputTuple,
+    DCAExecutorAddressChangedEvent.OutputTuple,
+    DCAExecutorAddressChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "DCAFactoryPauseStateChange"
+  ): TypedContractEvent<
+    DCAFactoryPauseStateChangeEvent.InputTuple,
+    DCAFactoryPauseStateChangeEvent.OutputTuple,
+    DCAFactoryPauseStateChangeEvent.OutputObject
+  >;
+  getEvent(
+    key: "DCAReinvestContractAddressChanged"
+  ): TypedContractEvent<
+    DCAReinvestContractAddressChangedEvent.InputTuple,
+    DCAReinvestContractAddressChangedEvent.OutputTuple,
+    DCAReinvestContractAddressChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
 
   filters: {
     "DCAAccountCreated(address,address)": TypedContractEvent<
@@ -166,6 +372,50 @@ export interface DCAFactory extends BaseContract {
       DCAAccountCreatedEvent.InputTuple,
       DCAAccountCreatedEvent.OutputTuple,
       DCAAccountCreatedEvent.OutputObject
+    >;
+
+    "DCAExecutorAddressChanged(address)": TypedContractEvent<
+      DCAExecutorAddressChangedEvent.InputTuple,
+      DCAExecutorAddressChangedEvent.OutputTuple,
+      DCAExecutorAddressChangedEvent.OutputObject
+    >;
+    DCAExecutorAddressChanged: TypedContractEvent<
+      DCAExecutorAddressChangedEvent.InputTuple,
+      DCAExecutorAddressChangedEvent.OutputTuple,
+      DCAExecutorAddressChangedEvent.OutputObject
+    >;
+
+    "DCAFactoryPauseStateChange(bool)": TypedContractEvent<
+      DCAFactoryPauseStateChangeEvent.InputTuple,
+      DCAFactoryPauseStateChangeEvent.OutputTuple,
+      DCAFactoryPauseStateChangeEvent.OutputObject
+    >;
+    DCAFactoryPauseStateChange: TypedContractEvent<
+      DCAFactoryPauseStateChangeEvent.InputTuple,
+      DCAFactoryPauseStateChangeEvent.OutputTuple,
+      DCAFactoryPauseStateChangeEvent.OutputObject
+    >;
+
+    "DCAReinvestContractAddressChanged(address)": TypedContractEvent<
+      DCAReinvestContractAddressChangedEvent.InputTuple,
+      DCAReinvestContractAddressChangedEvent.OutputTuple,
+      DCAReinvestContractAddressChangedEvent.OutputObject
+    >;
+    DCAReinvestContractAddressChanged: TypedContractEvent<
+      DCAReinvestContractAddressChangedEvent.InputTuple,
+      DCAReinvestContractAddressChangedEvent.OutputTuple,
+      DCAReinvestContractAddressChangedEvent.OutputObject
+    >;
+
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
     >;
   };
 }

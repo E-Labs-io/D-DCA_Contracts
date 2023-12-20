@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 import "./IDCADataStructures.sol";
 import "./IDCAExecutor.sol";
-import "../library/Reinvest.sol";
+import "../utils/DCAReinvest.sol";
 
 interface IDCAAccount is IDCADataStructures {
     /**
@@ -42,11 +42,13 @@ interface IDCAAccount is IDCADataStructures {
      */
     event NewStrategyCreated(uint256 indexed strategyId_);
 
+    event DCAReinvestLibraryChanged(address indexed newLibraryAddress);
+
     /**
      * @notice Triggered by the assigned executor to execute the given strategy
      * @param strategyId_ {uint256} Id for the Strategy to be executed
      * @param feeAmount_ (uint16) amount of the strategy amount to be paid via fee (percent)
-     * @return  {bool} If the function was successful
+     * @return If the function was successful
      */
     function Execute(
         uint256 strategyId_,

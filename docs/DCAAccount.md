@@ -118,23 +118,6 @@ function SubscribeStrategy(uint256 strategyId_) external nonpayable
 |---|---|---|
 | strategyId_ | uint256 | {uint256} Id of the strategy to subscribe to an executor |
 
-### UPGRADE_INTERFACE_VERSION
-
-```solidity
-function UPGRADE_INTERFACE_VERSION() external view returns (string)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
-
 ### UnFundAccount
 
 ```solidity
@@ -185,6 +168,22 @@ function WithdrawSavings(address token_, uint256 amount_) external nonpayable
 | token_ | address | {address} The ERC20 token address |
 | amount_ | uint256 | {uint256} Amount of the target token to withdraw |
 
+### changeDCAReinvestLibrary
+
+```solidity
+function changeDCAReinvestLibrary(address newLibraryAddress_) external nonpayable
+```
+
+
+
+*Updates the contract holding the reinvest logic*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newLibraryAddress_ | address | address of the library contract to use |
+
 ### changeExecutor
 
 ```solidity
@@ -200,6 +199,40 @@ function changeExecutor(address newExecutorAddress_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | newExecutorAddress_ | address | undefined |
+
+### getAttachedReinvestLibraryAddress
+
+```solidity
+function getAttachedReinvestLibraryAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+
+### getAttachedReinvestLibraryVersion
+
+```solidity
+function getAttachedReinvestLibraryVersion() external view returns (string)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | string | undefined |
 
 ### getBaseBalance
 
@@ -352,24 +385,6 @@ function getTimeTillWindow(uint256 strategyId_) external view returns (uint256 l
 | secondsLeft | uint256 | {uint256} seconds left timm strategy is in window |
 | checkReturn | bool | {bool} if the strategy is in the window |
 
-### initialize
-
-```solidity
-function initialize(address executorAddress_, address swapRouter_, address owner_) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| executorAddress_ | address | undefined |
-| swapRouter_ | address | undefined |
-| owner_ | address | undefined |
-
 ### owner
 
 ```solidity
@@ -386,23 +401,6 @@ function owner() external view returns (address)
 | Name | Type | Description |
 |---|---|---|
 | _0 | address | undefined |
-
-### proxiableUUID
-
-```solidity
-function proxiableUUID() external view returns (bytes32)
-```
-
-
-
-*Implementation of the ERC1822 {proxiableUUID} function. This returns the storage slot used by the implementation. It is used to validate the implementation&#39;s compatibility when performing an upgrade. IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier.*
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes32 | undefined |
 
 ### removeExecutor
 
@@ -475,23 +473,6 @@ function updateSwapAddress(address swapRouter_) external nonpayable
 |---|---|---|
 | swapRouter_ | address | {address} New address for the Uniswap router |
 
-### upgradeToAndCall
-
-```solidity
-function upgradeToAndCall(address newImplementation, bytes data) external payable
-```
-
-
-
-*Upgrade the implementation of the proxy to `newImplementation`, and subsequently execute the function call encoded in `data`. Calls {_authorizeUpgrade}. Emits an {Upgraded} event.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newImplementation | address | undefined |
-| data | bytes | undefined |
-
 
 
 ## Events
@@ -512,21 +493,21 @@ Emitted when the DCAExecutor contract address is changed
 |---|---|---|
 | newAddress_ `indexed` | address | {address} Address of the Executor contract |
 
-### Initialized
+### DCAReinvestLibraryChanged
 
 ```solidity
-event Initialized(uint64 version)
+event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
 ```
 
 
 
-*Triggered when the contract has been initialized or reinitialized.*
+
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| version  | uint64 | undefined |
+| newLibraryAddress `indexed` | address | undefined |
 
 ### NewStrategyCreated
 
@@ -612,101 +593,9 @@ Emitted when a strategy has been unsubscribed from an Executor
 |---|---|---|
 | strategyId_ `indexed` | uint256 | {uint256} Id of the strategy being unsubscribed |
 
-### Upgraded
-
-```solidity
-event Upgraded(address indexed implementation)
-```
-
-
-
-*Emitted when the implementation is upgraded.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| implementation `indexed` | address | undefined |
-
 
 
 ## Errors
-
-### AddressEmptyCode
-
-```solidity
-error AddressEmptyCode(address target)
-```
-
-
-
-*There&#39;s no code at `target` (it is not a contract).*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| target | address | undefined |
-
-### ERC1967InvalidImplementation
-
-```solidity
-error ERC1967InvalidImplementation(address implementation)
-```
-
-
-
-*The `implementation` of the proxy is invalid.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| implementation | address | undefined |
-
-### ERC1967NonPayable
-
-```solidity
-error ERC1967NonPayable()
-```
-
-
-
-*An upgrade function sees `msg.value &gt; 0` that may be lost.*
-
-
-### FailedInnerCall
-
-```solidity
-error FailedInnerCall()
-```
-
-
-
-*A call to an address target failed. The target may have reverted.*
-
-
-### InvalidInitialization
-
-```solidity
-error InvalidInitialization()
-```
-
-
-
-*The contract is already initialized.*
-
-
-### NotInitializing
-
-```solidity
-error NotInitializing()
-```
-
-
-
-*The contract is not initializing.*
-
 
 ### OwnableInvalidOwner
 
@@ -739,32 +628,5 @@ error OwnableUnauthorizedAccount(address account)
 | Name | Type | Description |
 |---|---|---|
 | account | address | undefined |
-
-### UUPSUnauthorizedCallContext
-
-```solidity
-error UUPSUnauthorizedCallContext()
-```
-
-
-
-*The call is from an unauthorized context.*
-
-
-### UUPSUnsupportedProxiableUUID
-
-```solidity
-error UUPSUnsupportedProxiableUUID(bytes32 slot)
-```
-
-
-
-*The storage `slot` is unsupported as a UUID.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| slot | bytes32 | undefined |
 
 

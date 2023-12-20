@@ -80,7 +80,7 @@ Used by the Executor service to remove a strategy from the DCAExecutor      Used
 ### Subscribe
 
 ```solidity
-function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable returns (bool sucsess)
+function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable
 ```
 
 
@@ -93,16 +93,10 @@ function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable re
 |---|---|---|
 | strategy_ | IDCADataStructures.Strategy | undefined |
 
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| sucsess | bool | undefined |
-
 ### Unsubscribe
 
 ```solidity
-function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable returns (bool sucsess)
+function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable
 ```
 
 Called by the DCAAccount to remove itself from the executor
@@ -113,14 +107,8 @@ Called by the DCAAccount to remove itself from the executor
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccountAddress_ | address | {address} Address of the unsubscribing DCAAccount |
-| strategyId_ | uint256 | {uint256} ID of the strategy being unsubscribed |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| sucsess | bool | {bool} If the unsubscribe completed |
+| DCAAccountAddress_ | address | Address of the unsubscribing DCAAccount |
+| strategyId_ | uint256 | ID of the strategy being unsubscribed |
 
 
 

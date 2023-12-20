@@ -10,16 +10,6 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
-    name: "InvalidInitialization",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "NotInitializing",
-    type: "error",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -40,19 +30,6 @@ const _abi = [
     ],
     name: "OwnableUnauthorizedAccount",
     type: "error",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint64",
-        name: "version",
-        type: "uint64",
-      },
-    ],
-    name: "Initialized",
-    type: "event",
   },
   {
     anonymous: false,
@@ -90,6 +67,19 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "newExecutorAddress_",
+        type: "address",
+      },
+    ],
+    name: "changeExecutor",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "addressToCheck_",
         type: "address",
       },
@@ -100,6 +90,19 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getExecutorAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -127,6 +130,13 @@ const _abi = [
       },
     ],
     name: "removeAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "removeExecutor",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

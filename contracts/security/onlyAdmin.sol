@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "./onlyExecutor.sol";
 
-abstract contract OnlyAdmin is Ownable {
+abstract contract OnlyAdmin is OnlyExecutor {
     mapping(address => bool) private _admins;
 
     modifier onlyAdmins() {
@@ -14,7 +14,10 @@ abstract contract OnlyAdmin is Ownable {
         _;
     }
 
-    constructor(address _owner) Ownable(_owner) {}
+    constructor(
+        address _owner,
+        address executorEOA_
+    ) OnlyExecutor(_owner, executorEOA_) {}
 
     function addAdmin(address newAdmin_) public onlyOwner {
         _admins[newAdmin_] = true;

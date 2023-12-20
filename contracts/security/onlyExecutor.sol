@@ -10,7 +10,9 @@ abstract contract OnlyExecutor is Ownable {
         _;
     }
 
-    constructor(address _owner) Ownable(_owner) {}
+    constructor(address owner_, address executorEOA_) Ownable(owner_) {
+        _changeExecutorAddress(executorEOA_);
+    }
 
     function _changeExecutorAddress(address newAddress_) internal {
         _executor = newAddress_;

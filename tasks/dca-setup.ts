@@ -3,18 +3,34 @@ import { task, types } from "hardhat/config";
 import { newStrat } from "../deployments/deploymentArguments/DCA.arguments";
 import { ChainName, tokenAddress } from "../bin/tokenAddress";
 import { AddressLike } from "ethers";
+import deployedDCAContracts from "~/bin/deployedAddress";
 
 const taskId = "setup-strategy";
 const taskDescription = "Approve, Fund and Setup strategy";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
-  const DCAAccount = "0xD629781AFCD5672969F009aed60f6603bdebda22";
-
   console.log(`🟢 [TASK] ${taskId} : Mounted`);
-  console.log(`🟢 [TASK] ${taskId} : Setting Strategy for : `, DCAAccount);
   const [owner] = await hre.ethers.getSigners();
   const network = hre.network;
 
+  console.log(`🟡 [TASK] ${taskId} : Creating Account from factory`);
+
+  const DCAFactory = await hre.ethers.getContractAt(
+    "DCAFactory",
+    deployedDCAContracts[network.name as ChainName]!.DCAFactory!,
+    owner
+  );
+
+  const tx = await DCAFactory.createDCAAccount();
+  // Wait for the transaction to be mined
+  const receipt = await tx.wait();
+
+  const DCAAccount: string = receipt?.logs.find(
+    (eventLog) => eventLog!.fragment!.name == "DCAAccountCreated"
+  ).args[1]!;
+
+  console.log(`🟢 [TASK] ${taskId} : Created new DCAAccount : `, DCAAccount);
+  console.log(`🟡 [TASK] ${taskId} : Setting Strategy`);
   //  Verify the contract
 
   const usdcAddress = tokenAddress.usdc[
@@ -37,7 +53,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     owner
   );
   const go = true;
-  const id = 3;
+  const id = 1;
   const strat = newStrat(DCAAccount, hre.network.name);
 
   if (go) {

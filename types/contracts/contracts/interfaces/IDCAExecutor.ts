@@ -292,13 +292,13 @@ export interface IDCAExecutor extends BaseContract {
 
   Subscribe: TypedContractMethod<
     [strategy_: IDCADataStructures.StrategyStruct],
-    [boolean],
+    [void],
     "nonpayable"
   >;
 
   Unsubscribe: TypedContractMethod<
     [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
-    [boolean],
+    [void],
     "nonpayable"
   >;
 
@@ -334,14 +334,14 @@ export interface IDCAExecutor extends BaseContract {
     nameOrSignature: "Subscribe"
   ): TypedContractMethod<
     [strategy_: IDCADataStructures.StrategyStruct],
-    [boolean],
+    [void],
     "nonpayable"
   >;
   getFunction(
     nameOrSignature: "Unsubscribe"
   ): TypedContractMethod<
     [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
-    [boolean],
+    [void],
     "nonpayable"
   >;
 

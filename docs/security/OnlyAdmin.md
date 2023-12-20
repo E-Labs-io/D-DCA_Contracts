@@ -26,6 +26,22 @@ function addAdmin(address newAdmin_) external nonpayable
 |---|---|---|
 | newAdmin_ | address | undefined |
 
+### changeExecutor
+
+```solidity
+function changeExecutor(address newExecutorAddress_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newExecutorAddress_ | address | undefined |
+
 ### checkIfAdmin
 
 ```solidity
@@ -47,6 +63,23 @@ function checkIfAdmin(address addressToCheck_) external view returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined |
+
+### getExecutorAddress
+
+```solidity
+function getExecutorAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### owner
 
@@ -81,6 +114,17 @@ function removeAdmin(address oldAdmin_) external nonpayable
 |---|---|---|
 | oldAdmin_ | address | undefined |
 
+### removeExecutor
+
+```solidity
+function removeExecutor() external nonpayable
+```
+
+
+
+
+
+
 ### renounceOwnership
 
 ```solidity
@@ -112,22 +156,6 @@ function transferOwnership(address newOwner) external nonpayable
 
 ## Events
 
-### Initialized
-
-```solidity
-event Initialized(uint64 version)
-```
-
-
-
-*Triggered when the contract has been initialized or reinitialized.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| version  | uint64 | undefined |
-
 ### OwnershipTransferred
 
 ```solidity
@@ -148,28 +176,6 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 
 
 ## Errors
-
-### InvalidInitialization
-
-```solidity
-error InvalidInitialization()
-```
-
-
-
-*The contract is already initialized.*
-
-
-### NotInitializing
-
-```solidity
-error NotInitializing()
-```
-
-
-
-*The contract is not initializing.*
-
 
 ### OwnableInvalidOwner
 

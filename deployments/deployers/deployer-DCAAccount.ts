@@ -7,6 +7,8 @@ import {
 } from "../../types/deployment/deploymentArguments";
 import delay from "../../scripts/helpers/delay";
 import verifyContractOnScan from "../../scripts/helpers/verifyOnScan";
+import deployedDCAContracts from "~/bin/deployedAddress";
+import { ChainName } from "~/bin/tokenAddress";
 
 export default async function deploy({
   hre,
@@ -18,24 +20,20 @@ export default async function deploy({
   prevDeployments,
 }: DeploymentProps): Promise<string | Addressable | false> {
   try {
-    let DCAExec: DeploymentStore | undefined = prevDeployments.find(
-      (x) => x.contractName === "DCAExecutor"
-    );
+    let DCAExec: DeploymentStore | undefined = {
+      deployment: deployedDCAContracts[network.name as ChainName]!.DCAExecutor!,
+      contractName: "DCAExecutor",
+    };
 
-    if (!DCAExec)
-      DCAExec = {
-        deployment: "0x715fa641F8c82B91ad15C0dC92ea5c32CA5DDDFC",
-        contractName: "DCAExecutor",
-      };
+    if (!DCAExec) {
+      prevDeployments.find((x) => x.contractName === "DCAExecutor");
+    }
     constructorArguments[0] = DCAExec.deployment;
 
-    const contract = await hre.ethers.getContractFactory(contractName);
-    const deployedContract = await hre.upgrades.deployProxy(
-      contract,
+    const deployedContract = await hre.ethers.deployContract(
+      contractName,
       constructorArguments,
-      {
-        initializer: "initialize",
-      }
+      deployer
     );
 
     await deployedContract.waitForDeployment();
@@ -46,7 +44,11 @@ export default async function deploy({
 
     if (network.name !== "hardhat") {
       await delay(delayTime);
-      await verifyContractOnScan(hre.run, deployedContract.target);
+      await verifyContractOnScan(
+        hre.run,
+        deployedContract.target,
+        constructorArguments
+      );
     } else {
       await hre.ethernal.push({
         name: contractName,

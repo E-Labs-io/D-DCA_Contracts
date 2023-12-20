@@ -111,6 +111,7 @@ export interface IDCAAccountInterface extends Interface {
   getEvent(
     nameOrSignatureOrTopic:
       | "DCAExecutorChanged"
+      | "DCAReinvestLibraryChanged"
       | "NewStrategyCreated"
       | "StrategyExecuted"
       | "StrategySubscribed"
@@ -210,6 +211,18 @@ export namespace DCAExecutorChangedEvent {
   export type OutputTuple = [newAddress_: string];
   export interface OutputObject {
     newAddress_: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace DCAReinvestLibraryChangedEvent {
+  export type InputTuple = [newLibraryAddress: AddressLike];
+  export type OutputTuple = [newLibraryAddress: string];
+  export interface OutputObject {
+    newLibraryAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -463,6 +476,13 @@ export interface IDCAAccount extends BaseContract {
     DCAExecutorChangedEvent.OutputObject
   >;
   getEvent(
+    key: "DCAReinvestLibraryChanged"
+  ): TypedContractEvent<
+    DCAReinvestLibraryChangedEvent.InputTuple,
+    DCAReinvestLibraryChangedEvent.OutputTuple,
+    DCAReinvestLibraryChangedEvent.OutputObject
+  >;
+  getEvent(
     key: "NewStrategyCreated"
   ): TypedContractEvent<
     NewStrategyCreatedEvent.InputTuple,
@@ -501,6 +521,17 @@ export interface IDCAAccount extends BaseContract {
       DCAExecutorChangedEvent.InputTuple,
       DCAExecutorChangedEvent.OutputTuple,
       DCAExecutorChangedEvent.OutputObject
+    >;
+
+    "DCAReinvestLibraryChanged(address)": TypedContractEvent<
+      DCAReinvestLibraryChangedEvent.InputTuple,
+      DCAReinvestLibraryChangedEvent.OutputTuple,
+      DCAReinvestLibraryChangedEvent.OutputObject
+    >;
+    DCAReinvestLibraryChanged: TypedContractEvent<
+      DCAReinvestLibraryChangedEvent.InputTuple,
+      DCAReinvestLibraryChangedEvent.OutputTuple,
+      DCAReinvestLibraryChangedEvent.OutputObject
     >;
 
     "NewStrategyCreated(uint256)": TypedContractEvent<

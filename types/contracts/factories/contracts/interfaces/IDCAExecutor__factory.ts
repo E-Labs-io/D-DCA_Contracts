@@ -276,13 +276,7 @@ const _abi = [
       },
     ],
     name: "Subscribe",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "sucsess",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -300,13 +294,7 @@ const _abi = [
       },
     ],
     name: "Unsubscribe",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "sucsess",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

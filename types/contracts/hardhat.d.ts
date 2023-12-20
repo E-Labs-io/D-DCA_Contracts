@@ -122,9 +122,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CometStorage__factory>;
     getContractFactory(
-      name: "ProxyDCAAccount",
+      name: "LibraryProxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ProxyDCAAccount__factory>;
+    ): Promise<Contracts.LibraryProxy__factory>;
     getContractFactory(
       name: "OnlyAdmin",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -133,6 +133,10 @@ declare module "hardhat/types/runtime" {
       name: "OnlyExecutor",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OnlyExecutor__factory>;
+    getContractFactory(
+      name: "DCAReinvest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DCAReinvest__factory>;
 
     getContractAt(
       name: "OwnableUpgradeable",
@@ -270,10 +274,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.CometStorage>;
     getContractAt(
-      name: "ProxyDCAAccount",
+      name: "LibraryProxy",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.ProxyDCAAccount>;
+    ): Promise<Contracts.LibraryProxy>;
     getContractAt(
       name: "OnlyAdmin",
       address: string | ethers.Addressable,
@@ -284,6 +288,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.OnlyExecutor>;
+    getContractAt(
+      name: "DCAReinvest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DCAReinvest>;
 
     deployContract(
       name: "OwnableUpgradeable",
@@ -394,9 +403,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CometStorage>;
     deployContract(
-      name: "ProxyDCAAccount",
+      name: "LibraryProxy",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ProxyDCAAccount>;
+    ): Promise<Contracts.LibraryProxy>;
     deployContract(
       name: "OnlyAdmin",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -405,6 +414,10 @@ declare module "hardhat/types/runtime" {
       name: "OnlyExecutor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyExecutor>;
+    deployContract(
+      name: "DCAReinvest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvest>;
 
     deployContract(
       name: "OwnableUpgradeable",
@@ -542,10 +555,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CometStorage>;
     deployContract(
-      name: "ProxyDCAAccount",
+      name: "LibraryProxy",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ProxyDCAAccount>;
+    ): Promise<Contracts.LibraryProxy>;
     deployContract(
       name: "OnlyAdmin",
       args: any[],
@@ -556,6 +569,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyExecutor>;
+    deployContract(
+      name: "DCAReinvest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvest>;
 
     // default types
     getContractFactory(

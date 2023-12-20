@@ -3,6 +3,10 @@
 import { AddressLike, Addressable, ZeroAddress } from "ethers";
 import { ChainName, tokenAddress } from "../../bin/tokenAddress";
 import { IDCADataStructures } from "~/types/contracts/contracts/DCAExecutor";
+import deployedDCAContracts from "~/bin/deployedAddress";
+
+const deployedAddresses = (networkName: ChainName) =>
+  deployedDCAContracts[networkName]!;
 
 export function DCAExecutorArguments(
   deployer: string | Addressable,
@@ -27,25 +31,45 @@ export function DCAAccountArguments(
   deployer: string | Addressable,
   networkName: string
 ): any[] {
-  const executorAddress_: AddressLike =
-    "0xfC73Ad879EB3F30FE58d2794e83BAac9e0717E0D";
+  const executorAddress_: AddressLike = deployedAddresses(
+    networkName as ChainName
+  ).DCAExecutor as AddressLike;
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter[networkName as ChainName]!;
 
   const owner_: AddressLike = deployer;
 
-  return [executorAddress_, swapRouter_, owner_];
+  const reinvestLibraryContract_ = deployedAddresses(
+    networkName as ChainName
+  ).DCAReinvest;
+
+  return [executorAddress_, swapRouter_, owner_, reinvestLibraryContract_];
 }
 
 export function DCAAccountFactoryArguments(
   deployer: string | Addressable,
   networkName: string
 ): any[] {
-  const executorAddress_: AddressLike = "";
+  const executorAddress_: AddressLike = deployedAddresses(
+    networkName as ChainName
+  ).DCAExecutor as AddressLike;
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter[networkName as ChainName]!;
 
-  return [executorAddress_, swapRouter_];
+  const reinvestLibraryContract_ = deployedAddresses(
+    networkName as ChainName
+  ).DCAReinvest;
+
+  return [executorAddress_, swapRouter_, reinvestLibraryContract_];
+}
+
+export function DCAReinvestLibraryArguments(
+  deployer: string | Addressable,
+  networkName: string
+): any[] {
+  const activate_ = false;
+
+  return [activate_];
 }
 
 export const newStrat = (

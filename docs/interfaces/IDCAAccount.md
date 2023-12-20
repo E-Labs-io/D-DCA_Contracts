@@ -31,7 +31,7 @@ Triggered by the assigned executor to execute the given strategy
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | {bool} If the function was successful |
+| _0 | bool | If the function was successful |
 
 ### ExecutorDeactivateStrategy
 
@@ -230,6 +230,22 @@ Emitted when the DCAExecutor contract address is changed
 | Name | Type | Description |
 |---|---|---|
 | newAddress_ `indexed` | address | {address} Address of the Executor contract |
+
+### DCAReinvestLibraryChanged
+
+```solidity
+event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newLibraryAddress `indexed` | address | undefined |
 
 ### NewStrategyCreated
 

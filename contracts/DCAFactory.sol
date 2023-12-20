@@ -8,6 +8,7 @@ contract DCAFactory is Ownable {
     // Event to emit when a new DCAAccount is created.
     event DCAAccountCreated(address indexed owner, address indexed dcaAccount);
     event DCAExecutorAddressChanged(address indexed newAddress);
+    event DCAReinvestContractAddressChanged(address indexed newLibraryAddress);
     event DCAFactoryPauseStateChange(bool indexed isPaused);
 
     // Mapping to keep track of accounts created by each user.
@@ -15,6 +16,7 @@ contract DCAFactory is Ownable {
 
     address immutable SWAP_ROUTER;
     address private _executorAddress;
+    address public reInvestLogicContract;
 
     bool private isPaused;
 
@@ -25,10 +27,12 @@ contract DCAFactory is Ownable {
 
     constructor(
         address executorAddress_,
-        address swapRouter_
+        address swapRouter_,
+        address reinvestLibraryContract_
     ) Ownable(_msgSender()) {
         SWAP_ROUTER = swapRouter_;
         _executorAddress = executorAddress_;
+        reInvestLogicContract = reinvestLibraryContract_;
     }
 
     fallback() external payable {
@@ -47,7 +51,8 @@ contract DCAFactory is Ownable {
         DCAAccount newAccount = new DCAAccount(
             _executorAddress,
             SWAP_ROUTER,
-            sender
+            sender,
+            reInvestLogicContract
         );
 
         // Store the new account's address in the mapping.
@@ -74,6 +79,13 @@ contract DCAFactory is Ownable {
 
         _executorAddress = _newExecutorAddress;
         emit DCAExecutorAddressChanged(_newExecutorAddress);
+    }
+
+    function updateReinvestLibraryAddress(
+        address newAddress_
+    ) public onlyOwner {
+        reInvestLogicContract = newAddress_;
+        emit DCAReinvestContractAddressChanged(newAddress_);
     }
 
     function setFactoryPauseState() public onlyOwner {

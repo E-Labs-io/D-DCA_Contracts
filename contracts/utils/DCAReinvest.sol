@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./Codes.sol";
+import "../library/Codes.sol";
+//import "../library/CompoundV3Reinvest.sol";
 
-//import "./CompoundV3Reinvest.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract DCAReinvest {
+contract DCAReinvest is Ownable {
     using ReinvestCodes for uint8;
+
+    string public constant REINVEST_VERSION = "ETH_GOERLI V0.1";
+    bool public REINVEST_ACTIVE;
 
     /**
      * @notice Reinvest strategy struct.
@@ -31,6 +35,26 @@ abstract contract DCAReinvest {
         address reinvestSpender; // Address of the contract that needs approval to spend (protocol entry contract)
     }
 
+    constructor(bool activate_) Ownable(_msgSender()) {
+        REINVEST_ACTIVE = activate_;
+    }
+
+    function executeReinvest(
+        Reinvest memory reinvestData_,
+        address tokenAddress_,
+        uint256 amount_
+    ) external returns (uint256 amount, bool success) {
+        return _executeInvest(reinvestData_, tokenAddress_, amount_);
+    }
+
+    function unwindReinvest(
+        Reinvest memory reinvestData_,
+        address tokenAddress_,
+        uint256 amount_
+    ) external returns (uint256 amount, bool success) {
+        return _executeWithdraw(reinvestData_, tokenAddress_, amount_);
+    }
+
     /**
      *
      * @param reinvestData_ {Reinvest} Data of the reinvest strategy
@@ -43,8 +67,9 @@ abstract contract DCAReinvest {
         Reinvest memory reinvestData_,
         address tokenAddress_,
         uint256 amount_
-    ) internal returns (uint256 amount) {
-        if (reinvestData_.investCode == ReinvestCodes.NOT_ACTIVE) return 0;
+    ) internal returns (uint256 amount, bool success) {
+        if (reinvestData_.investCode == ReinvestCodes.NOT_ACTIVE)
+            return (amount, success);
         if (reinvestData_.investCode == ReinvestCodes.CUSTOM) {
             // execute the custom reinvest logic
             amount = _customReinvest(reinvestData_, tokenAddress_, amount_);
@@ -56,13 +81,21 @@ abstract contract DCAReinvest {
                 tokenAddress_
             ); */
         } else if (reinvestData_.investCode <= ReinvestCodes.AAVE_ETH) {}
+
+        if (amount > 0) {
+            (success) = transferTokensToDCAAccount(
+                tokenAddress_,
+                amount,
+                _msgSender()
+            );
+        }
     }
 
     function _executeWithdraw(
         Reinvest memory reinvestData_,
         address tokenAddress_,
         uint256 amount_
-    ) internal returns (bool success, uint256 amount) {
+    ) internal returns (uint256 amount, bool success) {
         if (reinvestData_.investCode == ReinvestCodes.CUSTOM) {
             // execute the custom reinvest logic
             amount = _customReinvest(reinvestData_, tokenAddress_, amount_);
@@ -76,6 +109,29 @@ abstract contract DCAReinvest {
         } else if (reinvestData_.investCode <= ReinvestCodes.AAVE_ETH) {}
     }
 
+    function transferTokensToDCAAccount(
+        address tokenAddress_,
+        uint256 amount_,
+        address accountAddress_
+    ) internal returns (bool success) {
+        // Encoding the call to the transfer function of the ERC20 token
+        bytes memory data = abi.encodeWithSignature(
+            "transfer(address,uint256)",
+            accountAddress_,
+            amount_
+        );
+
+        // Low-level call to the token contract
+        (success, ) = tokenAddress_.call(data);
+        require(success, "Token transfer failed");
+
+        return success;
+    }
+
+    function getLibraryVersion() public pure returns (string memory) {
+        return REINVEST_VERSION;
+    }
+
     function _customReinvest(
         Reinvest memory reinvestData_,
         address tokenAddress_,
@@ -83,4 +139,8 @@ abstract contract DCAReinvest {
     ) internal returns (uint256 amount) {}
 
     function _customWithdraw() internal returns (uint256 amount) {}
+
+    function setActiveState() public onlyOwner {
+        REINVEST_ACTIVE = !REINVEST_ACTIVE;
+    }
 }

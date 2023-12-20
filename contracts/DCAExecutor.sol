@@ -7,16 +7,17 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IDCAExecutor.sol";
 import "./interfaces/IDCAAccount.sol";
 import "./security/onlyAdmin.sol";
+import "./security/onlyExecutor.sol";
+
 import "./library/Strategys.sol";
 
 contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     using Strategies for uint256;
-    using Strategies for IDCADataStructures.Strategy;
+    using Strategies for Strategy;
 
-    mapping(address => mapping(uint256 => IDCADataStructures.Strategy))
-        internal _strategies;
+    mapping(address => mapping(uint256 => Strategy)) internal _strategies;
     mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
-    IDCADataStructures.FeeDistribution internal _feeData;
+    FeeDistribution internal _feeData;
 
     bool internal _active = true;
     address internal _executionEOAAddress;
@@ -30,43 +31,48 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     }
 
     constructor(
-        IDCADataStructures.FeeDistribution memory feeDistrobution_,
+        FeeDistribution memory feeDistrobution_,
         address executionEOA_
-    ) OnlyAdmin(_msgSender()) {
+    ) OnlyAdmin(_msgSender(), executionEOA_) {
         _feeData = feeDistrobution_;
-        _setExecutionAddress(executionEOA_);
     }
 
     fallback() external payable {
-        revert();
+        revert("DCAExecutor : [fallback]");
     }
 
     receive() external payable {
-        revert();
+        revert("DCAExecutor : [receive]");
     }
 
     function Subscribe(
-        IDCADataStructures.Strategy calldata strategy_
-    ) external override is_active returns (bool success) {
-        require(strategy_._isValidStrategy(), "Invalid strategy");
+        Strategy calldata strategy_
+    ) external override is_active {
+        require(
+            strategy_._isValidStrategy(),
+            "DCAexecutor : [Subscribe] Invalid strategy"
+        );
+
         _subscribeAccount(strategy_);
         _totalActiveStrategies++;
-        return true;
     }
 
     function Unsubscribe(
         address DCAAccountAddress_,
         uint256 strategyId_
-    ) external override returns (bool success) {
+    ) external override {
+        require(
+            _msgSender() == DCAAccountAddress_,
+            "DCAexecutor : [Unsubscribe] Only Account Contract can unsubscribe"
+        );
         _unSubscribeAccount(DCAAccountAddress_, strategyId_);
         _totalActiveStrategies--;
-        return true;
     }
 
     function Execute(
         address DCAAccount_,
         uint256 strategyId_
-    ) external override onlyAdmins is_active {
+    ) external override onlyExecutor is_active {
         bool success = _singleExecution(DCAAccount_, strategyId_);
         if (success) {
             emit ExecutedDCA(DCAAccount_, strategyId_);
@@ -76,11 +82,14 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     function ExecuteBatch(
         address[] memory DCAAccount_,
         uint256[] memory strategyId_
-    ) external override onlyAdmins is_active {
-        require(DCAAccount_.length <= 10, "Maximum 10 executions allowed");
+    ) external override onlyExecutor is_active {
+        require(
+            DCAAccount_.length <= 10,
+            "DCAExecutor: [ExecuteBatch] Maximum 10 executions allowed"
+        );
         require(
             DCAAccount_.length == strategyId_.length,
-            "Accounts & Strategy count don't match"
+            "DCAExecutor: [ExecuteBatch] Accounts & Strategy count don't match"
         );
         for (uint256 i = 0; i < DCAAccount_.length; i++) {
             if (
@@ -118,10 +127,10 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     function ForceUnsubscribe(
         address DCAAccount_,
         uint256 strategyId_
-    ) external onlyAdmins {
+    ) external onlyExecutor {
         require(
             _strategies[DCAAccount_][strategyId_].active,
-            "Executor: Account already unsubscribed"
+            "DCAExecutor: [ForceUnsubscribe] Account already unsubscribed"
         );
         _strategies[DCAAccount_][strategyId_].active = false;
         IDCAAccount(DCAAccount_).ExecutorDeactivateStrategy(strategyId_);

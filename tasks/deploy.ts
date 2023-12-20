@@ -5,12 +5,14 @@ import masterDeployer from "~/deployments/deploy";
 
 const taskId = "deployContracts";
 const taskDescription = "Deploy the given contracts";
-const contractsToDeploy = ["DCAExecutor", "DCAAccount", "DCAFactory"];
 
 // "DCAExecutor", "DCAAccount", "DCAAccountFactory"
 
 task(taskId, taskDescription)
-  .addParam("contractnames", "Array of contract names to deploy")
+  .addVariadicPositionalParam(
+    "contractnames",
+    "Array of contract names to deploy"
+  )
   .setAction(async (_args, hre) => {
     console.log(`🟠 [TASK] ${taskId} : Mounted`);
     const { contractnames } = _args;

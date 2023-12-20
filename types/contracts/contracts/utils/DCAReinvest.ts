@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -20,86 +21,113 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../../common";
+} from "../../common";
 
-export interface OnlyAdminInterface extends Interface {
+export declare namespace DCAReinvest {
+  export type ReinvestStruct = {
+    active: boolean;
+    investCode: BigNumberish;
+    depositReinvestMethod: BytesLike;
+    withdrawReinvestMethod: BytesLike;
+    reinvestSpender: AddressLike;
+  };
+
+  export type ReinvestStructOutput = [
+    active: boolean,
+    investCode: bigint,
+    depositReinvestMethod: string,
+    withdrawReinvestMethod: string,
+    reinvestSpender: string
+  ] & {
+    active: boolean;
+    investCode: bigint;
+    depositReinvestMethod: string;
+    withdrawReinvestMethod: string;
+    reinvestSpender: string;
+  };
+}
+
+export interface DCAReinvestInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "addAdmin"
-      | "changeExecutor"
-      | "checkIfAdmin"
-      | "getExecutorAddress"
+      | "REINVEST_ACTIVE"
+      | "REINVEST_VERSION"
+      | "executeReinvest"
+      | "getLibraryVersion"
       | "owner"
-      | "removeAdmin"
-      | "removeExecutor"
       | "renounceOwnership"
+      | "setActiveState"
       | "transferOwnership"
+      | "unwindReinvest"
   ): FunctionFragment;
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "addAdmin",
-    values: [AddressLike]
+    functionFragment: "REINVEST_ACTIVE",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "changeExecutor",
-    values: [AddressLike]
+    functionFragment: "REINVEST_VERSION",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "checkIfAdmin",
-    values: [AddressLike]
+    functionFragment: "executeReinvest",
+    values: [DCAReinvest.ReinvestStruct, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getExecutorAddress",
+    functionFragment: "getLibraryVersion",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "removeAdmin",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeExecutor",
+    functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
+    functionFragment: "setActiveState",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "unwindReinvest",
+    values: [DCAReinvest.ReinvestStruct, AddressLike, BigNumberish]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "addAdmin", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "changeExecutor",
+    functionFragment: "REINVEST_ACTIVE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "checkIfAdmin",
+    functionFragment: "REINVEST_VERSION",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getExecutorAddress",
+    functionFragment: "executeReinvest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLibraryVersion",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "removeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeExecutor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setActiveState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unwindReinvest",
     data: BytesLike
   ): Result;
 }
@@ -117,11 +145,11 @@ export namespace OwnershipTransferredEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface OnlyAdmin extends BaseContract {
-  connect(runner?: ContractRunner | null): OnlyAdmin;
+export interface DCAReinvest extends BaseContract {
+  connect(runner?: ContractRunner | null): DCAReinvest;
   waitForDeployment(): Promise<this>;
 
-  interface: OnlyAdminInterface;
+  interface: DCAReinvestInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -160,37 +188,41 @@ export interface OnlyAdmin extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  addAdmin: TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+  REINVEST_ACTIVE: TypedContractMethod<[], [boolean], "view">;
 
-  changeExecutor: TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
-    [void],
+  REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
+
+  executeReinvest: TypedContractMethod<
+    [
+      reinvestData_: DCAReinvest.ReinvestStruct,
+      tokenAddress_: AddressLike,
+      amount_: BigNumberish
+    ],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
 
-  checkIfAdmin: TypedContractMethod<
-    [addressToCheck_: AddressLike],
-    [boolean],
-    "view"
-  >;
-
-  getExecutorAddress: TypedContractMethod<[], [string], "view">;
+  getLibraryVersion: TypedContractMethod<[], [string], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
-  removeAdmin: TypedContractMethod<
-    [oldAdmin_: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
-
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+
+  setActiveState: TypedContractMethod<[], [void], "nonpayable">;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
     [void],
+    "nonpayable"
+  >;
+
+  unwindReinvest: TypedContractMethod<
+    [
+      reinvestData_: DCAReinvest.ReinvestStruct,
+      tokenAddress_: AddressLike,
+      amount_: BigNumberish
+    ],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
 
@@ -199,36 +231,48 @@ export interface OnlyAdmin extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "addAdmin"
-  ): TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+    nameOrSignature: "REINVEST_ACTIVE"
+  ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "changeExecutor"
+    nameOrSignature: "REINVEST_VERSION"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "executeReinvest"
   ): TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
-    [void],
+    [
+      reinvestData_: DCAReinvest.ReinvestStruct,
+      tokenAddress_: AddressLike,
+      amount_: BigNumberish
+    ],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "checkIfAdmin"
-  ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "getExecutorAddress"
+    nameOrSignature: "getLibraryVersion"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "removeAdmin"
-  ): TypedContractMethod<[oldAdmin_: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "removeExecutor"
+    nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "renounceOwnership"
+    nameOrSignature: "setActiveState"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "unwindReinvest"
+  ): TypedContractMethod<
+    [
+      reinvestData_: DCAReinvest.ReinvestStruct,
+      tokenAddress_: AddressLike,
+      amount_: BigNumberish
+    ],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
 
   getEvent(
     key: "OwnershipTransferred"

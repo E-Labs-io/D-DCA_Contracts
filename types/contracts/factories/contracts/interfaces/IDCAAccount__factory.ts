@@ -27,6 +27,19 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "address",
+        name: "newLibraryAddress",
+        type: "address",
+      },
+    ],
+    name: "DCAReinvestLibraryChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "uint256",
         name: "strategyId_",
         type: "uint256",
