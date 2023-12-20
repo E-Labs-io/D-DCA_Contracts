@@ -20,6 +20,7 @@ export default async function deploy({
       constructorArguments,
       deployer
     );
+
     await deployedContract.waitForDeployment();
     console.log(
       `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`

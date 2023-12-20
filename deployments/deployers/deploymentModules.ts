@@ -13,8 +13,8 @@ import {
 
 const deploymentFiles: Deployment = {
   DCAExecutor: GenericDeployer,
-  DCAAccount: DCAAccountDeployer,
-  DCAFactory: DCAAccountDeployer,
+  DCAAccount: GenericDeployer,
+  DCAFactory: GenericDeployer,
 };
 
 export const deploymentArgumentStore: ArgumentStore = {

@@ -22,13 +22,13 @@ export default async function masterDeployer(
   console.log("🟠 Master Deployer: Mounted");
   console.log(`🟠 Master Deployer: ${deployer.address}`);
   console.log(`🟠 Master Deployer: Deploying ${deployments.length} Contracts`);
-  console.log("🟠 Master Deployer: Deploying to : ", network.name);
+  console.log("🟠 Master Deployer: Deploying to", network.name);
 
   const deploymentAddresses: DeploymentStore[] = [];
 
   for (let i = 0; i < deployments.length; i++) {
     const deployment = deployments[i];
-    console.log("🟠 Deploying Contract: ", deployment);
+    console.log("🟠 Deploying Contract:", deployment);
     await deploymentFiles[deployment]({
       hre,
       deployer,

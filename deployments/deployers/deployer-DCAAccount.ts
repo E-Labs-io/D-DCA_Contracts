@@ -17,6 +17,8 @@ export default async function deploy({
   prevDeployments,
 }: DeploymentProps): Promise<string | Addressable | false> {
   try {
+
+
     let DCAExec: DeploymentStore | undefined = prevDeployments.find(
       (x) => x.contractName === "DCAExecutor"
     );

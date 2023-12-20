@@ -1,5 +1,45 @@
 [
   {
+    "timestamp": "20/12/23, 23:07:15",
+    "contractName": "DCAFactory",
+    "contractAddress": "0x5B0f06876B290e92D7DB6872A21b0cb578Fd368a",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "20/12/23, 23:01:51",
+    "contractName": "DCAAccount",
+    "contractAddress": "0x47593BD110FD9bA5937CC8e179ffB39b8ffefF6C",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "20/12/23, 22:51:07",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x79cF24e1DB5b994A90077E6B36aBb086F8541629",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
+    "timestamp": "20/12/23, 22:19:18",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x42fFC7A48cf01E039c407AFe64b4cb19969CeB5a",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
     "timestamp": "16/12/23, 14:49:14",
     "contractName": "DCAFactory",
     "contractAddress": "0x6053cA02DCd3D71B0987b4DC2a39b3dDA04647C7",

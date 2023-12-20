@@ -40,6 +40,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         address swapRouter_,
         address owner_
     ) OnlyExecutor(executorAddress_) Ownable(owner_) {
+        _executorAddress = IDCAExecutor(executorAddress_);
         _changeDefaultExecutor(IDCAExecutor(executorAddress_));
         SWAP_ROUTER = ISwapRouter(swapRouter_);
     }

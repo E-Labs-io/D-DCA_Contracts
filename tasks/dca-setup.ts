@@ -8,7 +8,7 @@ const taskId = "setup-strategy";
 const taskDescription = "Approve, Fund and Setup strategy";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
-  const DCAAccount = "0xD629781AFCD5672969F009aed60f6603bdebda22";
+  const DCAAccount = "0x2295Ba2baa5Ec2C0106a098a1BD9ec220c2782Fd";
 
   console.log(`🟢 [TASK] ${taskId} : Mounted`);
   console.log(`🟢 [TASK] ${taskId} : Setting Strategy for : `, DCAAccount);
@@ -27,7 +27,12 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     await usdcAddress,
     owner
   );
-  await usdcContract.approve(DCAAccount, hre.ethers.parseUnits("50000", 6));
+  const approveTX = await usdcContract.approve(
+    DCAAccount,
+    hre.ethers.parseUnits("50000", 6)
+  );
+  await approveTX.wait();
+
   console.log(`🟢 [TASK] ${taskId} : Token Spend Approved`);
 
   // Deploy Strategy
@@ -36,8 +41,8 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     DCAAccount,
     owner
   );
-  const go = true;
-  const id = 3;
+  const go = false;
+  const id = 1;
   const strat = newStrat(DCAAccount, hre.network.name);
 
   if (go) {
