@@ -10,28 +10,6 @@
 
 ## Methods
 
-### CheckIfAdmin
-
-```solidity
-function CheckIfAdmin(address addressToCheck_) external view returns (bool)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| addressToCheck_ | address | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
-
 ### DistributeFees
 
 ```solidity
@@ -159,6 +137,28 @@ function addAdmin(address newAdmin_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | newAdmin_ | address | undefined |
+
+### checkIfAdmin
+
+```solidity
+function checkIfAdmin(address addressToCheck_) external view returns (bool)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| addressToCheck_ | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### getSpecificStrategy
 
@@ -351,6 +351,22 @@ Emitted each time the protocol fees are distributed
 | token_ `indexed` | address | {address} address of the token being distributed |
 | amount_ `indexed` | uint256 | {uint256} amount of the total token distributed |
 
+### Initialized
+
+```solidity
+event Initialized(uint64 version)
+```
+
+
+
+*Triggered when the contract has been initialized or reinitialized.*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| version  | uint64 | undefined |
+
 ### OwnershipTransferred
 
 ```solidity
@@ -371,6 +387,28 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 
 
 ## Errors
+
+### InvalidInitialization
+
+```solidity
+error InvalidInitialization()
+```
+
+
+
+*The contract is already initialized.*
+
+
+### NotInitializing
+
+```solidity
+error NotInitializing()
+```
+
+
+
+*The contract is not initializing.*
+
 
 ### OwnableInvalidOwner
 

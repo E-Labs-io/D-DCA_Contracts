@@ -14,7 +14,7 @@ abstract contract OnlyAdmin is Ownable {
         _;
     }
 
-    constructor() Ownable(address(msg.sender)) {}
+    constructor(address _owner) Ownable(_owner) {}
 
     function addAdmin(address newAdmin_) public onlyOwner {
         _admins[newAdmin_] = true;
@@ -24,7 +24,7 @@ abstract contract OnlyAdmin is Ownable {
         _admins[oldAdmin_] = false;
     }
 
-    function CheckIfAdmin(address addressToCheck_) public view returns (bool) {
+    function checkIfAdmin(address addressToCheck_) public view returns (bool) {
         return _admins[addressToCheck_];
     }
 }

@@ -11,6 +11,7 @@ export default async function deploy({
   deployer,
   delayTime,
   contractName,
+  network,
   constructorArguments,
   prevDeployments,
 }: DeploymentProps): Promise<string | Addressable | false> {
@@ -20,12 +21,12 @@ export default async function deploy({
       constructorArguments,
       deployer
     );
+
     await deployedContract.waitForDeployment();
     console.log(
       `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`
     );
 
-    const network = await hre.ethers.provider.getNetwork();
     if (network.name !== "hardhat") {
       await delay(delayTime);
       await verifyContractOnScan(

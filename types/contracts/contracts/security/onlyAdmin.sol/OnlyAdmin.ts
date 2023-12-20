@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -25,22 +26,24 @@ import type {
 export interface OnlyAdminInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "CheckIfAdmin"
       | "addAdmin"
+      | "checkIfAdmin"
       | "owner"
       | "removeAdmin"
       | "renounceOwnership"
       | "transferOwnership"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "Initialized" | "OwnershipTransferred"
+  ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "CheckIfAdmin",
+    functionFragment: "addAdmin",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "addAdmin",
+    functionFragment: "checkIfAdmin",
     values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -57,11 +60,11 @@ export interface OnlyAdminInterface extends Interface {
     values: [AddressLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addAdmin", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "CheckIfAdmin",
+    functionFragment: "checkIfAdmin",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addAdmin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeAdmin",
@@ -75,6 +78,18 @@ export interface OnlyAdminInterface extends Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+}
+
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace OwnershipTransferredEvent {
@@ -133,13 +148,13 @@ export interface OnlyAdmin extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  CheckIfAdmin: TypedContractMethod<
+  addAdmin: TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+
+  checkIfAdmin: TypedContractMethod<
     [addressToCheck_: AddressLike],
     [boolean],
     "view"
   >;
-
-  addAdmin: TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -162,11 +177,11 @@ export interface OnlyAdmin extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "CheckIfAdmin"
-  ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
-  getFunction(
     nameOrSignature: "addAdmin"
   ): TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "checkIfAdmin"
+  ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -181,6 +196,13 @@ export interface OnlyAdmin extends BaseContract {
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -189,6 +211,17 @@ export interface OnlyAdmin extends BaseContract {
   >;
 
   filters: {
+    "Initialized(uint64)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+
     "OwnershipTransferred(address,address)": TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,

@@ -1,5 +1,15 @@
 [
   {
+    "timestamp": "19/12/23, 15:46:18",
+    "contractName": "DCAAccount",
+    "contractAddress": "0xb3c1F964B2e63A5C3110Dd608309F125eca0Dde4",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethGoerli",
+      "chainId": "5"
+    }
+  },
+  {
     "timestamp": "16/12/23, 14:49:14",
     "contractName": "DCAFactory",
     "contractAddress": "0x6053cA02DCd3D71B0987b4DC2a39b3dDA04647C7",

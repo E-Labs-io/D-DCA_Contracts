@@ -5,7 +5,7 @@ import "./Codes.sol";
 
 //import "./CompoundV3Reinvest.sol";
 
-library DCAReinvest {
+abstract contract DCAReinvest {
     using ReinvestCodes for uint8;
 
     /**

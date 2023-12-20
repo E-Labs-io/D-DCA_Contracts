@@ -1,0 +1,380 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x6bcb1cFa6F8A2EA68E9FA93f8406E1052C6c8a50",
+      "txHash": "0xad9d9e2b197e35d446470619d5a56d0a0988e0e0a2b4188eb8bf8b80b81e8ebd",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x48Be14b28Aa506b25b445fF2308190BF8b9761Ae",
+      "txHash": "0x36e68ded4fb0e3bd4b1f9a9faced471de2c6115bf509bc04f5f43744d763edcc",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xB66DaAa479dF1D0A7a788622a68E5c90eAfb915f",
+      "txHash": "0xc321d804a260f8bfce4b27286434d680d4ba4052927e0e91b509f48aacfa4c66",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xb3c1F964B2e63A5C3110Dd608309F125eca0Dde4",
+      "txHash": "0xdbfa418d7bb800b5a59352e2ca5ede69e0c4a4b713475e1de39049bd29e1a15e",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "cbcc32bfc79fc2821877b844224b7514538c3c402b3f56d6ffb71c61678f481d": {
+      "address": "0xD98f50F601301f4B18F9c74010cC10D6CEfDa161",
+      "txHash": "0xf46ddeead219ffd2021dcb50283c36fffc72ce4a55818bc2c5b52fcfd1fdd8f6",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_executor",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "OnlyExecutor",
+            "src": "contracts/security/onlyExecutor.sol:6"
+          },
+          {
+            "label": "_strategies",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_uint256,t_struct(Strategy)2998_storage)",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:17"
+          },
+          {
+            "label": "_baseBalances",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:19"
+          },
+          {
+            "label": "_targetBalances",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:20"
+          },
+          {
+            "label": "_reinvestLiquidityTokenBalance",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:21"
+          },
+          {
+            "label": "_lastExecution",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:23"
+          },
+          {
+            "label": "_costPerBlock",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:24"
+          },
+          {
+            "label": "_executorAddress",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_contract(IDCAExecutor)3096",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:29"
+          },
+          {
+            "label": "SWAP_ROUTER",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_contract(ISwapRouter)900",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:30"
+          },
+          {
+            "label": "_poolFee",
+            "offset": 20,
+            "slot": "8",
+            "type": "t_uint24",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:32"
+          },
+          {
+            "label": "_totalIntervalsExecuted",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_uint256",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:34"
+          },
+          {
+            "label": "_totalActiveStrategies",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_uint256",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:35"
+          },
+          {
+            "label": "_strategyCount",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_uint256",
+            "contract": "DCAAccount",
+            "src": "contracts/DCAAccount.sol:36"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)64_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)14_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_bytes_storage": {
+            "label": "bytes",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IDCAExecutor)3096": {
+            "label": "contract IDCAExecutor",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISwapRouter)900": {
+            "label": "contract ISwapRouter",
+            "numberOfBytes": "20"
+          },
+          "t_enum(Interval)2962": {
+            "label": "enum IDCADataStructures.Interval",
+            "members": [
+              "TestIntervalOneMin",
+              "TestIntervalFiveMins",
+              "OneDay",
+              "TwoDays",
+              "OneWeek",
+              "OneMonth"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Strategy)2998_storage)": {
+            "label": "mapping(uint256 => struct IDCADataStructures.Strategy)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Reinvest)3414_storage": {
+            "label": "struct DCAReinvest.Reinvest",
+            "members": [
+              {
+                "label": "active",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "investCode",
+                "type": "t_uint8",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "depositReinvestMethod",
+                "type": "t_bytes_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "withdrawReinvestMethod",
+                "type": "t_bytes_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "reinvestSpender",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(Strategy)2998_storage": {
+            "label": "struct IDCADataStructures.Strategy",
+            "members": [
+              {
+                "label": "accountAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "baseToken",
+                "type": "t_struct(TokeData)3005_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "targetToken",
+                "type": "t_struct(TokeData)3005_storage",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "interval",
+                "type": "t_enum(Interval)2962",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "strategyId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "active",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "8"
+              },
+              {
+                "label": "reinvest",
+                "type": "t_struct(Reinvest)3414_storage",
+                "offset": 0,
+                "slot": "9"
+              }
+            ],
+            "numberOfBytes": "416"
+          },
+          "t_struct(TokeData)3005_storage": {
+            "label": "struct IDCADataStructures.TokeData",
+            "members": [
+              {
+                "label": "tokenAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "decimals",
+                "type": "t_uint8",
+                "offset": 20,
+                "slot": "0"
+              },
+              {
+                "label": "ticker",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint24": {
+            "label": "uint24",
+            "numberOfBytes": "3"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

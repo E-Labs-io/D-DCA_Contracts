@@ -10,10 +10,26 @@
 
 ## Methods
 
-### CheckIfAdmin
+### addAdmin
 
 ```solidity
-function CheckIfAdmin(address addressToCheck_) external view returns (bool)
+function addAdmin(address newAdmin_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newAdmin_ | address | undefined |
+
+### checkIfAdmin
+
+```solidity
+function checkIfAdmin(address addressToCheck_) external view returns (bool)
 ```
 
 
@@ -31,22 +47,6 @@ function CheckIfAdmin(address addressToCheck_) external view returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined |
-
-### addAdmin
-
-```solidity
-function addAdmin(address newAdmin_) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newAdmin_ | address | undefined |
 
 ### owner
 
@@ -112,6 +112,22 @@ function transferOwnership(address newOwner) external nonpayable
 
 ## Events
 
+### Initialized
+
+```solidity
+event Initialized(uint64 version)
+```
+
+
+
+*Triggered when the contract has been initialized or reinitialized.*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| version  | uint64 | undefined |
+
 ### OwnershipTransferred
 
 ```solidity
@@ -132,6 +148,28 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 
 
 ## Errors
+
+### InvalidInitialization
+
+```solidity
+error InvalidInitialization()
+```
+
+
+
+*The contract is already initialized.*
+
+
+### NotInitializing
+
+```solidity
+error NotInitializing()
+```
+
+
+
+*The contract is not initializing.*
+
 
 ### OwnableInvalidOwner
 

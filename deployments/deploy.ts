@@ -1,8 +1,6 @@
 /** @format */
 
-import deploymentFiles, {
-  deploymentArgumentStore,
-} from "./deployers/deploymentModules";
+import deploymentFiles, { deploymentArgumentStore } from "./deploymentModules";
 import logDeployment from "../scripts/saveDeployLog";
 import {
   DeploymentReturn,
@@ -34,6 +32,7 @@ export default async function masterDeployer(
       deployer,
       delayTime,
       contractName: deployment,
+      network,
       constructorArguments: deploymentArgumentStore[deployment](
         deployer.address,
         network.name

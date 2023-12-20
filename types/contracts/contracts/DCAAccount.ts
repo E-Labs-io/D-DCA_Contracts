@@ -101,6 +101,7 @@ export interface DCAAccountInterface extends Interface {
       | "SWAP"
       | "SetupStrategy"
       | "SubscribeStrategy"
+      | "UPGRADE_INTERFACE_VERSION"
       | "UnFundAccount"
       | "UnsubscribeStrategy"
       | "WithdrawSavings"
@@ -108,25 +109,31 @@ export interface DCAAccountInterface extends Interface {
       | "getBaseBalance"
       | "getBaseTokenCostPerBlock"
       | "getBaseTokenRemainingBlocks"
+      | "getExecutorAddress"
       | "getStrategyData"
       | "getTargetBalance"
       | "getTimeTillWindow"
+      | "initialize"
       | "owner"
+      | "proxiableUUID"
       | "removeExecutor"
       | "renounceOwnership"
       | "setStrategyReinvest"
       | "transferOwnership"
       | "updateSwapAddress"
+      | "upgradeToAndCall"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
       | "DCAExecutorChanged"
+      | "Initialized"
       | "NewStrategyCreated"
       | "OwnershipTransferred"
       | "StrategyExecuted"
       | "StrategySubscribed"
       | "StrategyUnsubscribed"
+      | "Upgraded"
   ): EventFragment;
 
   encodeFunctionData(
@@ -154,6 +161,10 @@ export interface DCAAccountInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "UnFundAccount",
     values: [AddressLike, BigNumberish]
   ): string;
@@ -182,6 +193,10 @@ export interface DCAAccountInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getExecutorAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getStrategyData",
     values: [BigNumberish]
   ): string;
@@ -193,7 +208,15 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "getTimeTillWindow",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [AddressLike, AddressLike, AddressLike]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "proxiableUUID",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "removeExecutor",
     values?: undefined
@@ -213,6 +236,10 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "updateSwapAddress",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [AddressLike, BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
@@ -234,6 +261,10 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "UnFundAccount",
     data: BytesLike
   ): Result;
@@ -262,6 +293,10 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getExecutorAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getStrategyData",
     data: BytesLike
   ): Result;
@@ -273,7 +308,12 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "getTimeTillWindow",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "removeExecutor",
     data: BytesLike
@@ -294,6 +334,10 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "updateSwapAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace DCAExecutorChangedEvent {
@@ -301,6 +345,18 @@ export namespace DCAExecutorChangedEvent {
   export type OutputTuple = [newAddress_: string];
   export interface OutputObject {
     newAddress_: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -373,6 +429,18 @@ export namespace StrategyUnsubscribedEvent {
   export type OutputTuple = [strategyId_: bigint];
   export interface OutputObject {
     strategyId_: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace UpgradedEvent {
+  export type InputTuple = [implementation: AddressLike];
+  export type OutputTuple = [implementation: string];
+  export interface OutputObject {
+    implementation: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -463,6 +531,8 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
+  UPGRADE_INTERFACE_VERSION: TypedContractMethod<[], [string], "view">;
+
   UnFundAccount: TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
     [void],
@@ -501,6 +571,8 @@ export interface DCAAccount extends BaseContract {
     "view"
   >;
 
+  getExecutorAddress: TypedContractMethod<[], [string], "view">;
+
   getStrategyData: TypedContractMethod<
     [strategyId_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput],
@@ -525,7 +597,19 @@ export interface DCAAccount extends BaseContract {
     "view"
   >;
 
+  initialize: TypedContractMethod<
+    [
+      executorAddress_: AddressLike,
+      swapRouter_: AddressLike,
+      owner_: AddressLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   owner: TypedContractMethod<[], [string], "view">;
+
+  proxiableUUID: TypedContractMethod<[], [string], "view">;
 
   removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
 
@@ -547,6 +631,12 @@ export interface DCAAccount extends BaseContract {
     [swapRouter_: AddressLike],
     [void],
     "nonpayable"
+  >;
+
+  upgradeToAndCall: TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -592,6 +682,9 @@ export interface DCAAccount extends BaseContract {
     nameOrSignature: "SubscribeStrategy"
   ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "UPGRADE_INTERFACE_VERSION"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "UnFundAccount"
   ): TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
@@ -625,6 +718,9 @@ export interface DCAAccount extends BaseContract {
     nameOrSignature: "getBaseTokenRemainingBlocks"
   ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
   getFunction(
+    nameOrSignature: "getExecutorAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "getStrategyData"
   ): TypedContractMethod<
     [strategyId_: BigNumberish],
@@ -648,7 +744,21 @@ export interface DCAAccount extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<
+    [
+      executorAddress_: AddressLike,
+      swapRouter_: AddressLike,
+      owner_: AddressLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "proxiableUUID"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "removeExecutor"
@@ -669,6 +779,13 @@ export interface DCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "updateSwapAddress"
   ): TypedContractMethod<[swapRouter_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "upgradeToAndCall"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike, data: BytesLike],
+    [void],
+    "payable"
+  >;
 
   getEvent(
     key: "DCAExecutorChanged"
@@ -676,6 +793,13 @@ export interface DCAAccount extends BaseContract {
     DCAExecutorChangedEvent.InputTuple,
     DCAExecutorChangedEvent.OutputTuple,
     DCAExecutorChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
   >;
   getEvent(
     key: "NewStrategyCreated"
@@ -712,6 +836,13 @@ export interface DCAAccount extends BaseContract {
     StrategyUnsubscribedEvent.OutputTuple,
     StrategyUnsubscribedEvent.OutputObject
   >;
+  getEvent(
+    key: "Upgraded"
+  ): TypedContractEvent<
+    UpgradedEvent.InputTuple,
+    UpgradedEvent.OutputTuple,
+    UpgradedEvent.OutputObject
+  >;
 
   filters: {
     "DCAExecutorChanged(address)": TypedContractEvent<
@@ -723,6 +854,17 @@ export interface DCAAccount extends BaseContract {
       DCAExecutorChangedEvent.InputTuple,
       DCAExecutorChangedEvent.OutputTuple,
       DCAExecutorChangedEvent.OutputObject
+    >;
+
+    "Initialized(uint64)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
     >;
 
     "NewStrategyCreated(uint256)": TypedContractEvent<
@@ -778,6 +920,17 @@ export interface DCAAccount extends BaseContract {
       StrategyUnsubscribedEvent.InputTuple,
       StrategyUnsubscribedEvent.OutputTuple,
       StrategyUnsubscribedEvent.OutputObject
+    >;
+
+    "Upgraded(address)": TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
+    >;
+    Upgraded: TypedContractEvent<
+      UpgradedEvent.InputTuple,
+      UpgradedEvent.OutputTuple,
+      UpgradedEvent.OutputObject
     >;
   };
 }

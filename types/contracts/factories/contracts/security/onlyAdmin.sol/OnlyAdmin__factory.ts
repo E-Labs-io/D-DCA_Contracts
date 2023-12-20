@@ -10,6 +10,16 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "InvalidInitialization",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotInitializing",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -35,6 +45,19 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint64",
+        name: "version",
+        type: "uint64",
+      },
+    ],
+    name: "Initialized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "previousOwner",
@@ -54,11 +77,24 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "newAdmin_",
+        type: "address",
+      },
+    ],
+    name: "addAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "addressToCheck_",
         type: "address",
       },
     ],
-    name: "CheckIfAdmin",
+    name: "checkIfAdmin",
     outputs: [
       {
         internalType: "bool",
@@ -67,19 +103,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newAdmin_",
-        type: "address",
-      },
-    ],
-    name: "addAdmin",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {

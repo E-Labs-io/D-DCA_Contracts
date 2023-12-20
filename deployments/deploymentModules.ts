@@ -1,15 +1,16 @@
 /** @format */
-import DCAAccountDeployer from "./deployer-DCAAccount";
-import GenericDeployer from "./deployer";
+import DCAAccountDeployer from "./deployers/deployer-DCAAccount";
+import GenericDeployer from "./deployers/deployer";
+import ProxyDeployer from "./deployers/deployProxy";
 import {
   DCAExecutorArguments,
   DCAAccountArguments,
   DCAAccountFactoryArguments,
-} from "../deploymentArguments/DCA.arguments";
+} from "./deploymentArguments/DCA.arguments";
 import {
   ArgumentStore,
   Deployment,
-} from "../../types/deployment/deploymentArguments";
+} from "../types/deployment/deploymentArguments";
 
 const deploymentFiles: Deployment = {
   DCAExecutor: GenericDeployer,

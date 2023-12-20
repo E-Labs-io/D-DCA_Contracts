@@ -123,7 +123,6 @@ export declare namespace DCAReinvest {
 export interface DCAExecutorInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "CheckIfAdmin"
       | "DistributeFees"
       | "Execute"
       | "ExecuteBatch"
@@ -131,6 +130,7 @@ export interface DCAExecutorInterface extends Interface {
       | "Subscribe"
       | "Unsubscribe"
       | "addAdmin"
+      | "checkIfAdmin"
       | "getSpecificStrategy"
       | "getTotalActiveStrategys"
       | "getTotalExecutions"
@@ -146,13 +146,10 @@ export interface DCAExecutorInterface extends Interface {
       | "ExecutedDCA"
       | "ExecutionEOAAddressChange"
       | "FeesDistributed"
+      | "Initialized"
       | "OwnershipTransferred"
   ): EventFragment;
 
-  encodeFunctionData(
-    functionFragment: "CheckIfAdmin",
-    values: [AddressLike]
-  ): string;
   encodeFunctionData(
     functionFragment: "DistributeFees",
     values: [AddressLike]
@@ -182,6 +179,10 @@ export interface DCAExecutorInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "checkIfAdmin",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSpecificStrategy",
     values: [AddressLike, BigNumberish]
   ): string;
@@ -208,10 +209,6 @@ export interface DCAExecutorInterface extends Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "CheckIfAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "DistributeFees",
     data: BytesLike
   ): Result;
@@ -230,6 +227,10 @@ export interface DCAExecutorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "checkIfAdmin",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getSpecificStrategy",
     data: BytesLike
@@ -324,6 +325,18 @@ export namespace FeesDistributedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace OwnershipTransferredEvent {
   export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
   export type OutputTuple = [previousOwner: string, newOwner: string];
@@ -380,12 +393,6 @@ export interface DCAExecutor extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  CheckIfAdmin: TypedContractMethod<
-    [addressToCheck_: AddressLike],
-    [boolean],
-    "view"
-  >;
-
   DistributeFees: TypedContractMethod<
     [tokenAddress_: AddressLike],
     [void],
@@ -424,6 +431,12 @@ export interface DCAExecutor extends BaseContract {
 
   addAdmin: TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
 
+  checkIfAdmin: TypedContractMethod<
+    [addressToCheck_: AddressLike],
+    [boolean],
+    "view"
+  >;
+
   getSpecificStrategy: TypedContractMethod<
     [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput],
@@ -454,9 +467,6 @@ export interface DCAExecutor extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
-  getFunction(
-    nameOrSignature: "CheckIfAdmin"
-  ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "DistributeFees"
   ): TypedContractMethod<[tokenAddress_: AddressLike], [void], "nonpayable">;
@@ -498,6 +508,9 @@ export interface DCAExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "addAdmin"
   ): TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "checkIfAdmin"
+  ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "getSpecificStrategy"
   ): TypedContractMethod<
@@ -553,6 +566,13 @@ export interface DCAExecutor extends BaseContract {
     FeesDistributedEvent.OutputObject
   >;
   getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -603,6 +623,17 @@ export interface DCAExecutor extends BaseContract {
       FeesDistributedEvent.InputTuple,
       FeesDistributedEvent.OutputTuple,
       FeesDistributedEvent.OutputObject
+    >;
+
+    "Initialized(uint64)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
     >;
 
     "OwnershipTransferred(address,address)": TypedContractEvent<

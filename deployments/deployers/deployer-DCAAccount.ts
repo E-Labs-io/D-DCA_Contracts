@@ -13,6 +13,7 @@ export default async function deploy({
   deployer,
   delayTime,
   contractName,
+  network,
   constructorArguments,
   prevDeployments,
 }: DeploymentProps): Promise<string | Addressable | false> {
@@ -28,24 +29,24 @@ export default async function deploy({
       };
     constructorArguments[0] = DCAExec.deployment;
 
-    const deployedContract = await hre.ethers.deployContract(
-      contractName,
+    const contract = await hre.ethers.getContractFactory(contractName);
+    const deployedContract = await hre.upgrades.deployProxy(
+      contract,
       constructorArguments,
-      deployer
+      {
+        initializer: "initialize",
+      }
     );
+
     await deployedContract.waitForDeployment();
+
     console.log(
       `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`
     );
 
-    const network = await hre.ethers.provider.getNetwork();
     if (network.name !== "hardhat") {
       await delay(delayTime);
-      await verifyContractOnScan(
-        hre.run,
-        deployedContract.target,
-        constructorArguments
-      );
+      await verifyContractOnScan(hre.run, deployedContract.target);
     } else {
       await hre.ethernal.push({
         name: contractName,

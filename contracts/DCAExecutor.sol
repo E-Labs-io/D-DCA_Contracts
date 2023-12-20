@@ -32,9 +32,17 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     constructor(
         IDCADataStructures.FeeDistribution memory feeDistrobution_,
         address executionEOA_
-    ) onlyAdmins() {
+    ) OnlyAdmin(_msgSender()) {
         _feeData = feeDistrobution_;
         _setExecutionAddress(executionEOA_);
+    }
+
+    fallback() external payable {
+        revert();
+    }
+
+    receive() external payable {
+        revert();
     }
 
     function Subscribe(

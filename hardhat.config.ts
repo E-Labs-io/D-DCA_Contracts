@@ -9,6 +9,7 @@ import "@nomicfoundation/hardhat-ethers";
 import "hardhat-gas-reporter";
 import "tsconfig-paths/register";
 import "hardhat-ethernal";
+import "@openzeppelin/hardhat-upgrades";
 
 import "./tasks";
 

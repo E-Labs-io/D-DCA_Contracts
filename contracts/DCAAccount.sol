@@ -3,12 +3,12 @@ pragma solidity ^0.8.20;
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 
-import "./interfaces/IDCADataStructures.sol";
-import "./interfaces/IDCAAccount.sol";
-import "./interfaces/IDCAExecutor.sol";
-import "./security/onlyExecutor.sol";
-import "./library/Strategys.sol";
-import "./library/Reinvest.sol";
+import {IDCADataStructures} from "./interfaces/IDCADataStructures.sol";
+import {IDCAAccount} from "./interfaces/IDCAAccount.sol";
+import {IDCAExecutor} from "./interfaces/IDCAExecutor.sol";
+import {OnlyExecutor} from "./security/onlyExecutor.sol";
+import {Strategies} from "./library/Strategys.sol";
+import {DCAReinvest} from "./library/Reinvest.sol";
 
 contract DCAAccount is OnlyExecutor, IDCAAccount {
     using Strategies for uint256;
@@ -28,6 +28,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     IDCAExecutor internal _executorAddress;
     ISwapRouter private SWAP_ROUTER;
+    DCAReinvest private DCAREINVEST_LIBRARY;
 
     uint24 private _poolFee = 10000;
 
@@ -39,9 +40,18 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         address executorAddress_,
         address swapRouter_,
         address owner_
-    ) OnlyExecutor(executorAddress_) Ownable(owner_) {
-        _changeDefaultExecutor(IDCAExecutor(executorAddress_));
+    ) OnlyExecutor(owner_) {
+        _changeDefaultExecutor(executorAddress_);
         SWAP_ROUTER = ISwapRouter(swapRouter_);
+    }
+
+    fallback() external payable {
+        revert();
+    }
+
+    // Receive is a variant of fallback that is triggered when msg.data is empty
+    receive() external payable {
+        revert();
     }
 
     /**
@@ -422,14 +432,14 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
      * @dev update the onChain executor address
      * @param newAddress_ address of the new default executor contract
      */
-    function _changeDefaultExecutor(IDCAExecutor newAddress_) internal {
+    function _changeDefaultExecutor(address newAddress_) internal {
         require(
-            _executorAddress != newAddress_,
+            address(_executorAddress) != newAddress_,
             "Already using this DCA executor"
         );
-        _executorAddress = newAddress_;
-        _changeExecutorAddress(address(newAddress_));
-        emit DCAExecutorChanged(address(newAddress_));
+        _executorAddress = IDCAExecutor(newAddress_);
+        _changeExecutorAddress(newAddress_);
+        emit DCAExecutorChanged(newAddress_);
     }
 
     /**
