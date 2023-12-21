@@ -9,15 +9,10 @@ abstract contract OnlyAdmin is OnlyExecutor {
     modifier onlyAdmins() {
         require(
             _admins[_msgSender()] || (_msgSender() == owner()),
-            "Address is not an admin"
+            "OnlyAdmin : [onlyAdmins] Address is not an admin"
         );
         _;
     }
-
-    constructor(
-        address _owner,
-        address executorEOA_
-    ) OnlyExecutor(_owner, executorEOA_) {}
 
     function addAdmin(address newAdmin_) public onlyOwner {
         _admins[newAdmin_] = true;

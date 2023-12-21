@@ -126,6 +126,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibraryProxy__factory>;
     getContractFactory(
+      name: "OnlyActive",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OnlyActive__factory>;
+    getContractFactory(
       name: "OnlyAdmin",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OnlyAdmin__factory>;
@@ -279,6 +283,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LibraryProxy>;
     getContractAt(
+      name: "OnlyActive",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OnlyActive>;
+    getContractAt(
       name: "OnlyAdmin",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -407,6 +416,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.LibraryProxy>;
     deployContract(
+      name: "OnlyActive",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OnlyActive>;
+    deployContract(
       name: "OnlyAdmin",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyAdmin>;
@@ -559,6 +572,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.LibraryProxy>;
+    deployContract(
+      name: "OnlyActive",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OnlyActive>;
     deployContract(
       name: "OnlyAdmin",
       args: any[],

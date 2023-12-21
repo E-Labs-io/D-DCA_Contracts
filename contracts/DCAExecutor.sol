@@ -8,10 +8,11 @@ import "./interfaces/IDCAExecutor.sol";
 import "./interfaces/IDCAAccount.sol";
 import "./security/onlyAdmin.sol";
 import "./security/onlyExecutor.sol";
+import "./security/onlyActive.sol";
 
 import "./library/Strategys.sol";
 
-contract DCAExecutor is OnlyAdmin, IDCAExecutor {
+contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
     using Strategies for uint256;
     using Strategies for Strategy;
 
@@ -19,21 +20,13 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
     FeeDistribution internal _feeData;
 
-    bool internal _active = true;
-    address internal _executionEOAAddress;
-
     uint256 private _totalActiveStrategies;
     uint256 private _totalIntervalsExecuted;
-
-    modifier is_active() {
-        require(_active, "DCAExecutor : [isActive] Executor is on pause");
-        _;
-    }
 
     constructor(
         FeeDistribution memory feeDistrobution_,
         address executionEOA_
-    ) OnlyAdmin(_msgSender(), executionEOA_) {
+    ) OnlyExecutor(_msgSender(), executionEOA_) {
         _feeData = feeDistrobution_;
     }
 
@@ -48,6 +41,10 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     function Subscribe(
         Strategy calldata strategy_
     ) external override is_active {
+        require(
+            _msgSender() == strategy_.accountAddress,
+            "DCAexecutor : [Subscribe] Only Account Contract can unsubscribe"
+        );
         require(
             strategy_._isValidStrategy(),
             "DCAexecutor : [Subscribe] Invalid strategy"
@@ -158,6 +155,10 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
         return _totalIntervalsExecuted;
     }
 
+    function getActiveExecutorAddress() public view returns (address) {
+        return _executor();
+    }
+
     /**
      *
      * @notice Internal & Private Functions
@@ -190,8 +191,7 @@ contract DCAExecutor is OnlyAdmin, IDCAExecutor {
     }
 
     function _setExecutionAddress(address newExecutionEOA_) internal {
-        _executionEOAAddress = newExecutionEOA_;
-        emit ExecutionEOAAddressChange(newExecutionEOA_, msg.sender);
+        _changeExecutorAddress(newExecutionEOA_);
     }
 
     function _singleExecution(

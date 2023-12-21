@@ -3,30 +3,36 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 abstract contract OnlyExecutor is Ownable {
-    address private _executor;
+    address private _executorAddress;
+
+    event ExecutorAddressChange(address indexed newAddress_);
 
     modifier onlyExecutor() {
-        require(_executor == msg.sender, "Address is not the executor");
+        require(
+            _executorAddress == msg.sender,
+            "OnlyExecutor : [onlyExecutor] Address is not an executor"
+        );
         _;
     }
 
-    constructor(address owner_, address executorEOA_) Ownable(owner_) {
-        _changeExecutorAddress(executorEOA_);
+    constructor(address owner_, address executorAddress_) Ownable(owner_) {
+        _changeExecutorAddress(executorAddress_);
     }
 
-    function _changeExecutorAddress(address newAddress_) internal {
-        _executor = newAddress_;
+    function _executor() internal view returns (address) {
+        return _executorAddress;
+    }
+
+    function _changeExecutorAddress(address executorAddress_) internal {
+        _executorAddress = executorAddress_;
+        emit ExecutorAddressChange(executorAddress_);
     }
 
     function removeExecutor() public onlyOwner {
-        _executor = address(0x0);
+        _changeExecutorAddress(address(0x0));
     }
 
-    function changeExecutor(address newExecutorAddress_) public onlyOwner {
-        _executor = address(newExecutorAddress_);
-    }
-
-    function getExecutorAddress() public view returns (address) {
-        return _executor;
+    function changeExecutor(address executorAddress_) public onlyOwner {
+        _changeExecutorAddress(executorAddress_);
     }
 }

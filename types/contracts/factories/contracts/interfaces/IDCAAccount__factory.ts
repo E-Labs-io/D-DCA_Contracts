@@ -15,19 +15,6 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "newAddress_",
-        type: "address",
-      },
-    ],
-    name: "DCAExecutorChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
         name: "newLibraryAddress",
         type: "address",
       },

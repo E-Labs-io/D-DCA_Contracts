@@ -13,66 +13,98 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   const [owner] = await hre.ethers.getSigners();
   const network = hre.network;
 
-  console.log(`🟡 [TASK] ${taskId} : Creating Account from factory`);
+  let DCAAccount: string = "0x00AC89dbd36308ce0d5a4FDb77A78386b48E013A";
 
-  const DCAFactory = await hre.ethers.getContractAt(
-    "DCAFactory",
-    deployedDCAContracts[network.name as ChainName]!.DCAFactory!,
-    owner
-  );
+  const [deployAccount, approveFund, fundAccount, newStrategy, subscribeStrat] =
+    [true, true, true, true, true];
 
-  const tx = await DCAFactory.createDCAAccount();
-  // Wait for the transaction to be mined
-  const receipt = await tx.wait();
+  if (deployAccount) {
+    console.log(`🟡 [TASK] ${taskId} : Creating Account from factory`);
 
-  const DCAAccount: string = receipt?.logs.find(
-    (eventLog) => eventLog!.fragment!.name == "DCAAccountCreated"
-  ).args[1]!;
+    const DCAFactory = await hre.ethers.getContractAt(
+      "DCAFactory",
+      deployedDCAContracts[network.name as ChainName]!.DCAFactory!,
+      owner
+    );
 
-  console.log(`🟢 [TASK] ${taskId} : Created new DCAAccount : `, DCAAccount);
-  console.log(`🟡 [TASK] ${taskId} : Setting Strategy`);
-  //  Verify the contract
+    const tx = await DCAFactory.createDCAAccount();
+    // Wait for the transaction to be mined
+    const receipt = await tx.wait();
 
-  const usdcAddress = tokenAddress.usdc[
-    network.name as ChainName
-  ] as AddressLike;
+    const checkArgs: any[] = receipt?.logs.find(
+      (eventLog) => eventLog?.fragment?.name == "DCAAccountCreated"
+    )!.args!;
 
-  //    Approve USDC for contrtact spend
-  const usdcContract = await hre.ethers.getContractAt(
-    "IERC20",
-    await usdcAddress,
-    owner
-  );
-  await usdcContract.approve(DCAAccount, hre.ethers.parseUnits("50000", 6));
-  console.log(`🟢 [TASK] ${taskId} : Token Spend Approved`);
+    if (checkArgs && checkArgs[0] === owner.address) {
+      DCAAccount = checkArgs[1];
+      console.log(
+        `🟢 [TASK] ${taskId} : Created new DCAAccount : `,
+        DCAAccount
+      );
+    } else
+      console.log(`🔴 [TASK] ${taskId} : Failed to Created new DCAAccount `);
+  }
 
-  // Deploy Strategy
+  //  Get the Account contract
+  console.log(`🟡 [TASK] ${taskId} : Connecting to Account`);
   const DCAAccountContract = await hre.ethers.getContractAt(
     "DCAAccount",
     DCAAccount,
     owner
   );
-  const go = true;
+
+  //  Get the USDC contract address for given network
+  const usdcAddress = tokenAddress.usdc[
+    network.name as ChainName
+  ] as AddressLike;
+
+  if (approveFund) {
+    //    Approve USDC for contrtact spend
+    console.log(`🟡 [TASK] ${taskId} : Approving Account to spend USDC`);
+    const usdcContract = await hre.ethers.getContractAt(
+      "IERC20",
+      await usdcAddress,
+      owner
+    );
+    const tx = await usdcContract.approve(
+      DCAAccount,
+      hre.ethers.parseUnits("50000", 6)
+    );
+    await tx.wait();
+    console.log(`🟢 [TASK] ${taskId} : Token Spend Approved`);
+  }
+
   const id = 1;
   const strat = newStrat(DCAAccount, hre.network.name);
 
-  if (go) {
-    await DCAAccountContract.SetupStrategy(strat, 0, false);
+  if (newStrategy) {
+    console.log(`🟡 [TASK] ${taskId} : Setting up new Strategy`);
+    const tx = await DCAAccountContract.SetupStrategy(strat, 0, false);
+    await tx.wait();
     console.log(`🟢 [TASK] ${taskId} : New strategy set up`);
   }
 
-  //  Fund DCAAccount
-  const fund = await DCAAccountContract.FundAccount(
-    usdcAddress,
-    hre.ethers.parseUnits("1000", 6)
-  );
-  await fund.wait();
-  console.log(`🟢 [TASK] ${taskId} : Account Funded`);
+  if (fundAccount) {
+    //  Fund DCAAccount
+    console.log(`🟡 [TASK] ${taskId} : Funding Account`);
 
-  //  Subscribe the strategy
-  const sub = await DCAAccountContract.SubscribeStrategy(
-    go ? strat.strategyId : id
-  );
-  await sub.wait();
-  console.log(`🟢 [TASK] ${taskId} : Strategy Subscribed`);
+    const tx = await DCAAccountContract.FundAccount(
+      usdcAddress,
+      hre.ethers.parseUnits("1000", 6)
+    );
+    await tx.wait();
+    console.log(`🟢 [TASK] ${taskId} : Account Funded`);
+  }
+
+  if (subscribeStrat) {
+    //  Subscribe the strategy
+    console.log(`🟡 [TASK] ${taskId} : Subscribing Strategy`);
+
+    const tx = await DCAAccountContract.SubscribeStrategy(
+      newStrategy ? strat.strategyId : id
+    );
+    await tx.wait();
+    console.log(`🟢 [TASK] ${taskId} : Strategy Subscribed`);
+  }
+  console.log(`🟢 [TASK] ${taskId} : Complete`);
 });

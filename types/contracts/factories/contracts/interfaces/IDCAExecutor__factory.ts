@@ -65,25 +65,6 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "newExecutionEOA_",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "changer_",
-        type: "address",
-      },
-    ],
-    name: "ExecutionEOAAddressChange",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
         name: "token_",
         type: "address",
       },

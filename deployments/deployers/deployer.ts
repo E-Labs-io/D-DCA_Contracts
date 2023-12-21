@@ -5,6 +5,7 @@ import delay from "../../scripts/helpers/delay";
 import verifyContractOnScan from "../../scripts/helpers/verifyOnScan";
 import { DeploymentProps } from "~/types/deployment/deploymentArguments";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import waitForConfirmations from "~/scripts/helpers/waitForConformations";
 
 export default async function deploy({
   hre,
@@ -21,8 +22,18 @@ export default async function deploy({
       constructorArguments,
       deployer
     );
+    console.log(
+      `🟠 Deployment confirming : ${contractName} to ${deployedContract.target}`
+    );
 
     await deployedContract.waitForDeployment();
+
+    await waitForConfirmations(
+      hre,
+      deployedContract.deploymentTransaction()?.hash!,
+      2
+    );
+
     console.log(
       `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`
     );

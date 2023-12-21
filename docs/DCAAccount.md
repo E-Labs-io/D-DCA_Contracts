@@ -187,7 +187,7 @@ function changeDCAReinvestLibrary(address newLibraryAddress_) external nonpayabl
 ### changeExecutor
 
 ```solidity
-function changeExecutor(address newExecutorAddress_) external nonpayable
+function changeExecutor(address executorAddress_) external nonpayable
 ```
 
 
@@ -198,7 +198,7 @@ function changeExecutor(address newExecutorAddress_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| newExecutorAddress_ | address | undefined |
+| executorAddress_ | address | undefined |
 
 ### getAttachedReinvestLibraryAddress
 
@@ -299,23 +299,6 @@ function getBaseTokenRemainingBlocks(address token_) external view returns (uint
 | Name | Type | Description |
 |---|---|---|
 | _0 | uint256 | {uint256} amount of blocks left for given base token balance |
-
-### getExecutorAddress
-
-```solidity
-function getExecutorAddress() external view returns (address)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
 
 ### getStrategyData
 
@@ -477,22 +460,6 @@ function updateSwapAddress(address swapRouter_) external nonpayable
 
 ## Events
 
-### DCAExecutorChanged
-
-```solidity
-event DCAExecutorChanged(address indexed newAddress_)
-```
-
-Emitted when the DCAExecutor contract address is changed
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newAddress_ `indexed` | address | {address} Address of the Executor contract |
-
 ### DCAReinvestLibraryChanged
 
 ```solidity
@@ -508,6 +475,22 @@ event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
 | Name | Type | Description |
 |---|---|---|
 | newLibraryAddress `indexed` | address | undefined |
+
+### ExecutorAddressChange
+
+```solidity
+event ExecutorAddressChange(address indexed newAddress_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newAddress_ `indexed` | address | undefined |
 
 ### NewStrategyCreated
 

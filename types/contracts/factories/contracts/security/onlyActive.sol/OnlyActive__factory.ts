@@ -4,9 +4,9 @@
 
 import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
-  OnlyAdmin,
-  OnlyAdminInterface,
-} from "../../../../contracts/security/onlyAdmin.sol/OnlyAdmin";
+  OnlyActive,
+  OnlyActiveInterface,
+} from "../../../../contracts/security/onlyActive.sol/OnlyActive";
 
 const _abi = [
   {
@@ -36,12 +36,12 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "newAddress_",
-        type: "address",
+        internalType: "bool",
+        name: "newState_",
+        type: "bool",
       },
     ],
-    name: "ExecutorAddressChange",
+    name: "ContractActiveStateChange",
     type: "event",
   },
   {
@@ -64,51 +64,6 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newAdmin_",
-        type: "address",
-      },
-    ],
-    name: "addAdmin",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "executorAddress_",
-        type: "address",
-      },
-    ],
-    name: "changeExecutor",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "addressToCheck_",
-        type: "address",
-      },
-    ],
-    name: "checkIfAdmin",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "owner",
     outputs: [
@@ -122,28 +77,21 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "oldAdmin_",
-        type: "address",
-      },
-    ],
-    name: "removeAdmin",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "removeExecutor",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bool",
+        name: "newState_",
+        type: "bool",
+      },
+    ],
+    name: "setActiveState",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -163,12 +111,12 @@ const _abi = [
   },
 ] as const;
 
-export class OnlyAdmin__factory {
+export class OnlyActive__factory {
   static readonly abi = _abi;
-  static createInterface(): OnlyAdminInterface {
-    return new Interface(_abi) as OnlyAdminInterface;
+  static createInterface(): OnlyActiveInterface {
+    return new Interface(_abi) as OnlyActiveInterface;
   }
-  static connect(address: string, runner?: ContractRunner | null): OnlyAdmin {
-    return new Contract(address, _abi, runner) as unknown as OnlyAdmin;
+  static connect(address: string, runner?: ContractRunner | null): OnlyActive {
+    return new Contract(address, _abi, runner) as unknown as OnlyActive;
   }
 }

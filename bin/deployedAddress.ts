@@ -7,8 +7,8 @@ const deployedDCAContracts: {
 } = {
   ethGoerli: {
     DCAReinvest: "0x67864895cBCD6Ae426f816cA09ee6BecAE162d10",
-    DCAExecutor: "0x6b74186415C1343BdBB72B6EAc40A104904A572F",
-    DCAFactory: "0x9297251091b9D7926E6f1fc37895Fe5c0aBaD66B",
+    DCAExecutor: "0x22DE15E76a05ec1863D27c2d7F6eDE870e24553d",
+    DCAFactory: "0xbb639096875855fA18a228731504037ed9Fc707E",
   },
 };
 

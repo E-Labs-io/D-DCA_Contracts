@@ -16,11 +16,6 @@ interface IDCAAccount is IDCADataStructures {
         uint256 indexed amountIn_,
         bool reInvest_
     );
-    /**
-     * @notice Emitted when the DCAExecutor contract address is changed
-     * @param newAddress_ {address} Address of the Executor contract
-     */
-    event DCAExecutorChanged(address indexed newAddress_);
 
     /**
      * @notice Emitted when the Strategy is confirmed to be subscribed to an Executor

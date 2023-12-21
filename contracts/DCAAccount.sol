@@ -26,7 +26,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     // Mapping of Interval enum to block amounts
     // Should move to a library using constants
 
-    IDCAExecutor internal _executorAddress;
+    //IDCAExecutor internal _executorAddress;
     ISwapRouter private SWAP_ROUTER;
     DCAReinvest private DCAREINVEST_LIBRARY;
 
@@ -42,17 +42,18 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         address owner_,
         address reinvestLibraryContract_
     ) OnlyExecutor(owner_, executorAddress_) {
+        //  _executorAddress = IDCAExecutor(executorAddress_);
         DCAREINVEST_LIBRARY = DCAReinvest(reinvestLibraryContract_);
         SWAP_ROUTER = ISwapRouter(swapRouter_);
     }
 
     fallback() external payable {
-        revert();
+        revert("DCAAccount : [fallback]");
     }
 
     // Receive is a variant of fallback that is triggered when msg.data is empty
     receive() external payable {
-        revert();
+        revert("DCAAccount : [receive]");
     }
 
     /**
@@ -93,6 +94,11 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         require(
             _strategies[strategyId_].active,
             "DCAAccount : [Execute] Strategy is not active"
+        );
+        require(
+            _baseBalances[_strategies[strategyId_].baseToken.tokenAddress] >=
+                _strategies[strategyId_].amount,
+            "DCAAccount : [Execute] Base Balance too low"
         );
         return _executeDCATrade(strategyId_, feeAmount_);
     }
@@ -412,13 +418,10 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
             strategyData_.interval
         );
 
-        _executorAddress.Subscribe(strategyData_);
+        IDCAExecutor(_executor()).Subscribe(strategyData_);
         _strategies[strategyData_.strategyId].active = true;
         _totalActiveStrategies += 1;
-        emit StrategySubscribed(
-            strategyData_.strategyId,
-            address(_executorAddress)
-        );
+        emit StrategySubscribed(strategyData_.strategyId, _executor());
     }
 
     /**
@@ -431,7 +434,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
             oldStrategy.baseToken.tokenAddress
         ] -= _calculateCostPerBlock(oldStrategy.amount, oldStrategy.interval);
 
-        _executorAddress.Unsubscribe(address(this), strategyId_);
+        IDCAExecutor(_executor()).Unsubscribe(address(this), strategyId_);
         _strategies[oldStrategy.strategyId].active = false;
         _totalActiveStrategies--;
         emit StrategyUnsubscribed(oldStrategy.strategyId);
@@ -442,13 +445,9 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
      * @param newAddress_ address of the new default executor contract
      */
     function _changeDefaultExecutor(address newAddress_) internal {
-        require(
-            address(_executorAddress) != newAddress_,
-            "Already using this DCA executor"
-        );
-        _executorAddress = IDCAExecutor(newAddress_);
+        require(_executor() != newAddress_, "Already using this DCA executor");
+
         _changeExecutorAddress(newAddress_);
-        emit DCAExecutorChanged(newAddress_);
     }
 
     /**
@@ -471,10 +470,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     function _transferFee(uint256 feeAmount_, address tokenAddress_) internal {
         // Transfer teh fee to the DCAExecutpr
         require(
-            IERC20(tokenAddress_).transfer(
-                address(_executorAddress),
-                feeAmount_
-            ),
+            IERC20(tokenAddress_).transfer(_executor(), feeAmount_),
             "Fee transfer failed"
         );
     }

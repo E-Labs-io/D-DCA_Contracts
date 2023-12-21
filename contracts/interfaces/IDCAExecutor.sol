@@ -5,16 +5,6 @@ import "./IDCADataStructures.sol";
 
 interface IDCAExecutor is IDCADataStructures {
     /**
-     * @notice emitted when the default Executor service address is changed
-     * @param newExecutionEOA_ {address} the new address of the Executor Service EOA or Multi
-     * @param changer_ {address} address of the wallet implementing change
-     */
-    event ExecutionEOAAddressChange(
-        address indexed newExecutionEOA_,
-        address changer_
-    );
-
-    /**
      * @notice Emitted once a strategy has finished executing
      * @param account_ {address} Address of the DCAAccount
      * @param strategyId_ {uint256} ID of teh strategy executed

@@ -110,7 +110,6 @@ export interface IDCAAccountInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "DCAExecutorChanged"
       | "DCAReinvestLibraryChanged"
       | "NewStrategyCreated"
       | "StrategyExecuted"
@@ -204,18 +203,6 @@ export interface IDCAAccountInterface extends Interface {
     functionFragment: "setStrategyReinvest",
     data: BytesLike
   ): Result;
-}
-
-export namespace DCAExecutorChangedEvent {
-  export type InputTuple = [newAddress_: AddressLike];
-  export type OutputTuple = [newAddress_: string];
-  export interface OutputObject {
-    newAddress_: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace DCAReinvestLibraryChangedEvent {
@@ -469,13 +456,6 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   getEvent(
-    key: "DCAExecutorChanged"
-  ): TypedContractEvent<
-    DCAExecutorChangedEvent.InputTuple,
-    DCAExecutorChangedEvent.OutputTuple,
-    DCAExecutorChangedEvent.OutputObject
-  >;
-  getEvent(
     key: "DCAReinvestLibraryChanged"
   ): TypedContractEvent<
     DCAReinvestLibraryChangedEvent.InputTuple,
@@ -512,17 +492,6 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   filters: {
-    "DCAExecutorChanged(address)": TypedContractEvent<
-      DCAExecutorChangedEvent.InputTuple,
-      DCAExecutorChangedEvent.OutputTuple,
-      DCAExecutorChangedEvent.OutputObject
-    >;
-    DCAExecutorChanged: TypedContractEvent<
-      DCAExecutorChangedEvent.InputTuple,
-      DCAExecutorChangedEvent.OutputTuple,
-      DCAExecutorChangedEvent.OutputObject
-    >;
-
     "DCAReinvestLibraryChanged(address)": TypedContractEvent<
       DCAReinvestLibraryChangedEvent.InputTuple,
       DCAReinvestLibraryChangedEvent.OutputTuple,

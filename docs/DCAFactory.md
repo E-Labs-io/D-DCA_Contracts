@@ -105,16 +105,21 @@ function renounceOwnership() external nonpayable
 *Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.*
 
 
-### setFactoryPauseState
+### setActiveState
 
 ```solidity
-function setFactoryPauseState() external nonpayable
+function setActiveState(bool newState_) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newState_ | bool | undefined |
 
 ### transferOwnership
 
@@ -191,6 +196,22 @@ function userDCAAccounts(address, uint256) external view returns (address)
 
 ## Events
 
+### ContractActiveStateChange
+
+```solidity
+event ContractActiveStateChange(bool indexed newState_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newState_ `indexed` | bool | undefined |
+
 ### DCAAccountCreated
 
 ```solidity
@@ -223,22 +244,6 @@ event DCAExecutorAddressChanged(address indexed newAddress)
 | Name | Type | Description |
 |---|---|---|
 | newAddress `indexed` | address | undefined |
-
-### DCAFactoryPauseStateChange
-
-```solidity
-event DCAFactoryPauseStateChange(bool indexed isPaused)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| isPaused `indexed` | bool | undefined |
 
 ### DCAReinvestContractAddressChanged
 

@@ -1,4 +1,4 @@
-# OnlyExecutor
+# OnlyActive
 
 
 
@@ -9,22 +9,6 @@
 
 
 ## Methods
-
-### changeExecutor
-
-```solidity
-function changeExecutor(address executorAddress_) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| executorAddress_ | address | undefined |
 
 ### owner
 
@@ -43,17 +27,6 @@ function owner() external view returns (address)
 |---|---|---|
 | _0 | address | undefined |
 
-### removeExecutor
-
-```solidity
-function removeExecutor() external nonpayable
-```
-
-
-
-
-
-
 ### renounceOwnership
 
 ```solidity
@@ -64,6 +37,22 @@ function renounceOwnership() external nonpayable
 
 *Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.*
 
+
+### setActiveState
+
+```solidity
+function setActiveState(bool newState_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newState_ | bool | undefined |
 
 ### transferOwnership
 
@@ -85,10 +74,10 @@ function transferOwnership(address newOwner) external nonpayable
 
 ## Events
 
-### ExecutorAddressChange
+### ContractActiveStateChange
 
 ```solidity
-event ExecutorAddressChange(address indexed newAddress_)
+event ContractActiveStateChange(bool indexed newState_)
 ```
 
 
@@ -99,7 +88,7 @@ event ExecutorAddressChange(address indexed newAddress_)
 
 | Name | Type | Description |
 |---|---|---|
-| newAddress_ `indexed` | address | undefined |
+| newState_ `indexed` | bool | undefined |
 
 ### OwnershipTransferred
 

@@ -16,8 +16,8 @@ import {
 const deploymentFiles: Deployment = {
   DCAReinvest: GenericDeployer,
   DCAExecutor: GenericDeployer,
-  DCAAccount: DCAAccountDeployer,
-  DCAFactory: DCAAccountDeployer,
+  DCAAccount: GenericDeployer,
+  DCAFactory: GenericDeployer,
 };
 
 export const deploymentArgumentStore: ArgumentStore = {

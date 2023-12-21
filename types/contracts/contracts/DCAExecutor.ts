@@ -132,7 +132,7 @@ export interface DCAExecutorInterface extends Interface {
       | "addAdmin"
       | "changeExecutor"
       | "checkIfAdmin"
-      | "getExecutorAddress"
+      | "getActiveExecutorAddress"
       | "getSpecificStrategy"
       | "getTotalActiveStrategys"
       | "getTotalExecutions"
@@ -140,14 +140,16 @@ export interface DCAExecutorInterface extends Interface {
       | "removeAdmin"
       | "removeExecutor"
       | "renounceOwnership"
+      | "setActiveState"
       | "transferOwnership"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "ContractActiveStateChange"
       | "DCAAccountSubscription"
       | "ExecutedDCA"
-      | "ExecutionEOAAddressChange"
+      | "ExecutorAddressChange"
       | "FeesDistributed"
       | "OwnershipTransferred"
   ): EventFragment;
@@ -189,7 +191,7 @@ export interface DCAExecutorInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getExecutorAddress",
+    functionFragment: "getActiveExecutorAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -216,6 +218,10 @@ export interface DCAExecutorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setActiveState",
+    values: [boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -250,7 +256,7 @@ export interface DCAExecutorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getExecutorAddress",
+    functionFragment: "getActiveExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -279,9 +285,25 @@ export interface DCAExecutorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setActiveState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+}
+
+export namespace ContractActiveStateChangeEvent {
+  export type InputTuple = [newState_: boolean];
+  export type OutputTuple = [newState_: boolean];
+  export interface OutputObject {
+    newState_: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace DCAAccountSubscriptionEvent {
@@ -322,15 +344,11 @@ export namespace ExecutedDCAEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace ExecutionEOAAddressChangeEvent {
-  export type InputTuple = [
-    newExecutionEOA_: AddressLike,
-    changer_: AddressLike
-  ];
-  export type OutputTuple = [newExecutionEOA_: string, changer_: string];
+export namespace ExecutorAddressChangeEvent {
+  export type InputTuple = [newAddress_: AddressLike];
+  export type OutputTuple = [newAddress_: string];
   export interface OutputObject {
-    newExecutionEOA_: string;
-    changer_: string;
+    newAddress_: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -446,7 +464,7 @@ export interface DCAExecutor extends BaseContract {
   addAdmin: TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
 
   changeExecutor: TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
+    [executorAddress_: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -457,7 +475,7 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
-  getExecutorAddress: TypedContractMethod<[], [string], "view">;
+  getActiveExecutorAddress: TypedContractMethod<[], [string], "view">;
 
   getSpecificStrategy: TypedContractMethod<
     [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
@@ -480,6 +498,12 @@ export interface DCAExecutor extends BaseContract {
   removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+
+  setActiveState: TypedContractMethod<
+    [newState_: boolean],
+    [void],
+    "nonpayable"
+  >;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -534,16 +558,12 @@ export interface DCAExecutor extends BaseContract {
   ): TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "changeExecutor"
-  ): TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[executorAddress_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "checkIfAdmin"
   ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
   getFunction(
-    nameOrSignature: "getExecutorAddress"
+    nameOrSignature: "getActiveExecutorAddress"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getSpecificStrategy"
@@ -571,9 +591,19 @@ export interface DCAExecutor extends BaseContract {
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setActiveState"
+  ): TypedContractMethod<[newState_: boolean], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
+  getEvent(
+    key: "ContractActiveStateChange"
+  ): TypedContractEvent<
+    ContractActiveStateChangeEvent.InputTuple,
+    ContractActiveStateChangeEvent.OutputTuple,
+    ContractActiveStateChangeEvent.OutputObject
+  >;
   getEvent(
     key: "DCAAccountSubscription"
   ): TypedContractEvent<
@@ -589,11 +619,11 @@ export interface DCAExecutor extends BaseContract {
     ExecutedDCAEvent.OutputObject
   >;
   getEvent(
-    key: "ExecutionEOAAddressChange"
+    key: "ExecutorAddressChange"
   ): TypedContractEvent<
-    ExecutionEOAAddressChangeEvent.InputTuple,
-    ExecutionEOAAddressChangeEvent.OutputTuple,
-    ExecutionEOAAddressChangeEvent.OutputObject
+    ExecutorAddressChangeEvent.InputTuple,
+    ExecutorAddressChangeEvent.OutputTuple,
+    ExecutorAddressChangeEvent.OutputObject
   >;
   getEvent(
     key: "FeesDistributed"
@@ -611,6 +641,17 @@ export interface DCAExecutor extends BaseContract {
   >;
 
   filters: {
+    "ContractActiveStateChange(bool)": TypedContractEvent<
+      ContractActiveStateChangeEvent.InputTuple,
+      ContractActiveStateChangeEvent.OutputTuple,
+      ContractActiveStateChangeEvent.OutputObject
+    >;
+    ContractActiveStateChange: TypedContractEvent<
+      ContractActiveStateChangeEvent.InputTuple,
+      ContractActiveStateChangeEvent.OutputTuple,
+      ContractActiveStateChangeEvent.OutputObject
+    >;
+
     "DCAAccountSubscription(address,uint256,uint8,bool)": TypedContractEvent<
       DCAAccountSubscriptionEvent.InputTuple,
       DCAAccountSubscriptionEvent.OutputTuple,
@@ -633,15 +674,15 @@ export interface DCAExecutor extends BaseContract {
       ExecutedDCAEvent.OutputObject
     >;
 
-    "ExecutionEOAAddressChange(address,address)": TypedContractEvent<
-      ExecutionEOAAddressChangeEvent.InputTuple,
-      ExecutionEOAAddressChangeEvent.OutputTuple,
-      ExecutionEOAAddressChangeEvent.OutputObject
+    "ExecutorAddressChange(address)": TypedContractEvent<
+      ExecutorAddressChangeEvent.InputTuple,
+      ExecutorAddressChangeEvent.OutputTuple,
+      ExecutorAddressChangeEvent.OutputObject
     >;
-    ExecutionEOAAddressChange: TypedContractEvent<
-      ExecutionEOAAddressChangeEvent.InputTuple,
-      ExecutionEOAAddressChangeEvent.OutputTuple,
-      ExecutionEOAAddressChangeEvent.OutputObject
+    ExecutorAddressChange: TypedContractEvent<
+      ExecutorAddressChangeEvent.InputTuple,
+      ExecutorAddressChangeEvent.OutputTuple,
+      ExecutorAddressChangeEvent.OutputObject
     >;
 
     "FeesDistributed(address,uint256)": TypedContractEvent<

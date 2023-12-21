@@ -3,13 +3,13 @@ pragma solidity ^0.8.20;
 
 import "./DCAAccount.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./security/onlyActive.sol";
 
-contract DCAFactory is Ownable {
+contract DCAFactory is OnlyActive {
     // Event to emit when a new DCAAccount is created.
     event DCAAccountCreated(address indexed owner, address indexed dcaAccount);
     event DCAExecutorAddressChanged(address indexed newAddress);
     event DCAReinvestContractAddressChanged(address indexed newLibraryAddress);
-    event DCAFactoryPauseStateChange(bool indexed isPaused);
 
     // Mapping to keep track of accounts created by each user.
     mapping(address => address[]) public userDCAAccounts;
@@ -17,13 +17,6 @@ contract DCAFactory is Ownable {
     address immutable SWAP_ROUTER;
     address private _executorAddress;
     address public reInvestLogicContract;
-
-    bool private isPaused;
-
-    modifier isFactoryPaused() {
-        require(!isPaused, "DCAFactory : Factory is paused");
-        _;
-    }
 
     constructor(
         address executorAddress_,
@@ -36,16 +29,16 @@ contract DCAFactory is Ownable {
     }
 
     fallback() external payable {
-        revert();
+        revert("DCAFactory : [fallback]");
     }
 
     // Receive is a variant of fallback that is triggered when msg.data is empty
     receive() external payable {
-        revert();
+        revert("DCAFactory : [receive]");
     }
 
     // Function to create a new DCAAccount.
-    function createDCAAccount() public isFactoryPaused {
+    function createDCAAccount() public is_active {
         // Create a new DCAAccount with the sender as the initial owner.
         address sender = _msgSender();
         DCAAccount newAccount = new DCAAccount(
@@ -88,12 +81,7 @@ contract DCAFactory is Ownable {
         emit DCAReinvestContractAddressChanged(newAddress_);
     }
 
-    function setFactoryPauseState() public onlyOwner {
-        isPaused = !isPaused;
-        emit DCAFactoryPauseStateChange(isPaused);
-    }
-
     function getFactoryPauseState() public view returns (bool) {
-        return isPaused;
+        return _getActiveState();
     }
 }

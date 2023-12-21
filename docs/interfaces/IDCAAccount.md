@@ -215,22 +215,6 @@ function setStrategyReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_
 
 ## Events
 
-### DCAExecutorChanged
-
-```solidity
-event DCAExecutorChanged(address indexed newAddress_)
-```
-
-Emitted when the DCAExecutor contract address is changed
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newAddress_ `indexed` | address | {address} Address of the Executor contract |
-
 ### DCAReinvestLibraryChanged
 
 ```solidity

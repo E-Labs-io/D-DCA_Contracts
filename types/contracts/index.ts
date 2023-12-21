@@ -64,6 +64,8 @@ export type { CometStorage } from "./contracts/protocols/compoundV3/CometStorage
 export { CometStorage__factory } from "./factories/contracts/protocols/compoundV3/CometStorage__factory";
 export type { LibraryProxy } from "./contracts/proxys/DCAReinvestProxy.sol/LibraryProxy";
 export { LibraryProxy__factory } from "./factories/contracts/proxys/DCAReinvestProxy.sol/LibraryProxy__factory";
+export type { OnlyActive } from "./contracts/security/onlyActive.sol/OnlyActive";
+export { OnlyActive__factory } from "./factories/contracts/security/onlyActive.sol/OnlyActive__factory";
 export type { OnlyAdmin } from "./contracts/security/onlyAdmin.sol/OnlyAdmin";
 export { OnlyAdmin__factory } from "./factories/contracts/security/onlyAdmin.sol/OnlyAdmin__factory";
 export type { OnlyExecutor } from "./contracts/security/onlyExecutor.sol/OnlyExecutor";

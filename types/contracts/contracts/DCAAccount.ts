@@ -111,7 +111,6 @@ export interface DCAAccountInterface extends Interface {
       | "getBaseBalance"
       | "getBaseTokenCostPerBlock"
       | "getBaseTokenRemainingBlocks"
-      | "getExecutorAddress"
       | "getStrategyData"
       | "getTargetBalance"
       | "getTimeTillWindow"
@@ -125,8 +124,8 @@ export interface DCAAccountInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "DCAExecutorChanged"
       | "DCAReinvestLibraryChanged"
+      | "ExecutorAddressChange"
       | "NewStrategyCreated"
       | "OwnershipTransferred"
       | "StrategyExecuted"
@@ -197,10 +196,6 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getBaseTokenRemainingBlocks",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getExecutorAddress",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getStrategyData",
@@ -295,10 +290,6 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getExecutorAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getStrategyData",
     data: BytesLike
   ): Result;
@@ -333,11 +324,11 @@ export interface DCAAccountInterface extends Interface {
   ): Result;
 }
 
-export namespace DCAExecutorChangedEvent {
-  export type InputTuple = [newAddress_: AddressLike];
-  export type OutputTuple = [newAddress_: string];
+export namespace DCAReinvestLibraryChangedEvent {
+  export type InputTuple = [newLibraryAddress: AddressLike];
+  export type OutputTuple = [newLibraryAddress: string];
   export interface OutputObject {
-    newAddress_: string;
+    newLibraryAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -345,11 +336,11 @@ export namespace DCAExecutorChangedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace DCAReinvestLibraryChangedEvent {
-  export type InputTuple = [newLibraryAddress: AddressLike];
-  export type OutputTuple = [newLibraryAddress: string];
+export namespace ExecutorAddressChangeEvent {
+  export type InputTuple = [newAddress_: AddressLike];
+  export type OutputTuple = [newAddress_: string];
   export interface OutputObject {
-    newLibraryAddress: string;
+    newAddress_: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -537,7 +528,7 @@ export interface DCAAccount extends BaseContract {
   >;
 
   changeExecutor: TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
+    [executorAddress_: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -559,8 +550,6 @@ export interface DCAAccount extends BaseContract {
     [bigint],
     "view"
   >;
-
-  getExecutorAddress: TypedContractMethod<[], [string], "view">;
 
   getStrategyData: TypedContractMethod<
     [strategyId_: BigNumberish],
@@ -678,11 +667,7 @@ export interface DCAAccount extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "changeExecutor"
-  ): TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[executorAddress_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "getAttachedReinvestLibraryAddress"
   ): TypedContractMethod<[], [string], "view">;
@@ -698,9 +683,6 @@ export interface DCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "getBaseTokenRemainingBlocks"
   ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getExecutorAddress"
-  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getStrategyData"
   ): TypedContractMethod<
@@ -748,18 +730,18 @@ export interface DCAAccount extends BaseContract {
   ): TypedContractMethod<[swapRouter_: AddressLike], [void], "nonpayable">;
 
   getEvent(
-    key: "DCAExecutorChanged"
-  ): TypedContractEvent<
-    DCAExecutorChangedEvent.InputTuple,
-    DCAExecutorChangedEvent.OutputTuple,
-    DCAExecutorChangedEvent.OutputObject
-  >;
-  getEvent(
     key: "DCAReinvestLibraryChanged"
   ): TypedContractEvent<
     DCAReinvestLibraryChangedEvent.InputTuple,
     DCAReinvestLibraryChangedEvent.OutputTuple,
     DCAReinvestLibraryChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ExecutorAddressChange"
+  ): TypedContractEvent<
+    ExecutorAddressChangeEvent.InputTuple,
+    ExecutorAddressChangeEvent.OutputTuple,
+    ExecutorAddressChangeEvent.OutputObject
   >;
   getEvent(
     key: "NewStrategyCreated"
@@ -798,17 +780,6 @@ export interface DCAAccount extends BaseContract {
   >;
 
   filters: {
-    "DCAExecutorChanged(address)": TypedContractEvent<
-      DCAExecutorChangedEvent.InputTuple,
-      DCAExecutorChangedEvent.OutputTuple,
-      DCAExecutorChangedEvent.OutputObject
-    >;
-    DCAExecutorChanged: TypedContractEvent<
-      DCAExecutorChangedEvent.InputTuple,
-      DCAExecutorChangedEvent.OutputTuple,
-      DCAExecutorChangedEvent.OutputObject
-    >;
-
     "DCAReinvestLibraryChanged(address)": TypedContractEvent<
       DCAReinvestLibraryChangedEvent.InputTuple,
       DCAReinvestLibraryChangedEvent.OutputTuple,
@@ -818,6 +789,17 @@ export interface DCAAccount extends BaseContract {
       DCAReinvestLibraryChangedEvent.InputTuple,
       DCAReinvestLibraryChangedEvent.OutputTuple,
       DCAReinvestLibraryChangedEvent.OutputObject
+    >;
+
+    "ExecutorAddressChange(address)": TypedContractEvent<
+      ExecutorAddressChangeEvent.InputTuple,
+      ExecutorAddressChangeEvent.OutputTuple,
+      ExecutorAddressChangeEvent.OutputObject
+    >;
+    ExecutorAddressChange: TypedContractEvent<
+      ExecutorAddressChangeEvent.InputTuple,
+      ExecutorAddressChangeEvent.OutputTuple,
+      ExecutorAddressChangeEvent.OutputObject
     >;
 
     "NewStrategyCreated(uint256)": TypedContractEvent<

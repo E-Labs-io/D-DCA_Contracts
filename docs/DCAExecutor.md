@@ -129,7 +129,7 @@ function addAdmin(address newAdmin_) external nonpayable
 ### changeExecutor
 
 ```solidity
-function changeExecutor(address newExecutorAddress_) external nonpayable
+function changeExecutor(address executorAddress_) external nonpayable
 ```
 
 
@@ -140,7 +140,7 @@ function changeExecutor(address newExecutorAddress_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| newExecutorAddress_ | address | undefined |
+| executorAddress_ | address | undefined |
 
 ### checkIfAdmin
 
@@ -164,10 +164,10 @@ function checkIfAdmin(address addressToCheck_) external view returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
-### getExecutorAddress
+### getActiveExecutorAddress
 
 ```solidity
-function getExecutorAddress() external view returns (address)
+function getActiveExecutorAddress() external view returns (address)
 ```
 
 
@@ -293,6 +293,22 @@ function renounceOwnership() external nonpayable
 *Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.*
 
 
+### setActiveState
+
+```solidity
+function setActiveState(bool newState_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newState_ | bool | undefined |
+
 ### transferOwnership
 
 ```solidity
@@ -312,6 +328,22 @@ function transferOwnership(address newOwner) external nonpayable
 
 
 ## Events
+
+### ContractActiveStateChange
+
+```solidity
+event ContractActiveStateChange(bool indexed newState_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newState_ `indexed` | bool | undefined |
 
 ### DCAAccountSubscription
 
@@ -349,13 +381,13 @@ Emitted once a strategy has finished executing
 | account_ `indexed` | address | {address} Address of the DCAAccount |
 | strategyId_ `indexed` | uint256 | {uint256} ID of teh strategy executed |
 
-### ExecutionEOAAddressChange
+### ExecutorAddressChange
 
 ```solidity
-event ExecutionEOAAddressChange(address indexed newExecutionEOA_, address changer_)
+event ExecutorAddressChange(address indexed newAddress_)
 ```
 
-emitted when the default Executor service address is changed
+
 
 
 
@@ -363,8 +395,7 @@ emitted when the default Executor service address is changed
 
 | Name | Type | Description |
 |---|---|---|
-| newExecutionEOA_ `indexed` | address | {address} the new address of the Executor Service EOA or Multi |
-| changer_  | address | {address} address of the wallet implementing change |
+| newAddress_ `indexed` | address | undefined |
 
 ### FeesDistributed
 

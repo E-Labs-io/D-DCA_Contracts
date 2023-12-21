@@ -6,7 +6,7 @@ import masterDeployer from "~/deployments/deploy";
 const taskId = "deployContracts";
 const taskDescription = "Deploy the given contracts";
 
-// "DCAExecutor", "DCAAccount", "DCAAccountFactory"
+// "DCAExecutor", "DCAAccount", "DCAFactory"
 
 task(taskId, taskDescription)
   .addVariadicPositionalParam(

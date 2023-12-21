@@ -32,7 +32,7 @@ export interface DCAFactoryInterface extends Interface {
       | "owner"
       | "reInvestLogicContract"
       | "renounceOwnership"
-      | "setFactoryPauseState"
+      | "setActiveState"
       | "transferOwnership"
       | "updateExecutorAddress"
       | "updateReinvestLibraryAddress"
@@ -41,9 +41,9 @@ export interface DCAFactoryInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "ContractActiveStateChange"
       | "DCAAccountCreated"
       | "DCAExecutorAddressChanged"
-      | "DCAFactoryPauseStateChange"
       | "DCAReinvestContractAddressChanged"
       | "OwnershipTransferred"
   ): EventFragment;
@@ -70,8 +70,8 @@ export interface DCAFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setFactoryPauseState",
-    values?: undefined
+    functionFragment: "setActiveState",
+    values: [boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -112,7 +112,7 @@ export interface DCAFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setFactoryPauseState",
+    functionFragment: "setActiveState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -133,6 +133,18 @@ export interface DCAFactoryInterface extends Interface {
   ): Result;
 }
 
+export namespace ContractActiveStateChangeEvent {
+  export type InputTuple = [newState_: boolean];
+  export type OutputTuple = [newState_: boolean];
+  export interface OutputObject {
+    newState_: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace DCAAccountCreatedEvent {
   export type InputTuple = [owner: AddressLike, dcaAccount: AddressLike];
   export type OutputTuple = [owner: string, dcaAccount: string];
@@ -151,18 +163,6 @@ export namespace DCAExecutorAddressChangedEvent {
   export type OutputTuple = [newAddress: string];
   export interface OutputObject {
     newAddress: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace DCAFactoryPauseStateChangeEvent {
-  export type InputTuple = [isPaused: boolean];
-  export type OutputTuple = [isPaused: boolean];
-  export interface OutputObject {
-    isPaused: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -254,7 +254,11 @@ export interface DCAFactory extends BaseContract {
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
-  setFactoryPauseState: TypedContractMethod<[], [void], "nonpayable">;
+  setActiveState: TypedContractMethod<
+    [newState_: boolean],
+    [void],
+    "nonpayable"
+  >;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -303,8 +307,8 @@ export interface DCAFactory extends BaseContract {
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setFactoryPauseState"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+    nameOrSignature: "setActiveState"
+  ): TypedContractMethod<[newState_: boolean], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
@@ -327,6 +331,13 @@ export interface DCAFactory extends BaseContract {
   >;
 
   getEvent(
+    key: "ContractActiveStateChange"
+  ): TypedContractEvent<
+    ContractActiveStateChangeEvent.InputTuple,
+    ContractActiveStateChangeEvent.OutputTuple,
+    ContractActiveStateChangeEvent.OutputObject
+  >;
+  getEvent(
     key: "DCAAccountCreated"
   ): TypedContractEvent<
     DCAAccountCreatedEvent.InputTuple,
@@ -339,13 +350,6 @@ export interface DCAFactory extends BaseContract {
     DCAExecutorAddressChangedEvent.InputTuple,
     DCAExecutorAddressChangedEvent.OutputTuple,
     DCAExecutorAddressChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "DCAFactoryPauseStateChange"
-  ): TypedContractEvent<
-    DCAFactoryPauseStateChangeEvent.InputTuple,
-    DCAFactoryPauseStateChangeEvent.OutputTuple,
-    DCAFactoryPauseStateChangeEvent.OutputObject
   >;
   getEvent(
     key: "DCAReinvestContractAddressChanged"
@@ -363,6 +367,17 @@ export interface DCAFactory extends BaseContract {
   >;
 
   filters: {
+    "ContractActiveStateChange(bool)": TypedContractEvent<
+      ContractActiveStateChangeEvent.InputTuple,
+      ContractActiveStateChangeEvent.OutputTuple,
+      ContractActiveStateChangeEvent.OutputObject
+    >;
+    ContractActiveStateChange: TypedContractEvent<
+      ContractActiveStateChangeEvent.InputTuple,
+      ContractActiveStateChangeEvent.OutputTuple,
+      ContractActiveStateChangeEvent.OutputObject
+    >;
+
     "DCAAccountCreated(address,address)": TypedContractEvent<
       DCAAccountCreatedEvent.InputTuple,
       DCAAccountCreatedEvent.OutputTuple,
@@ -383,17 +398,6 @@ export interface DCAFactory extends BaseContract {
       DCAExecutorAddressChangedEvent.InputTuple,
       DCAExecutorAddressChangedEvent.OutputTuple,
       DCAExecutorAddressChangedEvent.OutputObject
-    >;
-
-    "DCAFactoryPauseStateChange(bool)": TypedContractEvent<
-      DCAFactoryPauseStateChangeEvent.InputTuple,
-      DCAFactoryPauseStateChangeEvent.OutputTuple,
-      DCAFactoryPauseStateChangeEvent.OutputObject
-    >;
-    DCAFactoryPauseStateChange: TypedContractEvent<
-      DCAFactoryPauseStateChangeEvent.InputTuple,
-      DCAFactoryPauseStateChangeEvent.OutputTuple,
-      DCAFactoryPauseStateChangeEvent.OutputObject
     >;
 
     "DCAReinvestContractAddressChanged(address)": TypedContractEvent<

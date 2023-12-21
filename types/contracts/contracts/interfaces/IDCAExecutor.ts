@@ -107,7 +107,6 @@ export interface IDCAExecutorInterface extends Interface {
     nameOrSignatureOrTopic:
       | "DCAAccountSubscription"
       | "ExecutedDCA"
-      | "ExecutionEOAAddressChange"
       | "FeesDistributed"
   ): EventFragment;
 
@@ -187,22 +186,6 @@ export namespace ExecutedDCAEvent {
   export interface OutputObject {
     account_: string;
     strategyId_: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ExecutionEOAAddressChangeEvent {
-  export type InputTuple = [
-    newExecutionEOA_: AddressLike,
-    changer_: AddressLike
-  ];
-  export type OutputTuple = [newExecutionEOA_: string, changer_: string];
-  export interface OutputObject {
-    newExecutionEOA_: string;
-    changer_: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -360,13 +343,6 @@ export interface IDCAExecutor extends BaseContract {
     ExecutedDCAEvent.OutputObject
   >;
   getEvent(
-    key: "ExecutionEOAAddressChange"
-  ): TypedContractEvent<
-    ExecutionEOAAddressChangeEvent.InputTuple,
-    ExecutionEOAAddressChangeEvent.OutputTuple,
-    ExecutionEOAAddressChangeEvent.OutputObject
-  >;
-  getEvent(
     key: "FeesDistributed"
   ): TypedContractEvent<
     FeesDistributedEvent.InputTuple,
@@ -395,17 +371,6 @@ export interface IDCAExecutor extends BaseContract {
       ExecutedDCAEvent.InputTuple,
       ExecutedDCAEvent.OutputTuple,
       ExecutedDCAEvent.OutputObject
-    >;
-
-    "ExecutionEOAAddressChange(address,address)": TypedContractEvent<
-      ExecutionEOAAddressChangeEvent.InputTuple,
-      ExecutionEOAAddressChangeEvent.OutputTuple,
-      ExecutionEOAAddressChangeEvent.OutputObject
-    >;
-    ExecutionEOAAddressChange: TypedContractEvent<
-      ExecutionEOAAddressChangeEvent.InputTuple,
-      ExecutionEOAAddressChangeEvent.OutputTuple,
-      ExecutionEOAAddressChangeEvent.OutputObject
     >;
 
     "FeesDistributed(address,uint256)": TypedContractEvent<

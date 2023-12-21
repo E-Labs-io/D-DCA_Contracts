@@ -28,7 +28,6 @@ export interface OnlyAdminInterface extends Interface {
       | "addAdmin"
       | "changeExecutor"
       | "checkIfAdmin"
-      | "getExecutorAddress"
       | "owner"
       | "removeAdmin"
       | "removeExecutor"
@@ -36,7 +35,9 @@ export interface OnlyAdminInterface extends Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ExecutorAddressChange" | "OwnershipTransferred"
+  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "addAdmin",
@@ -49,10 +50,6 @@ export interface OnlyAdminInterface extends Interface {
   encodeFunctionData(
     functionFragment: "checkIfAdmin",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getExecutorAddress",
-    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -81,10 +78,6 @@ export interface OnlyAdminInterface extends Interface {
     functionFragment: "checkIfAdmin",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getExecutorAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeAdmin",
@@ -102,6 +95,18 @@ export interface OnlyAdminInterface extends Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+}
+
+export namespace ExecutorAddressChangeEvent {
+  export type InputTuple = [newAddress_: AddressLike];
+  export type OutputTuple = [newAddress_: string];
+  export interface OutputObject {
+    newAddress_: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace OwnershipTransferredEvent {
@@ -163,7 +168,7 @@ export interface OnlyAdmin extends BaseContract {
   addAdmin: TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
 
   changeExecutor: TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
+    [executorAddress_: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -173,8 +178,6 @@ export interface OnlyAdmin extends BaseContract {
     [boolean],
     "view"
   >;
-
-  getExecutorAddress: TypedContractMethod<[], [string], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -203,17 +206,10 @@ export interface OnlyAdmin extends BaseContract {
   ): TypedContractMethod<[newAdmin_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "changeExecutor"
-  ): TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[executorAddress_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "checkIfAdmin"
   ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "getExecutorAddress"
-  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -231,6 +227,13 @@ export interface OnlyAdmin extends BaseContract {
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   getEvent(
+    key: "ExecutorAddressChange"
+  ): TypedContractEvent<
+    ExecutorAddressChangeEvent.InputTuple,
+    ExecutorAddressChangeEvent.OutputTuple,
+    ExecutorAddressChangeEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -239,6 +242,17 @@ export interface OnlyAdmin extends BaseContract {
   >;
 
   filters: {
+    "ExecutorAddressChange(address)": TypedContractEvent<
+      ExecutorAddressChangeEvent.InputTuple,
+      ExecutorAddressChangeEvent.OutputTuple,
+      ExecutorAddressChangeEvent.OutputObject
+    >;
+    ExecutorAddressChange: TypedContractEvent<
+      ExecutorAddressChangeEvent.InputTuple,
+      ExecutorAddressChangeEvent.OutputTuple,
+      ExecutorAddressChangeEvent.OutputObject
+    >;
+
     "OwnershipTransferred(address,address)": TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,

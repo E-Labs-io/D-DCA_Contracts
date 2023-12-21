@@ -150,23 +150,6 @@ Emitted once a strategy has finished executing
 | account_ `indexed` | address | {address} Address of the DCAAccount |
 | strategyId_ `indexed` | uint256 | {uint256} ID of teh strategy executed |
 
-### ExecutionEOAAddressChange
-
-```solidity
-event ExecutionEOAAddressChange(address indexed newExecutionEOA_, address changer_)
-```
-
-emitted when the default Executor service address is changed
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newExecutionEOA_ `indexed` | address | {address} the new address of the Executor Service EOA or Multi |
-| changer_  | address | {address} address of the wallet implementing change |
-
 ### FeesDistributed
 
 ```solidity
