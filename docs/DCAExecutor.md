@@ -181,6 +181,23 @@ function getActiveExecutorAddress() external view returns (address)
 |---|---|---|
 | _0 | address | undefined |
 
+### getFeeData
+
+```solidity
+function getFeeData() external view returns (struct IDCADataStructures.FeeDistribution)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | IDCADataStructures.FeeDistribution | undefined |
+
 ### getSpecificStrategy
 
 ```solidity

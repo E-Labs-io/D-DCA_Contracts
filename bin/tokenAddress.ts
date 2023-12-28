@@ -49,6 +49,23 @@ const productionChainAddresses = {
   },
 };
 
+export const productionChainImpersonators = {
+  eth: {
+    usdc: "",
+    weth: "",
+    wbtc: "",
+    usdt: "",
+    dai: "",
+  },
+  arbitrum: {
+    usdc: "0x47c031236e19d024b42f8ae6780e44a573170703",
+    weth: "0x489ee077994b6658eafa855c308275ead8097c4a", //GMX Vault
+    wbtc: "0x489ee077994b6658eafa855c308275ead8097c4a", //GMX Vault
+    usdt: "0xf977814e90da44bfa03b6295a0616a897441acec",
+    dai: "0x489ee077994b6658eafa855c308275ead8097c4a", //GMX Vault
+  },
+};
+
 const forkedNetwork: ChainName = "arbitrum";
 
 export const tokenAddress: TokenAddressList = {

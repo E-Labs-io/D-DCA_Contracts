@@ -137,10 +137,9 @@ const config: HardhatUserConfig = {
 
   networks: {
     hardhat: {
-      chainId: 420,
+      chainId: 42161,
       forking: {
-        url: `https://arb1.arbitrum.io/rpc`,
-        blockNumber: 10000,
+        url: rcpEndPoints.arbitrim,
       },
     },
     baseGoerli: {

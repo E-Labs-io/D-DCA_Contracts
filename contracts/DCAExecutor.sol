@@ -159,6 +159,10 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         return _executor();
     }
 
+    function getFeeData() public view returns (FeeDistribution memory) {
+        return _feeData;
+    }
+
     /**
      *
      * @notice Internal & Private Functions
