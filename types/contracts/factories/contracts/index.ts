@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as interfaces from "./interfaces";
-export * as library from "./library";
+export * as modules from "./modules";
 export * as protocols from "./protocols";
 export * as proxys from "./proxys";
 export * as security from "./security";

@@ -1,9 +1,9 @@
 /** @format */
 
 import { task } from "hardhat/config";
-import masterDeployer from "~/deployments/deploy";
-import deployProxy from "~/deployments/deployers/deployProxy";
-import { deploymentArgumentStore } from "~/deployments/deploymentModules";
+import masterDeployer from "~/deploy/deploy";
+import deployProxy from "~/deploy/deployers/deployProxy";
+import { deploymentArgumentStore } from "~/deploy/deploymentModules";
 
 const taskId = "deployProxyContract";
 const taskDescription = "Deploy the given contract via a Proxy";

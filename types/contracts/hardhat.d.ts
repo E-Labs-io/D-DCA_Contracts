@@ -122,9 +122,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CometStorage__factory>;
     getContractFactory(
-      name: "LibraryProxy",
+      name: "DCAReinvestProxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.LibraryProxy__factory>;
+    ): Promise<Contracts.DCAReinvestProxy__factory>;
     getContractFactory(
       name: "OnlyActive",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -278,10 +278,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.CometStorage>;
     getContractAt(
-      name: "LibraryProxy",
+      name: "DCAReinvestProxy",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.LibraryProxy>;
+    ): Promise<Contracts.DCAReinvestProxy>;
     getContractAt(
       name: "OnlyActive",
       address: string | ethers.Addressable,
@@ -412,9 +412,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CometStorage>;
     deployContract(
-      name: "LibraryProxy",
+      name: "DCAReinvestProxy",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.LibraryProxy>;
+    ): Promise<Contracts.DCAReinvestProxy>;
     deployContract(
       name: "OnlyActive",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -568,10 +568,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CometStorage>;
     deployContract(
-      name: "LibraryProxy",
+      name: "DCAReinvestProxy",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.LibraryProxy>;
+    ): Promise<Contracts.DCAReinvestProxy>;
     deployContract(
       name: "OnlyActive",
       args: any[],

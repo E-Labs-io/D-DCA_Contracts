@@ -16,7 +16,7 @@
     "./tests",
     "./types",
     "./tasks",
-    "./deployments",
+    "deploy",
     "./bin",
     "./reports"
   ],

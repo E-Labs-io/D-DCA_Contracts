@@ -6,7 +6,7 @@ import { DCAAccount } from "../types/contracts";
 import {
   DCAAccountArguments,
   newStrat,
-} from "~/deployments/deploymentArguments/DCA.arguments";
+} from "~/deploy/deploymentArguments/DCA.arguments";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { IDCADataStructures } from "~/types/contracts/contracts/DCAExecutor";
 

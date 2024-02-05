@@ -18,10 +18,12 @@ const deploymentFiles: Deployment = {
   DCAExecutor: GenericDeployer,
   DCAAccount: GenericDeployer,
   DCAFactory: GenericDeployer,
+  DCAReinvestProxy: ProxyDeployer,
 };
 
 export const deploymentArgumentStore: ArgumentStore = {
   DCAReinvest: DCAReinvestLibraryArguments,
+  DCAReinvestProxy: DCAReinvestLibraryArguments,
   DCAExecutor: DCAExecutorArguments,
   DCAAccount: DCAAccountArguments,
   DCAFactory: DCAAccountFactoryArguments,

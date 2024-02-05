@@ -65,7 +65,7 @@ export declare namespace IDCADataStructures {
     strategyId: bigint;
     active: boolean;
     reinvest: DCAReinvest.ReinvestStructOutput;
-  }; 
+  };
 }
 
 export declare namespace DCAReinvest {

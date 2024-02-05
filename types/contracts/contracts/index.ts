@@ -3,8 +3,8 @@
 /* eslint-disable */
 import type * as interfaces from "./interfaces";
 export type { interfaces };
-import type * as library from "./library";
-export type { library };
+import type * as modules from "./modules";
+export type { modules };
 import type * as protocols from "./protocols";
 export type { protocols };
 import type * as proxys from "./proxys";

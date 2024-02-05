@@ -1,6 +1,6 @@
 /** @format */
 import { task, types } from "hardhat/config";
-import { newStrat } from "../deployments/deploymentArguments/DCA.arguments";
+import { newStrat } from "../deploy/deploymentArguments/DCA.arguments";
 import { ChainName, tokenAddress } from "../bin/tokenAddress";
 import { AddressLike } from "ethers";
 import deployedDCAContracts from "~/bin/deployedAddress";

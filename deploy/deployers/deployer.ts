@@ -5,8 +5,9 @@ import delay from "../../scripts/helpers/delay";
 import verifyContractOnScan from "../../scripts/helpers/verifyOnScan";
 import { DeploymentProps } from "~/types/deployment/deploymentArguments";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import waitForConfirmations from "~/scripts/helpers/waitForConformations";
 
-export default async function deployProxy({
+export default async function deploy({
   hre,
   deployer,
   delayTime,
@@ -16,26 +17,37 @@ export default async function deployProxy({
   prevDeployments,
 }: DeploymentProps): Promise<string | Addressable | false> {
   try {
-    const contract = await hre.ethers.getContractFactory(
+    const deployedContract = await hre.ethers.deployContract(
       contractName,
+      constructorArguments,
       deployer
     );
-    const deployedContract = await hre.upgrades.deployProxy(
-      contract,
-      constructorArguments,
-      {
-        initializer: "initialize",
-      }
+    console.log(
+      `🟠 Deployment confirming : ${contractName} to ${deployedContract.target}`
     );
 
     await deployedContract.waitForDeployment();
+
+    console.log(`🟠 Deployment Confirmed : ${contractName}`);
+
+    if (network.name !== "localhost" && network.name !== "hardhat")
+      await waitForConfirmations(
+        hre,
+        deployedContract.deploymentTransaction()?.hash!,
+        2
+      );
+
     console.log(
-      `🟢 Contract Deployed : ${contractName} to ${deployedContract.target} as Proxy`
+      `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`
     );
 
     if (network.name !== "hardhat") {
       await delay(delayTime);
-      await verifyContractOnScan(hre.run, deployedContract.target);
+      await verifyContractOnScan(
+        hre.run,
+        deployedContract.target,
+        constructorArguments
+      );
     } else {
       await hre.ethernal.push({
         name: contractName,

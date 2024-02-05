@@ -2,15 +2,14 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../protocols/compoundV3/CometMainInterface.sol";
-import {ReinvestCodes} from "./Codes.sol";
+import {ReinvestCodes} from "../library/Codes.sol";
 
 library CompoundV3Reinvest {
-    address internal constant COMPOUND_USDC_CONTRACT =
-        0x1d573274E19174260c5aCE3f2251598959d24456;
-    address internal constant COMPOUND_ETH_CONTRACT =
+  string public constant STRATEGY_NAME = "Compound V3 Reinvest";
+ address internal constant COMPOUND_ETH_CONTRACT =
         0x1d573274E19174260c5aCE3f2251598959d24456;
 
-    string public constant STRATEGY_NAME = "Compound V3 Reinvest";
+  
 
     function _supplyCompound(
         uint8 code_,
@@ -45,9 +44,9 @@ library CompoundV3Reinvest {
         return (amount);
     }
 
-    function _getContractAddress(uint8 code_) internal returns (address) {
-        if (code_ == ReinvestCodes.COMPOUND_USDC) return COMPOUND_USDC_CONTRACT;
-        else if (code_ == ReinvestCodes.COMPOUND_ETH)
+    function _getContractAddress(uint8 code_) internal pure returns (address) {
+ 
+    if (code_ == ReinvestCodes.COMPOUND_ETH)
             return COMPOUND_ETH_CONTRACT;
     }
 

@@ -16,7 +16,7 @@ export function DCAExecutorArguments(
     amountToAdmin: 2000, //  20%
     amountToComputing: 4500, //  45%
     amountToExecutor: 3500, //  35%
-    feeAmount: 30, //  0.3%
+    feeAmount: 50, //  0.3%
     executionAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     computingAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     adminAddress: deployer,

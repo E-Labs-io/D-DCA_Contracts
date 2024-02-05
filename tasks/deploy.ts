@@ -1,7 +1,7 @@
 /** @format */
 
 import { task } from "hardhat/config";
-import masterDeployer from "~/deployments/deploy";
+import masterDeployer from "~/deploy/deploy";
 
 const taskId = "deployContracts";
 const taskDescription = "Deploy the given contracts";

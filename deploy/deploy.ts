@@ -12,7 +12,7 @@ export default async function masterDeployer(
   hre: HardhatRuntimeEnvironment,
   deployments: string[]
 ) {
-  const [deployer] = await hre.ethers.getSigners();
+  const [deployer, executor] = await hre.ethers.getSigners();
   const network = await hre.ethers.provider.getNetwork();
 
   const delayTime = 2000;

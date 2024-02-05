@@ -1,6 +1,6 @@
 /** @format */
 import { task } from "hardhat/config";
-import { deploymentArgumentStore } from "../deployments/deploymentModules";
+import { deploymentArgumentStore } from "../deploy/deploymentModules";
 
 const taskId = "verifyDCAAccount";
 
