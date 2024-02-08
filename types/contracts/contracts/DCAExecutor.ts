@@ -98,25 +98,22 @@ export declare namespace IDCADataStructures {
 
 export declare namespace DCAReinvest {
   export type ReinvestStruct = {
+    reinvestData: BytesLike;
     active: boolean;
     investCode: BigNumberish;
-    depositReinvestMethod: BytesLike;
-    withdrawReinvestMethod: BytesLike;
-    reinvestSpender: AddressLike;
+    dcaAccountAddress: AddressLike;
   };
 
   export type ReinvestStructOutput = [
+    reinvestData: string,
     active: boolean,
     investCode: bigint,
-    depositReinvestMethod: string,
-    withdrawReinvestMethod: string,
-    reinvestSpender: string
+    dcaAccountAddress: string
   ] & {
+    reinvestData: string;
     active: boolean;
     investCode: bigint;
-    depositReinvestMethod: string;
-    withdrawReinvestMethod: string;
-    reinvestSpender: string;
+    dcaAccountAddress: string;
   };
 }
 

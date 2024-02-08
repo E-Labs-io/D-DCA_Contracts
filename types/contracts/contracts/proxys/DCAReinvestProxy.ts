@@ -23,27 +23,24 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
-export declare namespace DCAReinvestProxy {
+export declare namespace DCAReinvest {
   export type ReinvestStruct = {
+    reinvestData: BytesLike;
     active: boolean;
     investCode: BigNumberish;
-    depositReinvestMethod: BytesLike;
-    withdrawReinvestMethod: BytesLike;
-    reinvestSpender: AddressLike;
+    dcaAccountAddress: AddressLike;
   };
 
   export type ReinvestStructOutput = [
+    reinvestData: string,
     active: boolean,
     investCode: bigint,
-    depositReinvestMethod: string,
-    withdrawReinvestMethod: string,
-    reinvestSpender: string
+    dcaAccountAddress: string
   ] & {
+    reinvestData: string;
     active: boolean;
     investCode: bigint;
-    depositReinvestMethod: string;
-    withdrawReinvestMethod: string;
-    reinvestSpender: string;
+    dcaAccountAddress: string;
   };
 }
 
@@ -55,6 +52,7 @@ export interface DCAReinvestProxyInterface extends Interface {
       | "executeReinvest"
       | "getLibraryVersion"
       | "initialize"
+      | "migrateReinvest"
       | "owner"
       | "renounceOwnership"
       | "setActiveState"
@@ -76,13 +74,17 @@ export interface DCAReinvestProxyInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeReinvest",
-    values: [DCAReinvestProxy.ReinvestStruct, AddressLike, BigNumberish]
+    values: [DCAReinvest.ReinvestStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getLibraryVersion",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "initialize", values: [boolean]): string;
+  encodeFunctionData(
+    functionFragment: "migrateReinvest",
+    values: [DCAReinvest.ReinvestStruct, DCAReinvest.ReinvestStruct, boolean]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -98,7 +100,7 @@ export interface DCAReinvestProxyInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "unwindReinvest",
-    values: [DCAReinvestProxy.ReinvestStruct, AddressLike, BigNumberish]
+    values: [DCAReinvest.ReinvestStruct, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -118,6 +120,10 @@ export interface DCAReinvestProxyInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "migrateReinvest",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -210,11 +216,7 @@ export interface DCAReinvestProxy extends BaseContract {
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
 
   executeReinvest: TypedContractMethod<
-    [
-      reinvestData_: DCAReinvestProxy.ReinvestStruct,
-      tokenAddress_: AddressLike,
-      amount_: BigNumberish
-    ],
+    [reinvestData_: DCAReinvest.ReinvestStruct, amount_: BigNumberish],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
@@ -222,6 +224,16 @@ export interface DCAReinvestProxy extends BaseContract {
   getLibraryVersion: TypedContractMethod<[], [string], "view">;
 
   initialize: TypedContractMethod<[activate_: boolean], [void], "nonpayable">;
+
+  migrateReinvest: TypedContractMethod<
+    [
+      oldReinvestData_: DCAReinvest.ReinvestStruct,
+      newReinvestData_: DCAReinvest.ReinvestStruct,
+      withdrawFunds_: boolean
+    ],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -236,11 +248,7 @@ export interface DCAReinvestProxy extends BaseContract {
   >;
 
   unwindReinvest: TypedContractMethod<
-    [
-      reinvestData_: DCAReinvestProxy.ReinvestStruct,
-      tokenAddress_: AddressLike,
-      amount_: BigNumberish
-    ],
+    [reinvestData_: DCAReinvest.ReinvestStruct, amount_: BigNumberish],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
@@ -258,11 +266,7 @@ export interface DCAReinvestProxy extends BaseContract {
   getFunction(
     nameOrSignature: "executeReinvest"
   ): TypedContractMethod<
-    [
-      reinvestData_: DCAReinvestProxy.ReinvestStruct,
-      tokenAddress_: AddressLike,
-      amount_: BigNumberish
-    ],
+    [reinvestData_: DCAReinvest.ReinvestStruct, amount_: BigNumberish],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
@@ -272,6 +276,17 @@ export interface DCAReinvestProxy extends BaseContract {
   getFunction(
     nameOrSignature: "initialize"
   ): TypedContractMethod<[activate_: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "migrateReinvest"
+  ): TypedContractMethod<
+    [
+      oldReinvestData_: DCAReinvest.ReinvestStruct,
+      newReinvestData_: DCAReinvest.ReinvestStruct,
+      withdrawFunds_: boolean
+    ],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -287,11 +302,7 @@ export interface DCAReinvestProxy extends BaseContract {
   getFunction(
     nameOrSignature: "unwindReinvest"
   ): TypedContractMethod<
-    [
-      reinvestData_: DCAReinvestProxy.ReinvestStruct,
-      tokenAddress_: AddressLike,
-      amount_: BigNumberish
-    ],
+    [reinvestData_: DCAReinvest.ReinvestStruct, amount_: BigNumberish],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;

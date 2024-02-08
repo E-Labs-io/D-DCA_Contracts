@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT 
 pragma solidity ^0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -7,8 +8,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 
 library AaveV3Reinvest {
-    address constant AAVE_CONTRACT = 0x20fa38a4f8Af2E36f1Cc14caad2E603fbA5C535c;
     string public constant STRATEGY_NAME = "Aave V3 Reinvest";
+    address constant AAVE_CONTRACT = 0x20fa38a4f8Af2E36f1Cc14caad2E603fbA5C535c;
+
 
     /**
      * @dev Supply token to Aave V3 protocol

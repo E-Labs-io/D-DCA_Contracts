@@ -11,8 +11,6 @@ import type * as proxys from "./proxys";
 export type { proxys };
 import type * as security from "./security";
 export type { security };
-import type * as utils from "./utils";
-export type { utils };
 export type { DCAAccount } from "./DCAAccount";
 export type { DCAExecutor } from "./DCAExecutor";
 export type { DCAFactory } from "./DCAFactory";

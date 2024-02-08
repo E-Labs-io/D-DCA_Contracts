@@ -221,6 +221,11 @@ const _abi = [
           {
             components: [
               {
+                internalType: "bytes",
+                name: "reinvestData",
+                type: "bytes",
+              },
+              {
                 internalType: "bool",
                 name: "active",
                 type: "bool",
@@ -231,18 +236,8 @@ const _abi = [
                 type: "uint8",
               },
               {
-                internalType: "bytes",
-                name: "depositReinvestMethod",
-                type: "bytes",
-              },
-              {
-                internalType: "bytes",
-                name: "withdrawReinvestMethod",
-                type: "bytes",
-              },
-              {
                 internalType: "address",
-                name: "reinvestSpender",
+                name: "dcaAccountAddress",
                 type: "address",
               },
             ],

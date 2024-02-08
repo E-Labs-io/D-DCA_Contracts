@@ -3,3 +3,5 @@
 /* eslint-disable */
 import type * as compoundV3 from "./compoundV3";
 export type { compoundV3 };
+import type * as uniswap from "./uniswap";
+export type { uniswap };

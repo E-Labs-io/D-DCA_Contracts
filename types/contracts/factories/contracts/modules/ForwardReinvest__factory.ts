@@ -10,9 +10,9 @@ import {
 import type { Signer, ContractDeployTransaction, ContractRunner } from "ethers";
 import type { NonPayableOverrides } from "../../../common";
 import type {
-  CompoundV3Reinvest,
-  CompoundV3ReinvestInterface,
-} from "../../../contracts/modules/CompoundV3Reinvest";
+  ForwardReinvest,
+  ForwardReinvestInterface,
+} from "../../../contracts/modules/ForwardReinvest";
 
 const _abi = [
   {
@@ -31,18 +31,18 @@ const _abi = [
 ] as const;
 
 const _bytecode =
-  "0x61010961003a600b82828239805160001a60731461002d57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe730000000000000000000000000000000000000000301460806040526004361060335760003560e01c80636edd5446146038575b600080fd5b60736040518060400160405280601481526020017f436f6d706f756e64205633205265696e7665737400000000000000000000000081525081565b604051607e91906087565b60405180910390f35b600060208083528351808285015260005b8181101560b2578581018301518582016040015282016098565b506000604082860101526040601f19601f830116850101925050509291505056fea2646970667358221220a8827b3de39eb2ab1624922ae2f2e1c54f5c5b2166b7207a730cd09cd183134164736f6c63430008140033";
+  "0x61010961003a600b82828239805160001a60731461002d57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe730000000000000000000000000000000000000000301460806040526004361060335760003560e01c80636edd5446146038575b600080fd5b60736040518060400160405280601581526020017f466f7277617264205265696e766573742056302e31000000000000000000000081525081565b604051607e91906087565b60405180910390f35b600060208083528351808285015260005b8181101560b2578581018301518582016040015282016098565b506000604082860101526040601f19601f830116850101925050509291505056fea264697066735822122053d6310c131891c948a1b2604e681f4328a5d391a66b993af69e4819aee0411e64736f6c63430008140033";
 
-type CompoundV3ReinvestConstructorParams =
+type ForwardReinvestConstructorParams =
   | [signer?: Signer]
   | ConstructorParameters<typeof ContractFactory>;
 
 const isSuperArgs = (
-  xs: CompoundV3ReinvestConstructorParams
+  xs: ForwardReinvestConstructorParams
 ): xs is ConstructorParameters<typeof ContractFactory> => xs.length > 1;
 
-export class CompoundV3Reinvest__factory extends ContractFactory {
-  constructor(...args: CompoundV3ReinvestConstructorParams) {
+export class ForwardReinvest__factory extends ContractFactory {
+  constructor(...args: ForwardReinvestConstructorParams) {
     if (isSuperArgs(args)) {
       super(...args);
     } else {
@@ -57,24 +57,24 @@ export class CompoundV3Reinvest__factory extends ContractFactory {
   }
   override deploy(overrides?: NonPayableOverrides & { from?: string }) {
     return super.deploy(overrides || {}) as Promise<
-      CompoundV3Reinvest & {
+      ForwardReinvest & {
         deploymentTransaction(): ContractTransactionResponse;
       }
     >;
   }
-  override connect(runner: ContractRunner | null): CompoundV3Reinvest__factory {
-    return super.connect(runner) as CompoundV3Reinvest__factory;
+  override connect(runner: ContractRunner | null): ForwardReinvest__factory {
+    return super.connect(runner) as ForwardReinvest__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
-  static createInterface(): CompoundV3ReinvestInterface {
-    return new Interface(_abi) as CompoundV3ReinvestInterface;
+  static createInterface(): ForwardReinvestInterface {
+    return new Interface(_abi) as ForwardReinvestInterface;
   }
   static connect(
     address: string,
     runner?: ContractRunner | null
-  ): CompoundV3Reinvest {
-    return new Contract(address, _abi, runner) as unknown as CompoundV3Reinvest;
+  ): ForwardReinvest {
+    return new Contract(address, _abi, runner) as unknown as ForwardReinvest;
   }
 }

@@ -8,7 +8,7 @@ import {IDCAAccount} from "./interfaces/IDCAAccount.sol";
 import {IDCAExecutor} from "./interfaces/IDCAExecutor.sol";
 import {OnlyExecutor} from "./security/onlyExecutor.sol";
 import {Strategies} from "./library/Strategys.sol";
-import {DCAReinvest} from "./utils/DCAReinvest.sol";
+import {DCAReinvestProxy, DCAReinvest} from "./proxys/DCAReinvestProxy.sol";
 
 contract DCAAccount is OnlyExecutor, IDCAAccount {
     using Strategies for uint256;
@@ -28,7 +28,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     //IDCAExecutor internal _executorAddress;
     ISwapRouter private SWAP_ROUTER;
-    DCAReinvest private DCAREINVEST_LIBRARY;
+    DCAReinvestProxy private DCAREINVEST_LIBRARY;
 
     uint24 private _poolFee = 10000;
 
@@ -43,7 +43,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         address reinvestLibraryContract_
     ) OnlyExecutor(owner_, executorAddress_) {
         //  _executorAddress = IDCAExecutor(executorAddress_);
-        DCAREINVEST_LIBRARY = DCAReinvest(reinvestLibraryContract_);
+        DCAREINVEST_LIBRARY = DCAReinvestProxy(reinvestLibraryContract_);
         SWAP_ROUTER = ISwapRouter(swapRouter_);
     }
 
@@ -253,17 +253,16 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function setStrategyReinvest(
         uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_
+        DCAReinvestProxy.Reinvest memory reinvest_
     ) external override {
         if (reinvest_.active) {
             _strategies[strategyId_].reinvest = reinvest_;
         } else
             _strategies[strategyId_].reinvest = DCAReinvest.Reinvest(
+                "0x",
                 false,
                 0x00,
-                "",
-                "",
-                address(0)
+                address(this)
             );
     }
 
@@ -573,7 +572,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     function changeDCAReinvestLibrary(
         address newLibraryAddress_
     ) public onlyOwner {
-        DCAREINVEST_LIBRARY = DCAReinvest(newLibraryAddress_);
+        DCAREINVEST_LIBRARY = DCAReinvestProxy(newLibraryAddress_);
         emit DCAReinvestLibraryChanged(newLibraryAddress_);
     }
 
@@ -587,23 +586,30 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
      */
     function _executeReinvest(
         uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_,
+        DCAReinvestProxy.Reinvest memory reinvest_,
         address targetTokenAddress_,
         uint256 amount_
     ) internal {
         if (DCAREINVEST_LIBRARY.REINVEST_ACTIVE()) {
-            bool success = IERC20(
+         /*    
+         bool success = IERC20(
                 _strategies[strategyId_].targetToken.tokenAddress
             ).approve(address(DCAREINVEST_LIBRARY), amount_);
-            if (success) {
-                (uint256 amount, bool success2) = DCAREINVEST_LIBRARY
-                    .executeReinvest(reinvest_, targetTokenAddress_, amount_);
+            if (success) { 
+        */
+        ( bool success2,bytes memory returnData) = 
+            address(DCAREINVEST_LIBRARY).delegatecall(
+                abi.encodeWithSignature(
+                    "executeReinvest(Reinvest,uint256)", 
+                    reinvest_, 
+                    amount_
+                )
+            );
 
-                if (success2)
-                    _reinvestLiquidityTokenBalance[strategyId_] += amount;
-            }
-        }
-    }
+            (uint256 amount, bool success) = abi.decode(returnData,(uint256, bool));
+            
+   
+    }}
 
     /**
      * @dev withdraws and unwinds a given amount of the reinvest amount
@@ -615,7 +621,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
      */
     function _withdrawReinvest(
         uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_,
+        DCAReinvestProxy.Reinvest memory reinvest_,
         address targetTokenAddress_,
         uint256 amount_
     ) internal {
@@ -626,7 +632,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
         DCAREINVEST_LIBRARY.unwindReinvest(
             reinvest_,
-            targetTokenAddress_,
             amount_
         );
         //_reinvestLiquidityTokenBalance[strategyId_] -= amount_;

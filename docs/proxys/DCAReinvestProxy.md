@@ -47,7 +47,7 @@ function REINVEST_VERSION() external view returns (string)
 ### executeReinvest
 
 ```solidity
-function executeReinvest(DCAReinvestProxy.Reinvest reinvestData_, address tokenAddress_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
+function executeReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -58,8 +58,7 @@ function executeReinvest(DCAReinvestProxy.Reinvest reinvestData_, address tokenA
 
 | Name | Type | Description |
 |---|---|---|
-| reinvestData_ | DCAReinvestProxy.Reinvest | undefined |
-| tokenAddress_ | address | undefined |
+| reinvestData_ | DCAReinvest.Reinvest | undefined |
 | amount_ | uint256 | undefined |
 
 #### Returns
@@ -101,6 +100,31 @@ function initialize(bool activate_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | activate_ | bool | undefined |
+
+### migrateReinvest
+
+```solidity
+function migrateReinvest(DCAReinvest.Reinvest oldReinvestData_, DCAReinvest.Reinvest newReinvestData_, bool withdrawFunds_) external nonpayable returns (uint256 amount, bool success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| oldReinvestData_ | DCAReinvest.Reinvest | undefined |
+| newReinvestData_ | DCAReinvest.Reinvest | undefined |
+| withdrawFunds_ | bool | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amount | uint256 | undefined |
+| success | bool | undefined |
 
 ### owner
 
@@ -160,7 +184,7 @@ function transferOwnership(address newOwner) external nonpayable
 ### unwindReinvest
 
 ```solidity
-function unwindReinvest(DCAReinvestProxy.Reinvest reinvestData_, address tokenAddress_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
+function unwindReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -171,8 +195,7 @@ function unwindReinvest(DCAReinvestProxy.Reinvest reinvestData_, address tokenAd
 
 | Name | Type | Description |
 |---|---|---|
-| reinvestData_ | DCAReinvestProxy.Reinvest | undefined |
-| tokenAddress_ | address | undefined |
+| reinvestData_ | DCAReinvest.Reinvest | undefined |
 | amount_ | uint256 | undefined |
 
 #### Returns

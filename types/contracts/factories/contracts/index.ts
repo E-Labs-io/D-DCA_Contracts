@@ -6,7 +6,6 @@ export * as modules from "./modules";
 export * as protocols from "./protocols";
 export * as proxys from "./proxys";
 export * as security from "./security";
-export * as utils from "./utils";
 export { DCAAccount__factory } from "./DCAAccount__factory";
 export { DCAExecutor__factory } from "./DCAExecutor__factory";
 export { DCAFactory__factory } from "./DCAFactory__factory";

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 import "./IDCADataStructures.sol";
 import "./IDCAExecutor.sol";
-import "../utils/DCAReinvest.sol";
+import {DCAReinvestProxy} from "../proxys/DCAReinvestProxy.sol";
 
 interface IDCAAccount is IDCADataStructures {
     /**
@@ -114,7 +114,7 @@ interface IDCAAccount is IDCADataStructures {
      */
     function setStrategyReinvest(
         uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_
+        DCAReinvestProxy.Reinvest memory reinvest_
     ) external;
 
     /**
