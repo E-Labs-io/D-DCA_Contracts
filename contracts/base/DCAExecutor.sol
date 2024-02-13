@@ -4,13 +4,13 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./interfaces/IDCAExecutor.sol";
-import "./interfaces/IDCAAccount.sol";
-import "./security/onlyAdmin.sol";
-import "./security/onlyExecutor.sol";
-import "./security/onlyActive.sol";
+import "../interfaces/IDCAExecutor.sol";
+import "../interfaces/IDCAAccount.sol";
+import "../security/onlyAdmin.sol";
+import "../security/onlyExecutor.sol";
+import "../security/onlyActive.sol";
 
-import "./library/Strategys.sol";
+import "../library/Strategys.sol";
 
 contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
     using Strategies for uint256;

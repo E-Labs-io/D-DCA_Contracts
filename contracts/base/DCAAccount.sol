@@ -3,12 +3,12 @@ pragma solidity ^0.8.20;
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 
-import {IDCADataStructures} from "./interfaces/IDCADataStructures.sol";
-import {IDCAAccount} from "./interfaces/IDCAAccount.sol";
-import {IDCAExecutor} from "./interfaces/IDCAExecutor.sol";
-import {OnlyExecutor} from "./security/onlyExecutor.sol";
-import {Strategies} from "./library/Strategys.sol";
-import {DCAReinvestProxy, DCAReinvest} from "./proxys/DCAReinvestProxy.sol";
+import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
+import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
+import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
+import {OnlyExecutor} from "../security/onlyExecutor.sol";
+import {Strategies} from "../library/Strategys.sol";
+import {DCAReinvestProxy, DCAReinvest} from "../proxys/DCAReinvestProxy.sol";
 
 contract DCAAccount is OnlyExecutor, IDCAAccount {
     using Strategies for uint256;
@@ -27,7 +27,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     // Should move to a library using constants
 
     //IDCAExecutor internal _executorAddress;
-    ISwapRouter private SWAP_ROUTER;
+    ISwapRouter public SWAP_ROUTER;
     DCAReinvestProxy private DCAREINVEST_LIBRARY;
 
     uint24 private _poolFee = 10000;
@@ -48,12 +48,12 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     }
 
     fallback() external payable {
-        revert("DCAAccount : [fallback]");
+
     }
 
     // Receive is a variant of fallback that is triggered when msg.data is empty
     receive() external payable {
-        revert("DCAAccount : [receive]");
+    
     }
 
     /**
@@ -259,7 +259,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
             _strategies[strategyId_].reinvest = reinvest_;
         } else
             _strategies[strategyId_].reinvest = DCAReinvest.Reinvest(
-                "0x",
+                new bytes(0),
                 false,
                 0x00,
                 address(this)

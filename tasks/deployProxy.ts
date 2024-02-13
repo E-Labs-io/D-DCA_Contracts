@@ -8,25 +8,24 @@ import { deploymentArgumentStore } from "~/deploy/deploymentModules";
 const taskId = "deployProxyContract";
 const taskDescription = "Deploy the given contract via a Proxy";
 
-// "DCAExecutor", "DCAAccount", "DCAAccountFactory"
 
 task(taskId, taskDescription)
   .addParam("contractname", "The name of the contract to upgrade to")
   .setAction(async (_args, hre) => {
     console.log(`🟠 [TASK] ${taskId} : Mounted`);
     const { contractname } = _args;
-    const [deployer] = await hre.ethers.getSigners();
+    const [deployer, devAccount1, devAccount2] = await hre.ethers.getSigners();
     const network = await hre.ethers.provider.getNetwork();
 
     const constructorArguments = deploymentArgumentStore[contractname](
       deployer.address,
-      network.name
+      network.name,
     );
     const delayTime = 40000;
 
     await deployProxy({
       hre,
-      deployer,
+      deployer: deployer,
       contractName: contractname,
       network,
       delayTime,

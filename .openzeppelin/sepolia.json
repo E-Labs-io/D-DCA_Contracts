@@ -5,6 +5,16 @@
       "address": "0x38aefD6fcc17Fe0EEE5090257FA72681b9214853",
       "txHash": "0x8b09d360f3a9fe0226bfb2db32d1199d345bc1b0e9515ac4b395d435190ebf0e",
       "kind": "transparent"
+    },
+    {
+      "address": "0x805480d2FDB52c22A7C2a156976965Ca0eC8eA95",
+      "txHash": "0xc72906ff85527c7d0b499c762b5abab3bb0869cb1cccb1b4606e336576775fe3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xC8A4D5A59D5D603c2036e9c46B5CaB336669e3E0",
+      "txHash": "0x2c56d573a41e17361f017ca355a792d9b8a030e23dc7238601ff4f839b4d3fa7",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -99,9 +109,9 @@
         }
       }
     },
-    "351a0a137f2c1a0e39ec4a93edcc96110948c24ae112eb2b16c6d9aa6a2818a2": {
-      "address": "0x75BDd507A8ad2C8AE2bA502C85D96c1674a89730",
-      "txHash": "0xc791dc3737777852871ef372977618d495426707befd52c893b11603748b44a5",
+    "45bff43116585e8ad64f6ae6fdf076e695350c2f32411d03398dda72235361f1": {
+      "address": "0x0664a26B9B0924aE439bc3ddB1df64FBf1deA771",
+      "txHash": "0xf3df22b5e2aee49b2a4caa0bb290209ade2fd8d4ab530c10eb6ee82ccf9cea5f",
       "layout": {
         "solcVersion": "0.8.20",
         "storage": [
@@ -111,7 +121,7 @@
             "slot": "0",
             "type": "t_bool",
             "contract": "DCAReinvestProxy",
-            "src": "contracts/proxys/DCAReinvestProxy.sol:18"
+            "src": "contracts/proxys/DCAReinvestProxy.sol:16"
           }
         ],
         "types": {

@@ -47,6 +47,7 @@ export declare namespace DCAReinvest {
 export interface DCAReinvestProxyInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "ACTIVE_REINVESTS"
       | "REINVEST_ACTIVE"
       | "REINVEST_VERSION"
       | "executeReinvest"
@@ -64,6 +65,10 @@ export interface DCAReinvestProxyInterface extends Interface {
     nameOrSignatureOrTopic: "Initialized" | "OwnershipTransferred"
   ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "ACTIVE_REINVESTS",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "REINVEST_ACTIVE",
     values?: undefined
@@ -103,6 +108,10 @@ export interface DCAReinvestProxyInterface extends Interface {
     values: [DCAReinvest.ReinvestStruct, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "ACTIVE_REINVESTS",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "REINVEST_ACTIVE",
     data: BytesLike
@@ -211,6 +220,8 @@ export interface DCAReinvestProxy extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  ACTIVE_REINVESTS: TypedContractMethod<[], [string], "view">;
+
   REINVEST_ACTIVE: TypedContractMethod<[], [boolean], "view">;
 
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
@@ -257,6 +268,9 @@ export interface DCAReinvestProxy extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "ACTIVE_REINVESTS"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "REINVEST_ACTIVE"
   ): TypedContractMethod<[], [boolean], "view">;

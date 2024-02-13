@@ -10,7 +10,7 @@ const taskDescription = "Approve, Fund and Setup strategy";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
   console.log(`🟢 [TASK] ${taskId} : Mounted`);
-  const [owner] = await hre.ethers.getSigners();
+  const [deployer, a, b, executor] = await hre.ethers.getSigners();
   const network = hre.network;
 
   let DCAAccount: string = "0x00AC89dbd36308ce0d5a4FDb77A78386b48E013A";
@@ -24,7 +24,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     const DCAFactory = await hre.ethers.getContractAt(
       "DCAFactory",
       deployedDCAContracts[network.name as ChainName]!.DCAFactory!,
-      owner
+      deployer,
     );
 
     const tx = await DCAFactory.createDCAAccount();
@@ -32,14 +32,14 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     const receipt = await tx.wait();
 
     const checkArgs: any[] = receipt?.logs.find(
-      (eventLog) => eventLog?.fragment?.name == "DCAAccountCreated"
+      (eventLog: any) => eventLog?.fragment?.name == "DCAAccountCreated",
     )!.args!;
 
-    if (checkArgs && checkArgs[0] === owner.address) {
+    if (checkArgs && checkArgs[0] === deployer.address) {
       DCAAccount = checkArgs[1];
       console.log(
         `🟢 [TASK] ${taskId} : Created new DCAAccount : `,
-        DCAAccount
+        DCAAccount,
       );
     } else
       console.log(`🔴 [TASK] ${taskId} : Failed to Created new DCAAccount `);
@@ -50,7 +50,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   const DCAAccountContract = await hre.ethers.getContractAt(
     "DCAAccount",
     DCAAccount,
-    owner
+    deployer,
   );
 
   //  Get the USDC contract address for given network
@@ -64,11 +64,11 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     const usdcContract = await hre.ethers.getContractAt(
       "IERC20",
       await usdcAddress,
-      owner
+      deployer,
     );
     const tx = await usdcContract.approve(
       DCAAccount,
-      hre.ethers.parseUnits("50000", 6)
+      hre.ethers.parseUnits("50000", 6),
     );
     await tx.wait();
     console.log(`🟢 [TASK] ${taskId} : Token Spend Approved`);
@@ -90,7 +90,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
 
     const tx = await DCAAccountContract.FundAccount(
       usdcAddress,
-      hre.ethers.parseUnits("1000", 6)
+      hre.ethers.parseUnits("1000", 6),
     );
     await tx.wait();
     console.log(`🟢 [TASK] ${taskId} : Account Funded`);
@@ -101,7 +101,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     console.log(`🟡 [TASK] ${taskId} : Subscribing Strategy`);
 
     const tx = await DCAAccountContract.SubscribeStrategy(
-      newStrategy ? strat.strategyId : id
+      newStrategy ? strat.strategyId : id,
     );
     await tx.wait();
     console.log(`🟢 [TASK] ${taskId} : Strategy Subscribed`);

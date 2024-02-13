@@ -18,11 +18,11 @@ const deployedDCAContracts: {
     DCAReinvestProxy: "0x125226D875FE3457900a70c3863835205e4c57F5",
   },
   ethSepolia: {
-    DCAAccount: "",
-    DCAExecutor: "",
-    DCAReinvest: "",
-    DCAFactory: "",
-    DCAReinvestProxy: "",
+    DCAAccount: "0x1754A81a6b9fdC90E1aA32fC84be76372D9D9ad4",
+    DCAExecutor: "0x528cD9f6d03990DA7DE66FF12A482F64724f6198",
+    DCAReinvest: "0xC8A4D5A59D5D603c2036e9c46B5CaB336669e3E0",
+    DCAFactory: "0x336a760537DCFAcDaDFFa31079989d6d3ADF0607",
+    DCAReinvestProxy: "0xC8A4D5A59D5D603c2036e9c46B5CaB336669e3E0",
   },
 };
 

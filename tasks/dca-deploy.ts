@@ -19,7 +19,7 @@ const taskDescription = "Deploy the fully DCA suite";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
   console.log(`🟢 [TASK] ${taskId} : Mounted`);
-  const [deployer, executor] = await hre.ethers.getSigners();
+  const [deployer, a, b, executor] = await hre.ethers.getSigners();
   const network = hre.network;
   const netName = network.name as ChainName;
 
@@ -35,9 +35,9 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   console.log("🟠 DCA Deployer: Mounted");
   console.log(`🟠 DCA Deployer: ${deployer.address}`);
   console.log(
-    `🟠 DCA Deployer: Deploying ${contractsToDeploy.length} Contracts`
+    `🟠 DCA Deployer: Deploying ${contractsToDeploy.length} Contracts`,
   );
-  console.log("🟠 DCA Deployer: Deploying to", network.name);
+  console.log("🟠 DCA Deployer: Deploying to", netName);
 
   //  Deploy Contracts
   try {
@@ -45,16 +45,23 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
       const deployment = contractsToDeploy[i];
       console.log("🟠 Deploying Contract:", deployment);
 
+      const args = deploymentArgumentStore[deployment](
+        deployer.address,
+        network.name,
+      );
+
+      if (contractsToDeploy[0] === "DCAExecutor")
+        if (deployment === "DCAAccount" || deployment === "DCAFactory") {
+          args[0] = deploymentAddresses[0].deployment;
+        }
+
       await deploymentFiles[deployment]({
         hre,
         deployer,
         delayTime,
         contractName: deployment,
-        network,
-        constructorArguments: deploymentArgumentStore[deployment](
-          deployer.address,
-          network.name
-        ),
+        network: network,
+        constructorArguments: args,
         prevDeployments: deploymentAddresses,
       }).then(async (address: DeploymentReturn) => {
         if (address !== false) {

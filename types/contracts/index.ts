@@ -34,12 +34,12 @@ export type { IUniswapV3SwapCallback } from "./@uniswap/v3-core/contracts/interf
 export { IUniswapV3SwapCallback__factory } from "./factories/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback__factory";
 export type { ISwapRouter } from "./@uniswap/v3-periphery/contracts/interfaces/ISwapRouter";
 export { ISwapRouter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter__factory";
-export type { DCAAccount } from "./contracts/DCAAccount";
-export { DCAAccount__factory } from "./factories/contracts/DCAAccount__factory";
-export type { DCAExecutor } from "./contracts/DCAExecutor";
-export { DCAExecutor__factory } from "./factories/contracts/DCAExecutor__factory";
-export type { DCAFactory } from "./contracts/DCAFactory";
-export { DCAFactory__factory } from "./factories/contracts/DCAFactory__factory";
+export type { DCAAccount } from "./contracts/base/DCAAccount";
+export { DCAAccount__factory } from "./factories/contracts/base/DCAAccount__factory";
+export type { DCAExecutor } from "./contracts/base/DCAExecutor";
+export { DCAExecutor__factory } from "./factories/contracts/base/DCAExecutor__factory";
+export type { DCAFactory } from "./contracts/base/DCAFactory";
+export { DCAFactory__factory } from "./factories/contracts/base/DCAFactory__factory";
 export type { IDCAAccount } from "./contracts/interfaces/IDCAAccount";
 export { IDCAAccount__factory } from "./factories/contracts/interfaces/IDCAAccount__factory";
 export type { IDCAExecutor } from "./contracts/interfaces/IDCAExecutor";

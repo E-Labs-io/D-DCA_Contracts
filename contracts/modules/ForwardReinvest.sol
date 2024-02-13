@@ -9,6 +9,7 @@ library ForwardReinvest {
     string public constant STRATEGY_NAME = "Forward Reinvest V0.1";
 
     struct ReinvestDataStruct {
+        uint8 moduleCode;
         address receiver;
         address token;
     }

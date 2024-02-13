@@ -12,8 +12,6 @@ import "hardhat-ethernal";
 import "@openzeppelin/hardhat-upgrades";
 import "@nomicfoundation/hardhat-chai-matchers";
 
-import ethers from "ethers";
-
 import "./tasks";
 
 import { HardhatUserConfig } from "hardhat/config";

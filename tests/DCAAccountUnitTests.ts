@@ -12,18 +12,24 @@ import { IDCADataStructures } from "~/types/contracts/contracts/DCAExecutor";
 
 describe("DCAAccount Contract", function () {
   let dcaAccount: any;
-  let owner: HardhatEthersSigner, addr1;
+  let deployer: HardhatEthersSigner, addr1;
+
+
+
+  
 
   beforeEach(async function () {
-    [owner, addr1] = await ethers.getSigners();
+    [deployer, addr1] = await ethers.getSigners();
 
     // Deploy DCAAccount contract with standard deployment data
     const DCAAccountFactory = await ethers.getContractFactory("DCAAccount");
-    const dcaAccountArgs = DCAAccountArguments(owner.address, "hardhat");
+    const dcaAccountArgs = DCAAccountArguments(deployer.address, "hardhat");
     dcaAccount = await DCAAccountFactory.deploy(
       dcaAccountArgs[0],
       dcaAccountArgs[1],
-      dcaAccountArgs[2]
+      dcaAccountArgs[2],
+      dcaAccountArgs[3],
+      dcaAccountArgs[4],
     );
     await dcaAccount.deployed();
   });
@@ -31,7 +37,7 @@ describe("DCAAccount Contract", function () {
   describe("SetupStrategy", function () {
     it("Should set up a new strategy correctly", async function () {
       const strategyData: IDCADataStructures.StrategyStruct = newStrat(
-        owner.address,
+        deployer.address,
         "hardhat"
       );
 
@@ -43,7 +49,7 @@ describe("DCAAccount Contract", function () {
       const storedStrategy = await dcaAccount.getStrategyData(
         strategyData.strategyId
       );
-      expect(storedStrategy.accountAddress).to.equal(owner.address);
+      expect(storedStrategy.accountAddress).to.equal(deployer.address);
       expect(storedStrategy.baseToken.tokenAddress).to.equal(
         strategyData.baseToken.tokenAddress
       );
@@ -52,7 +58,7 @@ describe("DCAAccount Contract", function () {
 
     it("Should fund the account correctly", async function () {
       const strategyData: IDCADataStructures.StrategyStruct = newStrat(
-        owner.address,
+        deployer.address,
         "hardhat"
       );
       await dcaAccount.SetupStrategy(strategyData, 1000, false);

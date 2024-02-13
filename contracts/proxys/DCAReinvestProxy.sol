@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {ReinvestCodes} from "../library/Codes.sol";
 import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
 
-import {DCAReinvest} from "../utils/DCAReinvest.sol";
+import {DCAReinvest} from "../base/DCAReinvest.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -12,10 +12,11 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 
 contract DCAReinvestProxy is  Initializable, DCAReinvest, OwnableUpgradeable {
-    using ReinvestCodes for uint8;
+
+    bool public REINVEST_ACTIVE;
 
     string public constant REINVEST_VERSION = "ETH_SEPOLIA V0.2";
-    bool public REINVEST_ACTIVE;
+    bytes public constant ACTIVE_REINVESTS = abi.encodePacked([ReinvestCodes.FORWARD]);
 
 
     function initialize(bool activate_) public initializer {

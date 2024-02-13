@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "../utils/DCAReinvest.sol";
+import "../base/DCAReinvest.sol";
 
 interface IDCADataStructures {
     // Define an enum to represent the interval type

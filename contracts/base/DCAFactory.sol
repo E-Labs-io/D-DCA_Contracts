@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "./DCAAccount.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./security/onlyActive.sol";
+import "../security/onlyActive.sol";
 
 contract DCAFactory is OnlyActive {
     // Event to emit when a new DCAAccount is created.
