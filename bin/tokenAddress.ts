@@ -78,6 +78,7 @@ export const tokenAddress: TokenAddressList = {
     ethSepolia: "0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E",
     arbGoerli: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     opGoerli: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+    maticMumbai: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     hardhat: productionChainAddresses[forkedNetwork].swapRouter,
   },
   universalRouter: {

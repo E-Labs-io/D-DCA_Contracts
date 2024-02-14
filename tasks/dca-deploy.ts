@@ -1,13 +1,11 @@
 /** @format */
 
-import { task, types } from "hardhat/config";
+import { task } from "hardhat/config";
 import deploymentFiles, {
   deploymentArgumentStore,
 } from "../deploy/deploymentModules";
-import { newStrat } from "../deploy/deploymentArguments/DCA.arguments";
-import { ChainName, tokenAddress } from "../bin/tokenAddress";
-import { AddressLike } from "ethers";
-import deployedDCAContracts, { ContractNames } from "~/bin/deployedAddress";
+import { ChainName } from "../bin/tokenAddress";
+import { ContractNames } from "~/bin/deployedAddress";
 import {
   DeploymentStore,
   DeploymentReturn,

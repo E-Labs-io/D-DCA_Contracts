@@ -24,6 +24,13 @@ const deployedDCAContracts: {
     DCAFactory: "0x336a760537DCFAcDaDFFa31079989d6d3ADF0607",
     DCAReinvestProxy: "0xC8A4D5A59D5D603c2036e9c46B5CaB336669e3E0",
   },
+  maticMumbai: {
+    DCAAccount: "0x18dAD87cF002d4841e5277d01C3483A3C5117d9B",
+    DCAExecutor: "0x8Df44b661bf2FA245164a3352174235DFcbED26C",
+    DCAReinvest: "0x2cd3A7d47246006CCB0D4592432Dae52bd1D828d",
+    DCAFactory: "0x1A3bd587c94Ef417a127cAbEF0C9a2263571Df26",
+    DCAReinvestProxy: "0x2cd3A7d47246006CCB0D4592432Dae52bd1D828d",
+  },
 };
 
 export type ContractNames =

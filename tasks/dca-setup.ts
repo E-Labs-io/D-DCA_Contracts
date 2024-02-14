@@ -13,7 +13,8 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   const [deployer, a, b, executor] = await hre.ethers.getSigners();
   const network = hre.network;
 
-  let DCAAccount: string = "0x00AC89dbd36308ce0d5a4FDb77A78386b48E013A";
+  let DCAAccount: string =
+    deployedDCAContracts[network.name as ChainName]!.DCAAccount!;
 
   const [deployAccount, approveFund, fundAccount, newStrategy, subscribeStrat] =
     [true, true, true, true, true];
