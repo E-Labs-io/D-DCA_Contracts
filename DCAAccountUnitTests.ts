@@ -2,21 +2,17 @@
 
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { DCAAccount } from "../types/contracts";
+import { DCAAccount } from "./types/contracts";
 import {
   DCAAccountArguments,
   newStrat,
 } from "~/deploy/deploymentArguments/DCA.arguments";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { IDCADataStructures } from "~/types/contracts/contracts/DCAExecutor";
+import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 
 describe("DCAAccount Contract", function () {
   let dcaAccount: any;
   let deployer: HardhatEthersSigner, addr1;
-
-
-
-  
 
   beforeEach(async function () {
     [deployer, addr1] = await ethers.getSigners();
@@ -38,7 +34,7 @@ describe("DCAAccount Contract", function () {
     it("Should set up a new strategy correctly", async function () {
       const strategyData: IDCADataStructures.StrategyStruct = newStrat(
         deployer.address,
-        "hardhat"
+        "hardhat",
       );
 
       await expect(dcaAccount.SetupStrategy(strategyData, 1000, false))
@@ -47,11 +43,11 @@ describe("DCAAccount Contract", function () {
 
       // Get strategy data and validate
       const storedStrategy = await dcaAccount.getStrategyData(
-        strategyData.strategyId
+        strategyData.strategyId,
       );
       expect(storedStrategy.accountAddress).to.equal(deployer.address);
       expect(storedStrategy.baseToken.tokenAddress).to.equal(
-        strategyData.baseToken.tokenAddress
+        strategyData.baseToken.tokenAddress,
       );
       // Add additional checks for other strategy fields
     });
@@ -59,7 +55,7 @@ describe("DCAAccount Contract", function () {
     it("Should fund the account correctly", async function () {
       const strategyData: IDCADataStructures.StrategyStruct = newStrat(
         deployer.address,
-        "hardhat"
+        "hardhat",
       );
       await dcaAccount.SetupStrategy(strategyData, 1000, false);
 
@@ -67,14 +63,14 @@ describe("DCAAccount Contract", function () {
       await expect(
         dcaAccount.FundAccount(
           strategyData.baseToken.tokenAddress,
-          fundingAmount
-        )
+          fundingAmount,
+        ),
       )
         .to.emit(dcaAccount, "AccountFunded") // Assuming this event exists
         .withArgs(strategyData.baseToken.tokenAddress, fundingAmount);
 
       const balance = await dcaAccount.getBaseBalance(
-        strategyData.baseToken.tokenAddress
+        strategyData.baseToken.tokenAddress,
       );
       expect(balance).to.equal(fundingAmount);
     });

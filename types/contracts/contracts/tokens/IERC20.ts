@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../../common";
+} from "../../common";
 
 export interface IERC20Interface extends Interface {
   getFunction(

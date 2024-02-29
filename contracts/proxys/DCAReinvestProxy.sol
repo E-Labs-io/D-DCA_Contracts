@@ -7,8 +7,12 @@ import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
 import {DCAReinvest} from "../base/DCAReinvest.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/proxy/Proxy.sol";
 
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/interfaces/draft-IERC1822.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 
 contract DCAReinvestProxy is  Initializable, DCAReinvest, OwnableUpgradeable {

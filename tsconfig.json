@@ -13,12 +13,13 @@
   },
   "include": [
     "./scripts",
-    "./tests",
+    "test",
     "./types",
     "./tasks",
     "deploy",
     "./bin",
-    "./reports"
+    "./reports",
+    "DCAAccountUnitTests.ts"
   ],
   "files": ["./hardhat.config.ts"]
 }

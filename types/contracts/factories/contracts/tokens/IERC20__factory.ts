@@ -3,10 +3,7 @@
 /* eslint-disable */
 
 import { Contract, Interface, type ContractRunner } from "ethers";
-import type {
-  IERC20,
-  IERC20Interface,
-} from "../../../../contracts/flatContracts/flatDCAAccount.sol/IERC20";
+import type { IERC20, IERC20Interface } from "../../../contracts/tokens/IERC20";
 
 const _abi = [
   {
