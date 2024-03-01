@@ -181,6 +181,23 @@ function getActiveExecutorAddress() external view returns (address)
 |---|---|---|
 | _0 | address | undefined |
 
+### getExecutorAddress
+
+```solidity
+function getExecutorAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+
 ### getFeeData
 
 ```solidity

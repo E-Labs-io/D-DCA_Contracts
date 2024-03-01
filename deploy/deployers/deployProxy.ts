@@ -18,16 +18,16 @@ export default async function deployProxy({
   try {
     const contract = await hre.ethers.getContractFactory(
       contractName,
-      deployer
+      deployer,
     );
     const deployedContract = await hre.upgrades.deployProxy(
       contract,
-      constructorArguments
+      constructorArguments,
     );
 
     await deployedContract.waitForDeployment();
     console.log(
-      `🟢 Contract Deployed : ${contractName} to ${deployedContract.target} as Proxy`
+      `🟢 Contract Deployed : ${contractName} to ${deployedContract.target} as Proxy`,
     );
 
     if (network.name !== "hardhat") {

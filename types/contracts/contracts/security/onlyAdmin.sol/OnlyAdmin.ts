@@ -28,6 +28,7 @@ export interface OnlyAdminInterface extends Interface {
       | "addAdmin"
       | "changeExecutor"
       | "checkIfAdmin"
+      | "getExecutorAddress"
       | "owner"
       | "removeAdmin"
       | "removeExecutor"
@@ -50,6 +51,10 @@ export interface OnlyAdminInterface extends Interface {
   encodeFunctionData(
     functionFragment: "checkIfAdmin",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExecutorAddress",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -76,6 +81,10 @@ export interface OnlyAdminInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "checkIfAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -179,6 +188,8 @@ export interface OnlyAdmin extends BaseContract {
     "view"
   >;
 
+  getExecutorAddress: TypedContractMethod<[], [string], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   removeAdmin: TypedContractMethod<
@@ -210,6 +221,9 @@ export interface OnlyAdmin extends BaseContract {
   getFunction(
     nameOrSignature: "checkIfAdmin"
   ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "getExecutorAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

@@ -10,6 +10,23 @@
 
 ## Methods
 
+### SWAP_ROUTER
+
+```solidity
+function SWAP_ROUTER() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+
 ### createDCAAccount
 
 ```solidity
@@ -20,6 +37,23 @@ function createDCAAccount() external nonpayable
 
 
 
+
+### getActiveExecutorAddress
+
+```solidity
+function getActiveExecutorAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### getDCAAccountsOfUser
 
@@ -43,10 +77,10 @@ function getDCAAccountsOfUser(address user) external view returns (address[])
 |---|---|---|
 | _0 | address[] | undefined |
 
-### getFactoryPauseState
+### getFactoryActiveState
 
 ```solidity
-function getFactoryPauseState() external view returns (bool)
+function getFactoryActiveState() external view returns (bool)
 ```
 
 

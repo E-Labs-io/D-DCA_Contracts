@@ -64,6 +64,23 @@ function checkIfAdmin(address addressToCheck_) external view returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
+### getExecutorAddress
+
+```solidity
+function getExecutorAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+
 ### owner
 
 ```solidity

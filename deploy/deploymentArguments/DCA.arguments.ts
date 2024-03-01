@@ -2,7 +2,7 @@
 
 import { AddressLike, Addressable, ZeroAddress, ethers } from "ethers";
 import { ChainName, tokenAddress } from "../../bin/tokenAddress";
-import { IDCADataStructures } from "~/types/contracts/contracts/DCAExecutor";
+import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deployedDCAContracts from "~/bin/deployedAddress";
 
 const deployedAddresses = (networkName: ChainName) =>

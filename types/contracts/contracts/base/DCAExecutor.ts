@@ -130,6 +130,7 @@ export interface DCAExecutorInterface extends Interface {
       | "changeExecutor"
       | "checkIfAdmin"
       | "getActiveExecutorAddress"
+      | "getExecutorAddress"
       | "getFeeData"
       | "getSpecificStrategy"
       | "getTotalActiveStrategys"
@@ -190,6 +191,10 @@ export interface DCAExecutorInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getActiveExecutorAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExecutorAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -259,6 +264,10 @@ export interface DCAExecutorInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getActiveExecutorAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getFeeData", data: BytesLike): Result;
@@ -480,6 +489,8 @@ export interface DCAExecutor extends BaseContract {
 
   getActiveExecutorAddress: TypedContractMethod<[], [string], "view">;
 
+  getExecutorAddress: TypedContractMethod<[], [string], "view">;
+
   getFeeData: TypedContractMethod<
     [],
     [IDCADataStructures.FeeDistributionStructOutput],
@@ -573,6 +584,9 @@ export interface DCAExecutor extends BaseContract {
   ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "getActiveExecutorAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getExecutorAddress"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getFeeData"

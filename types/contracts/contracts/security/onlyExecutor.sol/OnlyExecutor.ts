@@ -26,6 +26,7 @@ export interface OnlyExecutorInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "changeExecutor"
+      | "getExecutorAddress"
       | "owner"
       | "removeExecutor"
       | "renounceOwnership"
@@ -39,6 +40,10 @@ export interface OnlyExecutorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "changeExecutor",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExecutorAddress",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -56,6 +61,10 @@ export interface OnlyExecutorInterface extends Interface {
 
   decodeFunctionResult(
     functionFragment: "changeExecutor",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -147,6 +156,8 @@ export interface OnlyExecutor extends BaseContract {
     "nonpayable"
   >;
 
+  getExecutorAddress: TypedContractMethod<[], [string], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
@@ -166,6 +177,9 @@ export interface OnlyExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "changeExecutor"
   ): TypedContractMethod<[executorAddress_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getExecutorAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

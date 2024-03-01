@@ -54,8 +54,8 @@ const productionChainAddresses = {
 
 export const productionChainImpersonators = {
   eth: {
-    usdc: "",
-    weth: "",
+    usdc: "0xD6153F5af5679a75cC85D8974463545181f48772",
+    weth: "0x267ed5f71EE47D3E45Bb1569Aa37889a2d10f91e",
     wbtc: "",
     usdt: "",
     dai: "",

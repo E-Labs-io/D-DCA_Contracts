@@ -109,6 +109,7 @@ export interface DCAAccountInterface extends Interface {
       | "getBaseBalance"
       | "getBaseTokenCostPerBlock"
       | "getBaseTokenRemainingBlocks"
+      | "getExecutorAddress"
       | "getStrategyData"
       | "getTargetBalance"
       | "getTimeTillWindow"
@@ -198,6 +199,10 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getBaseTokenRemainingBlocks",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExecutorAddress",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getStrategyData",
@@ -293,6 +298,10 @@ export interface DCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBaseTokenRemainingBlocks",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -559,6 +568,8 @@ export interface DCAAccount extends BaseContract {
     "view"
   >;
 
+  getExecutorAddress: TypedContractMethod<[], [string], "view">;
+
   getStrategyData: TypedContractMethod<
     [strategyId_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput],
@@ -694,6 +705,9 @@ export interface DCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "getBaseTokenRemainingBlocks"
   ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getExecutorAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getStrategyData"
   ): TypedContractMethod<

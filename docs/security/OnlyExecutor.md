@@ -26,6 +26,23 @@ function changeExecutor(address executorAddress_) external nonpayable
 |---|---|---|
 | executorAddress_ | address | undefined |
 
+### getExecutorAddress
+
+```solidity
+function getExecutorAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+
 ### owner
 
 ```solidity

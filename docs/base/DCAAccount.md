@@ -317,6 +317,23 @@ function getBaseTokenRemainingBlocks(address token_) external view returns (uint
 |---|---|---|
 | _0 | uint256 | {uint256} amount of blocks left for given base token balance |
 
+### getExecutorAddress
+
+```solidity
+function getExecutorAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+
 ### getStrategyData
 
 ```solidity

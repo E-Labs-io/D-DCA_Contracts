@@ -26,9 +26,11 @@ import type {
 export interface DCAFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "SWAP_ROUTER"
       | "createDCAAccount"
+      | "getActiveExecutorAddress"
       | "getDCAAccountsOfUser"
-      | "getFactoryPauseState"
+      | "getFactoryActiveState"
       | "owner"
       | "reInvestLogicContract"
       | "renounceOwnership"
@@ -49,7 +51,15 @@ export interface DCAFactoryInterface extends Interface {
   ): EventFragment;
 
   encodeFunctionData(
+    functionFragment: "SWAP_ROUTER",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "createDCAAccount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getActiveExecutorAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -57,7 +67,7 @@ export interface DCAFactoryInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getFactoryPauseState",
+    functionFragment: "getFactoryActiveState",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -91,7 +101,15 @@ export interface DCAFactoryInterface extends Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "SWAP_ROUTER",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "createDCAAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getActiveExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -99,7 +117,7 @@ export interface DCAFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getFactoryPauseState",
+    functionFragment: "getFactoryActiveState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -238,7 +256,11 @@ export interface DCAFactory extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
+
   createDCAAccount: TypedContractMethod<[], [void], "nonpayable">;
+
+  getActiveExecutorAddress: TypedContractMethod<[], [string], "view">;
 
   getDCAAccountsOfUser: TypedContractMethod<
     [user: AddressLike],
@@ -246,7 +268,7 @@ export interface DCAFactory extends BaseContract {
     "view"
   >;
 
-  getFactoryPauseState: TypedContractMethod<[], [boolean], "view">;
+  getFactoryActiveState: TypedContractMethod<[], [boolean], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -289,13 +311,19 @@ export interface DCAFactory extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "SWAP_ROUTER"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "createDCAAccount"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getActiveExecutorAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getDCAAccountsOfUser"
   ): TypedContractMethod<[user: AddressLike], [string[]], "view">;
   getFunction(
-    nameOrSignature: "getFactoryPauseState"
+    nameOrSignature: "getFactoryActiveState"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "owner"

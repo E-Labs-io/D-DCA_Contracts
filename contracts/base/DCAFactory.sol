@@ -14,7 +14,7 @@ contract DCAFactory is OnlyActive {
     // Mapping to keep track of accounts created by each user.
     mapping(address => address[]) public userDCAAccounts;
 
-    address immutable SWAP_ROUTER;
+    address public immutable SWAP_ROUTER;
     address private _executorAddress;
     address public reInvestLogicContract;
 
@@ -81,7 +81,11 @@ contract DCAFactory is OnlyActive {
         emit DCAReinvestContractAddressChanged(newAddress_);
     }
 
-    function getFactoryPauseState() public view returns (bool) {
+    function getFactoryActiveState() public view returns (bool) {
         return _getActiveState();
+    }
+
+    function getActiveExecutorAddress()public view returns(address){
+        return _executorAddress;
     }
 }

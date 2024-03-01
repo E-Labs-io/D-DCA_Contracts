@@ -20,6 +20,6 @@
     "./bin",
     "./reports",
     "DCAAccountUnitTests.ts"
-  ],
+, "test/reinvestModual.test.ts"  ],
   "files": ["./hardhat.config.ts"]
 }

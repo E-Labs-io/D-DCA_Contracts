@@ -1,46 +1,41 @@
 import { expect, assert } from "chai";
 import hre, { ethers } from "hardhat";
-import { AbiCoder, AddressLike, Addressable, Contract, Signer } from "ethers";
+import {
+  AbiCoder,
+  AddressLike,
+  Addressable,
+  Contract,
+  Signer,
+  ZeroAddress,
+} from "ethers";
 import { DCAReinvestProxy, ForwardReinvest } from "~/types/contracts";
 import { DCAReinvest } from "~/types/contracts/contracts/proxys/DCAReinvestProxy";
+import signerStore from "~/scripts/tests/signerStore";
+import { productionChainImpersonators } from "~/bin/tokenAddress";
 
 describe("> DCA Reinvest Modula Test", () => {
   console.log("🧪 DCA Reinvest Modula Test : Mounted");
 
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
 
-  let wethContract: Contract,
-    wbtcContract: Contract,
-    reinvestDeployment: DCAReinvestProxy;
+  let reinvestDeployment: DCAReinvestProxy;
+  let wethContract: Contract, wbtcContract: Contract;
+
   let addressStore: {
     [wallet: string]: { address: string | Addressable; signer: Signer };
   };
-  const preTest = async () => {
-    console.log("🧪 preTest : Mounted");
-    // Get the accounts & signers
-    const signers = await ethers.getSigners();
-    console.log("All Signers", signers);
-    const [deployer, tester] = signers;
-    console.log("Got Tester Signer", tester);
-    addressStore = {
-      deployer: { address: await deployer.getAddress(), signer: deployer },
-      tester: { address: await tester.getAddress(), signer: tester },
-    };
 
-    // Deploy the reinvest proxy contract
-    const proxyFactory = await ethers.getContractFactory(
-      "DCAReinvestProxy",
-      deployer,
-    );
-    reinvestDeployment = await proxyFactory.deploy();
-    await reinvestDeployment.waitForDeployment();
-    const initTx = await reinvestDeployment.initialize(false);
-    await initTx.wait();
-    console.log("📍 Deployed Reinvest Contract", reinvestDeployment.target);
+  before(async function () {
+    await preTest();
+  });
+
+  async function preTest() {
+    // Get the accounts & signers
+    addressStore = await signerStore(ethers, ["deployer", "tester"]);
 
     // Connect to WETH & Transfer to wallet
     const wethImpersonator = await ethers.getImpersonatedSigner(
-      "0x267ed5f71EE47D3E45Bb1569Aa37889a2d10f91e",
+      productionChainImpersonators.eth.weth,
     );
     wethContract = await ethers.getContractAt(
       "contracts/tokens/IERC20.sol:IERC20",
@@ -52,41 +47,33 @@ describe("> DCA Reinvest Modula Test", () => {
       ethers.parseUnits("1", "ether"),
     );
     await wethTx.wait();
-    // Connect to WBTC &Transfer to wallet
-
-    /* 
-    const wbtcImpersonator = await ethers.getImpersonatedSigner(
-      "0x6daB3bCbFb336b29d06B9C793AEF7eaA57888922",
-    );
-    wbtcContract = await ethers.getContractAt(
-      "contracts/tokens/IERC20.sol:IERC20",
-      "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-      wbtcImpersonator,
-    );
-
-    const wbtcTx = await wbtcContract.transfer(
-      addressStore.tester.address,
-      ethers.parseUnits("1", "ether"),
-    );
-
-    await wbtcTx.wait();  
-    */
-  };
-
-  before(async function () {
-    await preTest();
-    console.log("🧪 pre test : Complete");
-  });
+  }
 
   describe("💡 Check Wallet Balance", function () {
     it("🧪 WETH Should equal 1ETH", async function () {
       const wethBal = await wethContract.balanceOf(addressStore.tester.address);
       expect(wethBal).to.equal(ethers.parseUnits("1", "ether"));
     });
-    /* it("🧪 WBTC Should equal 1ETH", async function () {
-      const wethBal = await wbtcContract.balanceOf(addressStore.tester.address);
-      expect(wethBal).to.equal(ethers.parseUnits("0", "ether"));
-    }); */
+  });
+
+  describe("💡 Deploy Proxy & Check Ownership", function () {
+    it("🧪 Should deploy the contract", async function () {
+      // Deploy the reinvest proxy contract
+      const proxyFactory = await ethers.getContractFactory(
+        "DCAReinvestProxy",
+        addressStore.deployer.signer,
+      );
+      reinvestDeployment = await proxyFactory.deploy();
+      await reinvestDeployment.waitForDeployment();
+      const initTx = await reinvestDeployment.initialize(false);
+      await initTx.wait();
+      expect(reinvestDeployment.target).to.not.equal(ZeroAddress);
+    });
+
+    it("🧪 Should return the deployer address as owner", async function () {
+      const owner = await reinvestDeployment.owner();
+      expect(owner).to.equal(addressStore.deployer.address);
+    });
   });
 
   describe("💡 Contract State", function () {
@@ -117,27 +104,28 @@ describe("> DCA Reinvest Modula Test", () => {
   });
 
   describe("💡 Forward Strategy", function () {
-    const forwardStratData = {
-      moduleCode: 0x01,
-      receiver: addressStore.tester.address,
-      token: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-    };
-
-    const reinvestData: DCAReinvest.ReinvestStruct = {
-      reinvestData: abiEncoder.encode(["bytes"], [forwardStratData]),
-      active: false,
-      investCode: 0x01,
-      dcaAccountAddress: addressStore.tester.address,
-    };
-
     it("🧪 Should Fail", async function () {
-      const executeReinvestTX = await reinvestDeployment.executeReinvest(
-        reinvestData,
-        ethers.parseEther("0.5"),
-      );
+      const forwardStratData = [
+        0x01,
+        addressStore.tester.address,
+        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      ];
+      const reinvestData: DCAReinvest.ReinvestStruct = {
+        reinvestData: abiEncoder.encode(
+          ["uint8", "address", "address"],
+          forwardStratData,
+        ),
+        active: false,
+        investCode: 0x01,
+        dcaAccountAddress: addressStore.tester.address,
+      };
 
-      await executeReinvestTX.wait();
-      console.log(executeReinvestTX);
+      await expect(
+        reinvestDeployment.executeReinvest(
+          reinvestData,
+          ethers.parseEther("0.5"),
+        ),
+      ).to.revertedWithoutReason();
     });
   });
 });
