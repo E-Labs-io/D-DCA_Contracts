@@ -19,7 +19,7 @@ contract DCAReinvestProxy is  Initializable, DCAReinvest, OwnableUpgradeable {
 
     bool public REINVEST_ACTIVE;
 
-    string public constant REINVEST_VERSION = "ETH_SEPOLIA V0.2";
+    string public constant REINVEST_VERSION = "TEST V0.3";
     bytes public constant ACTIVE_REINVESTS = abi.encodePacked([ReinvestCodes.FORWARD]);
 
 

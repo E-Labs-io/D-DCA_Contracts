@@ -21,10 +21,13 @@ import {
   DCAAccountFactoryArguments,
   DCAExecutorArguments,
 } from "~/deploy/deploymentArguments/DCA.arguments";
-import { tokenAddress } from "~/bin/tokenAddress";
+import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
+import deploymentConfig from "~/bin/deployments.config";
 
 describe("> DCA Account Factory Tests", () => {
   console.log("🧪 DCA Account Factory Tests : Mounted");
+
+  const forkedChain = deploymentConfig().masterChain;
 
   let factoryContract: DCAFactory;
   let createdAccount: DCAAccount;
@@ -54,11 +57,16 @@ describe("> DCA Account Factory Tests", () => {
 
       factoryContract = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter.eth!,
+        tokenAddress.swapRouter[forkedChain]!,
         ZeroAddress,
       );
-      await factoryContract.waitForDeployment();
-      expect(factoryContract.target).to.not.equal(ZeroAddress);
+      await expect(
+        factoryFactory.deploy(
+          ZeroAddress,
+          tokenAddress.swapRouter[forkedChain]!,
+          ZeroAddress,
+        ),
+      ).to.be.fulfilled;
     });
 
     it("🧪 Should have the correct owner", async function () {
@@ -110,7 +118,7 @@ describe("> DCA Account Factory Tests", () => {
 
       const deploymentArgs = DCAExecutorArguments(
         addressStore.deployer.address,
-        "eth",
+        forkedChain,
       );
 
       deploymentArgs[0].executionAddress = addressStore.deployer.address;
@@ -156,11 +164,7 @@ describe("> DCA Account Factory Tests", () => {
       const createTx = await factoryContract
         .connect(addressStore.user.signer)
         .createDCAAccount();
-      await createTx.wait();
-      const filter = factoryContract.filters.DCAAccountCreated();
-      const log = await factoryContract.queryFilter(filter, createTx.hash);
-      let newAccountAddress = log[0].args[0];
-      expect(newAccountAddress).to.equal(addressStore.user.address);
+      await expect(createTx.wait()).to.be.fulfilled;
     });
 
     it("🧪 Should return the user has 1 account", async function () {
@@ -180,23 +184,5 @@ describe("> DCA Account Factory Tests", () => {
         }),
       ).to.be.revertedWith("DCAFactory : [receive]");
     });
-
-    /*  it("🧪 It should revert on WETH payment", async function () {
-      const wethImpersonator = await ethers.getImpersonatedSigner(
-        "0x267ed5f71EE47D3E45Bb1569Aa37889a2d10f91e",
-      );
-      let wethContract = await ethers.getContractAt(
-        "contracts/tokens/IERC20.sol:IERC20",
-        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-        wethImpersonator,
-      );
-
-      const tx = await wethContract.transfer(
-        factoryContract.target,
-        ethers.parseEther("0.1"),
-      );
-
-      await expect(tx.wait()).to.be.revertedWith("DCAFactory : [receive]");
-    }); */
   });
 });

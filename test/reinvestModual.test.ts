@@ -11,12 +11,14 @@ import {
 import { DCAReinvestProxy, ForwardReinvest } from "~/types/contracts";
 import { DCAReinvest } from "~/types/contracts/contracts/proxys/DCAReinvestProxy";
 import signerStore from "~/scripts/tests/signerStore";
-import { productionChainImpersonators } from "~/bin/tokenAddress";
+import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
+import deploymentConfig from "~/bin/deployments.config";
 
 describe("> DCA Reinvest Modula Test", () => {
   console.log("🧪 DCA Reinvest Modula Test : Mounted");
 
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
+  const forkedChain = deploymentConfig().masterChain;
 
   let reinvestDeployment: DCAReinvestProxy;
   let wethContract: Contract, wbtcContract: Contract;
@@ -35,11 +37,11 @@ describe("> DCA Reinvest Modula Test", () => {
 
     // Connect to WETH & Transfer to wallet
     const wethImpersonator = await ethers.getImpersonatedSigner(
-      productionChainImpersonators.eth.weth,
+      productionChainImpersonators[forkedChain].weth,
     );
     wethContract = await ethers.getContractAt(
       "contracts/tokens/IERC20.sol:IERC20",
-      "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      tokenAddress.weth[forkedChain] as string,
       wethImpersonator,
     );
     const wethTx = await wethContract.transfer(
@@ -80,7 +82,7 @@ describe("> DCA Reinvest Modula Test", () => {
     let decodedValue: any[];
     it("🧪 Should Return the Reinvest Version", async function () {
       const version = await reinvestDeployment.REINVEST_VERSION();
-      expect(version).to.equal("ETH_SEPOLIA V0.2");
+      expect(version).to.equal("TEST V0.3");
     });
     it("🧪 Should Return the Reinvest is Not Active", async function () {
       const active = await reinvestDeployment.REINVEST_ACTIVE();
