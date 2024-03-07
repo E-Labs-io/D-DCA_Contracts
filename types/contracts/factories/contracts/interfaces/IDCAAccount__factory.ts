@@ -71,6 +71,25 @@ const _abi = [
       },
       {
         indexed: true,
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
+    name: "StrategyReinvestExecuted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+      {
+        indexed: true,
         internalType: "address",
         name: "executor_",
         type: "address",

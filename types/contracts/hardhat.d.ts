@@ -78,6 +78,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DCAFactory__factory>;
     getContractFactory(
+      name: "DCAReinvest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DCAReinvest__factory>;
+    getContractFactory(
       name: "IDCAAccount",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDCAAccount__factory>;
@@ -101,6 +105,10 @@ declare module "hardhat/types/runtime" {
       name: "ForwardReinvest",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ForwardReinvest__factory>;
+    getContractFactory(
+      name: "IPool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPool__factory>;
     getContractFactory(
       name: "CometCore",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -235,6 +243,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.DCAFactory>;
     getContractAt(
+      name: "DCAReinvest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DCAReinvest>;
+    getContractAt(
       name: "IDCAAccount",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -264,6 +277,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ForwardReinvest>;
+    getContractAt(
+      name: "IPool",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPool>;
     getContractAt(
       name: "CometCore",
       address: string | ethers.Addressable,
@@ -395,6 +413,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCAFactory>;
     deployContract(
+      name: "DCAReinvest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvest>;
+    deployContract(
       name: "IDCAAccount",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDCAAccount>;
@@ -418,6 +440,10 @@ declare module "hardhat/types/runtime" {
       name: "ForwardReinvest",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ForwardReinvest>;
+    deployContract(
+      name: "IPool",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPool>;
     deployContract(
       name: "CometCore",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -552,6 +578,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCAFactory>;
     deployContract(
+      name: "DCAReinvest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvest>;
+    deployContract(
       name: "IDCAAccount",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -581,6 +612,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ForwardReinvest>;
+    deployContract(
+      name: "IPool",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPool>;
     deployContract(
       name: "CometCore",
       args: any[],

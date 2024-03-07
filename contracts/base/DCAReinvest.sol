@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-
-
+//DEV
+import "hardhat/console.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
 
 import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
+import {AaveV3Reinvest} from "../modules/AaveV3Reinvest.sol";
 
-
-abstract contract DCAReinvest  {
+abstract contract DCAReinvest {
     using ReinvestCodes for uint8;
-
-
+    string public constant REINVEST_VERSION = "TEST V0.3";
+    bytes public constant ACTIVE_REINVESTS =
+        abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
 
     /**
      * @notice Reinvest strategy struct.
@@ -25,7 +26,6 @@ abstract contract DCAReinvest  {
      * @param investCode Reinvest strategy code
      * @param dcaAccountAddress address of the account contract
      */
-
 
     struct Reinvest {
         bytes reinvestData;
@@ -45,23 +45,30 @@ abstract contract DCAReinvest  {
         Reinvest memory reinvestData_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
+        console.log("ExecutreReinvest Level 2");
+
         uint8 code = reinvestData_.investCode;
 
-
-        if (code == ReinvestCodes.NOT_ACTIVE)
-            return (amount, success);
-        else if(code == ReinvestCodes.FORWARD) 
-            return ForwardReinvest._execute(code, amount_, reinvestData_.reinvestData);
-        else if (code == ReinvestCodes.COMPOUND) {
-        } else if (code == ReinvestCodes.AAVE) {}
+        if (code == ReinvestCodes.NOT_ACTIVE) return (amount, success);
+        else if (code == ReinvestCodes.FORWARD)
+            return
+                ForwardReinvest._execute(amount_, reinvestData_.reinvestData);
+        else if (code == ReinvestCodes.COMPOUND) {} else if (
+            code == ReinvestCodes.AAVE
+        ) return AaveV3Reinvest._execute(amount_, reinvestData_.reinvestData);
     }
 
     function _executeWithdraw(
         Reinvest memory reinvestData_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-        if (reinvestData_.investCode <= ReinvestCodes.COMPOUND) {
-        } else if (reinvestData_.investCode == ReinvestCodes.AAVE) {}
+        if (reinvestData_.investCode <= ReinvestCodes.COMPOUND) {} else if (
+            reinvestData_.investCode == ReinvestCodes.AAVE
+        ) return AaveV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
     }
 
+    /*     function getActiveReinvestLibrarys()public pure returns(uint8[] memory codes){
+        codes = abi.decode(ACTIVE_REINVESTS,(uint8[]));
+        return codes;
+    } */
 }

@@ -40,6 +40,8 @@ export type { DCAExecutor } from "./contracts/base/DCAExecutor";
 export { DCAExecutor__factory } from "./factories/contracts/base/DCAExecutor__factory";
 export type { DCAFactory } from "./contracts/base/DCAFactory";
 export { DCAFactory__factory } from "./factories/contracts/base/DCAFactory__factory";
+export type { DCAReinvest } from "./contracts/base/DCAReinvest";
+export { DCAReinvest__factory } from "./factories/contracts/base/DCAReinvest__factory";
 export type { IDCAAccount } from "./contracts/interfaces/IDCAAccount";
 export { IDCAAccount__factory } from "./factories/contracts/interfaces/IDCAAccount__factory";
 export type { IDCAExecutor } from "./contracts/interfaces/IDCAExecutor";
@@ -52,6 +54,8 @@ export type { ReinvestTemplate } from "./contracts/modules/DCAReinvestModual.tem
 export { ReinvestTemplate__factory } from "./factories/contracts/modules/DCAReinvestModual.template.sol/ReinvestTemplate__factory";
 export type { ForwardReinvest } from "./contracts/modules/ForwardReinvest";
 export { ForwardReinvest__factory } from "./factories/contracts/modules/ForwardReinvest__factory";
+export type { IPool } from "./contracts/protocols/aaveV3/IPool";
+export { IPool__factory } from "./factories/contracts/protocols/aaveV3/IPool__factory";
 export type { CometCore } from "./contracts/protocols/compoundV3/CometCore";
 export { CometCore__factory } from "./factories/contracts/protocols/compoundV3/CometCore__factory";
 export type { CometExt } from "./contracts/protocols/compoundV3/CometExt";

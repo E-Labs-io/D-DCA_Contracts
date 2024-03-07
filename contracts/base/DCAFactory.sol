@@ -85,7 +85,7 @@ contract DCAFactory is OnlyActive {
         return _getActiveState();
     }
 
-    function getActiveExecutorAddress()public view returns(address){
+    function getActiveExecutorAddress() public view returns (address) {
         return _executorAddress;
     }
 }

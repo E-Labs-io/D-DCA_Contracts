@@ -35,7 +35,7 @@ abstract contract OnlyExecutor is Ownable {
     function changeExecutor(address executorAddress_) public onlyOwner {
         _changeExecutorAddress(executorAddress_);
     }
-       function getExecutorAddress() public view returns(address){
+    function getExecutorAddress() public view returns (address) {
         return _executorAddress;
     }
 }

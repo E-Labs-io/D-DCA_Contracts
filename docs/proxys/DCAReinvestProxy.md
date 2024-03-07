@@ -182,6 +182,24 @@ function setActiveState() external nonpayable
 
 
 
+### testCall
+
+```solidity
+function testCall() external nonpayable returns (uint256 amount, bool success)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amount | uint256 | undefined |
+| success | bool | undefined |
+
 ### transferOwnership
 
 ```solidity
@@ -258,6 +276,17 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 |---|---|---|
 | previousOwner `indexed` | address | undefined |
 | newOwner `indexed` | address | undefined |
+
+### TestCall
+
+```solidity
+event TestCall()
+```
+
+
+
+
+
 
 
 

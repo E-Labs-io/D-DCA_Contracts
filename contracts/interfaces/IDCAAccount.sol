@@ -39,6 +39,11 @@ interface IDCAAccount is IDCADataStructures {
 
     event DCAReinvestLibraryChanged(address indexed newLibraryAddress);
 
+    event StrategyReinvestExecuted(
+        uint256 indexed strategyId_,
+        bool indexed success
+    );
+
     /**
      * @notice Triggered by the assigned executor to execute the given strategy
      * @param strategyId_ {uint256} Id for the Strategy to be executed

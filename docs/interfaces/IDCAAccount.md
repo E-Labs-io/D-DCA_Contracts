@@ -265,6 +265,23 @@ Emitted when a strategy has been executed
 | amountIn_ `indexed` | uint256 | {uint256} amount received from the swap |
 | reInvest_  | bool | {bool} wether the strategy reinvested or not |
 
+### StrategyReinvestExecuted
+
+```solidity
+event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ `indexed` | uint256 | undefined |
+| success `indexed` | bool | undefined |
+
 ### StrategySubscribed
 
 ```solidity

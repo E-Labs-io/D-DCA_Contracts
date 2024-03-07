@@ -1,5 +1,5 @@
 import { expect, assert } from "chai";
-import hre, { ethers } from "hardhat";
+import hre, { ethers, upgrades } from "hardhat";
 import {
   AbiCoder,
   AddressLike,
@@ -29,6 +29,10 @@ import { erc20 } from "~/types/contracts/@openzeppelin/contracts/token";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
 import { DCAReinvest } from "~/types/contracts/contracts/base/DCAAccount";
+import {
+  getBalance,
+  transferErc20Token,
+} from "~/scripts/tests/contractInteraction";
 
 describe("> DCA Account Tests", () => {
   console.log("🧪 DCA Account Tests : Mounted");
@@ -37,8 +41,10 @@ describe("> DCA Account Tests", () => {
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
 
   let usdcContract: Contract;
+  let wethContract: Contract;
+
   let createdAccount: DCAAccount;
-  let reinvestContract: DCAReinvestProxy;
+  let reinvestContract: Contract;
   let executorContract: DCAExecutor;
   let addressStore: SignerStore;
 
@@ -61,6 +67,15 @@ describe("> DCA Account Tests", () => {
       "contracts/tokens/IERC20.sol:IERC20",
       tokenAddress?.usdc?.[forkedChain]! as string,
       usedImpersonater,
+    );
+
+    const wethImpersonator = await ethers.getImpersonatedSigner(
+      productionChainImpersonators.eth.weth,
+    );
+    wethContract = await ethers.getContractAt(
+      "contracts/tokens/IERC20.sol:IERC20",
+      tokenAddress?.weth?.[forkedChain]! as string,
+      wethImpersonator,
     );
 
     const tx = await usdcContract.transfer(
@@ -122,11 +137,9 @@ describe("> DCA Account Tests", () => {
         "DCAReinvestProxy",
         addressStore.deployer.signer,
       );
-      reinvestContract = await proxyFactory.deploy();
+      reinvestContract = await upgrades.deployProxy(proxyFactory, [true]);
       await reinvestContract.waitForDeployment();
-      const initTx = await reinvestContract.initialize(false);
-      await initTx.wait();
-      expect(reinvestContract.target).to.not.equal(ZeroAddress);
+      expect(reinvestContract.waitForDeployment()).to.be.fulfilled;
     });
 
     it("🧪 Should deploy the executor contract", async function () {
@@ -168,6 +181,10 @@ describe("> DCA Account Tests", () => {
       await updateAddressTx.wait();
       const address = await createdAccount.getAttachedReinvestLibraryAddress();
       expect(address).to.equal(reinvestContract.target);
+    });
+    it("🧪 Should Return the Reinvest Version", async function () {
+      const version = await createdAccount.getAttachedReinvestLibraryVersion();
+      expect(version).to.equal("TEST V0.3");
     });
   });
 
@@ -420,6 +437,38 @@ describe("> DCA Account Tests", () => {
   });
 
   describe("💡 Reinvest Logic Test", () => {
+    it("🧪 Should test the testCall (0x00)", async () => {
+      const notactiveStrat = [
+        0x00,
+        addressStore.executorEoa.address,
+        tokenAddress.weth[forkedChain],
+      ];
+      const reinvest: DCAReinvest.ReinvestStruct = {
+        reinvestData: abiEncoder.encode(
+          ["uint8", "address", "address"],
+          notactiveStrat,
+        ),
+        active: true,
+        investCode: 0x00,
+        dcaAccountAddress: createdAccount.target,
+      };
+
+      const reinvestTx = await createdAccount.testReinvest(1, reinvest, 0);
+
+      const recipt = await reinvestTx.wait();
+
+      await expect(recipt)
+        .to.emit(createdAccount, "StrategyReinvestExecuted")
+        .withArgs(1, false);
+    });
+    it("🧪 Should test the delegatecall on testDelegate", async () => {
+      const reinvestTx = await createdAccount.testDelegate();
+
+      const recipt = await reinvestTx.wait();
+      console.log(recipt?.logs);
+
+      await expect(recipt).to.emit(createdAccount, "ReturnedData");
+    });
     it("🧪 Should return false on active reinvest strategy 1", async () => {
       const stratData = await createdAccount.getStrategyData(1);
       expect(stratData[7][1]).to.be.false;
@@ -450,11 +499,49 @@ describe("> DCA Account Tests", () => {
       const stratData = await createdAccount.getStrategyData(1);
       expect(stratData[7][1]).to.be.true;
     });
-    it("🧪 Should return executor weth balance of zero", async () => {
-      const wethContract = await ethers.getContractAt(
-        "contracts/tokens/IERC20.sol:IERC20",
-        tokenAddress?.weth?.[forkedChain]! as string,
+    it("🧪 Should test the reinvest (0x01) and emit an event", async () => {
+      await transferErc20Token(
+        wethContract,
+        createdAccount.target,
+        ethers.parseEther("2"),
       );
+
+      const notactiveStrat = [
+        0x01,
+        addressStore.user.address,
+        tokenAddress.weth[forkedChain],
+      ];
+      console.log(
+        "Users WETH Balance PRE: ",
+        await getBalance(wethContract, addressStore.user.address),
+      );
+      const reinvest: DCAReinvest.ReinvestStruct = {
+        reinvestData: abiEncoder.encode(
+          ["uint8", "address", "address"],
+          notactiveStrat,
+        ),
+        active: true,
+        investCode: 0x01,
+        dcaAccountAddress: createdAccount.target,
+      };
+
+      const reinvestTx = await createdAccount.testReinvest(
+        1,
+        reinvest,
+        ethers.parseEther("1"),
+      );
+
+      const recipt = await reinvestTx.wait();
+      console.log(
+        "Users WETH Balance POST: ",
+        await getBalance(wethContract, addressStore.user.address),
+      );
+
+      await expect(recipt)
+        .to.emit(createdAccount, "StrategyReinvestExecuted")
+        .withArgs(1, true);
+    });
+    it("🧪 Should return executor weth balance of zero", async () => {
       const bal = await wethContract.balanceOf(
         addressStore.executorEoa.address,
       );
@@ -470,14 +557,10 @@ describe("> DCA Account Tests", () => {
         .withArgs(createdAccount.target, 1);
     });
     it("🧪 Should return executor weth balance of more than zero", async () => {
-      const wethContract = await ethers.getContractAt(
-        "contracts/tokens/IERC20.sol:IERC20",
-        tokenAddress?.weth?.[forkedChain]! as string,
-      );
-      const bal = await wethContract.balanceOf(
+      const bal = await getBalance(
+        wethContract,
         addressStore.executorEoa.address,
       );
-      console.log("Got Bal:", bal);
       expect(Number(bal) > 0).to.be.true;
     });
   });

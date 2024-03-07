@@ -217,6 +217,30 @@ function changeExecutor(address executorAddress_) external nonpayable
 |---|---|---|
 | executorAddress_ | address | undefined |
 
+### executeReinvest
+
+```solidity
+function executeReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| reinvestData_ | DCAReinvest.Reinvest | undefined |
+| amount_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amount | uint256 | undefined |
+| success | bool | undefined |
+
 ### getAttachedReinvestLibraryAddress
 
 ```solidity
@@ -458,6 +482,60 @@ function setStrategyReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_
 | strategyId_ | uint256 | undefined |
 | reinvest_ | DCAReinvest.Reinvest | undefined |
 
+### testCall
+
+```solidity
+function testCall() external nonpayable returns (uint256 amount, bool success)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amount | uint256 | undefined |
+| success | bool | undefined |
+
+### testDelegate
+
+```solidity
+function testDelegate() external nonpayable returns (uint256 amount, bool success)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amount | uint256 | undefined |
+| success | bool | undefined |
+
+### testReinvest
+
+```solidity
+function testReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_, uint256 amount_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | undefined |
+| reinvest_ | DCAReinvest.Reinvest | undefined |
+| amount_ | uint256 | undefined |
+
 ### transferOwnership
 
 ```solidity
@@ -526,6 +604,17 @@ event ExecutorAddressChange(address indexed newAddress_)
 |---|---|---|
 | newAddress_ `indexed` | address | undefined |
 
+### FailedTest
+
+```solidity
+event FailedTest()
+```
+
+
+
+
+
+
 ### NewStrategyCreated
 
 ```solidity
@@ -559,6 +648,23 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 | previousOwner `indexed` | address | undefined |
 | newOwner `indexed` | address | undefined |
 
+### ReturnedData
+
+```solidity
+event ReturnedData(bytes returnData, bool txSuccess)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| returnData  | bytes | undefined |
+| txSuccess  | bool | undefined |
+
 ### StrategyExecuted
 
 ```solidity
@@ -576,6 +682,23 @@ Emitted when a strategy has been executed
 | strategyId_ `indexed` | uint256 | {uint256} the id for the executed strategy |
 | amountIn_ `indexed` | uint256 | {uint256} amount received from the swap |
 | reInvest_  | bool | {bool} wether the strategy reinvested or not |
+
+### StrategyReinvestExecuted
+
+```solidity
+event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ `indexed` | uint256 | undefined |
+| success `indexed` | bool | undefined |
 
 ### StrategySubscribed
 
@@ -609,6 +732,17 @@ Emitted when a strategy has been unsubscribed from an Executor
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ `indexed` | uint256 | {uint256} Id of the strategy being unsubscribed |
+
+### TestCall
+
+```solidity
+event TestCall()
+```
+
+
+
+
+
 
 
 

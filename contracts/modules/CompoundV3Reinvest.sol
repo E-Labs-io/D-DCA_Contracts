@@ -5,18 +5,17 @@ import "../protocols/compoundV3/CometMainInterface.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
 
 library CompoundV3Reinvest {
-  string public constant STRATEGY_NAME = "Compound V3 Reinvest";
-  address internal constant COMPOUND_ETH_CONTRACT =
+    string public constant STRATEGY_NAME = "Compound V3 Reinvest";
+    address internal constant COMPOUND_ETH_CONTRACT =
         0x1d573274E19174260c5aCE3f2251598959d24456;
 
-        uint8 constant WETH = 0x0;
-        uint8 constant WBTC = 0x1;
+    uint8 constant WETH = 0x0;
+    uint8 constant WBTC = 0x1;
     struct ReinvestDataStruct {
         uint8 moduleCode;
         address receiver;
         address token;
     }
-  
 
     function _supplyCompound(
         uint8 code_,
@@ -52,9 +51,7 @@ library CompoundV3Reinvest {
     }
 
     function _getContractAddress(uint8 code_) internal pure returns (address) {
- 
-    if (code_ == ReinvestCodes.COMPOUND)
-            return COMPOUND_ETH_CONTRACT;
+        if (code_ == ReinvestCodes.COMPOUND) return COMPOUND_ETH_CONTRACT;
     }
 
     function _getBalance(

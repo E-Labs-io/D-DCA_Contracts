@@ -1,5 +1,5 @@
 import { expect, assert } from "chai";
-import hre, { ethers } from "hardhat";
+import hre, { ethers, upgrades } from "hardhat";
 import {
   AbiCoder,
   AddressLike,
@@ -13,6 +13,8 @@ import { DCAReinvest } from "~/types/contracts/contracts/proxys/DCAReinvestProxy
 import signerStore from "~/scripts/tests/signerStore";
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 import deploymentConfig from "~/bin/deployments.config";
+import { decodePackedBytes } from "~/scripts/tests/comparisons";
+import { getBalance } from "~/scripts/tests/contractInteraction";
 
 describe("> DCA Reinvest Modula Test", () => {
   console.log("🧪 DCA Reinvest Modula Test : Mounted");
@@ -20,7 +22,7 @@ describe("> DCA Reinvest Modula Test", () => {
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
   const forkedChain = deploymentConfig().masterChain;
 
-  let reinvestDeployment: DCAReinvestProxy;
+  let reinvestDeployment: Contract;
   let wethContract: Contract, wbtcContract: Contract;
 
   let addressStore: {
@@ -46,15 +48,20 @@ describe("> DCA Reinvest Modula Test", () => {
     );
     const wethTx = await wethContract.transfer(
       addressStore.tester.address,
-      ethers.parseUnits("1", "ether"),
+      ethers.parseUnits("10", "ether"),
     );
     await wethTx.wait();
+    const wethTx2 = await wethContract.transfer(
+      addressStore.deployer.address,
+      ethers.parseUnits("10", "ether"),
+    );
+    await wethTx2.wait();
   }
 
   describe("💡 Check Wallet Balance", function () {
     it("🧪 WETH Should equal 1ETH", async function () {
       const wethBal = await wethContract.balanceOf(addressStore.tester.address);
-      expect(wethBal).to.equal(ethers.parseUnits("1", "ether"));
+      expect(wethBal).to.equal(ethers.parseUnits("10", "ether"));
     });
   });
 
@@ -65,11 +72,9 @@ describe("> DCA Reinvest Modula Test", () => {
         "DCAReinvestProxy",
         addressStore.deployer.signer,
       );
-      reinvestDeployment = await proxyFactory.deploy();
+      reinvestDeployment = await upgrades.deployProxy(proxyFactory, [false]);
       await reinvestDeployment.waitForDeployment();
-      const initTx = await reinvestDeployment.initialize(false);
-      await initTx.wait();
-      expect(reinvestDeployment.target).to.not.equal(ZeroAddress);
+      expect(reinvestDeployment.waitForDeployment()).to.be.fulfilled;
     });
 
     it("🧪 Should return the deployer address as owner", async function () {
@@ -79,9 +84,8 @@ describe("> DCA Reinvest Modula Test", () => {
   });
 
   describe("💡 Contract State", function () {
-    let decodedValue: any[];
     it("🧪 Should Return the Reinvest Version", async function () {
-      const version = await reinvestDeployment.REINVEST_VERSION();
+      const version = await reinvestDeployment.getLibraryVersion();
       expect(version).to.equal("TEST V0.3");
     });
     it("🧪 Should Return the Reinvest is Not Active", async function () {
@@ -93,24 +97,25 @@ describe("> DCA Reinvest Modula Test", () => {
       const active = await reinvestDeployment.REINVEST_ACTIVE();
       expect(active).to.be.true;
     });
-    it("🧪 Should Return the active reinvest strat array", async function () {
+    it("🧪 Should Return the active reinvest strat array length of 2", async function () {
       const encodedData = await reinvestDeployment.ACTIVE_REINVESTS();
-      decodedValue = abiEncoder.decode(["uint8"], encodedData);
-      expect(Array.isArray(decodedValue)).to.be.true;
-    });
+      const decodedData = decodePackedBytes(encodedData);
 
-    it("🧪 Reinvest Active Strat element 1 should be Forward (1)", async function () {
-      const elemtnOne = Number(decodedValue[0]);
-      expect(elemtnOne).to.equal(1);
+      expect(decodedData.length === 2).to.be.true;
+    });
+    it("🧪 Reinvest Active Strat element 2 should be Aave (0x12)", async function () {
+      const encodedData = await reinvestDeployment.ACTIVE_REINVESTS();
+      const decodedData = decodePackedBytes(encodedData)[1];
+      expect(decodedData).to.equal(18);
     });
   });
 
-  describe("💡 Forward Strategy", function () {
-    it("🧪 Should Fail", async function () {
+  describe("💡 Strategy Execution", function () {
+    it("🧪 Should Complete 0x00 (not active)", async function () {
       const forwardStratData = [
         0x01,
         addressStore.tester.address,
-        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        tokenAddress.weth[forkedChain],
       ];
       const reinvestData: DCAReinvest.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
@@ -118,16 +123,63 @@ describe("> DCA Reinvest Modula Test", () => {
           forwardStratData,
         ),
         active: false,
+        investCode: 0x00,
+        dcaAccountAddress: addressStore.tester.address,
+      };
+
+      await expect(reinvestDeployment.executeReinvest(reinvestData, 0)).to.be
+        .fulfilled;
+    });
+    it("🧪 Should execute 0x01 (forward)", async function () {
+      const forwardStratData = [
+        0x01,
+        addressStore.tester.address,
+        tokenAddress.weth[forkedChain],
+      ];
+      const reinvestData: DCAReinvest.ReinvestStruct = {
+        reinvestData: abiEncoder.encode(
+          ["uint8", "address", "address"],
+          forwardStratData,
+        ),
+        active: true,
         investCode: 0x01,
         dcaAccountAddress: addressStore.tester.address,
       };
 
-      await expect(
-        reinvestDeployment.executeReinvest(
-          reinvestData,
-          ethers.parseEther("0.5"),
-        ),
-      ).to.revertedWithoutReason();
+      const con = await ethers.getContractAt(
+        "contracts/tokens/IERC20.sol:IERC20",
+        tokenAddress.weth[forkedChain] as string,
+        addressStore.deployer.signer,
+      );
+      const tx = await con.approve(
+        reinvestDeployment.target,
+        ethers.parseEther("1"),
+      );
+
+      await tx.wait();
+      const preTxBal = await getBalance(
+        wethContract,
+        addressStore.tester.address,
+      );
+      const mainTx = await reinvestDeployment.executeReinvest(
+        reinvestData,
+        ethers.parseEther("0.5"),
+      );
+
+      await mainTx.wait();
+
+      const postTxBal = await getBalance(
+        wethContract,
+        addressStore.tester.address,
+      );
+
+      expect(preTxBal + ethers.parseEther("0.5") === postTxBal).to.be.true;
+    });
+    it("🧪 Should execute testCall()", async function () {
+      await expect(reinvestDeployment.testCall()).to.emit(
+        reinvestDeployment,
+        "TestCall",
+      );
     });
   });
 });
