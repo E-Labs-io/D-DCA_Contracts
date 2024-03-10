@@ -27,36 +27,24 @@ library AaveV3Reinvest {
     ) internal returns (uint256 amount, bool success) {
         ReinvestDataStruct memory investData = _decodeData(data_);
 
-        uint256 oldBalance = IERC20(investData.aToken).balanceOf(msg.sender);
-        bool transferSuccess = IERC20(investData.token).transferFrom(
-            msg.sender,
-            address(this),
+        uint256 oldBalance = IERC20(investData.aToken).balanceOf(address(this));
+
+        bool approvalSuccess = IERC20(investData.token).approve(
+            address(AAVE_POOL),
             amount_
         );
 
-        if (transferSuccess) {
-            bool approvalSuccess = IERC20(investData.token).approve(
-                address(AAVE_POOL),
-                amount_
+        if (approvalSuccess) {
+            AAVE_POOL.supply(investData.token, amount_, address(this), 0);
+
+            uint256 newBalance = IERC20(investData.aToken).balanceOf(
+                address(this)
             );
 
-            if (approvalSuccess) {
-                AAVE_POOL.supply(investData.token, amount_, msg.sender, 0);
-
-                uint256 newBalance = IERC20(investData.aToken).balanceOf(
-                    msg.sender
-                );
-
-                amount = newBalance - oldBalance;
-                success = amount > 0;
-            } else {
-                IERC20(investData.token).transferFrom(
-                    address(this),
-                    msg.sender,
-                    amount
-                );
-            }
+            amount = newBalance - oldBalance;
+            success = amount > 0;
         }
+
         return (amount, success);
     }
 
@@ -65,7 +53,8 @@ library AaveV3Reinvest {
         bytes memory data_
     ) internal returns (uint256 amount, bool success) {
         ReinvestDataStruct memory investData = _decodeData(data_);
-        amount = AAVE_POOL.withdraw(investData.token, amount_, msg.sender);
+        amount = AAVE_POOL.withdraw(investData.token, amount_, address(this));
+
         success = amount > 0;
         return (amount, success);
     }

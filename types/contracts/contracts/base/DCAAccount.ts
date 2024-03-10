@@ -100,6 +100,7 @@ export interface DCAAccountInterface extends Interface {
       | "SetupStrategy"
       | "SubscribeStrategy"
       | "UnFundAccount"
+      | "UnWindReinvest"
       | "UnsubscribeStrategy"
       | "WithdrawSavings"
       | "changeDCAReinvestLibrary"
@@ -118,8 +119,6 @@ export interface DCAAccountInterface extends Interface {
       | "removeExecutor"
       | "renounceOwnership"
       | "setStrategyReinvest"
-      | "testCall"
-      | "testDelegate"
       | "testReinvest"
       | "transferOwnership"
       | "updateSwapAddress"
@@ -127,18 +126,16 @@ export interface DCAAccountInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "CompleteDeletate"
       | "DCAReinvestLibraryChanged"
       | "ExecutorAddressChange"
       | "FailedTest"
       | "NewStrategyCreated"
       | "OwnershipTransferred"
-      | "ReturnedData"
       | "StrategyExecuted"
       | "StrategyReinvestExecuted"
+      | "StrategyReinvestUnwound"
       | "StrategySubscribed"
       | "StrategyUnsubscribed"
-      | "TestCall"
   ): EventFragment;
 
   encodeFunctionData(
@@ -172,6 +169,10 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "UnFundAccount",
     values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "UnWindReinvest",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "UnsubscribeStrategy",
@@ -242,11 +243,6 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "setStrategyReinvest",
     values: [BigNumberish, DCAReinvestLogic.ReinvestStruct]
   ): string;
-  encodeFunctionData(functionFragment: "testCall", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "testDelegate",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "testReinvest",
     values: [BigNumberish, DCAReinvestLogic.ReinvestStruct, BigNumberish]
@@ -284,6 +280,10 @@ export interface DCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "UnFundAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "UnWindReinvest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -355,11 +355,6 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "setStrategyReinvest",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "testCall", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "testDelegate",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "testReinvest",
     data: BytesLike
@@ -372,19 +367,6 @@ export interface DCAAccountInterface extends Interface {
     functionFragment: "updateSwapAddress",
     data: BytesLike
   ): Result;
-}
-
-export namespace CompleteDeletateEvent {
-  export type InputTuple = [arg0: BigNumberish, arg1: boolean];
-  export type OutputTuple = [arg0: bigint, arg1: boolean];
-  export interface OutputObject {
-    arg0: bigint;
-    arg1: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace DCAReinvestLibraryChangedEvent {
@@ -446,19 +428,6 @@ export namespace OwnershipTransferredEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace ReturnedDataEvent {
-  export type InputTuple = [returnData: BytesLike, txSuccess: boolean];
-  export type OutputTuple = [returnData: string, txSuccess: boolean];
-  export interface OutputObject {
-    returnData: string;
-    txSuccess: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace StrategyExecutedEvent {
   export type InputTuple = [
     strategyId_: BigNumberish,
@@ -494,6 +463,28 @@ export namespace StrategyReinvestExecutedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace StrategyReinvestUnwoundEvent {
+  export type InputTuple = [
+    strategyId: BigNumberish,
+    amount: BigNumberish,
+    success: boolean
+  ];
+  export type OutputTuple = [
+    strategyId: bigint,
+    amount: bigint,
+    success: boolean
+  ];
+  export interface OutputObject {
+    strategyId: bigint;
+    amount: bigint;
+    success: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace StrategySubscribedEvent {
   export type InputTuple = [strategyId_: BigNumberish, executor_: AddressLike];
   export type OutputTuple = [strategyId_: bigint, executor_: string];
@@ -513,16 +504,6 @@ export namespace StrategyUnsubscribedEvent {
   export interface OutputObject {
     strategyId_: bigint;
   }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace TestCallEvent {
-  export type InputTuple = [];
-  export type OutputTuple = [];
-  export interface OutputObject {}
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -620,6 +601,12 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
+  UnWindReinvest: TypedContractMethod<
+    [strategyId_: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   UnsubscribeStrategy: TypedContractMethod<
     [strategyId_: BigNumberish],
     [void],
@@ -706,17 +693,13 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
-  testCall: TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
-
-  testDelegate: TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
-
   testReinvest: TypedContractMethod<
     [
       strategyId_: BigNumberish,
       reinvest_: DCAReinvestLogic.ReinvestStruct,
       amount_: BigNumberish
     ],
-    [void],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
 
@@ -784,6 +767,9 @@ export interface DCAAccount extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "UnWindReinvest"
+  ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "UnsubscribeStrategy"
   ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
@@ -869,12 +855,6 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "testCall"
-  ): TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
-  getFunction(
-    nameOrSignature: "testDelegate"
-  ): TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
-  getFunction(
     nameOrSignature: "testReinvest"
   ): TypedContractMethod<
     [
@@ -882,7 +862,7 @@ export interface DCAAccount extends BaseContract {
       reinvest_: DCAReinvestLogic.ReinvestStruct,
       amount_: BigNumberish
     ],
-    [void],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
   getFunction(
@@ -892,13 +872,6 @@ export interface DCAAccount extends BaseContract {
     nameOrSignature: "updateSwapAddress"
   ): TypedContractMethod<[swapRouter_: AddressLike], [void], "nonpayable">;
 
-  getEvent(
-    key: "CompleteDeletate"
-  ): TypedContractEvent<
-    CompleteDeletateEvent.InputTuple,
-    CompleteDeletateEvent.OutputTuple,
-    CompleteDeletateEvent.OutputObject
-  >;
   getEvent(
     key: "DCAReinvestLibraryChanged"
   ): TypedContractEvent<
@@ -935,13 +908,6 @@ export interface DCAAccount extends BaseContract {
     OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
-    key: "ReturnedData"
-  ): TypedContractEvent<
-    ReturnedDataEvent.InputTuple,
-    ReturnedDataEvent.OutputTuple,
-    ReturnedDataEvent.OutputObject
-  >;
-  getEvent(
     key: "StrategyExecuted"
   ): TypedContractEvent<
     StrategyExecutedEvent.InputTuple,
@@ -954,6 +920,13 @@ export interface DCAAccount extends BaseContract {
     StrategyReinvestExecutedEvent.InputTuple,
     StrategyReinvestExecutedEvent.OutputTuple,
     StrategyReinvestExecutedEvent.OutputObject
+  >;
+  getEvent(
+    key: "StrategyReinvestUnwound"
+  ): TypedContractEvent<
+    StrategyReinvestUnwoundEvent.InputTuple,
+    StrategyReinvestUnwoundEvent.OutputTuple,
+    StrategyReinvestUnwoundEvent.OutputObject
   >;
   getEvent(
     key: "StrategySubscribed"
@@ -969,26 +942,8 @@ export interface DCAAccount extends BaseContract {
     StrategyUnsubscribedEvent.OutputTuple,
     StrategyUnsubscribedEvent.OutputObject
   >;
-  getEvent(
-    key: "TestCall"
-  ): TypedContractEvent<
-    TestCallEvent.InputTuple,
-    TestCallEvent.OutputTuple,
-    TestCallEvent.OutputObject
-  >;
 
   filters: {
-    "CompleteDeletate(uint256,bool)": TypedContractEvent<
-      CompleteDeletateEvent.InputTuple,
-      CompleteDeletateEvent.OutputTuple,
-      CompleteDeletateEvent.OutputObject
-    >;
-    CompleteDeletate: TypedContractEvent<
-      CompleteDeletateEvent.InputTuple,
-      CompleteDeletateEvent.OutputTuple,
-      CompleteDeletateEvent.OutputObject
-    >;
-
     "DCAReinvestLibraryChanged(address)": TypedContractEvent<
       DCAReinvestLibraryChangedEvent.InputTuple,
       DCAReinvestLibraryChangedEvent.OutputTuple,
@@ -1044,17 +999,6 @@ export interface DCAAccount extends BaseContract {
       OwnershipTransferredEvent.OutputObject
     >;
 
-    "ReturnedData(bytes,bool)": TypedContractEvent<
-      ReturnedDataEvent.InputTuple,
-      ReturnedDataEvent.OutputTuple,
-      ReturnedDataEvent.OutputObject
-    >;
-    ReturnedData: TypedContractEvent<
-      ReturnedDataEvent.InputTuple,
-      ReturnedDataEvent.OutputTuple,
-      ReturnedDataEvent.OutputObject
-    >;
-
     "StrategyExecuted(uint256,uint256,bool)": TypedContractEvent<
       StrategyExecutedEvent.InputTuple,
       StrategyExecutedEvent.OutputTuple,
@@ -1077,6 +1021,17 @@ export interface DCAAccount extends BaseContract {
       StrategyReinvestExecutedEvent.OutputObject
     >;
 
+    "StrategyReinvestUnwound(uint256,uint256,bool)": TypedContractEvent<
+      StrategyReinvestUnwoundEvent.InputTuple,
+      StrategyReinvestUnwoundEvent.OutputTuple,
+      StrategyReinvestUnwoundEvent.OutputObject
+    >;
+    StrategyReinvestUnwound: TypedContractEvent<
+      StrategyReinvestUnwoundEvent.InputTuple,
+      StrategyReinvestUnwoundEvent.OutputTuple,
+      StrategyReinvestUnwoundEvent.OutputObject
+    >;
+
     "StrategySubscribed(uint256,address)": TypedContractEvent<
       StrategySubscribedEvent.InputTuple,
       StrategySubscribedEvent.OutputTuple,
@@ -1097,17 +1052,6 @@ export interface DCAAccount extends BaseContract {
       StrategyUnsubscribedEvent.InputTuple,
       StrategyUnsubscribedEvent.OutputTuple,
       StrategyUnsubscribedEvent.OutputObject
-    >;
-
-    "TestCall()": TypedContractEvent<
-      TestCallEvent.InputTuple,
-      TestCallEvent.OutputTuple,
-      TestCallEvent.OutputObject
-    >;
-    TestCall: TypedContractEvent<
-      TestCallEvent.InputTuple,
-      TestCallEvent.OutputTuple,
-      TestCallEvent.OutputObject
     >;
   };
 }

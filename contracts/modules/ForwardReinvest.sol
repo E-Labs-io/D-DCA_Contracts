@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-
+//DEV
+import "hardhat/console.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
 
 library ForwardReinvest {
-    string public constant STRATEGY_NAME = "Forward Reinvest V0.1";
+    string public constant STRATEGY_NAME = "Forward Reinvest V0.2";
 
     struct ReinvestDataStruct {
         uint8 moduleCode;
@@ -18,12 +19,16 @@ library ForwardReinvest {
         bytes memory data_
     ) internal returns (uint256, bool success) {
         ReinvestDataStruct memory investData = _decodeData(data_);
-        success = IERC20(investData.token).transferFrom(
-            msg.sender,
+        console.log("Forward Reinvest address(this) :", address(this));
+        console.log("Forward Reinvest msg.sender :", msg.sender);
+        console.log("Forward Reinvest forwarding to :", investData.receiver);
+
+        success = IERC20(investData.token).transfer(
             investData.receiver,
             amount_
         );
-        return (amount_, true);
+        console.log("> Reinvest: Forward: Success: ", success);
+        return (amount_, success);
     }
 
     function _unwind(

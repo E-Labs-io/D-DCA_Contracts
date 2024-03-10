@@ -86,5 +86,5 @@ export type { CalledProxy } from "./contracts/test/called.sol/CalledProxy";
 export { CalledProxy__factory } from "./factories/contracts/test/called.sol/CalledProxy__factory";
 export type { Caller } from "./contracts/test/caller.sol/Caller";
 export { Caller__factory } from "./factories/contracts/test/caller.sol/Caller__factory";
-export type { DCAReinvestLogic } from "./contracts/utils/reinvestLogic.sol/DCAReinvestLogic";
-export { DCAReinvestLogic__factory } from "./factories/contracts/utils/reinvestLogic.sol/DCAReinvestLogic__factory";
+export type { DCAReinvestLogic } from "./contracts/utils/DCAReinvestLogic";
+export { DCAReinvestLogic__factory } from "./factories/contracts/utils/DCAReinvestLogic__factory";

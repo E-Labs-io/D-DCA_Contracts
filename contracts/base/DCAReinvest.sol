@@ -3,14 +3,12 @@ pragma solidity ^0.8.20;
 //DEV
 import "hardhat/console.sol";
 
-import {DCAReinvestLogic} from "../utils/reinvestLogic.sol";
+import {DCAReinvestLogic} from "../utils/DCAReinvestLogic.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract DCAReinvest is DCAReinvestLogic, Ownable {
-    bool public REINVEST_ACTIVE;
-
     constructor(bool activeLibrary) Ownable(msg.sender) {
-        REINVEST_ACTIVE = activeLibrary;
+        _setActiveState(activeLibrary);
     }
 
     function executeReinvest(
@@ -45,6 +43,6 @@ contract DCAReinvest is DCAReinvestLogic, Ownable {
     }
 
     function setActiveState() public onlyOwner {
-        REINVEST_ACTIVE = !REINVEST_ACTIVE;
+        _setActiveState(!REINVEST_ACTIVE);
     }
 }

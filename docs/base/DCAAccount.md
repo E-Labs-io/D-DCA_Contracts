@@ -152,6 +152,22 @@ function UnFundAccount(address token_, uint256 amount_) external nonpayable
 | token_ | address | {address} The ERC20 token address |
 | amount_ | uint256 | {uint256} Amount of the token to withdraw |
 
+### UnWindReinvest
+
+```solidity
+function UnWindReinvest(uint256 strategyId_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | undefined |
+
 ### UnsubscribeStrategy
 
 ```solidity
@@ -482,46 +498,10 @@ function setStrategyReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest rein
 | strategyId_ | uint256 | undefined |
 | reinvest_ | DCAReinvestLogic.Reinvest | undefined |
 
-### testCall
-
-```solidity
-function testCall() external nonpayable returns (uint256, bool)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-| _1 | bool | undefined |
-
-### testDelegate
-
-```solidity
-function testDelegate() external nonpayable returns (uint256, bool)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-| _1 | bool | undefined |
-
 ### testReinvest
 
 ```solidity
-function testReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_, uint256 amount_) external nonpayable
+function testReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -535,6 +515,13 @@ function testReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_, 
 | strategyId_ | uint256 | undefined |
 | reinvest_ | DCAReinvestLogic.Reinvest | undefined |
 | amount_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amount | uint256 | undefined |
+| success | bool | undefined |
 
 ### transferOwnership
 
@@ -571,23 +558,6 @@ function updateSwapAddress(address swapRouter_) external nonpayable
 
 
 ## Events
-
-### CompleteDeletate
-
-```solidity
-event CompleteDeletate(uint256, bool)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0  | uint256 | undefined |
-| _1  | bool | undefined |
 
 ### DCAReinvestLibraryChanged
 
@@ -665,23 +635,6 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 | previousOwner `indexed` | address | undefined |
 | newOwner `indexed` | address | undefined |
 
-### ReturnedData
-
-```solidity
-event ReturnedData(bytes returnData, bool txSuccess)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| returnData  | bytes | undefined |
-| txSuccess  | bool | undefined |
-
 ### StrategyExecuted
 
 ```solidity
@@ -717,6 +670,24 @@ event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success
 | strategyId_ `indexed` | uint256 | undefined |
 | success `indexed` | bool | undefined |
 
+### StrategyReinvestUnwound
+
+```solidity
+event StrategyReinvestUnwound(uint256 indexed strategyId, uint256 amount, bool indexed success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId `indexed` | uint256 | undefined |
+| amount  | uint256 | undefined |
+| success `indexed` | bool | undefined |
+
 ### StrategySubscribed
 
 ```solidity
@@ -749,17 +720,6 @@ Emitted when a strategy has been unsubscribed from an Executor
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ `indexed` | uint256 | {uint256} Id of the strategy being unsubscribed |
-
-### TestCall
-
-```solidity
-event TestCall()
-```
-
-
-
-
-
 
 
 

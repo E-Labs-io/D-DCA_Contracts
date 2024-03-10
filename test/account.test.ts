@@ -15,8 +15,8 @@ import {
   ForwardReinvest,
   DCAExecutor,
   IERC20,
-  DCAReinvest,
-  DCAReinvestLogic,
+  type DCAReinvest,
+  type DCAReinvestLogic,
 } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 import {
@@ -438,14 +438,6 @@ describe("> DCA Account Tests", () => {
   });
 
   describe("💡 Reinvest Logic Test", () => {
-    it("🧪 Should test the delegatecall on testDelegate", async () => {
-      const reinvestTx = await createdAccount.testDelegate();
-
-      const recipt = await reinvestTx.wait();
-      await expect(recipt)
-        .to.emit(createdAccount, "CompleteDeletate")
-        .withArgs(420, true);
-    });
     it("🧪 Should return false on active reinvest strategy 1", async () => {
       const stratData = await createdAccount.getStrategyData(1);
       expect(stratData[7][1]).to.be.false;
@@ -516,19 +508,20 @@ describe("> DCA Account Tests", () => {
       expect(bal).to.equal(0);
     });
     it("🧪 Should execute strategy 1", async () => {
-      await expect(
-        executorContract
-          .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 1),
-      )
+      const tx = await executorContract
+        .connect(addressStore.executorEoa.signer)
+        .Execute(createdAccount.target, 1);
+      await expect(tx.wait())
         .to.emit(executorContract, "ExecutedDCA")
         .withArgs(createdAccount.target, 1);
     });
     it("🧪 Should return executor weth balance of more than zero", async () => {
-      expect(
-        (await getErc20Balance(wethContract, addressStore.testTarget.address)) >
-          0,
-      ).to.be.false;
+      const bal = await getErc20Balance(
+        wethContract,
+        addressStore.testTarget.address,
+      );
+      console.log("weth bal of test");
+      expect(Number(bal) > 0).to.be.true;
     });
   });
 });

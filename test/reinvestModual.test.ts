@@ -65,16 +65,6 @@ describe("> DCA Reinvest Modula Test", () => {
   });
 
   describe("💡 Deploy & Check Ownership", function () {
-    /* it("🧪 Should deploy the proxy contract", async function () {
-      // Deploy the reinvest proxy contract
-      const proxyFactory = await ethers.getContractFactory(
-        "DCAReinvestProxy",
-        addressStore.deployer.signer,
-      );
-      reinvestDeployment = await upgrades.deployProxy(proxyFactory, [false]);
-      await reinvestDeployment.waitForDeployment();
-      expect(reinvestDeployment.waitForDeployment()).to.be.fulfilled;
-    }); */
     it("🧪 Should deploy the contract", async function () {
       const contractFactory = await ethers.getContractFactory(
         "DCAReinvest",

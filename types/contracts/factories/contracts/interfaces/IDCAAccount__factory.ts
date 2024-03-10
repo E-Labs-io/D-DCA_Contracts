@@ -85,6 +85,31 @@ const _abi = [
       {
         indexed: true,
         internalType: "uint256",
+        name: "strategyId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
+    name: "StrategyReinvestUnwound",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
         name: "strategyId_",
         type: "uint256",
       },

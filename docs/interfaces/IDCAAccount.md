@@ -282,6 +282,24 @@ event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success
 | strategyId_ `indexed` | uint256 | undefined |
 | success `indexed` | bool | undefined |
 
+### StrategyReinvestUnwound
+
+```solidity
+event StrategyReinvestUnwound(uint256 indexed strategyId, uint256 amount, bool indexed success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId `indexed` | uint256 | undefined |
+| amount  | uint256 | undefined |
+| success `indexed` | bool | undefined |
+
 ### StrategySubscribed
 
 ```solidity

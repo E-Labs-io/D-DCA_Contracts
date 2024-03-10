@@ -9,6 +9,7 @@ import {AaveV3Reinvest} from "../modules/AaveV3Reinvest.sol";
 
 abstract contract DCAReinvestLogic {
     using ReinvestCodes for uint8;
+    bool public REINVEST_ACTIVE;
     string public constant REINVEST_VERSION = "TEST V0.4";
     bytes public constant ACTIVE_REINVESTS =
         abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
@@ -34,6 +35,10 @@ abstract contract DCAReinvestLogic {
         address dcaAccountAddress;
     }
 
+    function _setActiveState(bool state_) internal {
+        REINVEST_ACTIVE = state_;
+    }
+
     /**
      *
      * @param reinvestData_ {Reinvest} Data of the reinvest strategy
@@ -48,6 +53,7 @@ abstract contract DCAReinvestLogic {
         console.log("ExecutreReinvest Level 2");
 
         uint8 code = reinvestData_.investCode;
+        console.log("ExecutreReinvest Code", code);
 
         if (code == ReinvestCodes.NOT_ACTIVE) return (amount, success);
         else if (code == ReinvestCodes.FORWARD)

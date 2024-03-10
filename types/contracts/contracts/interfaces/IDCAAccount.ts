@@ -111,6 +111,7 @@ export interface IDCAAccountInterface extends Interface {
       | "NewStrategyCreated"
       | "StrategyExecuted"
       | "StrategyReinvestExecuted"
+      | "StrategyReinvestUnwound"
       | "StrategySubscribed"
       | "StrategyUnsubscribed"
   ): EventFragment;
@@ -254,6 +255,28 @@ export namespace StrategyReinvestExecutedEvent {
   export type OutputTuple = [strategyId_: bigint, success: boolean];
   export interface OutputObject {
     strategyId_: bigint;
+    success: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace StrategyReinvestUnwoundEvent {
+  export type InputTuple = [
+    strategyId: BigNumberish,
+    amount: BigNumberish,
+    success: boolean
+  ];
+  export type OutputTuple = [
+    strategyId: bigint,
+    amount: bigint,
+    success: boolean
+  ];
+  export interface OutputObject {
+    strategyId: bigint;
+    amount: bigint;
     success: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -495,6 +518,13 @@ export interface IDCAAccount extends BaseContract {
     StrategyReinvestExecutedEvent.OutputObject
   >;
   getEvent(
+    key: "StrategyReinvestUnwound"
+  ): TypedContractEvent<
+    StrategyReinvestUnwoundEvent.InputTuple,
+    StrategyReinvestUnwoundEvent.OutputTuple,
+    StrategyReinvestUnwoundEvent.OutputObject
+  >;
+  getEvent(
     key: "StrategySubscribed"
   ): TypedContractEvent<
     StrategySubscribedEvent.InputTuple,
@@ -552,6 +582,17 @@ export interface IDCAAccount extends BaseContract {
       StrategyReinvestExecutedEvent.InputTuple,
       StrategyReinvestExecutedEvent.OutputTuple,
       StrategyReinvestExecutedEvent.OutputObject
+    >;
+
+    "StrategyReinvestUnwound(uint256,uint256,bool)": TypedContractEvent<
+      StrategyReinvestUnwoundEvent.InputTuple,
+      StrategyReinvestUnwoundEvent.OutputTuple,
+      StrategyReinvestUnwoundEvent.OutputObject
+    >;
+    StrategyReinvestUnwound: TypedContractEvent<
+      StrategyReinvestUnwoundEvent.InputTuple,
+      StrategyReinvestUnwoundEvent.OutputTuple,
+      StrategyReinvestUnwoundEvent.OutputObject
     >;
 
     "StrategySubscribed(uint256,address)": TypedContractEvent<

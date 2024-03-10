@@ -7,7 +7,7 @@ import {
   IDCADataStructures,
 } from "~/types/contracts/contracts/base/DCAExecutor";
 import deployedDCAContracts from "~/bin/deployedAddress";
-import { DCAReinvest } from "~/types/contracts/contracts/base/DCAAccount";
+import {type DCAReinvest } from "~/types/contracts";
 
 const deployedAddresses = (networkName: ChainName) =>
   deployedDCAContracts[networkName]!;

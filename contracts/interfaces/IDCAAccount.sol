@@ -44,6 +44,12 @@ interface IDCAAccount is IDCADataStructures {
         bool indexed success
     );
 
+    event StrategyReinvestUnwound(
+        uint256 indexed strategyId,
+        uint256 amount,
+        bool indexed success
+    );
+
     /**
      * @notice Triggered by the assigned executor to execute the given strategy
      * @param strategyId_ {uint256} Id for the Strategy to be executed
