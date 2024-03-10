@@ -2,8 +2,12 @@
 
 import { AddressLike, Addressable, ZeroAddress, ethers } from "ethers";
 import { ChainName, tokenAddress } from "../../bin/tokenAddress";
-import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
+import {
+  DCAExecutor,
+  IDCADataStructures,
+} from "~/types/contracts/contracts/base/DCAExecutor";
 import deployedDCAContracts from "~/bin/deployedAddress";
+import { DCAReinvest } from "~/types/contracts/contracts/base/DCAAccount";
 
 const deployedAddresses = (networkName: ChainName) =>
   deployedDCAContracts[networkName]!;
@@ -35,7 +39,7 @@ export function DCAAccountArguments(
     networkName as ChainName,
   ).DCAExecutor as AddressLike;
   const swapRouter_: AddressLike =
-    tokenAddress.swapRouter[networkName as ChainName]!;
+    tokenAddress.swapRouter![networkName as ChainName]!;
 
   const owner_: AddressLike = deployer;
 
@@ -54,7 +58,7 @@ export function DCAAccountFactoryArguments(
     networkName as ChainName,
   ).DCAExecutor as AddressLike;
   const swapRouter_: AddressLike =
-    tokenAddress.swapRouter[networkName as ChainName]!;
+    tokenAddress.swapRouter![networkName as ChainName]!;
 
   const reinvestLibraryContract_ = deployedAddresses(
     networkName as ChainName,
@@ -75,22 +79,23 @@ export function DCAReinvestLibraryArguments(
 export const newStrat = (
   accountAddress: string,
   network: string,
+  reinvest?: DCAReinvest.ReinvestStruct,
 ): IDCADataStructures.StrategyStruct => {
   return {
     accountAddress: accountAddress,
     baseToken: {
-      tokenAddress: tokenAddress.usdc[network as ChainName]!,
+      tokenAddress: tokenAddress.usdc![network as ChainName]!,
       decimals: 6,
       ticker: "USDC",
     },
     targetToken: {
-      tokenAddress: tokenAddress.weth[network as ChainName]!,
+      tokenAddress: tokenAddress.weth![network as ChainName]!,
       decimals: 18,
       ticker: "WETH",
     },
     interval: 0,
     amount: 100000000,
-    reinvest: {
+    reinvest: reinvest ?? {
       reinvestData: "0x00",
       active: false,
       investCode: "0x00",

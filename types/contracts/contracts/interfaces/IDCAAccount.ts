@@ -44,7 +44,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: DCAReinvest.ReinvestStruct;
+    reinvest: DCAReinvestLogic.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -55,7 +55,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: DCAReinvest.ReinvestStructOutput
+    reinvest: DCAReinvestLogic.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -64,11 +64,11 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: DCAReinvest.ReinvestStructOutput;
+    reinvest: DCAReinvestLogic.ReinvestStructOutput;
   };
 }
 
-export declare namespace DCAReinvest {
+export declare namespace DCAReinvestLogic {
   export type ReinvestStruct = {
     reinvestData: BytesLike;
     active: boolean;
@@ -157,7 +157,7 @@ export interface IDCAAccountInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setStrategyReinvest",
-    values: [BigNumberish, DCAReinvest.ReinvestStruct]
+    values: [BigNumberish, DCAReinvestLogic.ReinvestStruct]
   ): string;
 
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
@@ -395,7 +395,7 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   setStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: DCAReinvest.ReinvestStruct],
+    [strategyId_: BigNumberish, reinvest_: DCAReinvestLogic.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -461,7 +461,7 @@ export interface IDCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "setStrategyReinvest"
   ): TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: DCAReinvest.ReinvestStruct],
+    [strategyId_: BigNumberish, reinvest_: DCAReinvestLogic.ReinvestStruct],
     [void],
     "nonpayable"
   >;

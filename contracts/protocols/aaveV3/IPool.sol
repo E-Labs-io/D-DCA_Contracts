@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface IPool {
+interface AaveIPool {
     /**
      * @dev Emitted on mintUnbacked()
      * @param reserve The address of the underlying asset of the reserve

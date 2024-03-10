@@ -64,7 +64,7 @@ function REINVEST_VERSION() external view returns (string)
 ### executeReinvest
 
 ```solidity
-function executeReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
+function executeReinvest(DCAReinvestLogic.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -75,7 +75,7 @@ function executeReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) ex
 
 | Name | Type | Description |
 |---|---|---|
-| reinvestData_ | DCAReinvest.Reinvest | undefined |
+| reinvestData_ | DCAReinvestLogic.Reinvest | undefined |
 | amount_ | uint256 | undefined |
 
 #### Returns
@@ -121,7 +121,7 @@ function initialize(bool activate_) external nonpayable
 ### migrateReinvest
 
 ```solidity
-function migrateReinvest(DCAReinvest.Reinvest oldReinvestData_, DCAReinvest.Reinvest newReinvestData_, bool withdrawFunds_) external nonpayable returns (uint256 amount, bool success)
+function migrateReinvest(DCAReinvestLogic.Reinvest oldReinvestData_, DCAReinvestLogic.Reinvest newReinvestData_, bool withdrawFunds_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -132,8 +132,8 @@ function migrateReinvest(DCAReinvest.Reinvest oldReinvestData_, DCAReinvest.Rein
 
 | Name | Type | Description |
 |---|---|---|
-| oldReinvestData_ | DCAReinvest.Reinvest | undefined |
-| newReinvestData_ | DCAReinvest.Reinvest | undefined |
+| oldReinvestData_ | DCAReinvestLogic.Reinvest | undefined |
+| newReinvestData_ | DCAReinvestLogic.Reinvest | undefined |
 | withdrawFunds_ | bool | undefined |
 
 #### Returns
@@ -185,7 +185,7 @@ function setActiveState() external nonpayable
 ### testCall
 
 ```solidity
-function testCall() external nonpayable returns (uint256 amount, bool success)
+function testCall() external nonpayable returns (uint256, bool)
 ```
 
 
@@ -197,8 +197,8 @@ function testCall() external nonpayable returns (uint256 amount, bool success)
 
 | Name | Type | Description |
 |---|---|---|
-| amount | uint256 | undefined |
-| success | bool | undefined |
+| _0 | uint256 | undefined |
+| _1 | bool | undefined |
 
 ### transferOwnership
 
@@ -219,7 +219,7 @@ function transferOwnership(address newOwner) external nonpayable
 ### unwindReinvest
 
 ```solidity
-function unwindReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
+function unwindReinvest(DCAReinvestLogic.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -230,7 +230,7 @@ function unwindReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) ext
 
 | Name | Type | Description |
 |---|---|---|
-| reinvestData_ | DCAReinvest.Reinvest | undefined |
+| reinvestData_ | DCAReinvestLogic.Reinvest | undefined |
 | amount_ | uint256 | undefined |
 
 #### Returns

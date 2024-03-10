@@ -1,6 +1,6 @@
 /** @format */
 
-import { AddressLike } from "ethers";
+import { AddressLike, Addressable } from "ethers";
 
 const forkedNetwork: ChainName = "eth";
 
@@ -52,7 +52,7 @@ const productionChainAddresses = {
   },
 };
 
-export const productionChainImpersonators = {
+export const productionChainImpersonators: ImpersonatorList = {
   eth: {
     usdc: "0xD6153F5af5679a75cC85D8974463545181f48772",
     weth: "0x267ed5f71EE47D3E45Bb1569Aa37889a2d10f91e",
@@ -177,14 +177,43 @@ export const tokenAddress: TokenAddressList = {
     ethSepolia: "0xC959483DBa39aa9E78757139af0e9a2EDEb3f42D",
     maticMumbai: "0x2c95d10bA4BBEc79e562e8B3f48687751808C925",
   },
+  aWeth: {
+    eth: "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8",
+  },
 };
 
-export interface TokenAddressList {
-  [contract: string]: TokenChainList;
-}
+export type AcceptedTokens =
+  | "weth"
+  | "wbtc"
+  | "eth"
+  | "usdc"
+  | "usdt"
+  | "dai"
+  | "gho"
+  | "link"
+  | "aWeth";
+
+export type AcceptedProtocolsAndContracts =
+  | "aaveFaucet"
+  | "aaveV3Pool"
+  | "swapRouter"
+  | "universalRouter"
+  | "compoundV3USDC"
+  | "ccipRouter";
+
+export type TokenListKeys = AcceptedProtocolsAndContracts | AcceptedTokens;
+export type TokenAddressList = {
+  [contract in TokenListKeys]?: TokenChainList;
+};
 
 export type TokenChainList = {
   [chain in ChainName]?: AddressLike;
+};
+
+export type ImpersonatorList = {
+  [chain in ChainName]?: {
+    [contract in AcceptedTokens]?: string | Addressable;
+  };
 };
 
 export type ChainName =

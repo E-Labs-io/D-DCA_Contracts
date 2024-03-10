@@ -220,7 +220,7 @@ function changeExecutor(address executorAddress_) external nonpayable
 ### executeReinvest
 
 ```solidity
-function executeReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
+function executeReinvest(DCAReinvestLogic.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -231,7 +231,7 @@ function executeReinvest(DCAReinvest.Reinvest reinvestData_, uint256 amount_) ex
 
 | Name | Type | Description |
 |---|---|---|
-| reinvestData_ | DCAReinvest.Reinvest | undefined |
+| reinvestData_ | DCAReinvestLogic.Reinvest | undefined |
 | amount_ | uint256 | undefined |
 
 #### Returns
@@ -468,7 +468,7 @@ function renounceOwnership() external nonpayable
 ### setStrategyReinvest
 
 ```solidity
-function setStrategyReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_) external nonpayable
+function setStrategyReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_) external nonpayable
 ```
 
 
@@ -480,12 +480,12 @@ function setStrategyReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | undefined |
-| reinvest_ | DCAReinvest.Reinvest | undefined |
+| reinvest_ | DCAReinvestLogic.Reinvest | undefined |
 
 ### testCall
 
 ```solidity
-function testCall() external nonpayable returns (uint256 amount, bool success)
+function testCall() external nonpayable returns (uint256, bool)
 ```
 
 
@@ -497,13 +497,13 @@ function testCall() external nonpayable returns (uint256 amount, bool success)
 
 | Name | Type | Description |
 |---|---|---|
-| amount | uint256 | undefined |
-| success | bool | undefined |
+| _0 | uint256 | undefined |
+| _1 | bool | undefined |
 
 ### testDelegate
 
 ```solidity
-function testDelegate() external nonpayable returns (uint256 amount, bool success)
+function testDelegate() external nonpayable returns (uint256, bool)
 ```
 
 
@@ -515,13 +515,13 @@ function testDelegate() external nonpayable returns (uint256 amount, bool succes
 
 | Name | Type | Description |
 |---|---|---|
-| amount | uint256 | undefined |
-| success | bool | undefined |
+| _0 | uint256 | undefined |
+| _1 | bool | undefined |
 
 ### testReinvest
 
 ```solidity
-function testReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_, uint256 amount_) external nonpayable
+function testReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_, uint256 amount_) external nonpayable
 ```
 
 
@@ -533,7 +533,7 @@ function testReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_, uint2
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | undefined |
-| reinvest_ | DCAReinvest.Reinvest | undefined |
+| reinvest_ | DCAReinvestLogic.Reinvest | undefined |
 | amount_ | uint256 | undefined |
 
 ### transferOwnership
@@ -571,6 +571,23 @@ function updateSwapAddress(address swapRouter_) external nonpayable
 
 
 ## Events
+
+### CompleteDeletate
+
+```solidity
+event CompleteDeletate(uint256, bool)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0  | uint256 | undefined |
+| _1  | bool | undefined |
 
 ### DCAReinvestLibraryChanged
 

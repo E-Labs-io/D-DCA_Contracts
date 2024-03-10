@@ -13,7 +13,7 @@ import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
 import {OnlyExecutor} from "../security/onlyExecutor.sol";
 import {Strategies} from "../library/Strategys.sol";
-import {DCAReinvestProxy, DCAReinvest} from "../proxys/DCAReinvestProxy.sol";
+import {DCAReinvestProxy, DCAReinvestLogic} from "../proxys/DCAReinvestProxy.sol";
 
 contract DCAAccount is OnlyExecutor, IDCAAccount {
     using Strategies for uint256;
@@ -48,7 +48,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         address reinvestLibraryContract_
     ) OnlyExecutor(owner_, executorAddress_) {
         //  _executorAddress = IDCAExecutor(executorAddress_);
-        DCAREINVEST_LIBRARY = DCAReinvestProxy(reinvestLibraryContract_);
+        DCAREINVEST_LIBRARY = DCAReinvestProxy((reinvestLibraryContract_));
         SWAP_ROUTER = ISwapRouter(swapRouter_);
     }
 
@@ -254,12 +254,12 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function setStrategyReinvest(
         uint256 strategyId_,
-        DCAReinvestProxy.Reinvest memory reinvest_
+        DCAReinvestProxy.Reinvest memory reinvest_ //bool migrateOrWithdrawCurrentReinvest_
     ) external override {
         if (reinvest_.active) {
             _strategies[strategyId_].reinvest = reinvest_;
         } else
-            _strategies[strategyId_].reinvest = DCAReinvest.Reinvest(
+            _strategies[strategyId_].reinvest = DCAReinvestLogic.Reinvest(
                 new bytes(0),
                 false,
                 0x00,
@@ -395,6 +395,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
                 _reinvestLiquidityTokenBalance[strategyId_] += reinvestAmount;
             } else
                 _targetBalances[strategy.targetToken.tokenAddress] += amountIn;
+
             _baseBalances[strategy.baseToken.tokenAddress] -= strategy.amount;
             _lastExecution[strategyId_] = block.timestamp;
             _totalIntervalsExecuted++;
@@ -577,7 +578,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     function changeDCAReinvestLibrary(
         address newLibraryAddress_
     ) public onlyOwner {
-        DCAREINVEST_LIBRARY = DCAReinvestProxy(newLibraryAddress_);
+        DCAREINVEST_LIBRARY = DCAReinvestProxy((newLibraryAddress_));
         emit DCAReinvestLibraryChanged(newLibraryAddress_);
     }
 
@@ -601,45 +602,43 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     }
     //  DEV
     event TestCall();
+    function testCall() external returns (uint256, bool) {
+        // leaving this function empty as it is used for delegatecall
+    }
     //  DEV
     event ReturnedData(bytes returnData, bool txSuccess);
+    event CompleteDeletate(uint256, bool );
     //  DEV
-    function testDelegate() public returns(uint256 amount, bool success) {
-        bytes4 selector = bytes4(keccak256("testCall()"));
+    function testDelegate() public returns (uint256, bool) {
+        (uint256 amount, bool success) = (0, false);
+
 
         (bool txSuccess, bytes memory returnData) = address(DCAREINVEST_LIBRARY)
-            .delegatecall(abi.encodeWithSelector(selector));
-        console.log("Delegate Call success:", txSuccess);
-
+            .delegatecall(abi.encodeWithSelector( DCAREINVEST_LIBRARY.executeReinvest.selector));
+        console.log("> Delegate Call success:", txSuccess);
 
         if (txSuccess) {
-            console.log("Got delegate return");
-            
-          if (returnData.length > 0) {
-                ( amount,  success) = abi.decode(
-                    returnData,
-                    (uint256, bool)
-                );
+            console.log("> Got delegate return");
+
+            if (returnData.length > 0) {
+                (amount, success) = abi.decode(returnData, (uint256, bool));
                 console.log(
-                    "Decoded return data - amount:",
+                    "> Decoded return data - amount:",
                     amount,
                     "success:",
                     success
                 );
+                emit CompleteDeletate(amount, success);
                 emit ReturnedData(returnData, txSuccess);
             } else {
-                console.log("Empty return data");
+                console.log("> Empty return data");
                 emit ReturnedData(returnData, false);
-            } 
+            }
         } else {
             emit ReturnedData(returnData, txSuccess);
         }
     }
     //  DEV
-    function testCall() external returns (uint256 amount, bool success) {
-        // leaving this function empty as it is used for delegatecall
-        return (amount, success);
-    }
 
     // DELEGATE CALL TEMPLATE
     function executeReinvest(
@@ -651,7 +650,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     /**
      * @dev logic to execute a reinvest portion of the strategy
-     * @notice NOT WORKING YET
+     * @notice Only working on call, not delegatecall
      * @param strategyId_ id of the strategy being executed
      * @param reinvest_ reinvest data struct of the strategy being executed
      * @param amount_ amount of the target   token to reinvest
@@ -662,36 +661,29 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
         if (DCAREINVEST_LIBRARY.REINVEST_ACTIVE()) {
-            (bool txSuccess, bytes memory returnData) = address(
-                DCAREINVEST_LIBRARY
-            ).delegatecall(
-                    abi.encodeWithSelector(
-                        DCAREINVEST_LIBRARY.executeReinvest.selector,
-                        reinvest_,
-                        amount_
-                    )
-                );
-            if (txSuccess) {
-                //(amount, success) = abi.decode(returnData, (uint256, bool));
-                emit StrategyReinvestExecuted(strategyId_, success);
-                return (amount, success);
-            } else {
-                emit FailedTest();
-                return (0, false);
+            bool approveSuccess = IERC20(
+                _strategies[strategyId_].targetToken.tokenAddress
+            ).approve(address(DCAREINVEST_LIBRARY), amount_);
+            if (approveSuccess) {
+                (bool txSuccess, bytes memory returnData) = address(
+                    DCAREINVEST_LIBRARY
+                ).call(
+                        abi.encodeWithSelector(
+                            DCAREINVEST_LIBRARY.executeReinvest.selector,
+                            reinvest_,
+                            amount_
+                        )
+                    );
+                if (txSuccess) {
+                    (amount, success) = abi.decode(returnData, (uint256, bool));
+                    emit StrategyReinvestExecuted(strategyId_, success);
+                    return (amount, success);
+                }
             }
-        } else {
-            emit FailedTest();
-            return (0, false);
         }
+        emit StrategyReinvestExecuted(strategyId_, false);
+        return (0, false);
     }
-
-    /*  address(DCAREINVEST_LIBRARY).delegatecall(
-                    abi.encodeWithSignature(
-                        "executeReinvest((bytes,bool,uint8,address),uint256)", 
-                        reinvest_, 
-                        amount_
-                    )
-                );  */
 
     /**
      * @dev withdraws and unwinds a given amount of the reinvest amount

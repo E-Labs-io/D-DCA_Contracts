@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 //DEV
 import "hardhat/console.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
-import {DCAReinvest} from "../base/DCAReinvest.sol";
+import {DCAReinvestLogic} from "../utils/reinvestLogic.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/proxy/Proxy.sol";
@@ -13,7 +13,11 @@ import "@openzeppelin/contracts/interfaces/draft-IERC1822.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract DCAReinvestProxy is Initializable, DCAReinvest, OwnableUpgradeable {
+contract DCAReinvestProxy is
+    Initializable,
+    DCAReinvestLogic,
+    OwnableUpgradeable
+{
     bool public REINVEST_ACTIVE;
 
     function initialize(bool activate_) public initializer {
@@ -25,18 +29,14 @@ contract DCAReinvestProxy is Initializable, DCAReinvest, OwnableUpgradeable {
         Reinvest memory reinvestData_,
         uint256 amount_
     ) external returns (uint256 amount, bool success) {
-        console.log("ExecutreReinvest Level 1");
         return _executeInvest(reinvestData_, amount_);
     }
     event TestCall();
-    function testCall() external returns (uint256 amount , bool success) {
-        console.log("Test call 1, returning Data:", 420, true);
-
+    function testCall() external returns (uint256, bool) {
+        (uint256 amount, bool success) = (420, true);
         emit TestCall();
-        console.log("Test call 2, returning Data:", 420, true);
-        return (420, true);
+        return (amount, success);
     }
-
     function unwindReinvest(
         Reinvest memory reinvestData_,
         uint256 amount_

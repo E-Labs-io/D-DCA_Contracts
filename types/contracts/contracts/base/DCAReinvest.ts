@@ -3,10 +3,13 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
   Interface,
+  EventFragment,
+  AddressLike,
   ContractRunner,
   ContractMethod,
   Listener,
@@ -15,22 +18,98 @@ import type {
   TypedContractEvent,
   TypedDeferredTopicFilter,
   TypedEventLog,
+  TypedLogDescription,
   TypedListener,
   TypedContractMethod,
 } from "../../common";
 
+export declare namespace DCAReinvestLogic {
+  export type ReinvestStruct = {
+    reinvestData: BytesLike;
+    active: boolean;
+    investCode: BigNumberish;
+    dcaAccountAddress: AddressLike;
+  };
+
+  export type ReinvestStructOutput = [
+    reinvestData: string,
+    active: boolean,
+    investCode: bigint,
+    dcaAccountAddress: string
+  ] & {
+    reinvestData: string;
+    active: boolean;
+    investCode: bigint;
+    dcaAccountAddress: string;
+  };
+}
+
 export interface DCAReinvestInterface extends Interface {
   getFunction(
-    nameOrSignature: "ACTIVE_REINVESTS" | "REINVEST_VERSION"
+    nameOrSignature:
+      | "ACTIVE_REINVESTS"
+      | "REINVEST_ACTIVE"
+      | "REINVEST_VERSION"
+      | "executeReinvest"
+      | "getLibraryVersion"
+      | "migrateReinvest"
+      | "owner"
+      | "renounceOwnership"
+      | "setActiveState"
+      | "testCall"
+      | "transferOwnership"
+      | "unwindReinvest"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic: "OwnershipTransferred" | "TestCall"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "ACTIVE_REINVESTS",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "REINVEST_ACTIVE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "REINVEST_VERSION",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeReinvest",
+    values: [DCAReinvestLogic.ReinvestStruct, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLibraryVersion",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "migrateReinvest",
+    values: [
+      DCAReinvestLogic.ReinvestStruct,
+      DCAReinvestLogic.ReinvestStruct,
+      boolean
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setActiveState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "testCall", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unwindReinvest",
+    values: [DCAReinvestLogic.ReinvestStruct, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -38,9 +117,66 @@ export interface DCAReinvestInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "REINVEST_ACTIVE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "REINVEST_VERSION",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "executeReinvest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLibraryVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "migrateReinvest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setActiveState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "testCall", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unwindReinvest",
+    data: BytesLike
+  ): Result;
+}
+
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [previousOwner: string, newOwner: string];
+  export interface OutputObject {
+    previousOwner: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace TestCallEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export interface DCAReinvest extends BaseContract {
@@ -88,7 +224,47 @@ export interface DCAReinvest extends BaseContract {
 
   ACTIVE_REINVESTS: TypedContractMethod<[], [string], "view">;
 
+  REINVEST_ACTIVE: TypedContractMethod<[], [boolean], "view">;
+
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
+
+  executeReinvest: TypedContractMethod<
+    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
+
+  getLibraryVersion: TypedContractMethod<[], [string], "view">;
+
+  migrateReinvest: TypedContractMethod<
+    [
+      oldReinvestData_: DCAReinvestLogic.ReinvestStruct,
+      newReinvestData_: DCAReinvestLogic.ReinvestStruct,
+      withdrawFunds_: boolean
+    ],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
+
+  owner: TypedContractMethod<[], [string], "view">;
+
+  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+
+  setActiveState: TypedContractMethod<[], [void], "nonpayable">;
+
+  testCall: TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
+
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  unwindReinvest: TypedContractMethod<
+    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -98,8 +274,91 @@ export interface DCAReinvest extends BaseContract {
     nameOrSignature: "ACTIVE_REINVESTS"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "REINVEST_ACTIVE"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
     nameOrSignature: "REINVEST_VERSION"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "executeReinvest"
+  ): TypedContractMethod<
+    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "getLibraryVersion"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "migrateReinvest"
+  ): TypedContractMethod<
+    [
+      oldReinvestData_: DCAReinvestLogic.ReinvestStruct,
+      newReinvestData_: DCAReinvestLogic.ReinvestStruct,
+      withdrawFunds_: boolean
+    ],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setActiveState"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "testCall"
+  ): TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "unwindReinvest"
+  ): TypedContractMethod<
+    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
 
-  filters: {};
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "TestCall"
+  ): TypedContractEvent<
+    TestCallEvent.InputTuple,
+    TestCallEvent.OutputTuple,
+    TestCallEvent.OutputObject
+  >;
+
+  filters: {
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+
+    "TestCall()": TypedContractEvent<
+      TestCallEvent.InputTuple,
+      TestCallEvent.OutputTuple,
+      TestCallEvent.OutputObject
+    >;
+    TestCall: TypedContractEvent<
+      TestCallEvent.InputTuple,
+      TestCallEvent.OutputTuple,
+      TestCallEvent.OutputObject
+    >;
+  };
 }

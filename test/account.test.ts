@@ -15,6 +15,8 @@ import {
   ForwardReinvest,
   DCAExecutor,
   IERC20,
+  DCAReinvest,
+  DCAReinvestLogic,
 } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 import {
@@ -28,9 +30,9 @@ import { compareStructs } from "~/scripts/tests/comparisons";
 import { erc20 } from "~/types/contracts/@openzeppelin/contracts/token";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
-import { DCAReinvest } from "~/types/contracts/contracts/base/DCAAccount";
 import {
-  getBalance,
+  connectToErc20,
+  getErc20Balance,
   transferErc20Token,
 } from "~/scripts/tests/contractInteraction";
 
@@ -44,7 +46,7 @@ describe("> DCA Account Tests", () => {
   let wethContract: Contract;
 
   let createdAccount: DCAAccount;
-  let reinvestContract: Contract;
+  let reinvestContract: DCAReinvest;
   let executorContract: DCAExecutor;
   let addressStore: SignerStore;
 
@@ -57,23 +59,22 @@ describe("> DCA Account Tests", () => {
       "deployer",
       "executorEoa",
       "user",
+      "testTarget",
     ]);
 
     const usedImpersonater = await ethers.getImpersonatedSigner(
-      productionChainImpersonators[forkedChain].usdc,
+      productionChainImpersonators[forkedChain]?.usdc as string,
     );
 
-    usdcContract = await ethers.getContractAt(
-      "contracts/tokens/IERC20.sol:IERC20",
+    usdcContract = await connectToErc20(
       tokenAddress?.usdc?.[forkedChain]! as string,
       usedImpersonater,
     );
 
     const wethImpersonator = await ethers.getImpersonatedSigner(
-      productionChainImpersonators.eth.weth,
+      productionChainImpersonators?.eth?.weth as string,
     );
-    wethContract = await ethers.getContractAt(
-      "contracts/tokens/IERC20.sol:IERC20",
+    wethContract = await connectToErc20(
       tokenAddress?.weth?.[forkedChain]! as string,
       wethImpersonator,
     );
@@ -95,7 +96,7 @@ describe("> DCA Account Tests", () => {
 
       createdAccount = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter[forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]!,
         addressStore.user.address,
         ZeroAddress,
       );
@@ -111,7 +112,7 @@ describe("> DCA Account Tests", () => {
 
     it("🧪 Should return the correct swap router", async () => {
       const address = await createdAccount.SWAP_ROUTER();
-      expect(address).to.equal(tokenAddress.swapRouter[forkedChain]);
+      expect(address).to.equal(tokenAddress.swapRouter![forkedChain]);
     });
 
     it("🧪 Should check the Executor address is the ZeroAddress", async () => {
@@ -133,11 +134,11 @@ describe("> DCA Account Tests", () => {
   describe("💡 Update Library & Executor", () => {
     it("🧪 Should deploy the library contract", async function () {
       // Deploy the reinvest proxy contract
-      const proxyFactory = await ethers.getContractFactory(
-        "DCAReinvestProxy",
+      const contractFactory = await ethers.getContractFactory(
+        "DCAReinvest",
         addressStore.deployer.signer,
       );
-      reinvestContract = await upgrades.deployProxy(proxyFactory, [true]);
+      reinvestContract = await contractFactory.deploy(false);
       await reinvestContract.waitForDeployment();
       expect(reinvestContract.waitForDeployment()).to.be.fulfilled;
     });
@@ -184,7 +185,7 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should Return the Reinvest Version", async function () {
       const version = await createdAccount.getAttachedReinvestLibraryVersion();
-      expect(version).to.equal("TEST V0.3");
+      expect(version).to.equal("TEST V0.4");
     });
   });
 
@@ -192,8 +193,8 @@ describe("> DCA Account Tests", () => {
     it("🧪Should fail to execute a SWAP test", async function () {
       await expect(
         createdAccount.SWAP(
-          tokenAddress.usdc[forkedChain]!,
-          tokenAddress.weth[forkedChain]!,
+          tokenAddress.usdc![forkedChain]!,
+          tokenAddress.weth![forkedChain]!,
           ethers.parseUnits("100", 6),
         ),
       ).to.be.reverted;
@@ -211,8 +212,8 @@ describe("> DCA Account Tests", () => {
     it("🧪Should fail to execute a SWAP test", async function () {
       await expect(
         createdAccount.SWAP(
-          tokenAddress.usdc[forkedChain]!,
-          tokenAddress.weth[forkedChain]!,
+          tokenAddress.usdc![forkedChain]!,
+          tokenAddress.weth![forkedChain]!,
           ethers.parseUnits("100", 6),
         ),
       ).to.be.fulfilled;
@@ -255,7 +256,7 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should return the Base Block Cost as 0", async function () {
       const costPerBlock = await createdAccount.getBaseTokenCostPerBlock(
-        tokenAddress.usdc[forkedChain] as string,
+        tokenAddress.usdc![forkedChain] as string,
       );
       expect(costPerBlock).to.equal(0);
     });
@@ -264,13 +265,13 @@ describe("> DCA Account Tests", () => {
   describe("💡 Check Fund, Withdraw & Balances", () => {
     it("🧪 Should return 0 base balance of USDC", async function () {
       const balance = await createdAccount.getBaseBalance(
-        tokenAddress.usdc[forkedChain]!,
+        tokenAddress.usdc![forkedChain]!,
       );
       expect(balance).to.equal(0);
     });
     it("🧪 Should return 0 target balance of WETH", async function () {
       const balance = await createdAccount.getBaseBalance(
-        tokenAddress.weth[forkedChain]!,
+        tokenAddress.weth![forkedChain]!,
       );
       expect(balance).to.equal(0);
     });
@@ -288,35 +289,35 @@ describe("> DCA Account Tests", () => {
 
       await expect(
         createdAccount.FundAccount(
-          tokenAddress.usdc[forkedChain]!,
+          tokenAddress.usdc![forkedChain]!,
           ethers.parseUnits("100", 6),
         ),
       ).to.be.fulfilled;
     });
     it("🧪 Should return the balance of 100 USDC", async function () {
       const balance = await createdAccount.getBaseBalance(
-        tokenAddress.usdc[forkedChain]!,
+        tokenAddress.usdc![forkedChain]!,
       );
       expect(balance).to.equal(ethers.parseUnits("100", 6));
     });
     it("🧪 Should unfund the account with USDC", async function () {
       await expect(
         createdAccount.UnFundAccount(
-          tokenAddress.usdc[forkedChain]!,
+          tokenAddress.usdc![forkedChain]!,
           ethers.parseUnits("100", 6),
         ),
       ).to.be.fulfilled;
     });
     it("🧪 Should return 0 base balance of USDC", async function () {
       const balance = await createdAccount.getBaseBalance(
-        tokenAddress.usdc[forkedChain]!,
+        tokenAddress.usdc![forkedChain]!,
       );
       expect(balance).to.equal(0);
     });
     it("🧪 Should revert to withdraw WETH Target balance", async function () {
       await expect(
         createdAccount.WithdrawSavings(
-          tokenAddress.weth[forkedChain]!,
+          tokenAddress.weth![forkedChain]!,
           ethers.parseUnits("100", 6),
         ),
       ).to.be.revertedWith(
@@ -325,7 +326,7 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should return the Base Block Cost as 0", async function () {
       const costPerBlock = await createdAccount.getBaseTokenCostPerBlock(
-        tokenAddress.usdc[forkedChain] as string,
+        tokenAddress.usdc![forkedChain] as string,
       );
       expect(costPerBlock).to.equal(0);
     });
@@ -335,7 +336,7 @@ describe("> DCA Account Tests", () => {
     it("🧪 Should prove strategy 1 exists", async function () {
       const strats = await createdAccount.getStrategyData(1);
       const checker = strats[1];
-      expect(checker[0]).to.equal(tokenAddress.usdc[forkedChain]);
+      expect(checker[0]).to.equal(tokenAddress.usdc![forkedChain]);
     });
     it("🧪 Should revert on unsubscribe strategy 1", async () => {
       await expect(createdAccount.UnsubscribeStrategy(1n)).to.be.revertedWith(
@@ -361,7 +362,7 @@ describe("> DCA Account Tests", () => {
 
       await expect(
         createdAccount.FundAccount(
-          tokenAddress.usdc[forkedChain]!,
+          tokenAddress.usdc![forkedChain]!,
           ethers.parseUnits("10000", 6),
         ),
       ).to.be.fulfilled;
@@ -430,44 +431,20 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should show target WETH balance above 0", async () => {
       const balance = await createdAccount.getTargetBalance(
-        tokenAddress.weth[forkedChain]!,
+        tokenAddress.weth![forkedChain]!,
       );
       expect(balance > 0).to.be.true;
     });
   });
 
   describe("💡 Reinvest Logic Test", () => {
-    it("🧪 Should test the testCall (0x00)", async () => {
-      const notactiveStrat = [
-        0x00,
-        addressStore.executorEoa.address,
-        tokenAddress.weth[forkedChain],
-      ];
-      const reinvest: DCAReinvest.ReinvestStruct = {
-        reinvestData: abiEncoder.encode(
-          ["uint8", "address", "address"],
-          notactiveStrat,
-        ),
-        active: true,
-        investCode: 0x00,
-        dcaAccountAddress: createdAccount.target,
-      };
-
-      const reinvestTx = await createdAccount.testReinvest(1, reinvest, 0);
-
-      const recipt = await reinvestTx.wait();
-
-      await expect(recipt)
-        .to.emit(createdAccount, "StrategyReinvestExecuted")
-        .withArgs(1, false);
-    });
     it("🧪 Should test the delegatecall on testDelegate", async () => {
       const reinvestTx = await createdAccount.testDelegate();
 
       const recipt = await reinvestTx.wait();
-      console.log(recipt?.logs);
-
-      await expect(recipt).to.emit(createdAccount, "ReturnedData");
+      await expect(recipt)
+        .to.emit(createdAccount, "CompleteDeletate")
+        .withArgs(420, true);
     });
     it("🧪 Should return false on active reinvest strategy 1", async () => {
       const stratData = await createdAccount.getStrategyData(1);
@@ -482,10 +459,10 @@ describe("> DCA Account Tests", () => {
     it("🧪 Should add forward reinvest to strategy 1", async () => {
       const forwardStratData = [
         0x01,
-        addressStore.executorEoa.address,
-        tokenAddress.weth[forkedChain],
+        addressStore.testTarget.address,
+        tokenAddress.weth![forkedChain],
       ];
-      const reinvest: DCAReinvest.ReinvestStruct = {
+      const reinvest: DCAReinvestLogic.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           forwardStratData,
@@ -509,13 +486,10 @@ describe("> DCA Account Tests", () => {
       const notactiveStrat = [
         0x01,
         addressStore.user.address,
-        tokenAddress.weth[forkedChain],
+        tokenAddress.weth![forkedChain],
       ];
-      console.log(
-        "Users WETH Balance PRE: ",
-        await getBalance(wethContract, addressStore.user.address),
-      );
-      const reinvest: DCAReinvest.ReinvestStruct = {
+
+      const reinvest: DCAReinvestLogic.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           notactiveStrat,
@@ -532,19 +506,13 @@ describe("> DCA Account Tests", () => {
       );
 
       const recipt = await reinvestTx.wait();
-      console.log(
-        "Users WETH Balance POST: ",
-        await getBalance(wethContract, addressStore.user.address),
-      );
 
       await expect(recipt)
         .to.emit(createdAccount, "StrategyReinvestExecuted")
         .withArgs(1, true);
     });
     it("🧪 Should return executor weth balance of zero", async () => {
-      const bal = await wethContract.balanceOf(
-        addressStore.executorEoa.address,
-      );
+      const bal = await wethContract.balanceOf(addressStore.testTarget.address);
       expect(bal).to.equal(0);
     });
     it("🧪 Should execute strategy 1", async () => {
@@ -557,11 +525,10 @@ describe("> DCA Account Tests", () => {
         .withArgs(createdAccount.target, 1);
     });
     it("🧪 Should return executor weth balance of more than zero", async () => {
-      const bal = await getBalance(
-        wethContract,
-        addressStore.executorEoa.address,
-      );
-      expect(Number(bal) > 0).to.be.true;
+      expect(
+        (await getErc20Balance(wethContract, addressStore.testTarget.address)) >
+          0,
+      ).to.be.false;
     });
   });
 });

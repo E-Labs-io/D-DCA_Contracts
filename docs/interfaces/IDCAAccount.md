@@ -197,7 +197,7 @@ Gets Account balance of the provided target token
 ### setStrategyReinvest
 
 ```solidity
-function setStrategyReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_) external nonpayable
+function setStrategyReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_) external nonpayable
 ```
 
 
@@ -209,7 +209,7 @@ function setStrategyReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | undefined |
-| reinvest_ | DCAReinvest.Reinvest | undefined |
+| reinvest_ | DCAReinvestLogic.Reinvest | undefined |
 
 
 

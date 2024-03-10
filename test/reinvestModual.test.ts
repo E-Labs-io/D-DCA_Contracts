@@ -8,13 +8,12 @@ import {
   Signer,
   ZeroAddress,
 } from "ethers";
-import { DCAReinvestProxy, ForwardReinvest } from "~/types/contracts";
-import { DCAReinvest } from "~/types/contracts/contracts/proxys/DCAReinvestProxy";
+import { DCAReinvest, DCAReinvestLogic } from "~/types/contracts";
 import signerStore from "~/scripts/tests/signerStore";
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 import deploymentConfig from "~/bin/deployments.config";
 import { decodePackedBytes } from "~/scripts/tests/comparisons";
-import { getBalance } from "~/scripts/tests/contractInteraction";
+import { getErc20Balance } from "~/scripts/tests/contractInteraction";
 
 describe("> DCA Reinvest Modula Test", () => {
   console.log("🧪 DCA Reinvest Modula Test : Mounted");
@@ -22,7 +21,7 @@ describe("> DCA Reinvest Modula Test", () => {
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
   const forkedChain = deploymentConfig().masterChain;
 
-  let reinvestDeployment: Contract;
+  let reinvestDeployment: DCAReinvest;
   let wethContract: Contract, wbtcContract: Contract;
 
   let addressStore: {
@@ -39,11 +38,11 @@ describe("> DCA Reinvest Modula Test", () => {
 
     // Connect to WETH & Transfer to wallet
     const wethImpersonator = await ethers.getImpersonatedSigner(
-      productionChainImpersonators[forkedChain].weth,
+      productionChainImpersonators[forkedChain]!.weth as string,
     );
     wethContract = await ethers.getContractAt(
       "contracts/tokens/IERC20.sol:IERC20",
-      tokenAddress.weth[forkedChain] as string,
+      tokenAddress.weth![forkedChain] as string,
       wethImpersonator,
     );
     const wethTx = await wethContract.transfer(
@@ -65,14 +64,23 @@ describe("> DCA Reinvest Modula Test", () => {
     });
   });
 
-  describe("💡 Deploy Proxy & Check Ownership", function () {
-    it("🧪 Should deploy the contract", async function () {
+  describe("💡 Deploy & Check Ownership", function () {
+    /* it("🧪 Should deploy the proxy contract", async function () {
       // Deploy the reinvest proxy contract
       const proxyFactory = await ethers.getContractFactory(
         "DCAReinvestProxy",
         addressStore.deployer.signer,
       );
       reinvestDeployment = await upgrades.deployProxy(proxyFactory, [false]);
+      await reinvestDeployment.waitForDeployment();
+      expect(reinvestDeployment.waitForDeployment()).to.be.fulfilled;
+    }); */
+    it("🧪 Should deploy the contract", async function () {
+      const contractFactory = await ethers.getContractFactory(
+        "DCAReinvest",
+        addressStore.deployer.signer,
+      );
+      reinvestDeployment = await contractFactory.deploy(false);
       await reinvestDeployment.waitForDeployment();
       expect(reinvestDeployment.waitForDeployment()).to.be.fulfilled;
     });
@@ -115,9 +123,9 @@ describe("> DCA Reinvest Modula Test", () => {
       const forwardStratData = [
         0x01,
         addressStore.tester.address,
-        tokenAddress.weth[forkedChain],
+        tokenAddress.weth![forkedChain],
       ];
-      const reinvestData: DCAReinvest.ReinvestStruct = {
+      const reinvestData: DCAReinvestLogic.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           forwardStratData,
@@ -134,9 +142,9 @@ describe("> DCA Reinvest Modula Test", () => {
       const forwardStratData = [
         0x01,
         addressStore.tester.address,
-        tokenAddress.weth[forkedChain],
+        tokenAddress.weth![forkedChain],
       ];
-      const reinvestData: DCAReinvest.ReinvestStruct = {
+      const reinvestData: DCAReinvestLogic.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           forwardStratData,
@@ -148,7 +156,7 @@ describe("> DCA Reinvest Modula Test", () => {
 
       const con = await ethers.getContractAt(
         "contracts/tokens/IERC20.sol:IERC20",
-        tokenAddress.weth[forkedChain] as string,
+        tokenAddress.weth![forkedChain] as string,
         addressStore.deployer.signer,
       );
       const tx = await con.approve(
@@ -157,7 +165,7 @@ describe("> DCA Reinvest Modula Test", () => {
       );
 
       await tx.wait();
-      const preTxBal = await getBalance(
+      const preTxBal = await getErc20Balance(
         wethContract,
         addressStore.tester.address,
       );
@@ -168,7 +176,7 @@ describe("> DCA Reinvest Modula Test", () => {
 
       await mainTx.wait();
 
-      const postTxBal = await getBalance(
+      const postTxBal = await getErc20Balance(
         wethContract,
         addressStore.tester.address,
       );

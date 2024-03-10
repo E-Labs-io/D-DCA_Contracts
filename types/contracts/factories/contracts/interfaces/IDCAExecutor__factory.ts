@@ -241,7 +241,7 @@ const _abi = [
                 type: "address",
               },
             ],
-            internalType: "struct DCAReinvest.Reinvest",
+            internalType: "struct DCAReinvestLogic.Reinvest",
             name: "reinvest",
             type: "tuple",
           },

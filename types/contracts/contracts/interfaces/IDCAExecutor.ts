@@ -44,7 +44,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: DCAReinvest.ReinvestStruct;
+    reinvest: DCAReinvestLogic.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -55,7 +55,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: DCAReinvest.ReinvestStructOutput
+    reinvest: DCAReinvestLogic.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -64,11 +64,11 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: DCAReinvest.ReinvestStructOutput;
+    reinvest: DCAReinvestLogic.ReinvestStructOutput;
   };
 }
 
-export declare namespace DCAReinvest {
+export declare namespace DCAReinvestLogic {
   export type ReinvestStruct = {
     reinvestData: BytesLike;
     active: boolean;
