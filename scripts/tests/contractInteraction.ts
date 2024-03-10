@@ -6,6 +6,7 @@ import {
   productionChainImpersonators,
   tokenAddress,
 } from "~/bin/tokenAddress";
+import { IERC20 } from "~/types/contracts";
 
 export const transferErc20Token = async (
   contract: Contract,

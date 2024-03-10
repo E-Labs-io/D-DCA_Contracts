@@ -17,12 +17,6 @@ contract DCAReinvest is DCAReinvestLogic, Ownable {
     ) external returns (uint256 amount, bool success) {
         return _executeInvest(reinvestData_, amount_);
     }
-    event TestCall();
-    function testCall() external returns (uint256, bool) {
-        (uint256 amount, bool success) = (420, true);
-        emit TestCall();
-        return (amount, success);
-    }
     function unwindReinvest(
         Reinvest memory reinvestData_,
         uint256 amount_

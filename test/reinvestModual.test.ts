@@ -13,7 +13,10 @@ import signerStore from "~/scripts/tests/signerStore";
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 import deploymentConfig from "~/bin/deployments.config";
 import { decodePackedBytes } from "~/scripts/tests/comparisons";
-import { getErc20Balance } from "~/scripts/tests/contractInteraction";
+import {
+  getErc20Balance,
+  transferErc20Token,
+} from "~/scripts/tests/contractInteraction";
 
 describe("> DCA Reinvest Modula Test", () => {
   console.log("🧪 DCA Reinvest Modula Test : Mounted");
@@ -34,8 +37,15 @@ describe("> DCA Reinvest Modula Test", () => {
 
   async function preTest() {
     // Get the accounts & signers
-    addressStore = await signerStore(ethers, ["deployer", "tester"]);
-
+    addressStore = await signerStore(ethers, [
+      "deployer",
+      "executorEoa",
+      "user",
+      "testTarget",
+      "target2",
+      "target3",
+      "target4",
+    ]);
     // Connect to WETH & Transfer to wallet
     const wethImpersonator = await ethers.getImpersonatedSigner(
       productionChainImpersonators[forkedChain]!.weth as string,
@@ -45,24 +55,12 @@ describe("> DCA Reinvest Modula Test", () => {
       tokenAddress.weth![forkedChain] as string,
       wethImpersonator,
     );
-    const wethTx = await wethContract.transfer(
-      addressStore.tester.address,
-      ethers.parseUnits("10", "ether"),
-    );
-    await wethTx.wait();
     const wethTx2 = await wethContract.transfer(
       addressStore.deployer.address,
       ethers.parseUnits("10", "ether"),
     );
     await wethTx2.wait();
   }
-
-  describe("💡 Check Wallet Balance", function () {
-    it("🧪 WETH Should equal 1ETH", async function () {
-      const wethBal = await wethContract.balanceOf(addressStore.tester.address);
-      expect(wethBal).to.equal(ethers.parseUnits("10", "ether"));
-    });
-  });
 
   describe("💡 Deploy & Check Ownership", function () {
     it("🧪 Should deploy the contract", async function () {
@@ -84,7 +82,7 @@ describe("> DCA Reinvest Modula Test", () => {
   describe("💡 Contract State", function () {
     it("🧪 Should Return the Reinvest Version", async function () {
       const version = await reinvestDeployment.getLibraryVersion();
-      expect(version).to.equal("TEST V0.3");
+      expect(version).to.equal("TEST V0.4");
     });
     it("🧪 Should Return the Reinvest is Not Active", async function () {
       const active = await reinvestDeployment.REINVEST_ACTIVE();
@@ -110,54 +108,38 @@ describe("> DCA Reinvest Modula Test", () => {
 
   describe("💡 Strategy Execution", function () {
     it("🧪 Should Complete 0x00 (not active)", async function () {
-      const forwardStratData = [
-        0x01,
-        addressStore.tester.address,
-        tokenAddress.weth![forkedChain],
-      ];
       const reinvestData: DCAReinvestLogic.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
-          forwardStratData,
+          [0x01, addressStore.user.address, tokenAddress.weth![forkedChain]],
         ),
         active: false,
         investCode: 0x00,
-        dcaAccountAddress: addressStore.tester.address,
+        dcaAccountAddress: addressStore.user.address,
       };
 
       await expect(reinvestDeployment.executeReinvest(reinvestData, 0)).to.be
         .fulfilled;
     });
     it("🧪 Should execute 0x01 (forward)", async function () {
-      const forwardStratData = [
-        0x01,
-        addressStore.tester.address,
-        tokenAddress.weth![forkedChain],
-      ];
       const reinvestData: DCAReinvestLogic.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
-          forwardStratData,
+          [0x01, addressStore.target4.address, tokenAddress.weth![forkedChain]],
         ),
         active: true,
         investCode: 0x01,
-        dcaAccountAddress: addressStore.tester.address,
+        dcaAccountAddress: ZeroAddress,
       };
 
-      const con = await ethers.getContractAt(
-        "contracts/tokens/IERC20.sol:IERC20",
-        tokenAddress.weth![forkedChain] as string,
-        addressStore.deployer.signer,
-      );
-      const tx = await con.approve(
+      await transferErc20Token(
+        wethContract,
         reinvestDeployment.target,
-        ethers.parseEther("1"),
+        ethers.parseEther("0.5"),
       );
-
-      await tx.wait();
       const preTxBal = await getErc20Balance(
         wethContract,
-        addressStore.tester.address,
+        addressStore.target4.address,
       );
       const mainTx = await reinvestDeployment.executeReinvest(
         reinvestData,
@@ -168,16 +150,10 @@ describe("> DCA Reinvest Modula Test", () => {
 
       const postTxBal = await getErc20Balance(
         wethContract,
-        addressStore.tester.address,
+        addressStore.target4.address,
       );
 
       expect(preTxBal + ethers.parseEther("0.5") === postTxBal).to.be.true;
-    });
-    it("🧪 Should execute testCall()", async function () {
-      await expect(reinvestDeployment.testCall()).to.emit(
-        reinvestDeployment,
-        "TestCall",
-      );
     });
   });
 });

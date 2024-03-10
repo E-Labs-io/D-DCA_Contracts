@@ -56,14 +56,11 @@ export interface DCAReinvestInterface extends Interface {
       | "owner"
       | "renounceOwnership"
       | "setActiveState"
-      | "testCall"
       | "transferOwnership"
       | "unwindReinvest"
   ): FunctionFragment;
 
-  getEvent(
-    nameOrSignatureOrTopic: "OwnershipTransferred" | "TestCall"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 
   encodeFunctionData(
     functionFragment: "ACTIVE_REINVESTS",
@@ -102,7 +99,6 @@ export interface DCAReinvestInterface extends Interface {
     functionFragment: "setActiveState",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "testCall", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
@@ -145,7 +141,6 @@ export interface DCAReinvestInterface extends Interface {
     functionFragment: "setActiveState",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "testCall", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -163,16 +158,6 @@ export namespace OwnershipTransferredEvent {
     previousOwner: string;
     newOwner: string;
   }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace TestCallEvent {
-  export type InputTuple = [];
-  export type OutputTuple = [];
-  export interface OutputObject {}
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -252,8 +237,6 @@ export interface DCAReinvest extends BaseContract {
 
   setActiveState: TypedContractMethod<[], [void], "nonpayable">;
 
-  testCall: TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
-
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
     [void],
@@ -310,9 +293,6 @@ export interface DCAReinvest extends BaseContract {
     nameOrSignature: "setActiveState"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "testCall"
-  ): TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
-  getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
@@ -330,13 +310,6 @@ export interface DCAReinvest extends BaseContract {
     OwnershipTransferredEvent.OutputTuple,
     OwnershipTransferredEvent.OutputObject
   >;
-  getEvent(
-    key: "TestCall"
-  ): TypedContractEvent<
-    TestCallEvent.InputTuple,
-    TestCallEvent.OutputTuple,
-    TestCallEvent.OutputObject
-  >;
 
   filters: {
     "OwnershipTransferred(address,address)": TypedContractEvent<
@@ -348,17 +321,6 @@ export interface DCAReinvest extends BaseContract {
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
       OwnershipTransferredEvent.OutputObject
-    >;
-
-    "TestCall()": TypedContractEvent<
-      TestCallEvent.InputTuple,
-      TestCallEvent.OutputTuple,
-      TestCallEvent.OutputObject
-    >;
-    TestCall: TypedContractEvent<
-      TestCallEvent.InputTuple,
-      TestCallEvent.OutputTuple,
-      TestCallEvent.OutputObject
     >;
   };
 }

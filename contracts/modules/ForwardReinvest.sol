@@ -19,15 +19,10 @@ library ForwardReinvest {
         bytes memory data_
     ) internal returns (uint256, bool success) {
         ReinvestDataStruct memory investData = _decodeData(data_);
-        console.log("Forward Reinvest address(this) :", address(this));
-        console.log("Forward Reinvest msg.sender :", msg.sender);
-        console.log("Forward Reinvest forwarding to :", investData.receiver);
-
         success = IERC20(investData.token).transfer(
             investData.receiver,
             amount_
         );
-        console.log("> Reinvest: Forward: Success: ", success);
         return (amount_, success);
     }
 

@@ -247,7 +247,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
     function UnWindReinvest(uint256 strategyId_) public onlyOwner {
         uint256 balance = _reinvestLiquidityTokenBalance[strategyId_];
-        console.log("UnWindReinvest: Mounted", balance);
         require(
             balance > 0,
             "[DCAAccount] : UnWindReinvest -  No investment to unwind"
@@ -378,15 +377,11 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         uint16 feeAmount_
     ) internal returns (bool) {
         Strategy memory strategy = _strategies[strategyId_];
-        console.log("> _executeDCATrade : ", strategyId_);
         uint256 fee = Strategies._calculateFee(
             strategy.amount,
             feeAmount_,
             strategy.baseToken.decimals
         );
-        console.log("> _executeDCATrade : strat input", strategy.amount);
-
-        console.log("> _executeDCATrade : fee", fee);
 
         uint256 tradeAmount = strategy.amount - fee;
 
@@ -405,7 +400,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
         if (amountIn > 0) {
             if (strategy.reinvest.active) {
-                console.log("> _executeDCATrade : Reinvest active");
 
                 (reinvestAmount, success) = _executeReinvest(
                     strategyId_,
@@ -413,7 +407,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
                     amountIn
                 );
             }
-            console.log("> _executeDCATrade : Reinvest sucess:", success);
 
             if (success) {
                 _reinvestLiquidityTokenBalance[strategyId_] += reinvestAmount;
@@ -613,10 +606,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         DCAReinvest.Reinvest memory reinvest_,
         uint256 amount_
     ) public onlyOwner returns (uint256 amount, bool success) {
-        console.log(
-            "> _executeReinvest: library active ",
-            DCAREINVEST_LIBRARY.REINVEST_ACTIVE()
-        );
+ 
         (bool txSuccess, bytes memory returnData) = address(DCAREINVEST_LIBRARY)
             .delegatecall(
                 abi.encodeWithSelector(
@@ -625,10 +615,8 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
                     amount_
                 )
             );
-        console.log("> Delegate CAll reutned: ", txSuccess);
         if (txSuccess) {
             (amount, success) = abi.decode(returnData, (uint256, bool));
-            console.log("> Decoded Success Data:", amount, success);
             emit StrategyReinvestExecuted(strategyId_, success);
             return (amount, success);
         }
@@ -656,12 +644,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         DCAReinvest.Reinvest memory reinvest_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-        console.log("> _executeReinvest: mounted ");
-        console.log(
-            "> _executeReinvest: library active ",
-            DCAREINVEST_LIBRARY.REINVEST_ACTIVE()
-        );
-
         if (DCAREINVEST_LIBRARY.REINVEST_ACTIVE()) {
             (bool txSuccess, bytes memory returnData) = address(
                 DCAREINVEST_LIBRARY
@@ -672,10 +654,8 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
                         amount_
                     )
                 );
-            console.log("> Delegate CAll reutned: ", txSuccess);
             if (txSuccess) {
                 (amount, success) = abi.decode(returnData, (uint256, bool));
-                console.log("> Decoded Success Data:", amount, success);
                 emit StrategyReinvestExecuted(strategyId_, success);
                 return (amount, success);
             }
@@ -696,7 +676,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         DCAReinvest.Reinvest memory reinvest_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-        console.log("> _withdrawReinvest: Mounted");
 
         (bool txSuccess, bytes memory returnData) = address(DCAREINVEST_LIBRARY)
             .delegatecall(
@@ -706,10 +685,8 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
                     amount_
                 )
             );
-        console.log("> Delegate CAll reutned: ", txSuccess);
         if (txSuccess) {
             (amount, success) = abi.decode(returnData, (uint256, bool));
-            console.log("> Decoded Success Data:", amount, success);
             _reinvestLiquidityTokenBalance[strategyId_] -= amount_;
             _targetBalances[
                 _strategies[strategyId_].targetToken.tokenAddress

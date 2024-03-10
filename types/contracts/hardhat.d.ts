@@ -158,18 +158,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OnlyExecutor__factory>;
     getContractFactory(
-      name: "Called",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Called__factory>;
-    getContractFactory(
-      name: "CalledProxy",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CalledProxy__factory>;
-    getContractFactory(
-      name: "Caller",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Caller__factory>;
-    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
@@ -359,21 +347,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OnlyExecutor>;
     getContractAt(
-      name: "Called",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Called>;
-    getContractAt(
-      name: "CalledProxy",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CalledProxy>;
-    getContractAt(
-      name: "Caller",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Caller>;
-    getContractAt(
       name: "IERC20",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -528,18 +501,6 @@ declare module "hardhat/types/runtime" {
       name: "OnlyExecutor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyExecutor>;
-    deployContract(
-      name: "Called",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Called>;
-    deployContract(
-      name: "CalledProxy",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.CalledProxy>;
-    deployContract(
-      name: "Caller",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Caller>;
     deployContract(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -729,21 +690,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyExecutor>;
-    deployContract(
-      name: "Called",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Called>;
-    deployContract(
-      name: "CalledProxy",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.CalledProxy>;
-    deployContract(
-      name: "Caller",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Caller>;
     deployContract(
       name: "IERC20",
       args: any[],

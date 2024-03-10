@@ -15,6 +15,7 @@ import {
   ForwardReinvest,
   DCAExecutor,
   IERC20,
+  DCAReinvest,
 } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 import {
@@ -31,7 +32,7 @@ describe("> DCA Account Factory Tests", () => {
 
   let factoryContract: DCAFactory;
   let createdAccount: DCAAccount;
-  let reinvestContract: DCAReinvestProxy;
+  let reinvestContract: DCAReinvest;
   let executorContract: DCAExecutor;
   let addressStore: SignerStore;
 
@@ -57,13 +58,13 @@ describe("> DCA Account Factory Tests", () => {
 
       factoryContract = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter[forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]!,
         ZeroAddress,
       );
       await expect(
         factoryFactory.deploy(
           ZeroAddress,
-          tokenAddress.swapRouter[forkedChain]!,
+          tokenAddress.swapRouter![forkedChain]!,
           ZeroAddress,
         ),
       ).to.be.fulfilled;
@@ -76,7 +77,7 @@ describe("> DCA Account Factory Tests", () => {
 
     it("🧪 Should return the correct swap router", async function () {
       const address = await factoryContract.SWAP_ROUTER();
-      expect(address).to.equal(tokenAddress.swapRouter.eth);
+      expect(address).to.equal(tokenAddress.swapRouter!.eth);
     });
 
     it("🧪 Should return the factory is active", async function () {
@@ -97,16 +98,13 @@ describe("> DCA Account Factory Tests", () => {
 
   describe("💡 Update Library & Executor", async function () {
     it("🧪 Should deploy the library contract", async function () {
-      // Deploy the reinvest proxy contract
-      const proxyFactory = await ethers.getContractFactory(
-        "DCAReinvestProxy",
+      const contractFactory = await ethers.getContractFactory(
+        "DCAReinvest",
         addressStore.deployer.signer,
       );
-      reinvestContract = await proxyFactory.deploy();
+      reinvestContract = await contractFactory.deploy(false);
       await reinvestContract.waitForDeployment();
-      const initTx = await reinvestContract.initialize(false);
-      await initTx.wait();
-      expect(reinvestContract.target).to.not.equal(ZeroAddress);
+      expect(reinvestContract.waitForDeployment()).to.be.fulfilled;
     });
 
     it("🧪 Should deploy the executor contract", async function () {

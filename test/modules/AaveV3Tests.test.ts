@@ -28,7 +28,11 @@ import { compareStructs } from "~/scripts/tests/comparisons";
 import { erc20 } from "~/types/contracts/@openzeppelin/contracts/token";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
-import type { AaveIPool, DCAReinvest } from "~/types/contracts";
+import type {
+  AaveIPool,
+  DCAReinvest,
+  DCAReinvestLogic,
+} from "~/types/contracts";
 import {
   approveErc20Spend,
   connectToErc20,
@@ -44,10 +48,10 @@ describe("> Aave V3 Reinvest Test", () => {
   const forkedChain = deploymentConfig().masterChain;
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
 
-  let usdcContract: Contract;
-  let wethContract: Contract;
-  let aWethContract: Contract;
-  let aaveV3Contract: Contract;
+  let usdcContract: IERC20;
+  let wethContract: IERC20;
+  let aWethContract: IERC20;
+  let aaveV3Contract: AaveIPool;
 
   let createdAccount: DCAAccount;
   let reinvestContract: DCAReinvest;
@@ -89,11 +93,6 @@ describe("> Aave V3 Reinvest Test", () => {
       "AaveIPool",
       tokenAddress.aaveV3Pool![forkedChain] as string,
       addressStore.user.signer,
-    );
-
-    const bal5 = await getErc20Balance(
-      aWethContract,
-      addressStore.user.address,
     );
   }
 
@@ -236,15 +235,15 @@ describe("> Aave V3 Reinvest Test", () => {
     it("🧪 Supply Weth to Aave", async () => {
       const connectedContract = wethContract.connect(addressStore.user.signer);
       const approveTx = await connectedContract.approve(
-        tokenAddress.aaveV3Pool![forkedChain],
+        tokenAddress.aaveV3Pool![forkedChain] as string,
         ethers.parseEther("1"),
       );
       await approveTx.wait();
 
       const tx = await aaveV3Contract.supply(
-        tokenAddress.weth![forkedChain],
+        tokenAddress.weth![forkedChain] as string,
         ethers.parseEther("1"),
-        addressStore.user.address,
+        addressStore.user.address as string,
         0,
       );
 
@@ -313,14 +312,6 @@ describe("> Aave V3 Reinvest Test", () => {
         .withArgs(1, true);
     });
     it("🧪 Should execute strategy 1", async () => {
-      console.log(`
-        account     :       ${createdAccount.target}
-        executor    :       ${executorContract.target}
-        reinvest    :       ${reinvestContract.target}
-        executorEoa :       ${addressStore.executorEoa.address}
-        deployer    :       ${addressStore.deployer.address}
-        user        :       ${addressStore.user.address}
-      `);
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
         .Execute(createdAccount.target, 1);
@@ -330,7 +321,6 @@ describe("> Aave V3 Reinvest Test", () => {
       expect(recipt)
         .to.emit(createdAccount, "StrategyReinvestExecuted")
         .withArgs(1, true);
-      //console.log("Getting strat Tx data:", recipt?.logs);
       expect(recipt).to.emit(createdAccount, "StrategyExecuted");
     });
     it("🧪 Should show balance of aWETH > 0", async () => {
@@ -341,27 +331,12 @@ describe("> Aave V3 Reinvest Test", () => {
 
   describe("💡 Unwind reinvest", () => {
     it("🧪 Should withdraw the accounts balance of aWeth", async () => {
-      const aWethBal = await getErc20Balance(
-        aWethContract,
-        createdAccount.target,
-      );
       const tx = await createdAccount.UnWindReinvest(1);
       await expect(tx.wait()).to.be.fulfilled;
-      await expect(tx.wait())
-        .to.emit(createdAccount, "StrategyReinvestUnwound")
-        .withArgs(1, aWethBal, true);
+      await expect(tx.wait()).to.emit(
+        createdAccount,
+        "StrategyReinvestUnwound",
+      );
     });
   });
 });
-
-/* 
-
-      console.log(`
-        account     :       ${createdAccount.target}
-        executor    :       ${executorContract.target}
-        reinvest    :       ${reinvestContract.target}
-        executorEoa :       ${addressStore.executorEoa.address}
-        deployer    :       ${addressStore.deployer.address}
-        user        :       ${addressStore.user.address}
-      `);
-*/

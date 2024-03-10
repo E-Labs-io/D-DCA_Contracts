@@ -1,34 +1,18 @@
 import { expect, assert } from "chai";
 import hre, { ethers, upgrades } from "hardhat";
-import {
-  AbiCoder,
-  AddressLike,
-  Addressable,
-  Contract,
-  Signer,
-  ZeroAddress,
-} from "ethers";
-import {
-  DCAFactory,
-  DCAAccount,
-  DCAReinvestProxy,
-  ForwardReinvest,
-  DCAExecutor,
-  IERC20,
-} from "~/types/contracts";
+import { AbiCoder, Contract, ZeroAddress } from "ethers";
+import { DCAAccount, DCAExecutor } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 import {
-  DCAAccountFactoryArguments,
   DCAExecutorArguments,
   newStrat,
 } from "~/deploy/deploymentArguments/DCA.arguments";
-import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
+import { tokenAddress } from "~/bin/tokenAddress";
 import { EMPTY_STRATEGY } from "~/bin/emptyData";
 import { compareStructs } from "~/scripts/tests/comparisons";
-import { erc20 } from "~/types/contracts/@openzeppelin/contracts/token";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
-import type { DCAReinvest } from "~/types/contracts";
+import { DCAReinvest } from "~/types/contracts";
 import {
   approveErc20Spend,
   connectToErc20,
@@ -36,9 +20,8 @@ import {
   getErc20ImpersonatedFunds,
   transferErc20Token,
 } from "~/scripts/tests/contractInteraction";
-import { table } from "console";
 
-describe("> Aave V3 Reinvest Test", () => {
+describe("> Basic Reinvest Test", () => {
   console.log("🧪 DCA Account Tests : Mounted");
 
   const forkedChain = deploymentConfig().masterChain;

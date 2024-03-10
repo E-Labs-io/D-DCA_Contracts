@@ -50,10 +50,8 @@ abstract contract DCAReinvestLogic {
         Reinvest memory reinvestData_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-        console.log("ExecutreReinvest Level 2");
 
         uint8 code = reinvestData_.investCode;
-        console.log("ExecutreReinvest Code", code);
 
         if (code == ReinvestCodes.NOT_ACTIVE) return (amount, success);
         else if (code == ReinvestCodes.FORWARD)
