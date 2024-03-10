@@ -44,7 +44,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: DCAReinvest.ReinvestStruct;
+    reinvest: DCAReinvestLogic.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -55,7 +55,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: DCAReinvest.ReinvestStructOutput
+    reinvest: DCAReinvestLogic.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -64,31 +64,28 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: DCAReinvest.ReinvestStructOutput;
+    reinvest: DCAReinvestLogic.ReinvestStructOutput;
   };
 }
 
-export declare namespace DCAReinvest {
+export declare namespace DCAReinvestLogic {
   export type ReinvestStruct = {
+    reinvestData: BytesLike;
     active: boolean;
     investCode: BigNumberish;
-    depositReinvestMethod: BytesLike;
-    withdrawReinvestMethod: BytesLike;
-    reinvestSpender: AddressLike;
+    dcaAccountAddress: AddressLike;
   };
 
   export type ReinvestStructOutput = [
+    reinvestData: string,
     active: boolean,
     investCode: bigint,
-    depositReinvestMethod: string,
-    withdrawReinvestMethod: string,
-    reinvestSpender: string
+    dcaAccountAddress: string
   ] & {
+    reinvestData: string;
     active: boolean;
     investCode: bigint;
-    depositReinvestMethod: string;
-    withdrawReinvestMethod: string;
-    reinvestSpender: string;
+    dcaAccountAddress: string;
   };
 }
 
@@ -110,9 +107,10 @@ export interface IDCAAccountInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "DCAExecutorChanged"
+      | "DCAReinvestLibraryChanged"
       | "NewStrategyCreated"
       | "StrategyExecuted"
+      | "StrategyReinvestExecuted"
       | "StrategySubscribed"
       | "StrategyUnsubscribed"
   ): EventFragment;
@@ -159,7 +157,7 @@ export interface IDCAAccountInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setStrategyReinvest",
-    values: [BigNumberish, DCAReinvest.ReinvestStruct]
+    values: [BigNumberish, DCAReinvestLogic.ReinvestStruct]
   ): string;
 
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
@@ -205,11 +203,11 @@ export interface IDCAAccountInterface extends Interface {
   ): Result;
 }
 
-export namespace DCAExecutorChangedEvent {
-  export type InputTuple = [newAddress_: AddressLike];
-  export type OutputTuple = [newAddress_: string];
+export namespace DCAReinvestLibraryChangedEvent {
+  export type InputTuple = [newLibraryAddress: AddressLike];
+  export type OutputTuple = [newLibraryAddress: string];
   export interface OutputObject {
-    newAddress_: string;
+    newLibraryAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -244,6 +242,19 @@ export namespace StrategyExecutedEvent {
     strategyId_: bigint;
     amountIn_: bigint;
     reInvest_: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace StrategyReinvestExecutedEvent {
+  export type InputTuple = [strategyId_: BigNumberish, success: boolean];
+  export type OutputTuple = [strategyId_: bigint, success: boolean];
+  export interface OutputObject {
+    strategyId_: bigint;
+    success: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -384,7 +395,7 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   setStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: DCAReinvest.ReinvestStruct],
+    [strategyId_: BigNumberish, reinvest_: DCAReinvestLogic.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -450,17 +461,17 @@ export interface IDCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "setStrategyReinvest"
   ): TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: DCAReinvest.ReinvestStruct],
+    [strategyId_: BigNumberish, reinvest_: DCAReinvestLogic.ReinvestStruct],
     [void],
     "nonpayable"
   >;
 
   getEvent(
-    key: "DCAExecutorChanged"
+    key: "DCAReinvestLibraryChanged"
   ): TypedContractEvent<
-    DCAExecutorChangedEvent.InputTuple,
-    DCAExecutorChangedEvent.OutputTuple,
-    DCAExecutorChangedEvent.OutputObject
+    DCAReinvestLibraryChangedEvent.InputTuple,
+    DCAReinvestLibraryChangedEvent.OutputTuple,
+    DCAReinvestLibraryChangedEvent.OutputObject
   >;
   getEvent(
     key: "NewStrategyCreated"
@@ -475,6 +486,13 @@ export interface IDCAAccount extends BaseContract {
     StrategyExecutedEvent.InputTuple,
     StrategyExecutedEvent.OutputTuple,
     StrategyExecutedEvent.OutputObject
+  >;
+  getEvent(
+    key: "StrategyReinvestExecuted"
+  ): TypedContractEvent<
+    StrategyReinvestExecutedEvent.InputTuple,
+    StrategyReinvestExecutedEvent.OutputTuple,
+    StrategyReinvestExecutedEvent.OutputObject
   >;
   getEvent(
     key: "StrategySubscribed"
@@ -492,15 +510,15 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   filters: {
-    "DCAExecutorChanged(address)": TypedContractEvent<
-      DCAExecutorChangedEvent.InputTuple,
-      DCAExecutorChangedEvent.OutputTuple,
-      DCAExecutorChangedEvent.OutputObject
+    "DCAReinvestLibraryChanged(address)": TypedContractEvent<
+      DCAReinvestLibraryChangedEvent.InputTuple,
+      DCAReinvestLibraryChangedEvent.OutputTuple,
+      DCAReinvestLibraryChangedEvent.OutputObject
     >;
-    DCAExecutorChanged: TypedContractEvent<
-      DCAExecutorChangedEvent.InputTuple,
-      DCAExecutorChangedEvent.OutputTuple,
-      DCAExecutorChangedEvent.OutputObject
+    DCAReinvestLibraryChanged: TypedContractEvent<
+      DCAReinvestLibraryChangedEvent.InputTuple,
+      DCAReinvestLibraryChangedEvent.OutputTuple,
+      DCAReinvestLibraryChangedEvent.OutputObject
     >;
 
     "NewStrategyCreated(uint256)": TypedContractEvent<
@@ -523,6 +541,17 @@ export interface IDCAAccount extends BaseContract {
       StrategyExecutedEvent.InputTuple,
       StrategyExecutedEvent.OutputTuple,
       StrategyExecutedEvent.OutputObject
+    >;
+
+    "StrategyReinvestExecuted(uint256,bool)": TypedContractEvent<
+      StrategyReinvestExecutedEvent.InputTuple,
+      StrategyReinvestExecutedEvent.OutputTuple,
+      StrategyReinvestExecutedEvent.OutputObject
+    >;
+    StrategyReinvestExecuted: TypedContractEvent<
+      StrategyReinvestExecutedEvent.InputTuple,
+      StrategyReinvestExecutedEvent.OutputTuple,
+      StrategyReinvestExecutedEvent.OutputObject
     >;
 
     "StrategySubscribed(uint256,address)": TypedContractEvent<

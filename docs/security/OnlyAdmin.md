@@ -10,10 +10,42 @@
 
 ## Methods
 
-### CheckIfAdmin
+### addAdmin
 
 ```solidity
-function CheckIfAdmin(address addressToCheck_) external view returns (bool)
+function addAdmin(address newAdmin_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newAdmin_ | address | undefined |
+
+### changeExecutor
+
+```solidity
+function changeExecutor(address executorAddress_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| executorAddress_ | address | undefined |
+
+### checkIfAdmin
+
+```solidity
+function checkIfAdmin(address addressToCheck_) external view returns (bool)
 ```
 
 
@@ -32,21 +64,22 @@ function CheckIfAdmin(address addressToCheck_) external view returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
-### addAdmin
+### getExecutorAddress
 
 ```solidity
-function addAdmin(address newAdmin_) external nonpayable
+function getExecutorAddress() external view returns (address)
 ```
 
 
 
 
 
-#### Parameters
+
+#### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| newAdmin_ | address | undefined |
+| _0 | address | undefined |
 
 ### owner
 
@@ -81,6 +114,17 @@ function removeAdmin(address oldAdmin_) external nonpayable
 |---|---|---|
 | oldAdmin_ | address | undefined |
 
+### removeExecutor
+
+```solidity
+function removeExecutor() external nonpayable
+```
+
+
+
+
+
+
 ### renounceOwnership
 
 ```solidity
@@ -111,6 +155,22 @@ function transferOwnership(address newOwner) external nonpayable
 
 
 ## Events
+
+### ExecutorAddressChange
+
+```solidity
+event ExecutorAddressChange(address indexed newAddress_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newAddress_ `indexed` | address | undefined |
 
 ### OwnershipTransferred
 

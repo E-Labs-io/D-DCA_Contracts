@@ -31,7 +31,7 @@ Triggered by the assigned executor to execute the given strategy
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | {bool} If the function was successful |
+| _0 | bool | If the function was successful |
 
 ### ExecutorDeactivateStrategy
 
@@ -197,7 +197,7 @@ Gets Account balance of the provided target token
 ### setStrategyReinvest
 
 ```solidity
-function setStrategyReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_) external nonpayable
+function setStrategyReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_) external nonpayable
 ```
 
 
@@ -209,19 +209,19 @@ function setStrategyReinvest(uint256 strategyId_, DCAReinvest.Reinvest reinvest_
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | undefined |
-| reinvest_ | DCAReinvest.Reinvest | undefined |
+| reinvest_ | DCAReinvestLogic.Reinvest | undefined |
 
 
 
 ## Events
 
-### DCAExecutorChanged
+### DCAReinvestLibraryChanged
 
 ```solidity
-event DCAExecutorChanged(address indexed newAddress_)
+event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
 ```
 
-Emitted when the DCAExecutor contract address is changed
+
 
 
 
@@ -229,7 +229,7 @@ Emitted when the DCAExecutor contract address is changed
 
 | Name | Type | Description |
 |---|---|---|
-| newAddress_ `indexed` | address | {address} Address of the Executor contract |
+| newLibraryAddress `indexed` | address | undefined |
 
 ### NewStrategyCreated
 
@@ -264,6 +264,23 @@ Emitted when a strategy has been executed
 | strategyId_ `indexed` | uint256 | {uint256} the id for the executed strategy |
 | amountIn_ `indexed` | uint256 | {uint256} amount received from the swap |
 | reInvest_  | bool | {bool} wether the strategy reinvested or not |
+
+### StrategyReinvestExecuted
+
+```solidity
+event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ `indexed` | uint256 | undefined |
+| success `indexed` | bool | undefined |
 
 ### StrategySubscribed
 

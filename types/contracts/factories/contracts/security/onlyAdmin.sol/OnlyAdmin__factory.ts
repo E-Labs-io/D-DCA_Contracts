@@ -37,6 +37,19 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+        name: "newAddress_",
+        type: "address",
+      },
+    ],
+    name: "ExecutorAddressChange",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "previousOwner",
         type: "address",
       },
@@ -54,11 +67,37 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "newAdmin_",
+        type: "address",
+      },
+    ],
+    name: "addAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "executorAddress_",
+        type: "address",
+      },
+    ],
+    name: "changeExecutor",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "addressToCheck_",
         type: "address",
       },
     ],
-    name: "CheckIfAdmin",
+    name: "checkIfAdmin",
     outputs: [
       {
         internalType: "bool",
@@ -70,16 +109,16 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "getExecutorAddress",
+    outputs: [
       {
         internalType: "address",
-        name: "newAdmin_",
+        name: "",
         type: "address",
       },
     ],
-    name: "addAdmin",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -104,6 +143,13 @@ const _abi = [
       },
     ],
     name: "removeAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "removeExecutor",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

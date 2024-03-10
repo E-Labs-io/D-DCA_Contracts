@@ -1,6 +1,6 @@
 /** @format */
 import { task } from "hardhat/config";
-import { deploymentArgumentStore } from "../deployments/deployers/deploymentModules";
+import { deploymentArgumentStore } from "../deploy/deploymentModules";
 
 const taskId = "verifyDCAAccount";
 
@@ -19,7 +19,7 @@ task(taskId, "Register the DCAAccount Contract to block explorer").setAction(
       address: DCAAccount,
       constructorArguments: deploymentArgumentStore.DCAAccount(
         owner.address,
-        network.name,
+        network.name
       ),
     });
   }

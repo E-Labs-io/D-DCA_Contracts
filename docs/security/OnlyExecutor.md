@@ -13,7 +13,7 @@
 ### changeExecutor
 
 ```solidity
-function changeExecutor(address newExecutorAddress_) external nonpayable
+function changeExecutor(address executorAddress_) external nonpayable
 ```
 
 
@@ -24,7 +24,24 @@ function changeExecutor(address newExecutorAddress_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| newExecutorAddress_ | address | undefined |
+| executorAddress_ | address | undefined |
+
+### getExecutorAddress
+
+```solidity
+function getExecutorAddress() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### owner
 
@@ -84,6 +101,22 @@ function transferOwnership(address newOwner) external nonpayable
 
 
 ## Events
+
+### ExecutorAddressChange
+
+```solidity
+event ExecutorAddressChange(address indexed newAddress_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newAddress_ `indexed` | address | undefined |
 
 ### OwnershipTransferred
 

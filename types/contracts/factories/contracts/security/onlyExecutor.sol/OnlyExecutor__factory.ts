@@ -37,6 +37,19 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+        name: "newAddress_",
+        type: "address",
+      },
+    ],
+    name: "ExecutorAddressChange",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "previousOwner",
         type: "address",
       },
@@ -54,13 +67,26 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "newExecutorAddress_",
+        name: "executorAddress_",
         type: "address",
       },
     ],
     name: "changeExecutor",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getExecutorAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

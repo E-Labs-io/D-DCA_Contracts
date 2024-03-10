@@ -78,6 +78,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DCAFactory__factory>;
     getContractFactory(
+      name: "DCAReinvest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DCAReinvest__factory>;
+    getContractFactory(
       name: "IDCAAccount",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDCAAccount__factory>;
@@ -93,6 +97,18 @@ declare module "hardhat/types/runtime" {
       name: "CompoundV3Reinvest",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CompoundV3Reinvest__factory>;
+    getContractFactory(
+      name: "ReinvestTemplate",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ReinvestTemplate__factory>;
+    getContractFactory(
+      name: "ForwardReinvest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ForwardReinvest__factory>;
+    getContractFactory(
+      name: "AaveIPool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AaveIPool__factory>;
     getContractFactory(
       name: "CometCore",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -122,9 +138,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CometStorage__factory>;
     getContractFactory(
-      name: "LibraryProxy",
+      name: "IUniversalRouter",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.LibraryProxy__factory>;
+    ): Promise<Contracts.IUniversalRouter__factory>;
+    getContractFactory(
+      name: "DCAReinvestProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DCAReinvestProxy__factory>;
+    getContractFactory(
+      name: "OnlyActive",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OnlyActive__factory>;
     getContractFactory(
       name: "OnlyAdmin",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -134,9 +158,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OnlyExecutor__factory>;
     getContractFactory(
-      name: "DCAReinvest",
+      name: "Called",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.DCAReinvest__factory>;
+    ): Promise<Contracts.Called__factory>;
+    getContractFactory(
+      name: "CalledProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CalledProxy__factory>;
+    getContractFactory(
+      name: "Caller",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Caller__factory>;
+    getContractFactory(
+      name: "IERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20__factory>;
+    getContractFactory(
+      name: "DCAReinvestLogic",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DCAReinvestLogic__factory>;
 
     getContractAt(
       name: "OwnableUpgradeable",
@@ -219,6 +259,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.DCAFactory>;
     getContractAt(
+      name: "DCAReinvest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DCAReinvest>;
+    getContractAt(
       name: "IDCAAccount",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -238,6 +283,21 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.CompoundV3Reinvest>;
+    getContractAt(
+      name: "ReinvestTemplate",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ReinvestTemplate>;
+    getContractAt(
+      name: "ForwardReinvest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ForwardReinvest>;
+    getContractAt(
+      name: "AaveIPool",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AaveIPool>;
     getContractAt(
       name: "CometCore",
       address: string | ethers.Addressable,
@@ -274,10 +334,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.CometStorage>;
     getContractAt(
-      name: "LibraryProxy",
+      name: "IUniversalRouter",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.LibraryProxy>;
+    ): Promise<Contracts.IUniversalRouter>;
+    getContractAt(
+      name: "DCAReinvestProxy",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DCAReinvestProxy>;
+    getContractAt(
+      name: "OnlyActive",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OnlyActive>;
     getContractAt(
       name: "OnlyAdmin",
       address: string | ethers.Addressable,
@@ -289,10 +359,30 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OnlyExecutor>;
     getContractAt(
-      name: "DCAReinvest",
+      name: "Called",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.DCAReinvest>;
+    ): Promise<Contracts.Called>;
+    getContractAt(
+      name: "CalledProxy",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CalledProxy>;
+    getContractAt(
+      name: "Caller",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Caller>;
+    getContractAt(
+      name: "IERC20",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20>;
+    getContractAt(
+      name: "DCAReinvestLogic",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DCAReinvestLogic>;
 
     deployContract(
       name: "OwnableUpgradeable",
@@ -359,6 +449,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCAFactory>;
     deployContract(
+      name: "DCAReinvest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvest>;
+    deployContract(
       name: "IDCAAccount",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDCAAccount>;
@@ -374,6 +468,18 @@ declare module "hardhat/types/runtime" {
       name: "CompoundV3Reinvest",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CompoundV3Reinvest>;
+    deployContract(
+      name: "ReinvestTemplate",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReinvestTemplate>;
+    deployContract(
+      name: "ForwardReinvest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ForwardReinvest>;
+    deployContract(
+      name: "AaveIPool",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AaveIPool>;
     deployContract(
       name: "CometCore",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -403,9 +509,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CometStorage>;
     deployContract(
-      name: "LibraryProxy",
+      name: "IUniversalRouter",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.LibraryProxy>;
+    ): Promise<Contracts.IUniversalRouter>;
+    deployContract(
+      name: "DCAReinvestProxy",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvestProxy>;
+    deployContract(
+      name: "OnlyActive",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OnlyActive>;
     deployContract(
       name: "OnlyAdmin",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -415,9 +529,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyExecutor>;
     deployContract(
-      name: "DCAReinvest",
+      name: "Called",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.DCAReinvest>;
+    ): Promise<Contracts.Called>;
+    deployContract(
+      name: "CalledProxy",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CalledProxy>;
+    deployContract(
+      name: "Caller",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Caller>;
+    deployContract(
+      name: "IERC20",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20>;
+    deployContract(
+      name: "DCAReinvestLogic",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvestLogic>;
 
     deployContract(
       name: "OwnableUpgradeable",
@@ -500,6 +630,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCAFactory>;
     deployContract(
+      name: "DCAReinvest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvest>;
+    deployContract(
       name: "IDCAAccount",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -519,6 +654,21 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CompoundV3Reinvest>;
+    deployContract(
+      name: "ReinvestTemplate",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReinvestTemplate>;
+    deployContract(
+      name: "ForwardReinvest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ForwardReinvest>;
+    deployContract(
+      name: "AaveIPool",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AaveIPool>;
     deployContract(
       name: "CometCore",
       args: any[],
@@ -555,10 +705,20 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CometStorage>;
     deployContract(
-      name: "LibraryProxy",
+      name: "IUniversalRouter",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.LibraryProxy>;
+    ): Promise<Contracts.IUniversalRouter>;
+    deployContract(
+      name: "DCAReinvestProxy",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvestProxy>;
+    deployContract(
+      name: "OnlyActive",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OnlyActive>;
     deployContract(
       name: "OnlyAdmin",
       args: any[],
@@ -570,10 +730,30 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyExecutor>;
     deployContract(
-      name: "DCAReinvest",
+      name: "Called",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.DCAReinvest>;
+    ): Promise<Contracts.Called>;
+    deployContract(
+      name: "CalledProxy",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CalledProxy>;
+    deployContract(
+      name: "Caller",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Caller>;
+    deployContract(
+      name: "IERC20",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20>;
+    deployContract(
+      name: "DCAReinvestLogic",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvestLogic>;
 
     // default types
     getContractFactory(

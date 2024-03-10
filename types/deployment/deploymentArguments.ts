@@ -1,5 +1,5 @@
 /** @format */
-import { AddressLike, Addressable } from "ethers";
+import { AddressLike, Addressable, Network } from "ethers";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -21,6 +21,7 @@ export interface DeploymentProps {
   deployer: HardhatEthersSigner;
   delayTime: number;
   contractName: string;
+  network: Network;
   constructorArguments: any[];
   prevDeployments: DeploymentStore[];
 }

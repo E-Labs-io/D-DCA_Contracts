@@ -44,7 +44,7 @@ export declare namespace IDCADataStructures {
     amount: BigNumberish;
     strategyId: BigNumberish;
     active: boolean;
-    reinvest: DCAReinvest.ReinvestStruct;
+    reinvest: DCAReinvestLogic.ReinvestStruct;
   };
 
   export type StrategyStructOutput = [
@@ -55,7 +55,7 @@ export declare namespace IDCADataStructures {
     amount: bigint,
     strategyId: bigint,
     active: boolean,
-    reinvest: DCAReinvest.ReinvestStructOutput
+    reinvest: DCAReinvestLogic.ReinvestStructOutput
   ] & {
     accountAddress: string;
     baseToken: IDCADataStructures.TokeDataStructOutput;
@@ -64,31 +64,28 @@ export declare namespace IDCADataStructures {
     amount: bigint;
     strategyId: bigint;
     active: boolean;
-    reinvest: DCAReinvest.ReinvestStructOutput;
+    reinvest: DCAReinvestLogic.ReinvestStructOutput;
   };
 }
 
-export declare namespace DCAReinvest {
+export declare namespace DCAReinvestLogic {
   export type ReinvestStruct = {
+    reinvestData: BytesLike;
     active: boolean;
     investCode: BigNumberish;
-    depositReinvestMethod: BytesLike;
-    withdrawReinvestMethod: BytesLike;
-    reinvestSpender: AddressLike;
+    dcaAccountAddress: AddressLike;
   };
 
   export type ReinvestStructOutput = [
+    reinvestData: string,
     active: boolean,
     investCode: bigint,
-    depositReinvestMethod: string,
-    withdrawReinvestMethod: string,
-    reinvestSpender: string
+    dcaAccountAddress: string
   ] & {
+    reinvestData: string;
     active: boolean;
     investCode: bigint;
-    depositReinvestMethod: string;
-    withdrawReinvestMethod: string;
-    reinvestSpender: string;
+    dcaAccountAddress: string;
   };
 }
 
@@ -107,7 +104,6 @@ export interface IDCAExecutorInterface extends Interface {
     nameOrSignatureOrTopic:
       | "DCAAccountSubscription"
       | "ExecutedDCA"
-      | "ExecutionEOAAddressChange"
       | "FeesDistributed"
   ): EventFragment;
 
@@ -187,22 +183,6 @@ export namespace ExecutedDCAEvent {
   export interface OutputObject {
     account_: string;
     strategyId_: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ExecutionEOAAddressChangeEvent {
-  export type InputTuple = [
-    newExecutionEOA_: AddressLike,
-    changer_: AddressLike
-  ];
-  export type OutputTuple = [newExecutionEOA_: string, changer_: string];
-  export interface OutputObject {
-    newExecutionEOA_: string;
-    changer_: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -292,13 +272,13 @@ export interface IDCAExecutor extends BaseContract {
 
   Subscribe: TypedContractMethod<
     [strategy_: IDCADataStructures.StrategyStruct],
-    [boolean],
+    [void],
     "nonpayable"
   >;
 
   Unsubscribe: TypedContractMethod<
     [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
-    [boolean],
+    [void],
     "nonpayable"
   >;
 
@@ -334,14 +314,14 @@ export interface IDCAExecutor extends BaseContract {
     nameOrSignature: "Subscribe"
   ): TypedContractMethod<
     [strategy_: IDCADataStructures.StrategyStruct],
-    [boolean],
+    [void],
     "nonpayable"
   >;
   getFunction(
     nameOrSignature: "Unsubscribe"
   ): TypedContractMethod<
     [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
-    [boolean],
+    [void],
     "nonpayable"
   >;
 
@@ -358,13 +338,6 @@ export interface IDCAExecutor extends BaseContract {
     ExecutedDCAEvent.InputTuple,
     ExecutedDCAEvent.OutputTuple,
     ExecutedDCAEvent.OutputObject
-  >;
-  getEvent(
-    key: "ExecutionEOAAddressChange"
-  ): TypedContractEvent<
-    ExecutionEOAAddressChangeEvent.InputTuple,
-    ExecutionEOAAddressChangeEvent.OutputTuple,
-    ExecutionEOAAddressChangeEvent.OutputObject
   >;
   getEvent(
     key: "FeesDistributed"
@@ -395,17 +368,6 @@ export interface IDCAExecutor extends BaseContract {
       ExecutedDCAEvent.InputTuple,
       ExecutedDCAEvent.OutputTuple,
       ExecutedDCAEvent.OutputObject
-    >;
-
-    "ExecutionEOAAddressChange(address,address)": TypedContractEvent<
-      ExecutionEOAAddressChangeEvent.InputTuple,
-      ExecutionEOAAddressChangeEvent.OutputTuple,
-      ExecutionEOAAddressChangeEvent.OutputObject
-    >;
-    ExecutionEOAAddressChange: TypedContractEvent<
-      ExecutionEOAAddressChangeEvent.InputTuple,
-      ExecutionEOAAddressChangeEvent.OutputTuple,
-      ExecutionEOAAddressChangeEvent.OutputObject
     >;
 
     "FeesDistributed(address,uint256)": TypedContractEvent<

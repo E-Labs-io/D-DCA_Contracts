@@ -5,16 +5,6 @@ import "./IDCADataStructures.sol";
 
 interface IDCAExecutor is IDCADataStructures {
     /**
-     * @notice emitted when the default Executor service address is changed
-     * @param newExecutionEOA_ {address} the new address of the Executor Service EOA or Multi
-     * @param changer_ {address} address of the wallet implementing change
-     */
-    event ExecutionEOAAddressChange(
-        address indexed newExecutionEOA_,
-        address changer_
-    );
-
-    /**
      * @notice Emitted once a strategy has finished executing
      * @param account_ {address} Address of the DCAAccount
      * @param strategyId_ {uint256} ID of teh strategy executed
@@ -44,23 +34,19 @@ interface IDCAExecutor is IDCADataStructures {
 
     /**
      * @notice Called by a DCAAccount to subscribe a strategy to the DCAExecutor
-     * @param strategy_ {Strategy} The full strategy data of the subscribing strategy
-     * @return sucsess {bool} if the subscription was successful
+     * @param strategy_ The full strategy data of the subscribing strategy
      */
-    function Subscribe(
-        Strategy calldata strategy_
-    ) external returns (bool sucsess);
+    function Subscribe(Strategy calldata strategy_) external;
 
     /**
      * @notice Called by the DCAAccount to remove itself from the executor
-     * @param DCAAccountAddress_ {address} Address of the unsubscribing DCAAccount
-     * @param strategyId_ {uint256} ID of the strategy being unsubscribed
-     * @return sucsess {bool} If the unsubscribe completed
+     * @param DCAAccountAddress_ Address of the unsubscribing DCAAccount
+     * @param strategyId_ ID of the strategy being unsubscribed
      */
     function Unsubscribe(
         address DCAAccountAddress_,
         uint256 strategyId_
-    ) external returns (bool sucsess);
+    ) external;
 
     /**
      * @notice Called by the external Executor service wallet only, triggers the specified strategy

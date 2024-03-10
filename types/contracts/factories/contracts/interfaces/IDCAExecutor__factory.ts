@@ -65,25 +65,6 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "newExecutionEOA_",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "changer_",
-        type: "address",
-      },
-    ],
-    name: "ExecutionEOAAddressChange",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
         name: "token_",
         type: "address",
       },
@@ -240,6 +221,11 @@ const _abi = [
           {
             components: [
               {
+                internalType: "bytes",
+                name: "reinvestData",
+                type: "bytes",
+              },
+              {
                 internalType: "bool",
                 name: "active",
                 type: "bool",
@@ -250,22 +236,12 @@ const _abi = [
                 type: "uint8",
               },
               {
-                internalType: "bytes",
-                name: "depositReinvestMethod",
-                type: "bytes",
-              },
-              {
-                internalType: "bytes",
-                name: "withdrawReinvestMethod",
-                type: "bytes",
-              },
-              {
                 internalType: "address",
-                name: "reinvestSpender",
+                name: "dcaAccountAddress",
                 type: "address",
               },
             ],
-            internalType: "struct DCAReinvest.Reinvest",
+            internalType: "struct DCAReinvestLogic.Reinvest",
             name: "reinvest",
             type: "tuple",
           },
@@ -276,13 +252,7 @@ const _abi = [
       },
     ],
     name: "Subscribe",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "sucsess",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -300,13 +270,7 @@ const _abi = [
       },
     ],
     name: "Unsubscribe",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "sucsess",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

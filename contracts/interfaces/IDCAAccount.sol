@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 import "./IDCADataStructures.sol";
 import "./IDCAExecutor.sol";
-import "../library/Reinvest.sol";
+import {DCAReinvestProxy} from "../proxys/DCAReinvestProxy.sol";
 
 interface IDCAAccount is IDCADataStructures {
     /**
@@ -16,11 +16,6 @@ interface IDCAAccount is IDCADataStructures {
         uint256 indexed amountIn_,
         bool reInvest_
     );
-    /**
-     * @notice Emitted when the DCAExecutor contract address is changed
-     * @param newAddress_ {address} Address of the Executor contract
-     */
-    event DCAExecutorChanged(address indexed newAddress_);
 
     /**
      * @notice Emitted when the Strategy is confirmed to be subscribed to an Executor
@@ -42,11 +37,18 @@ interface IDCAAccount is IDCADataStructures {
      */
     event NewStrategyCreated(uint256 indexed strategyId_);
 
+    event DCAReinvestLibraryChanged(address indexed newLibraryAddress);
+
+    event StrategyReinvestExecuted(
+        uint256 indexed strategyId_,
+        bool indexed success
+    );
+
     /**
      * @notice Triggered by the assigned executor to execute the given strategy
      * @param strategyId_ {uint256} Id for the Strategy to be executed
      * @param feeAmount_ (uint16) amount of the strategy amount to be paid via fee (percent)
-     * @return  {bool} If the function was successful
+     * @return If the function was successful
      */
     function Execute(
         uint256 strategyId_,
@@ -117,7 +119,7 @@ interface IDCAAccount is IDCADataStructures {
      */
     function setStrategyReinvest(
         uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_
+        DCAReinvestProxy.Reinvest memory reinvest_
     ) external;
 
     /**

@@ -15,11 +15,11 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "newAddress_",
+        name: "newLibraryAddress",
         type: "address",
       },
     ],
-    name: "DCAExecutorChanged",
+    name: "DCAReinvestLibraryChanged",
     type: "event",
   },
   {
@@ -58,6 +58,25 @@ const _abi = [
       },
     ],
     name: "StrategyExecuted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
+    name: "StrategyReinvestExecuted",
     type: "event",
   },
   {
@@ -223,6 +242,11 @@ const _abi = [
           {
             components: [
               {
+                internalType: "bytes",
+                name: "reinvestData",
+                type: "bytes",
+              },
+              {
                 internalType: "bool",
                 name: "active",
                 type: "bool",
@@ -233,22 +257,12 @@ const _abi = [
                 type: "uint8",
               },
               {
-                internalType: "bytes",
-                name: "depositReinvestMethod",
-                type: "bytes",
-              },
-              {
-                internalType: "bytes",
-                name: "withdrawReinvestMethod",
-                type: "bytes",
-              },
-              {
                 internalType: "address",
-                name: "reinvestSpender",
+                name: "dcaAccountAddress",
                 type: "address",
               },
             ],
-            internalType: "struct DCAReinvest.Reinvest",
+            internalType: "struct DCAReinvestLogic.Reinvest",
             name: "reinvest",
             type: "tuple",
           },
@@ -383,6 +397,11 @@ const _abi = [
       {
         components: [
           {
+            internalType: "bytes",
+            name: "reinvestData",
+            type: "bytes",
+          },
+          {
             internalType: "bool",
             name: "active",
             type: "bool",
@@ -393,22 +412,12 @@ const _abi = [
             type: "uint8",
           },
           {
-            internalType: "bytes",
-            name: "depositReinvestMethod",
-            type: "bytes",
-          },
-          {
-            internalType: "bytes",
-            name: "withdrawReinvestMethod",
-            type: "bytes",
-          },
-          {
             internalType: "address",
-            name: "reinvestSpender",
+            name: "dcaAccountAddress",
             type: "address",
           },
         ],
-        internalType: "struct DCAReinvest.Reinvest",
+        internalType: "struct DCAReinvestLogic.Reinvest",
         name: "reinvest_",
         type: "tuple",
       },

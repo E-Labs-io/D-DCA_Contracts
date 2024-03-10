@@ -6,7 +6,7 @@ import { RunTaskFunction } from "hardhat/types";
 async function verifyContractOnScan(
   run: RunTaskFunction,
   contractAddress: string | Addressable,
-  args: any[]
+  args?: any[]
 ) {
   console.log("🟡 Starting Contract Verification");
   await run("verify:verify", {

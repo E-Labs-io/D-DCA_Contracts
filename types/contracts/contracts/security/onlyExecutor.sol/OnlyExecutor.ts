@@ -26,17 +26,24 @@ export interface OnlyExecutorInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "changeExecutor"
+      | "getExecutorAddress"
       | "owner"
       | "removeExecutor"
       | "renounceOwnership"
       | "transferOwnership"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ExecutorAddressChange" | "OwnershipTransferred"
+  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "changeExecutor",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getExecutorAddress",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -56,6 +63,10 @@ export interface OnlyExecutorInterface extends Interface {
     functionFragment: "changeExecutor",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getExecutorAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeExecutor",
@@ -69,6 +80,18 @@ export interface OnlyExecutorInterface extends Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+}
+
+export namespace ExecutorAddressChangeEvent {
+  export type InputTuple = [newAddress_: AddressLike];
+  export type OutputTuple = [newAddress_: string];
+  export interface OutputObject {
+    newAddress_: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace OwnershipTransferredEvent {
@@ -128,10 +151,12 @@ export interface OnlyExecutor extends BaseContract {
   ): Promise<this>;
 
   changeExecutor: TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
+    [executorAddress_: AddressLike],
     [void],
     "nonpayable"
   >;
+
+  getExecutorAddress: TypedContractMethod<[], [string], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -151,11 +176,10 @@ export interface OnlyExecutor extends BaseContract {
 
   getFunction(
     nameOrSignature: "changeExecutor"
-  ): TypedContractMethod<
-    [newExecutorAddress_: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[executorAddress_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getExecutorAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -170,6 +194,13 @@ export interface OnlyExecutor extends BaseContract {
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   getEvent(
+    key: "ExecutorAddressChange"
+  ): TypedContractEvent<
+    ExecutorAddressChangeEvent.InputTuple,
+    ExecutorAddressChangeEvent.OutputTuple,
+    ExecutorAddressChangeEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -178,6 +209,17 @@ export interface OnlyExecutor extends BaseContract {
   >;
 
   filters: {
+    "ExecutorAddressChange(address)": TypedContractEvent<
+      ExecutorAddressChangeEvent.InputTuple,
+      ExecutorAddressChangeEvent.OutputTuple,
+      ExecutorAddressChangeEvent.OutputObject
+    >;
+    ExecutorAddressChange: TypedContractEvent<
+      ExecutorAddressChangeEvent.InputTuple,
+      ExecutorAddressChangeEvent.OutputTuple,
+      ExecutorAddressChangeEvent.OutputObject
+    >;
+
     "OwnershipTransferred(address,address)": TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
