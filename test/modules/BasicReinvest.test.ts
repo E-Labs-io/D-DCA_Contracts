@@ -210,47 +210,6 @@ describe("> Basic Reinvest Test", () => {
 
       expect(Number(bal) === 0).to.be.true;
     });
-    it("🧪 Should test the reinvest (0x01) and emit an event", async () => {
-      await transferErc20Token(
-        wethContract,
-        createdAccount.target,
-        ethers.parseEther("2"),
-      );
-
-      const notactiveStrat = [
-        0x01,
-        addressStore.testTarget.address,
-        tokenAddress.weth![forkedChain],
-      ];
-
-      const reinvest: DCAReinvestLogic.ReinvestStruct = {
-        reinvestData: abiEncoder.encode(
-          ["uint8", "address", "address"],
-          notactiveStrat,
-        ),
-        active: true,
-        investCode: 0x01,
-        dcaAccountAddress: createdAccount.target,
-      };
-
-      const reinvestTx = await createdAccount.testReinvest(
-        1,
-        reinvest,
-        ethers.parseEther("1"),
-      );
-
-      const recipt = await reinvestTx.wait();
-
-      const bal1 = await getErc20Balance(
-        wethContract,
-        addressStore.testTarget.address,
-      );
-
-      expect(recipt)
-        .to.emit(createdAccount, "StrategyReinvestExecuted")
-        .withArgs(1, true);
-      expect(Number(bal1) > 0).to.be.true;
-    });
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)

@@ -599,39 +599,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         emit DCAReinvestLibraryChanged(newLibraryAddress_);
     }
 
-    //  DEV
-    event FailedTest();
-    function testReinvest(
-        uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_,
-        uint256 amount_
-    ) public onlyOwner returns (uint256 amount, bool success) {
- 
-        (bool txSuccess, bytes memory returnData) = address(DCAREINVEST_LIBRARY)
-            .delegatecall(
-                abi.encodeWithSelector(
-                    DCAREINVEST_LIBRARY.executeReinvest.selector,
-                    reinvest_,
-                    amount_
-                )
-            );
-        if (txSuccess) {
-            (amount, success) = abi.decode(returnData, (uint256, bool));
-            emit StrategyReinvestExecuted(strategyId_, success);
-            return (amount, success);
-        }
-
-        emit StrategyReinvestExecuted(strategyId_, false);
-    }
-
-    // DELEGATE CALL TEMPLATE
-    function executeReinvest(
-        DCAReinvest.Reinvest memory reinvestData_,
-        uint256 amount_
-    ) external returns (uint256 amount, bool success) {
-        // Empty for delegatecall
-    }
-
     /**
      * @dev logic to execute a reinvest portion of the strategy
      * @notice Only working on call, not delegatecall

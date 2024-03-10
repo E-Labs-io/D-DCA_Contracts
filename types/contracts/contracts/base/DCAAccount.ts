@@ -105,7 +105,6 @@ export interface DCAAccountInterface extends Interface {
       | "WithdrawSavings"
       | "changeDCAReinvestLibrary"
       | "changeExecutor"
-      | "executeReinvest"
       | "getAttachedReinvestLibraryAddress"
       | "getAttachedReinvestLibraryVersion"
       | "getBaseBalance"
@@ -119,7 +118,6 @@ export interface DCAAccountInterface extends Interface {
       | "removeExecutor"
       | "renounceOwnership"
       | "setStrategyReinvest"
-      | "testReinvest"
       | "transferOwnership"
       | "updateSwapAddress"
   ): FunctionFragment;
@@ -128,7 +126,6 @@ export interface DCAAccountInterface extends Interface {
     nameOrSignatureOrTopic:
       | "DCAReinvestLibraryChanged"
       | "ExecutorAddressChange"
-      | "FailedTest"
       | "NewStrategyCreated"
       | "OwnershipTransferred"
       | "StrategyExecuted"
@@ -191,10 +188,6 @@ export interface DCAAccountInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "executeReinvest",
-    values: [DCAReinvestLogic.ReinvestStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getAttachedReinvestLibraryAddress",
     values?: undefined
   ): string;
@@ -242,10 +235,6 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "setStrategyReinvest",
     values: [BigNumberish, DCAReinvestLogic.ReinvestStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "testReinvest",
-    values: [BigNumberish, DCAReinvestLogic.ReinvestStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -303,10 +292,6 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "executeReinvest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getAttachedReinvestLibraryAddress",
     data: BytesLike
   ): Result;
@@ -356,10 +341,6 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "testReinvest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
@@ -387,16 +368,6 @@ export namespace ExecutorAddressChangeEvent {
   export interface OutputObject {
     newAddress_: string;
   }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace FailedTestEvent {
-  export type InputTuple = [];
-  export type OutputTuple = [];
-  export interface OutputObject {}
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -631,12 +602,6 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
-  executeReinvest: TypedContractMethod<
-    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
-    [[bigint, boolean] & { amount: bigint; success: boolean }],
-    "nonpayable"
-  >;
-
   getAttachedReinvestLibraryAddress: TypedContractMethod<[], [string], "view">;
 
   getAttachedReinvestLibraryVersion: TypedContractMethod<[], [string], "view">;
@@ -690,16 +655,6 @@ export interface DCAAccount extends BaseContract {
   setStrategyReinvest: TypedContractMethod<
     [strategyId_: BigNumberish, reinvest_: DCAReinvestLogic.ReinvestStruct],
     [void],
-    "nonpayable"
-  >;
-
-  testReinvest: TypedContractMethod<
-    [
-      strategyId_: BigNumberish,
-      reinvest_: DCAReinvestLogic.ReinvestStruct,
-      amount_: BigNumberish
-    ],
-    [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
 
@@ -791,13 +746,6 @@ export interface DCAAccount extends BaseContract {
     nameOrSignature: "changeExecutor"
   ): TypedContractMethod<[executorAddress_: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "executeReinvest"
-  ): TypedContractMethod<
-    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
-    [[bigint, boolean] & { amount: bigint; success: boolean }],
-    "nonpayable"
-  >;
-  getFunction(
     nameOrSignature: "getAttachedReinvestLibraryAddress"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -855,17 +803,6 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "testReinvest"
-  ): TypedContractMethod<
-    [
-      strategyId_: BigNumberish,
-      reinvest_: DCAReinvestLogic.ReinvestStruct,
-      amount_: BigNumberish
-    ],
-    [[bigint, boolean] & { amount: bigint; success: boolean }],
-    "nonpayable"
-  >;
-  getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
@@ -885,13 +822,6 @@ export interface DCAAccount extends BaseContract {
     ExecutorAddressChangeEvent.InputTuple,
     ExecutorAddressChangeEvent.OutputTuple,
     ExecutorAddressChangeEvent.OutputObject
-  >;
-  getEvent(
-    key: "FailedTest"
-  ): TypedContractEvent<
-    FailedTestEvent.InputTuple,
-    FailedTestEvent.OutputTuple,
-    FailedTestEvent.OutputObject
   >;
   getEvent(
     key: "NewStrategyCreated"
@@ -964,17 +894,6 @@ export interface DCAAccount extends BaseContract {
       ExecutorAddressChangeEvent.InputTuple,
       ExecutorAddressChangeEvent.OutputTuple,
       ExecutorAddressChangeEvent.OutputObject
-    >;
-
-    "FailedTest()": TypedContractEvent<
-      FailedTestEvent.InputTuple,
-      FailedTestEvent.OutputTuple,
-      FailedTestEvent.OutputObject
-    >;
-    FailedTest: TypedContractEvent<
-      FailedTestEvent.InputTuple,
-      FailedTestEvent.OutputTuple,
-      FailedTestEvent.OutputObject
     >;
 
     "NewStrategyCreated(uint256)": TypedContractEvent<

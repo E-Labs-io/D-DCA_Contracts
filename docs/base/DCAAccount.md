@@ -233,30 +233,6 @@ function changeExecutor(address executorAddress_) external nonpayable
 |---|---|---|
 | executorAddress_ | address | undefined |
 
-### executeReinvest
-
-```solidity
-function executeReinvest(DCAReinvestLogic.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| reinvestData_ | DCAReinvestLogic.Reinvest | undefined |
-| amount_ | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| amount | uint256 | undefined |
-| success | bool | undefined |
-
 ### getAttachedReinvestLibraryAddress
 
 ```solidity
@@ -498,31 +474,6 @@ function setStrategyReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest rein
 | strategyId_ | uint256 | undefined |
 | reinvest_ | DCAReinvestLogic.Reinvest | undefined |
 
-### testReinvest
-
-```solidity
-function testReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId_ | uint256 | undefined |
-| reinvest_ | DCAReinvestLogic.Reinvest | undefined |
-| amount_ | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| amount | uint256 | undefined |
-| success | bool | undefined |
-
 ### transferOwnership
 
 ```solidity
@@ -590,17 +541,6 @@ event ExecutorAddressChange(address indexed newAddress_)
 | Name | Type | Description |
 |---|---|---|
 | newAddress_ `indexed` | address | undefined |
-
-### FailedTest
-
-```solidity
-event FailedTest()
-```
-
-
-
-
-
 
 ### NewStrategyCreated
 

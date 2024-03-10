@@ -471,39 +471,6 @@ describe("> DCA Account Tests", () => {
       const stratData = await createdAccount.getStrategyData(1);
       expect(stratData[7][1]).to.be.true;
     });
-    it("🧪 Should test the reinvest (0x01) and emit an event", async () => {
-      await transferErc20Token(
-        wethContract,
-        createdAccount.target,
-        ethers.parseEther("2"),
-      );
-
-      const reinvest: DCAReinvestLogic.ReinvestStruct = {
-        reinvestData: abiEncoder.encode(
-          ["uint8", "address", "address"],
-          [
-            0x01,
-            addressStore.testTarget.address,
-            tokenAddress.weth![forkedChain],
-          ],
-        ),
-        active: true,
-        investCode: 0x01,
-        dcaAccountAddress: createdAccount.target,
-      };
-
-      const reinvestTx = await createdAccount.testReinvest(
-        1,
-        reinvest,
-        ethers.parseEther("1"),
-      );
-
-      const recipt = await reinvestTx.wait();
-
-      await expect(recipt)
-        .to.emit(createdAccount, "StrategyReinvestExecuted")
-        .withArgs(1, true);
-    });
     it("🧪 Should return target3 weth balance of zero", async () => {
       const bal = await wethContract.balanceOf(addressStore.target3.address);
       expect(bal).to.equal(0);
