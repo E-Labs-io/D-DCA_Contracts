@@ -158,7 +158,7 @@ const config: HardhatUserConfig = {
     fork: {
       gas: "auto",
       chainId: 1,
-      url: rcpEndPoints("eth")!,
+      url: rcpEndPoints(deploymentConfig().masterChain)!,
       mining: {
         auto: true,
         interval: 5000,
@@ -169,7 +169,7 @@ const config: HardhatUserConfig = {
       chainId: 1,
       forking: {
         enabled: true,
-        url: rcpEndPoints("eth")!,
+        url: rcpEndPoints(deploymentConfig().masterChain)!,
         blockNumber: 19329615,
       },
       mining: {

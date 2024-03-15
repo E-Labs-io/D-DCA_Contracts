@@ -7,7 +7,7 @@ import { ChainName } from "./tokenAddress";
 
 export default function deploymentConfig() {
   const deployCue: ContractNames[] = [];
-  const masterChain: ChainName = "eth";
+  const masterChain: ChainName = "optimism";
   const ethernalEnabled: boolean = true;
 
   return { deployCue, ethernalEnabled, masterChain };

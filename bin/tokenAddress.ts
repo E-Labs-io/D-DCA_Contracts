@@ -42,10 +42,10 @@ const productionChainAddresses = {
   optimism: {
     swapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     weth: "0x4200000000000000000000000000000000000006",
-    wbtc: "",
-    dai: "",
-    usdc: "",
-    usdt: "",
+    wbtc: "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+    dai: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    usdc: "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+    usdt: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
     compoundV3Usdc: "",
     aaveV3Pool: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
     universalRouter: "",
@@ -68,6 +68,13 @@ export const productionChainImpersonators: ImpersonatorList = {
     usdt: "0xb38e8c17e38363af6ebdcb3dae12e0243582891d", // Binance Hot wallet (EOA)
     dai: "0x2d070ed1321871841245d8ee5b84bd2712644322", // Random EOA 2
   },
+  optimism: {
+    usdc: "0xf491d040110384DBcf7F241fFE2A546513fD873d",
+    weth: "0x86bb63148d17d445ed5398ef26aa05bf76dd5b59",
+    wbtc: "0xa79a356b01ef805b3089b4fe67447b96c7e6dd4c",
+    usdt: "0xf491d040110384DBcf7F241fFE2A546513fD873d",
+    dai: "0xd28843e10c3795e51a6e574378f8698afe803029",
+  },
 };
 
 export const tokenAddress: TokenAddressList = {
@@ -80,13 +87,14 @@ export const tokenAddress: TokenAddressList = {
     opGoerli: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     maticMumbai: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     hardhat: productionChainAddresses[forkedNetwork].swapRouter,
+    optimism: productionChainAddresses.optimism.swapRouter,
   },
   universalRouter: {
     eth: productionChainAddresses.eth.universalRouter,
     arbitrum: productionChainAddresses.arbitrum.universalRouter,
     ethGoerli: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
     ethSepolia: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
-    optimism: "0xeC8B0F7Ffe3ae75d7FfAb09429e3675bb63503e4",
+    optimism: productionChainAddresses.optimism.universalRouter,
     arbGoerli: "",
     opGoerli: "",
     hardhat: productionChainAddresses[forkedNetwork].universalRouter,
@@ -100,6 +108,7 @@ export const tokenAddress: TokenAddressList = {
     opGoerli: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
     maticMumbai: "0x52D800ca262522580CeBAD275395ca6e7598C014",
     hardhat: productionChainAddresses[forkedNetwork].usdc,
+    optimism: productionChainAddresses.optimism.usdc,
   },
   usdt: {
     eth: productionChainAddresses.eth.usdt,
@@ -109,6 +118,7 @@ export const tokenAddress: TokenAddressList = {
     arbGoerli: "",
     opGoerli: "",
     hardhat: productionChainAddresses[forkedNetwork].usdt,
+    optimism: productionChainAddresses.optimism.usdt,
   },
   weth: {
     eth: productionChainAddresses.eth.weth,
@@ -119,6 +129,7 @@ export const tokenAddress: TokenAddressList = {
     opGoerli: "0x4200000000000000000000000000000000000006",
     maticMumbai: "0xc199807AF4fEDB02EE567Ed0FeB814A077de4802",
     hardhat: productionChainAddresses[forkedNetwork].weth,
+    optimism: productionChainAddresses.optimism.weth,
   },
   wbtc: {
     eth: productionChainAddresses.eth.wbtc,
@@ -129,6 +140,7 @@ export const tokenAddress: TokenAddressList = {
     opGoerli: "0x099E6dA9FFF9F0D8873AaD3FB4C9F7eDA5742692",
     maticMumbai: "0x2Fa2e7a6dEB7bb51B625336DBe1dA23511914a8A",
     hardhat: productionChainAddresses[forkedNetwork].wbtc,
+    optimism: productionChainAddresses.optimism.wbtc,
   },
   link: {
     eth: "",
@@ -147,6 +159,7 @@ export const tokenAddress: TokenAddressList = {
     arbitrum: productionChainAddresses.arbitrum.compoundV3Usdc,
     opGoerli: "",
     hardhat: productionChainAddresses[forkedNetwork].compoundV3Usdc,
+    optimism: productionChainAddresses.optimism.compoundV3Usdc,
   },
   aaveV3Pool: {
     eth: productionChainAddresses.eth.aaveV3Pool,
@@ -156,6 +169,7 @@ export const tokenAddress: TokenAddressList = {
     arbitrum: productionChainAddresses.arbitrum.aaveV3Pool,
     opGoerli: "0x52dCE39f4A3823b335732178364f5590bDacb25D",
     hardhat: productionChainAddresses[forkedNetwork].aaveV3Pool,
+    optimism: productionChainAddresses.optimism.aaveV3Pool,
   },
   gho: {
     eth: productionChainAddresses.eth.gho,
@@ -179,6 +193,10 @@ export const tokenAddress: TokenAddressList = {
   },
   aWeth: {
     eth: "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8",
+    optimism: "0xe50fA9b3c56FfB159cB0FCA61F5c9D750e8128c8",
+  },
+  aWbtc: {
+    optimism: "0x078f358208685046a11C85e8ad32895DED33A249",
   },
 };
 
@@ -191,7 +209,8 @@ export type AcceptedTokens =
   | "dai"
   | "gho"
   | "link"
-  | "aWeth";
+  | "aWeth"
+  | "aWbtc";
 
 export type AcceptedProtocolsAndContracts =
   | "aaveFaucet"
