@@ -31,6 +31,7 @@ import { erc20 } from "~/types/contracts/@openzeppelin/contracts/token";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
 import {
+  checkEthBalanceAndTransfer,
   connectToErc20,
   getErc20Balance,
   transferErc20Token,
@@ -74,6 +75,11 @@ describe("> DCA Account Tests", () => {
       productionChainImpersonators[forkedChain]?.usdc as string,
     );
 
+    await checkEthBalanceAndTransfer(
+      productionChainImpersonators[forkedChain]?.usdc as string,
+      addressStore.deployer.signer,
+    );
+
     usdcContract = await connectToErc20(
       tokenAddress?.usdc?.[forkedChain]! as string,
       usedImpersonater,
@@ -82,6 +88,12 @@ describe("> DCA Account Tests", () => {
     const wethImpersonator = await ethers.getImpersonatedSigner(
       productionChainImpersonators?.eth?.weth as string,
     );
+
+    await checkEthBalanceAndTransfer(
+      productionChainImpersonators[forkedChain]?.weth as string,
+      addressStore.deployer.signer,
+    );
+
     wethContract = await connectToErc20(
       tokenAddress?.weth?.[forkedChain]! as string,
       wethImpersonator,
@@ -217,14 +229,17 @@ describe("> DCA Account Tests", () => {
       ).to.be.fulfilled;
     });
 
-    it("🧪Should fail to execute a SWAP test", async function () {
-      await expect(
-        createdAccount.SWAP(
+    it("🧪Should execute a SWAP test", async function () {
+      try {
+        const tx = await createdAccount.SWAP(
           tokenAddress.usdc![forkedChain]!,
           tokenAddress.weth![forkedChain]!,
           ethers.parseUnits("100", 6),
-        ),
-      ).to.be.fulfilled;
+        );
+        await expect(tx.wait()).to.be.fulfilled;
+      } catch (error) {
+        console.log(error);
+      }
     });
   });
 

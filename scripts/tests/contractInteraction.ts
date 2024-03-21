@@ -1,4 +1,10 @@
-import { Addressable, BaseContract, Contract, Signer } from "ethers";
+import {
+  AddressLike,
+  Addressable,
+  BaseContract,
+  Contract,
+  Signer,
+} from "ethers";
 import { ethers } from "hardhat";
 import {
   AcceptedTokens,
@@ -7,6 +13,7 @@ import {
   tokenAddress,
 } from "~/bin/tokenAddress";
 import { IERC20 } from "~/types/contracts";
+import signerStore from "./signerStore";
 
 export const transferErc20Token = async (
   contract: Contract,
@@ -62,5 +69,24 @@ export const getErc20ImpersonatedFunds = async (
   } catch (error) {
     console.log("getErc20ImpersonatedFunds Error: ", error);
     throw error;
+  }
+};
+
+export const checkEthBalanceAndTransfer = async (
+  address: string,
+  bank: Signer,
+) => {
+  const balance = await ethers.provider.getBalance(address);
+  console.log(`Users : ${address} ETH Balance of ${balance}`);
+
+  if (balance < 1) {
+    const message = {
+      to: address,
+      value: ethers.parseEther("1"),
+    };
+    const tx = await bank.sendTransaction(message);
+    await tx.wait();
+    const balance = await ethers.provider.getBalance(address);
+    console.log(`Users : ${address} ETH Balance of ${balance}`);
   }
 };
