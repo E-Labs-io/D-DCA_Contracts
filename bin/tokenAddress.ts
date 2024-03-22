@@ -1,10 +1,13 @@
 /** @format */
 
 import { AddressLike, Addressable } from "ethers";
+import deploymentConfig from "./deployments.config";
 
-const forkedNetwork: ChainName = "eth";
+const forkedNetwork: ChainName = deploymentConfig().masterChain;
 
-const productionChainAddresses = {
+const productionChainAddresses: {
+  [chain in MainnetNames]: { [Item in TokenListKeys]?: string };
+} = {
   eth: {
     swapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     weth: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -14,8 +17,9 @@ const productionChainAddresses = {
     usdt: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
     compoundV3Usdc: "",
     aaveV3Pool: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
-    universalRouter: "",
+    universalRouter: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
     gho: "0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2f",
+    permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
   },
   arbitrum: {
     swapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
@@ -26,9 +30,10 @@ const productionChainAddresses = {
     usdt: "",
     compoundV3Usdc: "0x9c4ec768c28520B50860ea7a15bd7213a9fF58bf",
     aaveV3Pool: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
-    universalRouter: "",
+    universalRouter: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
+    permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
   },
-  polygon: {
+  matic: {
     swapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     weth: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
     wbtc: "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
@@ -37,7 +42,8 @@ const productionChainAddresses = {
     usdt: "",
     compoundV3Usdc: "0xF25212E676D1F7F89Cd72fFEe66158f541246445",
     aaveV3Pool: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
-    universalRouter: "",
+    universalRouter: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
+    permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
   },
   optimism: {
     swapRouter: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
@@ -48,7 +54,12 @@ const productionChainAddresses = {
     usdt: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
     compoundV3Usdc: "",
     aaveV3Pool: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
-    universalRouter: "",
+    universalRouter: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
+    permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+  },
+  base: {
+    permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    universalRouter: "0x198EF79F1F515F02dFE9e3115eD9fC07183f02fC",
   },
 };
 
@@ -92,12 +103,25 @@ export const tokenAddress: TokenAddressList = {
   universalRouter: {
     eth: productionChainAddresses.eth.universalRouter,
     arbitrum: productionChainAddresses.arbitrum.universalRouter,
+    optimism: productionChainAddresses.optimism.universalRouter,
+    base: productionChainAddresses.base.universalRouter,
     ethGoerli: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
     ethSepolia: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
-    optimism: productionChainAddresses.optimism.universalRouter,
-    arbGoerli: "",
-    opGoerli: "",
+    baseSepolia: "0x050E797f3625EC8785265e1d9BDd4799b97528A1",
+    opSepolia: "0xD5bBa708b39537d33F2812E5Ea032622456F1A95",
+    arbSepolia: "0x4A7b5Da61326A6379179b40d00F57E5bbDC962c2",
     hardhat: productionChainAddresses[forkedNetwork].universalRouter,
+  },
+  permit2: {
+    eth: productionChainAddresses.eth.permit2,
+    arbitrum: productionChainAddresses.arbitrum.permit2,
+    optimism: productionChainAddresses.optimism.permit2,
+    base: productionChainAddresses.base.permit2,
+    ethSepolia: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    baseSepolia: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    opSepolia: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    arbSepolia: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    hardhat: productionChainAddresses[forkedNetwork].permit2,
   },
   usdc: {
     eth: productionChainAddresses.eth.usdc,
@@ -151,7 +175,7 @@ export const tokenAddress: TokenAddressList = {
     maticMumbai: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
     hardhat: "",
   },
-  compoundV3USDC: {
+  compoundV3Usdc: {
     eth: productionChainAddresses.eth.compoundV3Usdc,
     ethGoerli: "",
     ethSepolia: "",
@@ -178,7 +202,7 @@ export const tokenAddress: TokenAddressList = {
     arbGoerli: "",
     arbitrum: "",
     opGoerli: "",
-    hardhat: productionChainAddresses[forkedNetwork].gho,
+    hardhat: productionChainAddresses[forkedNetwork]!.gho,
   },
   ccipRouter: {
     opGoerli: "0xcc5a0B910D9E9504A7561934bed294c51285a78D",
@@ -217,8 +241,9 @@ export type AcceptedProtocolsAndContracts =
   | "aaveV3Pool"
   | "swapRouter"
   | "universalRouter"
-  | "compoundV3USDC"
-  | "ccipRouter";
+  | "compoundV3Usdc"
+  | "ccipRouter"
+  | "permit2";
 
 export type TokenListKeys = AcceptedProtocolsAndContracts | AcceptedTokens;
 export type TokenAddressList = {
@@ -234,20 +259,17 @@ export type ImpersonatorList = {
     [contract in AcceptedTokens]?: string | Addressable;
   };
 };
+export type ChainName = MainnetNames | TestNetNames;
+export type MainnetNames = "eth" | "arbitrum" | "optimism" | "matic" | "base";
 
-export type ChainName =
-  | "eth"
+export type TestNetNames =
   | "ethGoerli"
   | "ethSepolia"
-  | "arbitrum"
   | "arbGoerli"
   | "arbSepolia"
-  | "optimism"
   | "opGoerli"
   | "opSepolia"
-  | "matic"
   | "maticMumbai"
-  | "base"
   | "baseSepolia"
   | "baseGoerli"
   | "hardhat"

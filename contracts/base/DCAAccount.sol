@@ -8,6 +8,7 @@ import "hardhat/console.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
+import {IUniversalRouter} from "../protocols/uniswap/IUniversalRouter.sol";
 import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
 import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
@@ -32,10 +33,11 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
     // Should move to a library using constants
 
     //IDCAExecutor internal _executorAddress;
-    ISwapRouter public SWAP_ROUTER;
+    IUniversalRouter public SWAP_ROUTER;
     DCAReinvest private DCAREINVEST_LIBRARY;
+    address private PERMIT2_ADDRESS;
 
-    uint24 private _poolFee = 10000;
+    uint24 private _poolFee = 5000;
 
     uint256 private _totalIntervalsExecuted;
     uint256 private _totalActiveStrategies;
@@ -45,11 +47,13 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         address executorAddress_,
         address swapRouter_,
         address owner_,
-        address reinvestLibraryContract_
+        address reinvestLibraryContract_,
+        address permit2Contract_
     ) OnlyExecutor(owner_, executorAddress_) {
         //  _executorAddress = IDCAExecutor(executorAddress_);
         DCAREINVEST_LIBRARY = DCAReinvest((reinvestLibraryContract_));
-        SWAP_ROUTER = ISwapRouter(swapRouter_);
+        SWAP_ROUTER = IUniversalRouter(swapRouter_);
+        PERMIT2_ADDRESS = permit2Contract_;
     }
 
     fallback() external payable {}
@@ -78,7 +82,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
      * @param swapRouter_ {address} New address for the Uniswap router
      */
     function updateSwapAddress(address swapRouter_) public onlyOwner {
-        SWAP_ROUTER = ISwapRouter(swapRouter_);
+        SWAP_ROUTER = IUniversalRouter(swapRouter_);
     }
 
     /**
@@ -400,7 +404,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
 
         if (amountIn > 0) {
             if (strategy.reinvest.active) {
-
                 (reinvestAmount, success) = _executeReinvest(
                     strategyId_,
                     strategy.reinvest,
@@ -506,7 +509,7 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         IERC20 token = IERC20(baseToken_);
         uint256 currentAllowance = token.allowance(
             address(this),
-            address(SWAP_ROUTER)
+            PERMIT2_ADDRESS
         );
 
         if (currentAllowance < amount_) {
@@ -567,20 +570,29 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         address targetToken_,
         uint256 amount_
     ) internal returns (uint256) {
-        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
-            .ExactInputSingleParams({
-                tokenIn: baseToken_,
-                tokenOut: targetToken_,
-                fee: _poolFee,
-                recipient: address(this),
-                deadline: block.timestamp + 5 minutes,
-                amountIn: amount_,
-                amountOutMinimum: 0,
-                sqrtPriceLimitX96: 0
-            });
+        bytes memory path = abi.encodePacked(
+            baseToken_,
+            _poolFee,
+            targetToken_
+        );
 
-        //  The call to `exactInputSingle` executes the swap.
-        return SWAP_ROUTER.exactInputSingle(params);
+        bytes memory command = abi.encodePacked(bytes1(0x00));
+
+        uint256 oldBal = IERC20(targetToken_).balanceOf(address(this));
+
+        console.log("Pre Swap Bal", oldBal);
+        console.log("Commands Length", command.length);
+
+        bytes[] memory inputs = new bytes[](1);
+        inputs[0] = abi.encode(address(this), amount_, 0, path, false);
+        console.log("inputs Length", inputs.length);
+
+        SWAP_ROUTER.execute(command, inputs);
+        uint256 newBal = IERC20(targetToken_).balanceOf(address(this));
+
+        console.log("Post Swap Bal", newBal);
+        console.log("Swap Amount", newBal - oldBal);
+        return newBal - oldBal;
     }
 
     /**
@@ -643,7 +655,6 @@ contract DCAAccount is OnlyExecutor, IDCAAccount {
         DCAReinvest.Reinvest memory reinvest_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-
         (bool txSuccess, bytes memory returnData) = address(DCAREINVEST_LIBRARY)
             .delegatecall(
                 abi.encodeWithSelector(

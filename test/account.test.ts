@@ -116,9 +116,10 @@ describe("> DCA Account Tests", () => {
 
       createdAccount = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.universalRouter![forkedChain]!,
         addressStore.user.address,
         ZeroAddress,
+        tokenAddress.permit2![forkedChain]!,
       );
       await createdAccount.waitForDeployment();
       createdAccount = createdAccount.connect(addressStore.user.signer);
@@ -132,7 +133,7 @@ describe("> DCA Account Tests", () => {
 
     it("🧪 Should return the correct swap router", async () => {
       const address = await createdAccount.SWAP_ROUTER();
-      expect(address).to.equal(tokenAddress.swapRouter![forkedChain]);
+      expect(address).to.equal(tokenAddress.universalRouter![forkedChain]);
     });
 
     it("🧪 Should check the Executor address is the ZeroAddress", async () => {
@@ -230,16 +231,12 @@ describe("> DCA Account Tests", () => {
     });
 
     it("🧪Should execute a SWAP test", async function () {
-      try {
-        const tx = await createdAccount.SWAP(
-          tokenAddress.usdc![forkedChain]!,
-          tokenAddress.weth![forkedChain]!,
-          ethers.parseUnits("100", 6),
-        );
-        await expect(tx.wait()).to.be.fulfilled;
-      } catch (error) {
-        console.log(error);
-      }
+      const tx = await createdAccount.SWAP(
+        tokenAddress.usdc![forkedChain]!,
+        tokenAddress.weth![forkedChain]!,
+        ethers.parseUnits("100", 6),
+      );
+      await expect(tx.wait()).to.be.fulfilled;
     });
   });
 

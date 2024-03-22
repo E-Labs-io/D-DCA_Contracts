@@ -13,6 +13,23 @@
 ### execute
 
 ```solidity
+function execute(bytes commands, bytes[] inputs) external payable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| commands | bytes | undefined |
+| inputs | bytes[] | undefined |
+
+### execute
+
+```solidity
 function execute(bytes commands, bytes[] inputs, uint256 deadline) external payable
 ```
 

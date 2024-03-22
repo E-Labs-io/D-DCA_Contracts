@@ -87,7 +87,7 @@ ONLY IN CONTRACT FOR DEVELOPMENT, WILL REMOVE ON PUBLIC DEPLOY
 ### SWAP_ROUTER
 
 ```solidity
-function SWAP_ROUTER() external view returns (contract ISwapRouter)
+function SWAP_ROUTER() external view returns (contract IUniversalRouter)
 ```
 
 
@@ -99,7 +99,7 @@ function SWAP_ROUTER() external view returns (contract ISwapRouter)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | contract ISwapRouter | undefined |
+| _0 | contract IUniversalRouter | undefined |
 
 ### SetupStrategy
 

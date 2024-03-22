@@ -16,16 +16,19 @@ contract DCAFactory is OnlyActive {
 
     address public immutable SWAP_ROUTER;
     address private _executorAddress;
+    address private _permit2Contract;
     address public reInvestLogicContract;
 
     constructor(
         address executorAddress_,
         address swapRouter_,
-        address reinvestLibraryContract_
+        address reinvestLibraryContract_,
+        address permit2Contract_
     ) Ownable(_msgSender()) {
         SWAP_ROUTER = swapRouter_;
         _executorAddress = executorAddress_;
         reInvestLogicContract = reinvestLibraryContract_;
+        _permit2Contract = permit2Contract_;
     }
 
     fallback() external payable {
@@ -45,7 +48,8 @@ contract DCAFactory is OnlyActive {
             _executorAddress,
             SWAP_ROUTER,
             sender,
-            reInvestLogicContract
+            reInvestLogicContract,
+            _permit2Contract
         );
 
         // Store the new account's address in the mapping.

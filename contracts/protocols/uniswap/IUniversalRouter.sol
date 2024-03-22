@@ -22,4 +22,9 @@ interface IUniversalRouter {
         bytes[] calldata inputs,
         uint256 deadline
     ) external payable;
+
+    function execute(
+        bytes calldata commands,
+        bytes[] calldata inputs
+    ) external payable;
 }

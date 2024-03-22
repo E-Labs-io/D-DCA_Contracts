@@ -21,14 +21,27 @@ import type {
 } from "../../../common";
 
 export interface IUniversalRouterInterface extends Interface {
-  getFunction(nameOrSignature: "execute"): FunctionFragment;
+  getFunction(
+    nameOrSignature: "execute(bytes,bytes[])" | "execute(bytes,bytes[],uint256)"
+  ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "execute",
+    functionFragment: "execute(bytes,bytes[])",
+    values: [BytesLike, BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "execute(bytes,bytes[],uint256)",
     values: [BytesLike, BytesLike[], BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "execute(bytes,bytes[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "execute(bytes,bytes[],uint256)",
+    data: BytesLike
+  ): Result;
 }
 
 export interface IUniversalRouter extends BaseContract {
@@ -74,7 +87,13 @@ export interface IUniversalRouter extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  execute: TypedContractMethod<
+  "execute(bytes,bytes[])": TypedContractMethod<
+    [commands: BytesLike, inputs: BytesLike[]],
+    [void],
+    "payable"
+  >;
+
+  "execute(bytes,bytes[],uint256)": TypedContractMethod<
     [commands: BytesLike, inputs: BytesLike[], deadline: BigNumberish],
     [void],
     "payable"
@@ -85,7 +104,14 @@ export interface IUniversalRouter extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "execute"
+    nameOrSignature: "execute(bytes,bytes[])"
+  ): TypedContractMethod<
+    [commands: BytesLike, inputs: BytesLike[]],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "execute(bytes,bytes[],uint256)"
   ): TypedContractMethod<
     [commands: BytesLike, inputs: BytesLike[], deadline: BigNumberish],
     [void],
