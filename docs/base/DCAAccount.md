@@ -87,7 +87,7 @@ ONLY IN CONTRACT FOR DEVELOPMENT, WILL REMOVE ON PUBLIC DEPLOY
 ### SWAP_ROUTER
 
 ```solidity
-function SWAP_ROUTER() external view returns (contract ISwapRouter)
+function SWAP_ROUTER() external view returns (contract ISwapRouter02)
 ```
 
 
@@ -99,7 +99,7 @@ function SWAP_ROUTER() external view returns (contract ISwapRouter)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | contract ISwapRouter | undefined |
+| _0 | contract ISwapRouter02 | undefined |
 
 ### SetupStrategy
 
@@ -504,7 +504,7 @@ function updateSwapAddress(address swapRouter_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| swapRouter_ | address | {address} New address for the Uniswap router |
+| swapRouter_ | address | New address for the Uniswap router |
 
 
 

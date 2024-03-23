@@ -23,7 +23,7 @@ dotenv.config();
 
 console.log("🟢 Hardhat : Mounted.");
 // Some quick checks to make sure our .env is working.
-const { rcpEndPoints, masterDeployer, etherscanApis, devAccounts } =
+const { rcpEndPoints, masterDeployer, etherscanApis, devAccounts, chainIds } =
   checkPrivateKeys();
 
 const gasPrice = 25000000000;
@@ -31,13 +31,35 @@ console.log("❗️Gas Price Set: ", gasPrice / 10 ** 9, "gwei");
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.20",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 1000,
+    compilers: [
+      {
+        version: "0.8.20",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000,
+          },
+        },
       },
-    },
+      {
+        version: "0.7.5",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000,
+          },
+        },
+      },
+      {
+        version: "0.7.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000,
+          },
+        },
+      },
+    ],
   },
   typechain: {
     outDir: "types/contracts",
@@ -63,11 +85,27 @@ const config: HardhatUserConfig = {
     apiKey: etherscanApis,
     customChains: [
       {
+        network: "base",
+        chainId: chainIds.base!,
+        urls: {
+          apiURL: "https://api.basescan.org/api",
+          browserURL: "https://basescan.org",
+        },
+      },
+      {
         network: "baseGoerli",
-        chainId: 84531,
+        chainId: chainIds.baseGoerli!,
         urls: {
           apiURL: "https://api-goerli.basescan.org/api",
           browserURL: "https://goerli.basescan.org",
+        },
+      },
+      {
+        network: "baseSepolia",
+        chainId: chainIds.baseSepolia!,
+        urls: {
+          apiURL: "https://api-goerli.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org",
         },
       },
 
@@ -157,7 +195,7 @@ const config: HardhatUserConfig = {
   networks: {
     fork: {
       gas: "auto",
-      chainId: 1,
+      chainId: chainIds[deploymentConfig().masterChain],
       url: rcpEndPoints(deploymentConfig().masterChain)!,
       mining: {
         auto: true,
@@ -166,7 +204,7 @@ const config: HardhatUserConfig = {
     },
     hardhat: {
       gas: "auto",
-      chainId: 1,
+      chainId: chainIds[deploymentConfig().masterChain],
       forking: {
         enabled: true,
         url: rcpEndPoints(deploymentConfig().masterChain)!,
@@ -177,10 +215,22 @@ const config: HardhatUserConfig = {
         interval: 5000,
       },
     },
+    base: {
+      url: rcpEndPoints("base"),
+      accounts: devAccounts,
+      chainId: chainIds.base,
+      gasPrice: gasPrice,
+    },
     baseGoerli: {
       url: rcpEndPoints("baseGoerli"),
       accounts: devAccounts,
-      chainId: 84531,
+      chainId: chainIds.baseGoerli,
+      gasPrice: gasPrice,
+    },
+    baseSepolia: {
+      url: rcpEndPoints("baseSepolia"),
+      accounts: devAccounts,
+      chainId: chainIds.baseSepolia,
       gasPrice: gasPrice,
     },
     optimism: {
@@ -244,8 +294,8 @@ const config: HardhatUserConfig = {
       gasPrice: gasPrice,
     },
     localhost: {
-      url: "http://127.0.0.1:8545",
-      chainId: 1,
+      url: "HTTP://192.168.0.41:7545",
+      chainId: 5777,
       gasPrice: gasPrice,
     },
   },

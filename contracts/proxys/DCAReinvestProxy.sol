@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 //DEV
 import "hardhat/console.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
-import {DCAReinvestLogic} from "../utils/DCAReinvestLogic.sol";
+import {DCAReinvestLogic} from "../logic/ReinvestLogic.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/proxy/Proxy.sol";

@@ -1,17 +1,17 @@
 /** @format */
 
 import { ContractNames } from "./deployedAddress";
-import { ChainName } from "./tokenAddress";
+import { ChainName, MainnetNames } from "./tokenAddress";
 
 // BlockToken BlockSales BlockStore
 
 export default function deploymentConfig() {
   const deployCue: ContractNames[] = [];
-  const masterChain: ChainName = "optimism";
+  const masterChain: MainnetNames = "optimism";
   const forkBlockNumber = () => {
-    const list: { [chain in ChainName]?: number } = {
-      eth: 19482918,
-      optimism: 21838708,
+    const list: { [chain in MainnetNames]?: number } = {
+      eth: 19493637,
+      optimism: 117000000,
     };
 
     return list[masterChain];

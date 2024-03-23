@@ -1,10 +1,4 @@
-import {
-  AddressLike,
-  Addressable,
-  BaseContract,
-  Contract,
-  Signer,
-} from "ethers";
+import { Addressable, BigNumberish, Contract, Signer } from "ethers";
 import { ethers } from "hardhat";
 import {
   AcceptedTokens,
@@ -13,28 +7,27 @@ import {
   tokenAddress,
 } from "~/bin/tokenAddress";
 import { IERC20 } from "~/types/contracts";
-import signerStore from "./signerStore";
 
 export const transferErc20Token = async (
-  contract: Contract,
-  to: string | Addressable,
-  amount: number | BigInt,
+  contract: IERC20,
+  to: Addressable,
+  amount: BigNumberish,
 ) => {
   const tx = await contract.transfer(to, amount);
   tx.wait();
 };
 
 export const approveErc20Spend = async (
-  contract: Contract,
-  to: string,
-  amount: number | BigInt,
+  contract: IERC20,
+  to: Addressable,
+  amount: BigNumberish,
 ) => {
   const tx = await contract.approve(to, amount);
   tx.wait();
 };
 
 export const getErc20Balance = async (
-  contract: Contract,
+  contract: IERC20,
   address: string | Addressable,
 ) => {
   const balance = await contract.balanceOf(address);
@@ -44,22 +37,26 @@ export const getErc20Balance = async (
 export const connectToErc20 = async (
   address: string,
   signer: Signer,
-): Promise<Contract> =>
-  ethers.getContractAt("contracts/tokens/IERC20.sol:IERC20", address, signer);
+): Promise<IERC20> =>
+  (await ethers.getContractAt(
+    "contracts/tokens/IERC20.sol:IERC20",
+    address,
+    signer,
+  )) as unknown as IERC20;
 
 export const getErc20ImpersonatedFunds = async (
   chain: ChainName,
-  to: string | Addressable,
-  amount: number | BigInt,
+  to: Addressable,
+  amount: BigNumberish,
   token: AcceptedTokens,
-): Promise<Contract> => {
+): Promise<IERC20> => {
   try {
     const impersonater = productionChainImpersonators[chain]![token]!;
     const impSigner: Signer = await ethers.getImpersonatedSigner(
       impersonater as string,
     );
 
-    const erc20Contract = await connectToErc20(
+    const erc20Contract: IERC20 = await connectToErc20(
       tokenAddress[token]![chain] as string,
       impSigner,
     );
@@ -75,18 +72,28 @@ export const getErc20ImpersonatedFunds = async (
 export const checkEthBalanceAndTransfer = async (
   address: string,
   bank: Signer,
+  options?: { amount?: BigNumberish; force?: true; topUpTo?: number },
 ) => {
   const balance = await ethers.provider.getBalance(address);
   console.log(`Users : ${address} ETH Balance of ${balance}`);
 
-  if (balance < 1) {
+  if (balance < 1 || options?.force) {
     const message = {
       to: address,
-      value: ethers.parseEther("1"),
+      value: options?.amount ?? ethers.parseEther("1"),
     };
     const tx = await bank.sendTransaction(message);
     await tx.wait();
     const balance = await ethers.provider.getBalance(address);
     console.log(`Users : ${address} ETH Balance of ${balance}`);
+  } else if (options?.topUpTo) {
+    const defisate = options?.topUpTo - Number(balance);
+    if (defisate > 0) {
+      const message = {
+        to: address,
+        value: defisate,
+      };
+      const tx = await bank.sendTransaction(message);
+    }
   }
 };

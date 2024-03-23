@@ -17,18 +17,22 @@ export default function checkPrivateKeys() {
   const masterDeployer = `0x${process.env.MASTER_DEPLOYER_KEY}`;
   const rcpEndPoints = (net?: ChainName): string => {
     const rpc: { [chain in ChainName]?: string } = {
-      baseGoerli: `https://base-goerli.public.blastapi.io`,
+      baseGoerli: `https://base-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_KEY}`,
+      baseSepolia: `https://base-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_KEY}`,
+      base: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_KEY}`,
       maticMumbai: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MATICMUMBAI_KEY}`,
       matic: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MATICMUMBAI_KEY}`,
       eth: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
       ethSepolia: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_KEY}`,
-      optimism: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
-      opGoerli: `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_OPGOERLI_KEY}`,
+      optimism: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_OP_KEY}`,
+      opGoerli: `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_OP_KEY}`,
       arbGoerli: `https://arb-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       arbSepolia: `https://arb-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_ARBSEPOLIA_KEY}`,
       arbitrum: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       ethGoerli: `https:/eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
     };
+
+    //       optimism: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_OP_KEY}`,
 
     let result = net ? rpc[net] : rpc.ethGoerli;
     return result!;
@@ -46,6 +50,9 @@ export default function checkPrivateKeys() {
     arbitrum: process.env.ETHERSCAN_API_KEY_ARBITRUM!,
     arbGoerli: process.env.ETHERSCAN_API_KEY_ARBITRUM!,
     arbSepolia: process.env.ETHERSCAN_API_KEY_ARBITRUM!,
+    base: process.env.ETHERSCAN_API_KEY_BASE!,
+    baseGoerli: process.env.ETHERSCAN_API_KEY_BASE!,
+    baseSepolia: process.env.ETHERSCAN_API_KEY_BASE!,
   };
 
   const chainIds: { [chain in ChainName]?: number } = {
@@ -58,7 +65,9 @@ export default function checkPrivateKeys() {
     arbitrum: 42161,
     arbGoerli: 421613,
     arbSepolia: 11155420,
+    base: 8453,
     baseGoerli: 84531,
+    baseSepolia: 84532,
     matic: 137,
     maticMumbai: 80001,
   };

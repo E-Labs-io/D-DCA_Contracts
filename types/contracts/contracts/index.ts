@@ -5,6 +5,8 @@ import type * as base from "./base";
 export type { base };
 import type * as interfaces from "./interfaces";
 export type { interfaces };
+import type * as logic from "./logic";
+export type { logic };
 import type * as modules from "./modules";
 export type { modules };
 import type * as protocols from "./protocols";

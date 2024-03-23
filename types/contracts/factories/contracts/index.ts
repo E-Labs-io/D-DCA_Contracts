@@ -3,6 +3,7 @@
 /* eslint-disable */
 export * as base from "./base";
 export * as interfaces from "./interfaces";
+export * as logic from "./logic";
 export * as modules from "./modules";
 export * as protocols from "./protocols";
 export * as proxys from "./proxys";

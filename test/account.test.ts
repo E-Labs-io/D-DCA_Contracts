@@ -1,22 +1,12 @@
 import { expect, assert } from "chai";
 import hre, { ethers, upgrades } from "hardhat";
+import { AbiCoder, ZeroAddress } from "ethers";
 import {
-  AbiCoder,
-  AddressLike,
-  Addressable,
-  Contract,
-  Signer,
-  ZeroAddress,
-} from "ethers";
-import {
-  DCAFactory,
   DCAAccount,
-  DCAReinvestProxy,
-  ForwardReinvest,
   DCAExecutor,
   IERC20,
   type DCAReinvest,
-  type DCAReinvestLogic,
+  IAToken,
 } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 import {
@@ -43,9 +33,9 @@ describe("> DCA Account Tests", () => {
   const forkedChain = deploymentConfig().masterChain;
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
 
-  let usdcContract: Contract;
-  let wethContract: Contract;
-  let aWethContract: IERC20;
+  let usdcContract: IERC20;
+  let wethContract: IERC20;
+  let aWethContract: IAToken;
 
   let createdAccount: DCAAccount;
   let reinvestContract: DCAReinvest;
@@ -66,18 +56,26 @@ describe("> DCA Account Tests", () => {
       "target3",
     ]);
 
-    aWethContract = await connectToErc20(
+    aWethContract = (await connectToErc20(
       tokenAddress?.aWeth?.[forkedChain]! as string,
       addressStore.deployer.signer,
-    );
+    )) as IAToken;
 
     const usedImpersonater = await ethers.getImpersonatedSigner(
       productionChainImpersonators[forkedChain]?.usdc as string,
     );
 
+    console.log(
+      "USDC Impersonator: ",
+      productionChainImpersonators[forkedChain]?.usdc,
+    );
+
+    console.log("USDC Contract: ", tokenAddress?.usdc?.[forkedChain]!);
+
     await checkEthBalanceAndTransfer(
       productionChainImpersonators[forkedChain]?.usdc as string,
       addressStore.deployer.signer,
+      { amount: ethers.parseEther("2"), force: true },
     );
 
     usdcContract = await connectToErc20(
@@ -92,6 +90,7 @@ describe("> DCA Account Tests", () => {
     await checkEthBalanceAndTransfer(
       productionChainImpersonators[forkedChain]?.weth as string,
       addressStore.deployer.signer,
+      { amount: ethers.parseEther("2"), force: true },
     );
 
     wethContract = await connectToErc20(
@@ -99,9 +98,14 @@ describe("> DCA Account Tests", () => {
       wethImpersonator,
     );
 
+    console.log(
+      "USDC Balance",
+      await usdcContract.balanceOf(await usedImpersonater.getAddress()),
+    );
+
     const tx = await usdcContract.transfer(
       addressStore.user.address,
-      ethers.parseUnits("100000", 9),
+      ethers.parseUnits("20000", 6),
     );
     await tx.wait();
   }
@@ -111,7 +115,7 @@ describe("> DCA Account Tests", () => {
     it("🧪 Should deploy the contract", async () => {
       const factoryFactory = await ethers.getContractFactory(
         "DCAAccount",
-        addressStore.user.signer,
+        addressStore.deployer.signer,
       );
 
       createdAccount = await factoryFactory.deploy(
@@ -230,16 +234,12 @@ describe("> DCA Account Tests", () => {
     });
 
     it("🧪Should execute a SWAP test", async function () {
-      try {
-        const tx = await createdAccount.SWAP(
-          tokenAddress.usdc![forkedChain]!,
-          tokenAddress.weth![forkedChain]!,
-          ethers.parseUnits("100", 6),
-        );
-        await expect(tx.wait()).to.be.fulfilled;
-      } catch (error) {
-        console.log(error);
-      }
+      const tx = await createdAccount.SWAP(
+        tokenAddress.usdc![forkedChain]!,
+        tokenAddress.weth![forkedChain]!,
+        ethers.parseUnits("100", 6),
+      );
+      await expect(tx.wait()).to.be.fulfilled;
     });
   });
 
@@ -472,7 +472,7 @@ describe("> DCA Account Tests", () => {
       );
     });
     it("🧪 Should add forward reinvest to strategy 1", async () => {
-      const reinvest: DCAReinvestLogic.ReinvestStruct = {
+      const reinvest: DCAReinvestLogic.Reinvest = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           [0x01, addressStore.target3.address, tokenAddress.weth![forkedChain]],

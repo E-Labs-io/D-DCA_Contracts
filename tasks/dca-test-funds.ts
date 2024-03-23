@@ -16,16 +16,17 @@ task(taskId, "Register the DCAAccount Contract to block explorer").setAction(
     const [owner, executorEOA] = await hre.ethers.getSigners();
     const network = hre.network.name as ChainName;
 
-    const ERC20Address = tokenAddress.usdt[network] as string;
-    const ERC20Wallet = productionChainImpersonators.arbitrum.usdt;
+    const ERC20Address = tokenAddress.usdt![network] as string;
+    const ERC20Wallet = productionChainImpersonators.arbitrum!.usdt;
 
-    const impersonateSigner =
-      await hre.ethers.getImpersonatedSigner(ERC20Wallet);
+    const impersonateSigner = await hre.ethers.getImpersonatedSigner(
+      ERC20Wallet as string,
+    );
 
     const ERC20Contract = await hre.ethers.getContractAt(
       "IERC20",
       ERC20Address,
-      impersonateSigner
+      impersonateSigner,
     );
     // Transfer Funds
 
@@ -41,5 +42,5 @@ task(taskId, "Register the DCAAccount Contract to block explorer").setAction(
     await tx.wait();
 
     console.log("Transfered USDC:", tx);
-  }
+  },
 );

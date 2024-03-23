@@ -3,3 +3,4 @@
 /* eslint-disable */
 import type * as iPoolSol from "./IPool.sol";
 export type { iPoolSol };
+export type { IAToken } from "./IAToken";

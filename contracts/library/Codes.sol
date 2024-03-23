@@ -9,4 +9,8 @@ library ReinvestCodes {
     uint8 constant AAVE = 0x12;
     uint8 constant HOP = 0x13;
     uint8 constant POOLTOGETHER_ETH = 0x14;
+
+    function isCode(uint8 try_, uint8 code_) internal view returns (bool){
+        
+    }
 }

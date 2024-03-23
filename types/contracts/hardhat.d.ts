@@ -90,6 +90,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDCAExecutor__factory>;
     getContractFactory(
+      name: "DCAAccountLogic",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DCAAccountLogic__factory>;
+    getContractFactory(
+      name: "DCAReinvestLogic",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DCAReinvestLogic__factory>;
+    getContractFactory(
       name: "AaveV3Reinvest",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AaveV3Reinvest__factory>;
@@ -105,6 +113,10 @@ declare module "hardhat/types/runtime" {
       name: "ForwardReinvest",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ForwardReinvest__factory>;
+    getContractFactory(
+      name: "IAToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAToken__factory>;
     getContractFactory(
       name: "AaveIPool",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -138,6 +150,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CometStorage__factory>;
     getContractFactory(
+      name: "ISwapRouter02",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapRouter02__factory>;
+    getContractFactory(
       name: "IUniversalRouter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IUniversalRouter__factory>;
@@ -162,9 +178,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "DCAReinvestLogic",
+      name: "Swap",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.DCAReinvestLogic__factory>;
+    ): Promise<Contracts.Swap__factory>;
 
     getContractAt(
       name: "OwnableUpgradeable",
@@ -262,6 +278,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IDCAExecutor>;
     getContractAt(
+      name: "DCAAccountLogic",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DCAAccountLogic>;
+    getContractAt(
+      name: "DCAReinvestLogic",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DCAReinvestLogic>;
+    getContractAt(
       name: "AaveV3Reinvest",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -281,6 +307,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ForwardReinvest>;
+    getContractAt(
+      name: "IAToken",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAToken>;
     getContractAt(
       name: "AaveIPool",
       address: string | ethers.Addressable,
@@ -322,6 +353,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.CometStorage>;
     getContractAt(
+      name: "ISwapRouter02",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapRouter02>;
+    getContractAt(
       name: "IUniversalRouter",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -352,10 +388,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "DCAReinvestLogic",
+      name: "Swap",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.DCAReinvestLogic>;
+    ): Promise<Contracts.Swap>;
 
     deployContract(
       name: "OwnableUpgradeable",
@@ -434,6 +470,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDCAExecutor>;
     deployContract(
+      name: "DCAAccountLogic",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAAccountLogic>;
+    deployContract(
+      name: "DCAReinvestLogic",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvestLogic>;
+    deployContract(
       name: "AaveV3Reinvest",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AaveV3Reinvest>;
@@ -449,6 +493,10 @@ declare module "hardhat/types/runtime" {
       name: "ForwardReinvest",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ForwardReinvest>;
+    deployContract(
+      name: "IAToken",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAToken>;
     deployContract(
       name: "AaveIPool",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -482,6 +530,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CometStorage>;
     deployContract(
+      name: "ISwapRouter02",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISwapRouter02>;
+    deployContract(
       name: "IUniversalRouter",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IUniversalRouter>;
@@ -506,9 +558,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
-      name: "DCAReinvestLogic",
+      name: "Swap",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.DCAReinvestLogic>;
+    ): Promise<Contracts.Swap>;
 
     deployContract(
       name: "OwnableUpgradeable",
@@ -606,6 +658,16 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IDCAExecutor>;
     deployContract(
+      name: "DCAAccountLogic",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAAccountLogic>;
+    deployContract(
+      name: "DCAReinvestLogic",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DCAReinvestLogic>;
+    deployContract(
       name: "AaveV3Reinvest",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -625,6 +687,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ForwardReinvest>;
+    deployContract(
+      name: "IAToken",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAToken>;
     deployContract(
       name: "AaveIPool",
       args: any[],
@@ -666,6 +733,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.CometStorage>;
     deployContract(
+      name: "ISwapRouter02",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISwapRouter02>;
+    deployContract(
       name: "IUniversalRouter",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -696,10 +768,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
-      name: "DCAReinvestLogic",
+      name: "Swap",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.DCAReinvestLogic>;
+    ): Promise<Contracts.Swap>;
 
     // default types
     getContractFactory(

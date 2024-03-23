@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 //DEV
 import "hardhat/console.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
-
 import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
 import {AaveV3Reinvest} from "../modules/AaveV3Reinvest.sol";
 
@@ -50,7 +49,6 @@ abstract contract DCAReinvestLogic {
         Reinvest memory reinvestData_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-
         uint8 code = reinvestData_.investCode;
 
         if (code == ReinvestCodes.NOT_ACTIVE) return (amount, success);
@@ -70,9 +68,4 @@ abstract contract DCAReinvestLogic {
             reinvestData_.investCode == ReinvestCodes.AAVE
         ) return AaveV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
     }
-
-    /*     function getActiveReinvestLibrarys()public pure returns(uint8[] memory codes){
-        codes = abi.decode(ACTIVE_REINVESTS,(uint8[]));
-        return codes;
-    } */
 }
