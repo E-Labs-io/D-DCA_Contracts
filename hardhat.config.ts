@@ -23,8 +23,14 @@ dotenv.config();
 
 console.log("🟢 Hardhat : Mounted.");
 // Some quick checks to make sure our .env is working.
-const { rcpEndPoints, masterDeployer, etherscanApis, devAccounts, chainIds } =
-  checkPrivateKeys();
+export const {
+  rcpEndPoints,
+  masterDeployer,
+  etherscanApis,
+  devAccounts,
+  chainIds,
+} = checkPrivateKeys();
+export const { masterChain, forkBlockNumber } = deploymentConfig();
 
 const gasPrice = 25000000000;
 console.log("❗️Gas Price Set: ", gasPrice / 10 ** 9, "gwei");
@@ -195,8 +201,8 @@ const config: HardhatUserConfig = {
   networks: {
     fork: {
       gas: "auto",
-      chainId: chainIds[deploymentConfig().masterChain],
-      url: rcpEndPoints(deploymentConfig().masterChain)!,
+      chainId: chainIds[masterChain],
+      url: rcpEndPoints(masterChain)!,
       mining: {
         auto: true,
         interval: 5000,
@@ -204,11 +210,11 @@ const config: HardhatUserConfig = {
     },
     hardhat: {
       gas: "auto",
-      chainId: chainIds[deploymentConfig().masterChain],
+      chainId: chainIds[masterChain],
       forking: {
         enabled: true,
-        url: rcpEndPoints(deploymentConfig().masterChain)!,
-        blockNumber: deploymentConfig().forkBlockNumber(),
+        url: rcpEndPoints(masterChain)!,
+        blockNumber: forkBlockNumber(),
       },
       mining: {
         auto: true,

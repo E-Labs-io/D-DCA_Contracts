@@ -17,9 +17,10 @@ import {
   abi as swapRouterABI,
   bytecode as SWAP_ROUTER_BYTECODE,
 } from "@uniswap/swap-router-contracts/artifacts/contracts/SwapRouter02.sol/SwapRouter02.json";
+import { resetFork } from "~/scripts/tests/forking";
 
 describe("> Uniswap Tests Tests", () => {
-  console.log("🧪 DCA Account Tests : Mounted");
+  console.log("🧪 Uniswap Tests : Mounted");
 
   const forkedChain = deploymentConfig().masterChain;
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
@@ -33,19 +34,14 @@ describe("> Uniswap Tests Tests", () => {
   let addressStore: SignerStore;
   let swapRouter: ISwapRouter02;
 
-  before(async function () {
-    await preTest();
-  });
+ before(async function () {
+   await resetFork(hre);
+   await preTest();
+ });
 
   async function preTest() {
-    console.log("⭕️ NETWORK :", hre.network.name);
 
     addressStore = await signerStore(ethers, ["deployer"]);
-
-    console.log(
-      "Deployer Balance",
-      await ethers.provider.getBalance(addressStore.deployer.address),
-    );
 
     // SWAP ROUTER
     swapRouter = (await ethers.getContractAt(
@@ -62,13 +58,6 @@ describe("> Uniswap Tests Tests", () => {
       tokenAddress?.usdc?.[forkedChain]! as string,
       usedImpersonater,
     );
-
-    console.log(
-      "USDC Impersonator: ",
-      productionChainImpersonators[forkedChain]?.usdc,
-    );
-
-    console.log("USDC Contract: ", tokenAddress?.usdc?.[forkedChain]!);
 
     await checkEthBalanceAndTransfer(
       productionChainImpersonators[forkedChain]?.usdc as string,
@@ -88,18 +77,8 @@ describe("> Uniswap Tests Tests", () => {
       addressStore.deployer.signer,
     );
 
-    console.log(
-      "USDC Balance",
-      await usdcContract.balanceOf(await usedImpersonater.getAddress()),
-    );
-
-    console.log(
-      "Deployer Balance",
-      await ethers.provider.getBalance(addressStore.deployer.address),
-    );
 
     const block = await hre.ethers.provider.getBlock("latest");
-    console.log("Current Block", block?.timestamp);
     swapParams = {
       tokenIn: tokenAddress.usdc![forkedChain]!,
       tokenOut: tokenAddress.weth![forkedChain]!,
@@ -175,8 +154,6 @@ describe("> Uniswap Tests Tests", () => {
     });
 
     it("🧪 Should revert a USDC > WETH trade - Not spend approved", async () => {
-      /*    const tx = await swapRouter.exactInputSingle(swapParams);
-      await tx.wait(); */
       await expect(swapRouter.exactInputSingle(swapParams)).to.be.revertedWith(
         "STF",
       );

@@ -460,7 +460,7 @@ function renounceOwnership() external nonpayable
 ### setStrategyReinvest
 
 ```solidity
-function setStrategyReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest reinvest_) external nonpayable
+function setStrategyReinvest(uint256 strategyId_, IDCADataStructures.Reinvest reinvest_) external nonpayable
 ```
 
 
@@ -472,7 +472,7 @@ function setStrategyReinvest(uint256 strategyId_, DCAReinvestLogic.Reinvest rein
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | undefined |
-| reinvest_ | DCAReinvestLogic.Reinvest | undefined |
+| reinvest_ | IDCADataStructures.Reinvest | undefined |
 
 ### transferOwnership
 

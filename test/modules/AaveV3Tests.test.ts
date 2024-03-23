@@ -1,31 +1,15 @@
 import { expect, assert } from "chai";
-import hre, { ethers, upgrades } from "hardhat";
-import {
-  AbiCoder,
-  AddressLike,
-  Addressable,
-  Contract,
-  Signer,
-  ZeroAddress,
-} from "ethers";
-import {
-  DCAFactory,
-  DCAAccount,
-  DCAReinvestProxy,
-  ForwardReinvest,
-  DCAExecutor,
-  IERC20,
-} from "~/types/contracts";
+import hre, { ethers } from "hardhat";
+import { AbiCoder, Addressable, ZeroAddress } from "ethers";
+import { DCAAccount, DCAExecutor, IERC20 } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 import {
-  DCAAccountFactoryArguments,
   DCAExecutorArguments,
   newStrat,
 } from "~/deploy/deploymentArguments/DCA.arguments";
-import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
+import { tokenAddress } from "~/bin/tokenAddress";
 import { EMPTY_STRATEGY } from "~/bin/emptyData";
 import { compareStructs } from "~/scripts/tests/comparisons";
-import { erc20 } from "~/types/contracts/@openzeppelin/contracts/token";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
 import type {
@@ -38,12 +22,11 @@ import {
   connectToErc20,
   getErc20Balance,
   getErc20ImpersonatedFunds,
-  transferErc20Token,
 } from "~/scripts/tests/contractInteraction";
-import { table } from "console";
+import { resetFork } from "~/scripts/tests/forking";
 
 describe("> Aave V3 Reinvest Test", () => {
-  console.log("🧪 DCA Account Tests : Mounted");
+  console.log("🧪 DCA Reinvest Modula : Aave V3 Tests : Mounted");
 
   const forkedChain = deploymentConfig().masterChain;
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
@@ -59,6 +42,7 @@ describe("> Aave V3 Reinvest Test", () => {
   let addressStore: SignerStore;
 
   before(async function () {
+    await resetFork(hre);
     await preTest();
   });
 
@@ -77,14 +61,14 @@ describe("> Aave V3 Reinvest Test", () => {
 
     usdcContract = await getErc20ImpersonatedFunds(
       forkedChain,
-      addressStore.user.address,
+      addressStore.user.address as Addressable,
       ethers.parseUnits("100000", 6),
       "usdc",
     );
 
     wethContract = await getErc20ImpersonatedFunds(
       forkedChain,
-      addressStore.user.address,
+      addressStore.user.address as Addressable,
       ethers.parseEther("10"),
       "weth",
     );
@@ -186,11 +170,11 @@ describe("> Aave V3 Reinvest Test", () => {
       );
       await approveErc20Spend(
         uscUsercontract,
-        createdAccount.target as string,
+        createdAccount.target as Addressable,
         ethers.parseUnits("1000", 6),
       ).catch((error) => console.log("approve error: ", error));
 
-      const reinvest: DCAReinvest.ReinvestStruct = {
+      const reinvest: IDCADataStructures.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           [
@@ -256,7 +240,7 @@ describe("> Aave V3 Reinvest Test", () => {
       );
 
       const tx = await aaveV3Contract.withdraw(
-        tokenAddress.weth![forkedChain],
+        tokenAddress.weth![forkedChain] as Addressable,
         ethers.parseEther("1"),
         addressStore.user.address,
       );
@@ -274,7 +258,7 @@ describe("> Aave V3 Reinvest Test", () => {
   describe("💡 Execution", () => {
     it("🧪 Should show balance of aWETH == 0", async () => {
       const bal = await getErc20Balance(aWethContract, createdAccount.target);
-      expect(Number(bal) === 0).to.be.true;
+      expect(bal === 0n).to.be.true;
     });
 
     it("🧪 Should execute strategy 1", async () => {
@@ -289,9 +273,10 @@ describe("> Aave V3 Reinvest Test", () => {
         .withArgs(1, true);
       expect(recipt).to.emit(createdAccount, "StrategyExecuted");
     });
+
     it("🧪 Should show balance of aWETH > 0", async () => {
-      const bal1 = await getErc20Balance(aWethContract, createdAccount.target);
-      expect(Number(bal1) > 0).to.be.true;
+      const bal = await getErc20Balance(aWethContract, createdAccount.target);
+      expect(bal > 0n).to.be.true;
     });
   });
 

@@ -1,7 +1,7 @@
 import { expect, assert } from "chai";
 import hre, { ethers, upgrades } from "hardhat";
-import { AbiCoder, Contract, ZeroAddress } from "ethers";
-import { DCAAccount, DCAExecutor } from "~/types/contracts";
+import { AbiCoder, Addressable, Contract, ZeroAddress } from "ethers";
+import { DCAAccount, DCAExecutor, IAToken, IERC20 } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 import {
   DCAExecutorArguments,
@@ -20,16 +20,17 @@ import {
   getErc20ImpersonatedFunds,
   transferErc20Token,
 } from "~/scripts/tests/contractInteraction";
+import { resetFork } from "~/scripts/tests/forking";
 
 describe("> Basic Reinvest Test", () => {
-  console.log("🧪 DCA Account Tests : Mounted");
+  console.log("🧪 DCA Reinvest Modula : Basic Tests : Mounted");
 
   const forkedChain = deploymentConfig().masterChain;
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
 
-  let usdcContract: Contract;
-  let wethContract: Contract;
-  let aWethContract: Contract;
+  let usdcContract: IERC20;
+  let wethContract: IERC20;
+  let aWethContract: IAToken;
   let aaveV3Contract: Contract;
 
   let createdAccount: DCAAccount;
@@ -38,6 +39,7 @@ describe("> Basic Reinvest Test", () => {
   let addressStore: SignerStore;
 
   before(async function () {
+    await resetFork(hre);
     await preTest();
   });
 
@@ -50,21 +52,21 @@ describe("> Basic Reinvest Test", () => {
       "target2",
     ]);
 
-    aWethContract = await connectToErc20(
+    aWethContract = (await connectToErc20(
       tokenAddress?.aWeth?.[forkedChain]! as string,
       addressStore.deployer.signer,
-    );
+    )) as IAToken;
 
     usdcContract = await getErc20ImpersonatedFunds(
       forkedChain,
-      addressStore.user.address,
+      addressStore.user.address as Addressable,
       ethers.parseUnits("10000000", 6),
       "usdc",
     );
 
     wethContract = await getErc20ImpersonatedFunds(
       forkedChain,
-      addressStore.user.address,
+      addressStore.user.address as Addressable,
       ethers.parseEther("100"),
       "weth",
     );
@@ -160,11 +162,11 @@ describe("> Basic Reinvest Test", () => {
       );
       await approveErc20Spend(
         uscUsercontract,
-        createdAccount.target as string,
+        createdAccount.target as Addressable,
         ethers.parseUnits("100000", 6),
       ).catch((error) => console.log("approve error: ", error));
 
-      const reinvest: DCAReinvest.ReinvestStruct = {
+      const reinvest: IDCADataStructures.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           [0x01, addressStore.target2.address, tokenAddress.weth![forkedChain]],

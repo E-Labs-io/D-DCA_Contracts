@@ -36,39 +36,6 @@ export declare namespace IDCADataStructures {
     ticker: string
   ] & { tokenAddress: string; decimals: bigint; ticker: string };
 
-  export type StrategyStruct = {
-    accountAddress: AddressLike;
-    baseToken: IDCADataStructures.TokeDataStruct;
-    targetToken: IDCADataStructures.TokeDataStruct;
-    interval: BigNumberish;
-    amount: BigNumberish;
-    strategyId: BigNumberish;
-    active: boolean;
-    reinvest: DCAReinvestLogic.ReinvestStruct;
-  };
-
-  export type StrategyStructOutput = [
-    accountAddress: string,
-    baseToken: IDCADataStructures.TokeDataStructOutput,
-    targetToken: IDCADataStructures.TokeDataStructOutput,
-    interval: bigint,
-    amount: bigint,
-    strategyId: bigint,
-    active: boolean,
-    reinvest: DCAReinvestLogic.ReinvestStructOutput
-  ] & {
-    accountAddress: string;
-    baseToken: IDCADataStructures.TokeDataStructOutput;
-    targetToken: IDCADataStructures.TokeDataStructOutput;
-    interval: bigint;
-    amount: bigint;
-    strategyId: bigint;
-    active: boolean;
-    reinvest: DCAReinvestLogic.ReinvestStructOutput;
-  };
-}
-
-export declare namespace DCAReinvestLogic {
   export type ReinvestStruct = {
     reinvestData: BytesLike;
     active: boolean;
@@ -86,6 +53,37 @@ export declare namespace DCAReinvestLogic {
     active: boolean;
     investCode: bigint;
     dcaAccountAddress: string;
+  };
+
+  export type StrategyStruct = {
+    accountAddress: AddressLike;
+    baseToken: IDCADataStructures.TokeDataStruct;
+    targetToken: IDCADataStructures.TokeDataStruct;
+    interval: BigNumberish;
+    amount: BigNumberish;
+    strategyId: BigNumberish;
+    active: boolean;
+    reinvest: IDCADataStructures.ReinvestStruct;
+  };
+
+  export type StrategyStructOutput = [
+    accountAddress: string,
+    baseToken: IDCADataStructures.TokeDataStructOutput,
+    targetToken: IDCADataStructures.TokeDataStructOutput,
+    interval: bigint,
+    amount: bigint,
+    strategyId: bigint,
+    active: boolean,
+    reinvest: IDCADataStructures.ReinvestStructOutput
+  ] & {
+    accountAddress: string;
+    baseToken: IDCADataStructures.TokeDataStructOutput;
+    targetToken: IDCADataStructures.TokeDataStructOutput;
+    interval: bigint;
+    amount: bigint;
+    strategyId: bigint;
+    active: boolean;
+    reinvest: IDCADataStructures.ReinvestStructOutput;
   };
 }
 
@@ -158,7 +156,7 @@ export interface IDCAAccountInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setStrategyReinvest",
-    values: [BigNumberish, DCAReinvestLogic.ReinvestStruct]
+    values: [BigNumberish, IDCADataStructures.ReinvestStruct]
   ): string;
 
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
@@ -418,7 +416,7 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   setStrategyReinvest: TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: DCAReinvestLogic.ReinvestStruct],
+    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
     "nonpayable"
   >;
@@ -484,7 +482,7 @@ export interface IDCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "setStrategyReinvest"
   ): TypedContractMethod<
-    [strategyId_: BigNumberish, reinvest_: DCAReinvestLogic.ReinvestStruct],
+    [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
     "nonpayable"
   >;

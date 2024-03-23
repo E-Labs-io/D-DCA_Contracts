@@ -64,7 +64,7 @@ contract DCAAccount is DCAAccountLogic {
      * @param subscribeToExecutor_ Wether to subscribe to the executor at setup
      */
     function SetupStrategy(
-        IDCADataStructures.Strategy memory newStrategy_,
+        Strategy memory newStrategy_,
         uint256 seedFunds_,
         bool subscribeToExecutor_
     ) external override onlyOwner {
@@ -221,12 +221,12 @@ contract DCAAccount is DCAAccountLogic {
 
     function setStrategyReinvest(
         uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_ //bool migrateOrWithdrawCurrentReinvest_
+        Reinvest memory reinvest_ //bool migrateOrWithdrawCurrentReinvest_
     ) external override {
         if (reinvest_.active) {
             _strategies[strategyId_].reinvest = reinvest_;
         } else
-            _strategies[strategyId_].reinvest = DCAReinvestLogic.Reinvest(
+            _strategies[strategyId_].reinvest = Reinvest(
                 new bytes(0),
                 false,
                 0x00,
@@ -304,7 +304,7 @@ contract DCAAccount is DCAAccountLogic {
         returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
     {
         lastEx = _lastExecution[strategyId_];
-        IDCADataStructures.Interval inter = _strategies[strategyId_].interval;
+        Interval inter = _strategies[strategyId_].interval;
 
         secondsLeft = Strategies._secondsLeftTilLWindow(lastEx, inter);
 

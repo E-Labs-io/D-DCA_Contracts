@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 //DEV
 import "hardhat/console.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
-import {DCAReinvestLogic} from "../logic/ReinvestLogic.sol";
+import {DCAReinvestLogic,IDCADataStructures} from "../logic/ReinvestLogic.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/proxy/Proxy.sol";
@@ -24,7 +24,7 @@ contract DCAReinvestProxy is
     }
 
     function executeReinvest(
-        Reinvest memory reinvestData_,
+        IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
     ) external returns (uint256 amount, bool success) {
         return _executeInvest(reinvestData_, amount_);
@@ -36,15 +36,15 @@ contract DCAReinvestProxy is
         return (amount, success);
     }
     function unwindReinvest(
-        Reinvest memory reinvestData_,
+        IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
     ) external returns (uint256 amount, bool success) {
         return _executeWithdraw(reinvestData_, amount_);
     }
 
     function migrateReinvest(
-        Reinvest memory oldReinvestData_,
-        Reinvest memory newReinvestData_,
+        IDCADataStructures.Reinvest memory oldReinvestData_,
+        IDCADataStructures.Reinvest memory newReinvestData_,
         bool withdrawFunds_
     ) external returns (uint256 amount, bool success) {
         return (amount, success);

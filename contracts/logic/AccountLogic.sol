@@ -5,7 +5,6 @@ import "hardhat/console.sol";
 
 import "../utils/swap.sol";
 import {Strategies} from "../library/Strategys.sol";
-import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
 import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
 import {DCAReinvestLogic, DCAReinvest} from "../base/DCAReinvest.sol";
 import {OnlyExecutor} from "../security/onlyExecutor.sol";
@@ -171,7 +170,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      */
     function _executeReinvest(
         uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_,
+        Reinvest memory reinvest_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
         if (DCAREINVEST_LIBRARY.REINVEST_ACTIVE()) {
@@ -202,7 +201,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      */
     function _withdrawReinvest(
         uint256 strategyId_,
-        DCAReinvest.Reinvest memory reinvest_,
+        Reinvest memory reinvest_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
         (bool txSuccess, bytes memory returnData) = address(DCAREINVEST_LIBRARY)

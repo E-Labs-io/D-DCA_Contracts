@@ -10,22 +10,20 @@ import {
 } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 import {
-  DCAAccountFactoryArguments,
   DCAExecutorArguments,
   newStrat,
 } from "~/deploy/deploymentArguments/DCA.arguments";
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 import { EMPTY_STRATEGY } from "~/bin/emptyData";
 import { compareStructs } from "~/scripts/tests/comparisons";
-import { erc20 } from "~/types/contracts/@openzeppelin/contracts/token";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
 import {
   checkEthBalanceAndTransfer,
   connectToErc20,
   getErc20Balance,
-  transferErc20Token,
 } from "~/scripts/tests/contractInteraction";
+import { resetFork } from "~/scripts/tests/forking";
 
 describe("> DCA Account Tests", () => {
   console.log("🧪 DCA Account Tests : Mounted");
@@ -42,9 +40,10 @@ describe("> DCA Account Tests", () => {
   let executorContract: DCAExecutor;
   let addressStore: SignerStore;
 
-  before(async function () {
-    await preTest();
-  });
+ before(async function () {
+   await resetFork(hre);
+   await preTest();
+ });
 
   async function preTest() {
     addressStore = await signerStore(ethers, [
@@ -64,13 +63,6 @@ describe("> DCA Account Tests", () => {
     const usedImpersonater = await ethers.getImpersonatedSigner(
       productionChainImpersonators[forkedChain]?.usdc as string,
     );
-
-    console.log(
-      "USDC Impersonator: ",
-      productionChainImpersonators[forkedChain]?.usdc,
-    );
-
-    console.log("USDC Contract: ", tokenAddress?.usdc?.[forkedChain]!);
 
     await checkEthBalanceAndTransfer(
       productionChainImpersonators[forkedChain]?.usdc as string,
@@ -96,11 +88,6 @@ describe("> DCA Account Tests", () => {
     wethContract = await connectToErc20(
       tokenAddress?.weth?.[forkedChain]! as string,
       wethImpersonator,
-    );
-
-    console.log(
-      "USDC Balance",
-      await usdcContract.balanceOf(await usedImpersonater.getAddress()),
     );
 
     const tx = await usdcContract.transfer(
@@ -472,7 +459,7 @@ describe("> DCA Account Tests", () => {
       );
     });
     it("🧪 Should add forward reinvest to strategy 1", async () => {
-      const reinvest: DCAReinvestLogic.Reinvest = {
+      const reinvest: IDCADataStructures.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           [0x01, addressStore.target3.address, tokenAddress.weth![forkedChain]],

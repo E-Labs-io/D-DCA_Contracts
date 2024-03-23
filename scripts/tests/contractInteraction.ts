@@ -75,7 +75,6 @@ export const checkEthBalanceAndTransfer = async (
   options?: { amount?: BigNumberish; force?: true; topUpTo?: number },
 ) => {
   const balance = await ethers.provider.getBalance(address);
-  console.log(`Users : ${address} ETH Balance of ${balance}`);
 
   if (balance < 1 || options?.force) {
     const message = {
@@ -85,7 +84,6 @@ export const checkEthBalanceAndTransfer = async (
     const tx = await bank.sendTransaction(message);
     await tx.wait();
     const balance = await ethers.provider.getBalance(address);
-    console.log(`Users : ${address} ETH Balance of ${balance}`);
   } else if (options?.topUpTo) {
     const defisate = options?.topUpTo - Number(balance);
     if (defisate > 0) {
@@ -94,6 +92,7 @@ export const checkEthBalanceAndTransfer = async (
         value: defisate,
       };
       const tx = await bank.sendTransaction(message);
+      await tx.wait();
     }
   }
 };

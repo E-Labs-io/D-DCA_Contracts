@@ -8,15 +8,19 @@ import {
   Signer,
   ZeroAddress,
 } from "ethers";
-import { DCAReinvest, DCAReinvestLogic } from "~/types/contracts";
+import { DCAReinvest, DCAReinvestLogic, IERC20 } from "~/types/contracts";
 import signerStore from "~/scripts/tests/signerStore";
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 import deploymentConfig from "~/bin/deployments.config";
+import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
+
 import { decodePackedBytes } from "~/scripts/tests/comparisons";
 import {
+  connectToErc20,
   getErc20Balance,
   transferErc20Token,
 } from "~/scripts/tests/contractInteraction";
+import { resetFork } from "~/scripts/tests/forking";
 
 describe("> DCA Reinvest Modula Test", () => {
   console.log("🧪 DCA Reinvest Modula Test : Mounted");
@@ -25,13 +29,14 @@ describe("> DCA Reinvest Modula Test", () => {
   const forkedChain = deploymentConfig().masterChain;
 
   let reinvestDeployment: DCAReinvest;
-  let wethContract: Contract, wbtcContract: Contract;
+  let wethContract: IERC20, wbtcContract: IERC20;
 
   let addressStore: {
     [wallet: string]: { address: string | Addressable; signer: Signer };
   };
 
   before(async function () {
+    await resetFork(hre);
     await preTest();
   });
 
@@ -50,9 +55,8 @@ describe("> DCA Reinvest Modula Test", () => {
     const wethImpersonator = await ethers.getImpersonatedSigner(
       productionChainImpersonators[forkedChain]!.weth as string,
     );
-    wethContract = await ethers.getContractAt(
-      "contracts/tokens/IERC20.sol:IERC20",
-      tokenAddress.weth![forkedChain] as string,
+    wethContract = await connectToErc20(
+      tokenAddress?.weth?.[forkedChain]! as string,
       wethImpersonator,
     );
     const wethTx2 = await wethContract.transfer(
@@ -108,7 +112,7 @@ describe("> DCA Reinvest Modula Test", () => {
 
   describe("💡 Strategy Execution", function () {
     it("🧪 Should Complete 0x00 (not active)", async function () {
-      const reinvestData: DCAReinvestLogic.ReinvestStruct = {
+      const reinvestData: IDCADataStructures.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           [0x01, addressStore.user.address, tokenAddress.weth![forkedChain]],
@@ -122,7 +126,7 @@ describe("> DCA Reinvest Modula Test", () => {
         .fulfilled;
     });
     it("🧪 Should execute 0x01 (forward)", async function () {
-      const reinvestData: DCAReinvestLogic.ReinvestStruct = {
+      const reinvestData: IDCADataStructures.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
           [0x01, addressStore.target4.address, tokenAddress.weth![forkedChain]],
@@ -134,7 +138,7 @@ describe("> DCA Reinvest Modula Test", () => {
 
       await transferErc20Token(
         wethContract,
-        reinvestDeployment.target,
+        reinvestDeployment.target as Addressable,
         ethers.parseEther("0.5"),
       );
       const preTxBal = await getErc20Balance(

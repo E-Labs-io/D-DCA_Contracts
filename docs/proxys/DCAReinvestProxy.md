@@ -64,7 +64,7 @@ function REINVEST_VERSION() external view returns (string)
 ### executeReinvest
 
 ```solidity
-function executeReinvest(DCAReinvestLogic.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
+function executeReinvest(IDCADataStructures.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -75,7 +75,7 @@ function executeReinvest(DCAReinvestLogic.Reinvest reinvestData_, uint256 amount
 
 | Name | Type | Description |
 |---|---|---|
-| reinvestData_ | DCAReinvestLogic.Reinvest | undefined |
+| reinvestData_ | IDCADataStructures.Reinvest | undefined |
 | amount_ | uint256 | undefined |
 
 #### Returns
@@ -121,7 +121,7 @@ function initialize(bool activate_) external nonpayable
 ### migrateReinvest
 
 ```solidity
-function migrateReinvest(DCAReinvestLogic.Reinvest oldReinvestData_, DCAReinvestLogic.Reinvest newReinvestData_, bool withdrawFunds_) external nonpayable returns (uint256 amount, bool success)
+function migrateReinvest(IDCADataStructures.Reinvest oldReinvestData_, IDCADataStructures.Reinvest newReinvestData_, bool withdrawFunds_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -132,8 +132,8 @@ function migrateReinvest(DCAReinvestLogic.Reinvest oldReinvestData_, DCAReinvest
 
 | Name | Type | Description |
 |---|---|---|
-| oldReinvestData_ | DCAReinvestLogic.Reinvest | undefined |
-| newReinvestData_ | DCAReinvestLogic.Reinvest | undefined |
+| oldReinvestData_ | IDCADataStructures.Reinvest | undefined |
+| newReinvestData_ | IDCADataStructures.Reinvest | undefined |
 | withdrawFunds_ | bool | undefined |
 
 #### Returns
@@ -219,7 +219,7 @@ function transferOwnership(address newOwner) external nonpayable
 ### unwindReinvest
 
 ```solidity
-function unwindReinvest(DCAReinvestLogic.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
+function unwindReinvest(IDCADataStructures.Reinvest reinvestData_, uint256 amount_) external nonpayable returns (uint256 amount, bool success)
 ```
 
 
@@ -230,7 +230,7 @@ function unwindReinvest(DCAReinvestLogic.Reinvest reinvestData_, uint256 amount_
 
 | Name | Type | Description |
 |---|---|---|
-| reinvestData_ | DCAReinvestLogic.Reinvest | undefined |
+| reinvestData_ | IDCADataStructures.Reinvest | undefined |
 | amount_ | uint256 | undefined |
 
 #### Returns

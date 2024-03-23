@@ -23,7 +23,7 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
-export declare namespace DCAReinvestLogic {
+export declare namespace IDCADataStructures {
   export type ReinvestStruct = {
     reinvestData: BytesLike;
     active: boolean;
@@ -80,7 +80,7 @@ export interface DCAReinvestProxyInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeReinvest",
-    values: [DCAReinvestLogic.ReinvestStruct, BigNumberish]
+    values: [IDCADataStructures.ReinvestStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getLibraryVersion",
@@ -90,8 +90,8 @@ export interface DCAReinvestProxyInterface extends Interface {
   encodeFunctionData(
     functionFragment: "migrateReinvest",
     values: [
-      DCAReinvestLogic.ReinvestStruct,
-      DCAReinvestLogic.ReinvestStruct,
+      IDCADataStructures.ReinvestStruct,
+      IDCADataStructures.ReinvestStruct,
       boolean
     ]
   ): string;
@@ -111,7 +111,7 @@ export interface DCAReinvestProxyInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "unwindReinvest",
-    values: [DCAReinvestLogic.ReinvestStruct, BigNumberish]
+    values: [IDCADataStructures.ReinvestStruct, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -244,7 +244,7 @@ export interface DCAReinvestProxy extends BaseContract {
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
 
   executeReinvest: TypedContractMethod<
-    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
+    [reinvestData_: IDCADataStructures.ReinvestStruct, amount_: BigNumberish],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
@@ -255,8 +255,8 @@ export interface DCAReinvestProxy extends BaseContract {
 
   migrateReinvest: TypedContractMethod<
     [
-      oldReinvestData_: DCAReinvestLogic.ReinvestStruct,
-      newReinvestData_: DCAReinvestLogic.ReinvestStruct,
+      oldReinvestData_: IDCADataStructures.ReinvestStruct,
+      newReinvestData_: IDCADataStructures.ReinvestStruct,
       withdrawFunds_: boolean
     ],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
@@ -278,7 +278,7 @@ export interface DCAReinvestProxy extends BaseContract {
   >;
 
   unwindReinvest: TypedContractMethod<
-    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
+    [reinvestData_: IDCADataStructures.ReinvestStruct, amount_: BigNumberish],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
@@ -299,7 +299,7 @@ export interface DCAReinvestProxy extends BaseContract {
   getFunction(
     nameOrSignature: "executeReinvest"
   ): TypedContractMethod<
-    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
+    [reinvestData_: IDCADataStructures.ReinvestStruct, amount_: BigNumberish],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;
@@ -313,8 +313,8 @@ export interface DCAReinvestProxy extends BaseContract {
     nameOrSignature: "migrateReinvest"
   ): TypedContractMethod<
     [
-      oldReinvestData_: DCAReinvestLogic.ReinvestStruct,
-      newReinvestData_: DCAReinvestLogic.ReinvestStruct,
+      oldReinvestData_: IDCADataStructures.ReinvestStruct,
+      newReinvestData_: IDCADataStructures.ReinvestStruct,
       withdrawFunds_: boolean
     ],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
@@ -338,7 +338,7 @@ export interface DCAReinvestProxy extends BaseContract {
   getFunction(
     nameOrSignature: "unwindReinvest"
   ): TypedContractMethod<
-    [reinvestData_: DCAReinvestLogic.ReinvestStruct, amount_: BigNumberish],
+    [reinvestData_: IDCADataStructures.ReinvestStruct, amount_: BigNumberish],
     [[bigint, boolean] & { amount: bigint; success: boolean }],
     "nonpayable"
   >;

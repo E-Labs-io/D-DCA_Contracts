@@ -1,29 +1,17 @@
-import { expect, assert } from "chai";
+import { expect } from "chai";
 import hre, { ethers } from "hardhat";
-import {
-  AbiCoder,
-  AddressLike,
-  Addressable,
-  Contract,
-  Signer,
-  ZeroAddress,
-} from "ethers";
+import { ZeroAddress } from "ethers";
 import {
   DCAFactory,
   DCAAccount,
-  DCAReinvestProxy,
-  ForwardReinvest,
   DCAExecutor,
-  IERC20,
   DCAReinvest,
 } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
-import {
-  DCAAccountFactoryArguments,
-  DCAExecutorArguments,
-} from "~/deploy/deploymentArguments/DCA.arguments";
-import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
+import { DCAExecutorArguments } from "~/deploy/deploymentArguments/DCA.arguments";
+import { tokenAddress } from "~/bin/tokenAddress";
 import deploymentConfig from "~/bin/deployments.config";
+import { resetFork } from "~/scripts/tests/forking";
 
 describe("> DCA Account Factory Tests", () => {
   console.log("🧪 DCA Account Factory Tests : Mounted");
@@ -36,7 +24,8 @@ describe("> DCA Account Factory Tests", () => {
   let executorContract: DCAExecutor;
   let addressStore: SignerStore;
 
-  before(async function () {
+  before(async () => {
+    await resetFork(hre);
     await preTest();
   });
 
@@ -55,7 +44,6 @@ describe("> DCA Account Factory Tests", () => {
         "DCAFactory",
         addressStore.deployer.signer,
       );
-
       factoryContract = await factoryFactory.deploy(
         ZeroAddress,
         tokenAddress.swapRouter![forkedChain]!,
@@ -77,7 +65,7 @@ describe("> DCA Account Factory Tests", () => {
 
     it("🧪 Should return the correct swap router", async function () {
       const address = await factoryContract.SWAP_ROUTER();
-      expect(address).to.equal(tokenAddress.swapRouter!.eth);
+      expect(address).to.equal(tokenAddress.swapRouter![forkedChain]);
     });
 
     it("🧪 Should return the factory is active", async function () {

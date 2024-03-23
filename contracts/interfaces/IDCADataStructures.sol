@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "../base/DCAReinvest.sol";
-
 interface IDCADataStructures {
     // Define an enum to represent the interval type
     // Interval enum as you defined
@@ -36,12 +34,33 @@ interface IDCADataStructures {
         uint256 amount;
         uint256 strategyId;
         bool active;
-        DCAReinvest.Reinvest reinvest;
+        Reinvest reinvest;
     }
 
     struct TokeData {
         address tokenAddress;
         uint8 decimals;
         string ticker;
+    }
+
+    /**
+     * @notice Reinvest strategy struct.
+     * If no reinvest set active to false and zero-out other fields
+     * If using predefined reinvest strategy zero-out the bytes fields
+     * Check code agents the Reinvest Codes library
+     *
+     * @notice deposit & withdraw reinvest methods only needed IF using custom reinvest strategy
+     *
+     * @param reinvestData Reinvest strategy specific data (encoded to bytes)
+     * @param active If the reinvest is active
+     * @param investCode Reinvest strategy code
+     * @param dcaAccountAddress address of the account contract
+     */
+
+    struct Reinvest {
+        bytes reinvestData;
+        bool active;
+        uint8 investCode;
+        address dcaAccountAddress;
     }
 }

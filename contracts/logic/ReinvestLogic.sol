@@ -5,6 +5,7 @@ import "hardhat/console.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
 import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
 import {AaveV3Reinvest} from "../modules/AaveV3Reinvest.sol";
+import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
 
 abstract contract DCAReinvestLogic {
     using ReinvestCodes for uint8;
@@ -12,27 +13,6 @@ abstract contract DCAReinvestLogic {
     string public constant REINVEST_VERSION = "TEST V0.4";
     bytes public constant ACTIVE_REINVESTS =
         abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
-
-    /**
-     * @notice Reinvest strategy struct.
-     * If no reinvest set active to false and zero-out other fields
-     * If using predefined reinvest strategy zero-out the bytes fields
-     * Check code agents the Reinvest Codes library
-     *
-     * @notice deposit & withdraw reinvest methods only needed IF using custom reinvest strategy
-     *
-     * @param reinvestData Reinvest strategy specific data (encoded to bytes)
-     * @param active If the reinvest is active
-     * @param investCode Reinvest strategy code
-     * @param dcaAccountAddress address of the account contract
-     */
-
-    struct Reinvest {
-        bytes reinvestData;
-        bool active;
-        uint8 investCode;
-        address dcaAccountAddress;
-    }
 
     function _setActiveState(bool state_) internal {
         REINVEST_ACTIVE = state_;
@@ -46,7 +26,7 @@ abstract contract DCAReinvestLogic {
      */
 
     function _executeInvest(
-        Reinvest memory reinvestData_,
+        IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
         uint8 code = reinvestData_.investCode;
@@ -61,7 +41,7 @@ abstract contract DCAReinvestLogic {
     }
 
     function _executeWithdraw(
-        Reinvest memory reinvestData_,
+        IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
         if (reinvestData_.investCode <= ReinvestCodes.COMPOUND) {} else if (

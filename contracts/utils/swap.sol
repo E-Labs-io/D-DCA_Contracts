@@ -26,22 +26,7 @@ abstract contract Swap {
         address targetToken_,
         uint256 amount_
     ) public {
-        //_approveSwapSpend(baseToken_, amount_);
-        console.log(
-            "Pre Approval amount: ",
-            IERC20(baseToken_).allowance(address(this), address(SWAP_ROUTER))
-        );
         _approveSwapSpend(baseToken_, amount_);
-        console.log(
-            "Balance of account: ",
-            IERC20(baseToken_).balanceOf(address(this))
-        );
-        console.log("Transaction amount: ", amount_);
-        console.log(
-            "Post Approval amount: ",
-            IERC20(baseToken_).allowance(address(this), address(SWAP_ROUTER))
-        );
-
         _swap(baseToken_, targetToken_, amount_);
     }
 
@@ -77,28 +62,18 @@ abstract contract Swap {
      * @param baseToken_ address of the base token to allow contract to spend
      * @param amount_ amount to limit the spend
      */
-    function _approveSwapSpend(address baseToken_, uint256 amount_) internal {
-        console.log(
-            "Pre Approve Allowance Check: ",
-            IERC20(baseToken_).allowance(address(this), address(SWAP_ROUTER))
+    function _approveSwapSpend(
+        address baseToken_,
+        uint256 amount_
+    ) internal returns (bool success) {
+        success = _checkSendAllowance(
+            baseToken_,
+            address(SWAP_ROUTER),
+            amount_
         );
-
-        if (!_checkSendAllowance(baseToken_, address(SWAP_ROUTER), amount_)) {
-            console.log("Need to approve Allowance: ");
-            bool success = IERC20(baseToken_).approve(
-                address(SWAP_ROUTER),
-                amount_
-            );
-
+        if (!success) {
+            success = IERC20(baseToken_).approve(address(SWAP_ROUTER), amount_);
             require(success, "Swap Allowance Set Failed");
-
-            console.log(
-                "Post Approve Allowance Check: ",
-                IERC20(baseToken_).allowance(
-                    address(this),
-                    address(SWAP_ROUTER)
-                )
-            );
         }
     }
 
