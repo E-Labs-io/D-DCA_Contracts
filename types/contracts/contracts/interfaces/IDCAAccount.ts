@@ -100,6 +100,7 @@ export interface IDCAAccountInterface extends Interface {
       | "WithdrawSavings"
       | "getBaseBalance"
       | "getTargetBalance"
+      | "getTimeTillWindow"
       | "setStrategyReinvest"
   ): FunctionFragment;
 
@@ -155,6 +156,10 @@ export interface IDCAAccountInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTimeTillWindow",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setStrategyReinvest",
     values: [BigNumberish, IDCADataStructures.ReinvestStruct]
   ): string;
@@ -194,6 +199,10 @@ export interface IDCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTargetBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTimeTillWindow",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -415,6 +424,18 @@ export interface IDCAAccount extends BaseContract {
     "nonpayable"
   >;
 
+  getTimeTillWindow: TypedContractMethod<
+    [strategyId_: BigNumberish],
+    [
+      [bigint, bigint, boolean] & {
+        lastEx: bigint;
+        secondsLeft: bigint;
+        checkReturn: boolean;
+      }
+    ],
+    "view"
+  >;
+
   setStrategyReinvest: TypedContractMethod<
     [strategyId_: BigNumberish, reinvest_: IDCADataStructures.ReinvestStruct],
     [void],
@@ -479,6 +500,19 @@ export interface IDCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "getTargetBalance"
   ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getTimeTillWindow"
+  ): TypedContractMethod<
+    [strategyId_: BigNumberish],
+    [
+      [bigint, bigint, boolean] & {
+        lastEx: bigint;
+        secondsLeft: bigint;
+        checkReturn: boolean;
+      }
+    ],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "setStrategyReinvest"
   ): TypedContractMethod<

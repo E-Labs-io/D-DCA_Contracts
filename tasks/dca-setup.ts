@@ -17,7 +17,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     deployedDCAContracts[network.name as ChainName]!.DCAAccount!;
 
   const [deployAccount, approveFund, fundAccount, newStrategy, subscribeStrat] =
-    [true, true, true, true, true];
+    [false, true, true, true, true];
 
   if (deployAccount) {
     console.log(`🟡 [TASK] ${taskId} : Creating Account from factory`);
@@ -55,7 +55,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   );
 
   //  Get the USDC contract address for given network
-  const usdcAddress = tokenAddress.usdc[
+  const usdcAddress = tokenAddress.usdc![
     network.name as ChainName
   ] as AddressLike;
 
@@ -63,7 +63,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     //    Approve USDC for contrtact spend
     console.log(`🟡 [TASK] ${taskId} : Approving Account to spend USDC`);
     const usdcContract = await hre.ethers.getContractAt(
-      "IERC20",
+      "contracts/tokens/IERC20.sol:IERC20",
       await usdcAddress,
       deployer,
     );

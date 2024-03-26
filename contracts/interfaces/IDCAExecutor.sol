@@ -84,4 +84,12 @@ interface IDCAExecutor is IDCADataStructures {
         address DCAAccount_,
         uint256 strategyId_
     ) external;
+
+    function getTimeTillWindow(
+        address account_,
+        uint256 strategyId_
+    )
+        external
+        view
+        returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn);
 }

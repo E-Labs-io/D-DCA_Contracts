@@ -79,7 +79,7 @@ export function DCAReinvestLibraryArguments(
 export const newStrat = (
   accountAddress: string,
   network: string,
-  reinvest?: DCAReinvest.ReinvestStruct,
+  reinvest?: IDCADataStructures.ReinvestStruct,
 ): IDCADataStructures.StrategyStruct => {
   return {
     accountAddress: accountAddress,

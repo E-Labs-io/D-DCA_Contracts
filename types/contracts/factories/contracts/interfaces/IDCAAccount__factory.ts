@@ -419,6 +419,35 @@ const _abi = [
         name: "strategyId_",
         type: "uint256",
       },
+    ],
+    name: "getTimeTillWindow",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "lastEx",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "secondsLeft",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "checkReturn",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
       {
         components: [
           {

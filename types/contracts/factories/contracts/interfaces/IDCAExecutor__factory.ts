@@ -274,6 +274,40 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account_",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+    ],
+    name: "getTimeTillWindow",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "lastEx",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "secondsLeft",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "checkReturn",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ] as const;
 
 export class IDCAExecutor__factory {

@@ -131,6 +131,7 @@ export interface DCAExecutorInterface extends Interface {
       | "getExecutorAddress"
       | "getFeeData"
       | "getSpecificStrategy"
+      | "getTimeTillWindow"
       | "getTotalActiveStrategys"
       | "getTotalExecutions"
       | "owner"
@@ -204,6 +205,10 @@ export interface DCAExecutorInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTimeTillWindow",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTotalActiveStrategys",
     values?: undefined
   ): string;
@@ -271,6 +276,10 @@ export interface DCAExecutorInterface extends Interface {
   decodeFunctionResult(functionFragment: "getFeeData", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getSpecificStrategy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTimeTillWindow",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -501,6 +510,18 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
+  getTimeTillWindow: TypedContractMethod<
+    [account_: AddressLike, strategyId_: BigNumberish],
+    [
+      [bigint, bigint, boolean] & {
+        lastEx: bigint;
+        secondsLeft: bigint;
+        checkReturn: boolean;
+      }
+    ],
+    "view"
+  >;
+
   getTotalActiveStrategys: TypedContractMethod<[], [bigint], "view">;
 
   getTotalExecutions: TypedContractMethod<[], [bigint], "view">;
@@ -598,6 +619,19 @@ export interface DCAExecutor extends BaseContract {
   ): TypedContractMethod<
     [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getTimeTillWindow"
+  ): TypedContractMethod<
+    [account_: AddressLike, strategyId_: BigNumberish],
+    [
+      [bigint, bigint, boolean] & {
+        lastEx: bigint;
+        secondsLeft: bigint;
+        checkReturn: boolean;
+      }
+    ],
     "view"
   >;
   getFunction(

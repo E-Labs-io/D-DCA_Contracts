@@ -238,6 +238,31 @@ function getSpecificStrategy(address dcaAccountAddress_, uint256 accountStrategy
 |---|---|---|
 | _0 | IDCADataStructures.Strategy | undefined |
 
+### getTimeTillWindow
+
+```solidity
+function getTimeTillWindow(address account_, uint256 strategyId_) external view returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account_ | address | undefined |
+| strategyId_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| lastEx | uint256 | undefined |
+| secondsLeft | uint256 | undefined |
+| checkReturn | bool | undefined |
+
 ### getTotalActiveStrategys
 
 ```solidity

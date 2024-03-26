@@ -104,6 +104,7 @@ export interface DCAAccountLogicInterface extends Interface {
       | "getBaseBalance"
       | "getExecutorAddress"
       | "getTargetBalance"
+      | "getTimeTillWindow"
       | "owner"
       | "removeExecutor"
       | "renounceOwnership"
@@ -180,6 +181,10 @@ export interface DCAAccountLogicInterface extends Interface {
     functionFragment: "getTargetBalance",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getTimeTillWindow",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeExecutor",
@@ -246,6 +251,10 @@ export interface DCAAccountLogicInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTargetBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTimeTillWindow",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -521,6 +530,18 @@ export interface DCAAccountLogic extends BaseContract {
     "nonpayable"
   >;
 
+  getTimeTillWindow: TypedContractMethod<
+    [strategyId_: BigNumberish],
+    [
+      [bigint, bigint, boolean] & {
+        lastEx: bigint;
+        secondsLeft: bigint;
+        checkReturn: boolean;
+      }
+    ],
+    "view"
+  >;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
@@ -613,6 +634,19 @@ export interface DCAAccountLogic extends BaseContract {
   getFunction(
     nameOrSignature: "getTargetBalance"
   ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getTimeTillWindow"
+  ): TypedContractMethod<
+    [strategyId_: BigNumberish],
+    [
+      [bigint, bigint, boolean] & {
+        lastEx: bigint;
+        secondsLeft: bigint;
+        checkReturn: boolean;
+      }
+    ],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

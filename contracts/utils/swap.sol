@@ -8,7 +8,7 @@ import {IERC20} from "../tokens/IERC20.sol";
 
 abstract contract Swap {
     ISwapRouter02 public SWAP_ROUTER;
-    uint24 private _poolFee = 10000;
+    uint24 private _poolFee = 3000;
 
     constructor(address swapAddress) {
         SWAP_ROUTER = ISwapRouter02(swapAddress);

@@ -290,30 +290,6 @@ contract DCAAccount is DCAAccountLogic {
     }
 
     /**
-     * @dev returns UI data for strategy interval timing
-     * @param strategyId_ Strategy Id of the strategy data to get
-     * @return lastEx {uint256} time of last execution (seconds)
-     * @return secondsLeft {uint256} seconds left timm strategy is in window
-     * @return checkReturn {bool} if the strategy is in the window
-     */
-    function getTimeTillWindow(
-        uint256 strategyId_
-    )
-        public
-        view
-        returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
-    {
-        lastEx = _lastExecution[strategyId_];
-        Interval inter = _strategies[strategyId_].interval;
-
-        secondsLeft = Strategies._secondsLeftTilLWindow(lastEx, inter);
-
-        checkReturn = Strategies._isStrategyInWindow(lastEx, inter);
-
-        return (lastEx, secondsLeft, checkReturn);
-    }
-
-    /**
      * @dev update the onChain executor address
      * @param newAddress_ address of the new default executor contract
      */

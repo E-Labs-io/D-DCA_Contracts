@@ -262,6 +262,30 @@ Gets Account balance of the provided target token
 |---|---|---|
 | _0 | uint256 | {uint256} Amount of that token in the account |
 
+### getTimeTillWindow
+
+```solidity
+function getTimeTillWindow(uint256 strategyId_) external view returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
+```
+
+
+
+*returns UI data for strategy interval timing*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | Strategy Id of the strategy data to get |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| lastEx | uint256 | {uint256} time of last execution (seconds) |
+| secondsLeft | uint256 | {uint256} seconds left timm strategy is in window |
+| checkReturn | bool | {bool} if the strategy is in the window |
+
 ### owner
 
 ```solidity

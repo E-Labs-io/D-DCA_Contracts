@@ -194,6 +194,30 @@ Gets Account balance of the provided target token
 |---|---|---|
 | _0 | uint256 | {uint256} Amount of that token in the account |
 
+### getTimeTillWindow
+
+```solidity
+function getTimeTillWindow(uint256 strategyId_) external view returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| lastEx | uint256 | undefined |
+| secondsLeft | uint256 | undefined |
+| checkReturn | bool | undefined |
+
 ### setStrategyReinvest
 
 ```solidity

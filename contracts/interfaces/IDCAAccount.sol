@@ -140,4 +140,11 @@ interface IDCAAccount is IDCADataStructures {
      * @return {uint256} Amount of that token in the account
      */
     function getTargetBalance(address token_) external returns (uint256);
+
+    function getTimeTillWindow(
+        uint256 strategyId_
+    )
+        external
+        view
+        returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn);
 }

@@ -96,6 +96,7 @@ export interface IDCAExecutorInterface extends Interface {
       | "ForceUnsubscribe"
       | "Subscribe"
       | "Unsubscribe"
+      | "getTimeTillWindow"
   ): FunctionFragment;
 
   getEvent(
@@ -129,6 +130,10 @@ export interface IDCAExecutorInterface extends Interface {
     functionFragment: "Unsubscribe",
     values: [AddressLike, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getTimeTillWindow",
+    values: [AddressLike, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "DistributeFees",
@@ -146,6 +151,10 @@ export interface IDCAExecutorInterface extends Interface {
   decodeFunctionResult(functionFragment: "Subscribe", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "Unsubscribe",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTimeTillWindow",
     data: BytesLike
   ): Result;
 }
@@ -280,6 +289,18 @@ export interface IDCAExecutor extends BaseContract {
     "nonpayable"
   >;
 
+  getTimeTillWindow: TypedContractMethod<
+    [account_: AddressLike, strategyId_: BigNumberish],
+    [
+      [bigint, bigint, boolean] & {
+        lastEx: bigint;
+        secondsLeft: bigint;
+        checkReturn: boolean;
+      }
+    ],
+    "view"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -321,6 +342,19 @@ export interface IDCAExecutor extends BaseContract {
     [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
     [void],
     "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "getTimeTillWindow"
+  ): TypedContractMethod<
+    [account_: AddressLike, strategyId_: BigNumberish],
+    [
+      [bigint, bigint, boolean] & {
+        lastEx: bigint;
+        secondsLeft: bigint;
+        checkReturn: boolean;
+      }
+    ],
+    "view"
   >;
 
   getEvent(

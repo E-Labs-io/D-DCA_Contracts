@@ -163,6 +163,19 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         return _feeData;
     }
 
+    function getTimeTillWindow(
+        address account_,
+        uint256 strategyId_
+    )
+        external
+        view
+        returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
+    {
+        return
+            IDCAAccount(_strategies[account_][strategyId_].accountAddress)
+                .getTimeTillWindow(strategyId_);
+    }
+
     /**
      *
      * @notice Internal & Private Functions
