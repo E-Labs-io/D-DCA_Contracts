@@ -268,17 +268,6 @@ contract DCAAccount is DCAAccountLogic {
     }
 
     /**
-     * @dev get amount of blocks remaining for given base token
-     * @param token_ {address} Base token address
-     * @return {uint256} amount of blocks left for given base token balance
-     */
-    function getBaseTokenRemainingBlocks(
-        address token_
-    ) external view returns (uint256) {
-        return _baseBalances[token_] / _costPerBlock[token_];
-    }
-
-    /**
      * @dev Get the full data for the given strategy
      * @param strategyId_ Strategy Id of the strategy data to get
      * @return {Strategy} the given strategy's full data struct

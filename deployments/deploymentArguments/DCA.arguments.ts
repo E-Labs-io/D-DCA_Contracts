@@ -2,11 +2,11 @@
 
 import { AddressLike, Addressable, ZeroAddress } from "ethers";
 import { ChainName, tokenAddress } from "../../bin/tokenAddress";
-import { IDCADataStructures } from "~/types/contracts/contracts/DCAExecutor";
+import { IDCADataStructures } from "../../types/contracts/contracts/base/DCAExecutor";
 
 export function DCAExecutorArguments(
   deployer: string | Addressable,
-  networkName: string
+  networkName: string,
 ): any[] {
   const feeDistrobution_: IDCADataStructures.FeeDistributionStruct = {
     amountToAdmin: 2000, //  20%
@@ -25,13 +25,13 @@ export function DCAExecutorArguments(
 
 export function DCAAccountArguments(
   deployer: string | Addressable,
-  networkName: string
+  networkName: string,
 ): any[] {
   const executorAddress_: AddressLike =
     "0x79cF24e1DB5b994A90077E6B36aBb086F8541629";
 
   const swapRouter_: AddressLike =
-    tokenAddress.swapRouter[networkName as ChainName]!;
+    tokenAddress.swapRouter![networkName as ChainName]!;
 
   const owner_: AddressLike = deployer;
 
@@ -40,30 +40,30 @@ export function DCAAccountArguments(
 
 export function DCAAccountFactoryArguments(
   deployer: string | Addressable,
-  networkName: string
+  networkName: string,
 ): any[] {
   const executorAddress_: AddressLike =
     "0x79cF24e1DB5b994A90077E6B36aBb086F8541629";
 
   const swapRouter_: AddressLike =
-    tokenAddress.swapRouter[networkName as ChainName]!;
+    tokenAddress.swapRouter![networkName as ChainName]!;
 
   return [executorAddress_, swapRouter_];
 }
 
 export const newStrat = (
   accountAddress: string,
-  network: string
+  network: string,
 ): IDCADataStructures.StrategyStruct => {
   return {
     accountAddress: accountAddress,
     baseToken: {
-      tokenAddress: tokenAddress.usdc[network as ChainName]!,
+      tokenAddress: tokenAddress.usdc![network as ChainName]!,
       decimals: 6,
       ticker: "USDC",
     },
     targetToken: {
-      tokenAddress: tokenAddress.weth[network as ChainName]!,
+      tokenAddress: tokenAddress.weth![network as ChainName]!,
       decimals: 18,
       ticker: "WETH",
     },
@@ -72,9 +72,8 @@ export const newStrat = (
     reinvest: {
       active: false,
       investCode: "0x00",
-      depositReinvestMethod: "0x0000000000000000000000000000000000000000",
-      withdrawReinvestMethod: "0x0000000000000000000000000000000000000000",
-      reinvestSpender: "0x0000000000000000000000000000000000000000",
+      reinvestData: "0x00",
+      dcaAccountAddress: "0x0000000000000000000000000000000000000000",
     },
     active: false,
     strategyId: 1,
