@@ -11,6 +11,8 @@ abstract contract DCAReinvestLogic {
     using ReinvestCodes for uint8;
     bool public REINVEST_ACTIVE;
     string public constant REINVEST_VERSION = "TEST V0.4";
+    uint256 public constant REINVEST_CHAIN = 420;
+
     bytes public constant ACTIVE_REINVESTS =
         abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
 

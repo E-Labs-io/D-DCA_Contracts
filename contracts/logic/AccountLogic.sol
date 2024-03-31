@@ -4,7 +4,9 @@ pragma solidity ^0.8.20;
 import "hardhat/console.sol";
 
 import "../utils/swap.sol";
-import {Strategies} from "../library/Strategys.sol";
+import {Strategies, Intervals} from "../library/Strategys.sol";
+import {Fee} from "../library/Fees.sol";
+
 import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
 import {DCAReinvestLogic, DCAReinvest} from "../base/DCAReinvest.sol";
 import {OnlyExecutor} from "../security/onlyExecutor.sol";
@@ -12,7 +14,9 @@ import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
 
 abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     using Strategies for uint256;
+    using Fee for uint16;
     using Strategies for Strategy;
+    using Intervals for Interval;
 
     mapping(uint256 => Strategy) internal _strategies;
 
@@ -36,9 +40,8 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
 
     modifier inWindow(uint256 strategyId_) {
         require(
-            Strategies._isStrategyInWindow(
-                _lastExecution[strategyId_],
-                _strategies[strategyId_].interval
+            _strategies[strategyId_].interval._isStrategyInWindow(
+                _lastExecution[strategyId_]
             ),
             "DCAAccount : [inWindow] Strategy Interval not met"
         );
@@ -52,24 +55,19 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     /**
      * @dev logic for executing a strategy
      * @param strategyId_ Strategy Id of the strategy data to execute
-     * @param feeAmount_ Amount to charge as fee in percent
+     * @param feePercent_ Amount to charge as fee in percent
      * @notice percent breakdown where 10000 = 100%, 100 = 1%, etc.
      * @return {bool} if the execution was sucsessful
      */
     function _executeDCATrade(
         uint256 strategyId_,
-        uint16 feeAmount_
+        uint16 feePercent_
     ) internal returns (bool) {
         Strategy memory strategy = _strategies[strategyId_];
-        uint256 fee = Strategies._calculateFee(
-            strategy.amount,
-            feeAmount_,
-            strategy.baseToken.decimals
-        );
-
+        uint256 fee = feePercent_._getFee(strategy.amount);
         uint256 tradeAmount = strategy.amount - fee;
 
-        if (feeAmount_ > 0) {
+        if (feePercent_ > 0) {
             _transferFee(fee, strategy.baseToken.tokenAddress);
         }
 
@@ -252,7 +250,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         uint256 amount_,
         Interval interval_
     ) internal pure returns (uint256) {
-        return amount_ / Strategies._getIntervalBlockAmount(interval_);
+        return amount_ / interval_._intervalToBlockAmount();
     }
     /**
      * @notice Helpers Logic
@@ -274,11 +272,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     {
         lastEx = _lastExecution[strategyId_];
         Interval inter = _strategies[strategyId_].interval;
-
-        secondsLeft = Strategies._secondsLeftTilLWindow(lastEx, inter);
-
-        checkReturn = Strategies._isStrategyInWindow(lastEx, inter);
-
-        return (lastEx, secondsLeft, checkReturn);
+        secondsLeft = inter._secondsLeftTillWindow(lastEx);
+        return (lastEx, secondsLeft, secondsLeft == 0);
     }
 }

@@ -9,12 +9,34 @@ import "../interfaces/IDCAAccount.sol";
 import "../security/onlyAdmin.sol";
 import "../security/onlyExecutor.sol";
 import "../security/onlyActive.sol";
+import {Strategies} from "../library/Strategys.sol";
+import {Fee} from "../library/Fees.sol";
+import {Intervals} from "../library/Intervals.sol";
 
-import "../library/Strategys.sol";
+/**
+ *
+ ***********************************************
+ *___ooo____oooooooo_oooo____oooo____ooo____oo_*
+ *_oo___oo_____oo_____oo___oo____oo__oooo___oo_*
+ *oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
+ *ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
+ *oo_____oo____oo_____oo___oo____oo__oo___oooo_*
+ *oo_____oo____oo____oooo____oooo____oo____ooo_*
+ *_____________________________________________*
+ *       Dollar Cost Average Contracts
+ ***********************************************
+ *
+ *  x.com/0xAtion
+ *  x.com/e_labs_
+ *
+ *
+ */
 
 contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
-    using Strategies for uint256;
+    using Intervals for uint8;
+    using Intervals for uint256;
     using Strategies for Strategy;
+    using Fee for uint256;
 
     mapping(address => mapping(uint256 => Strategy)) internal _strategies;
     mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
@@ -71,9 +93,7 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         uint256 strategyId_
     ) external override onlyExecutor is_active {
         bool success = _singleExecution(DCAAccount_, strategyId_);
-        if (success) {
-            emit ExecutedDCA(DCAAccount_, strategyId_);
-        }
+        if (success) emit ExecutedDCA(DCAAccount_, strategyId_);
     }
 
     function ExecuteBatch(
@@ -90,11 +110,10 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         );
         for (uint256 i = 0; i < DCAAccount_.length; i++) {
             if (
-                _lastExecution[DCAAccount_[i]][strategyId_[i]] +
-                    Strategies._getIntervalBlockAmount(
+                _lastExecution[DCAAccount_[i]][strategyId_[i]]
+                    ._isStrategyInWindow(
                         _strategies[DCAAccount_[i]][strategyId_[i]].interval
-                    ) <
-                block.number
+                    )
             ) {
                 if (_singleExecution(DCAAccount_[i], strategyId_[i])) {
                     emit ExecutedDCA(DCAAccount_[i], strategyId_[i]);
@@ -113,7 +132,7 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
                 uint256 executorFee,
                 uint256 computingFee,
                 uint256 adminFee
-            ) = _calculateFeeSplits(balance);
+            ) = balance._getFees(_feeData);
             _transferFee(_feeData.executionAddress, executorFee, token);
             _transferFee(_feeData.computingAddress, computingFee, token);
             _transferFee(_feeData.adminAddress, adminFee, token);
@@ -163,6 +182,10 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         return _feeData;
     }
 
+    function getFeeQuote(uint256 amount_) public view returns (uint256) {
+        return amount_._getFee(_feeData.feeAmount);
+    }
+
     function getTimeTillWindow(
         address account_,
         uint256 strategyId_
@@ -174,6 +197,16 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         return
             IDCAAccount(_strategies[account_][strategyId_].accountAddress)
                 .getTimeTillWindow(strategyId_);
+    }
+
+    function DEVgetFeeOfAmount(
+        uint256 amount_
+    )
+        public
+        view
+        returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
+    {
+        return amount_._getFees(_feeData);
     }
 
     /**
@@ -223,31 +256,6 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
             _lastExecution[accountAddress_][strategyId_] = block.number;
         }
         return success;
-    }
-
-    function _calculateFeeSplits(
-        uint256 balance
-    )
-        internal
-        view
-        returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
-    {
-        executorFee = Strategies._calculateFee(
-            balance,
-            _feeData.amountToExecutor,
-            18 // Assuming the token has 18 decimals
-        );
-        computingFee = Strategies._calculateFee(
-            balance,
-            _feeData.amountToComputing,
-            18
-        );
-        adminFee = Strategies._calculateFee(
-            balance,
-            _feeData.amountToAdmin,
-            18
-        );
-        return (executorFee, computingFee, adminFee);
     }
 
     function _transferFee(

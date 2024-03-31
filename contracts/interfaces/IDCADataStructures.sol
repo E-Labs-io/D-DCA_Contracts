@@ -7,9 +7,11 @@ interface IDCADataStructures {
     enum Interval {
         TestIntervalOneMin, //Only for development 4 blocks
         TestIntervalFiveMins, //Only for development 20 blocks
+        TwelveHours,
         OneDay, // 1 day = 5760 blocks
         TwoDays, // 2 days = 11520 blocks
         OneWeek, // 1 week = 40320 blocks
+        TwoWeeks,
         OneMonth // 1 month = 172800 blocks
     }
 
