@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 pragma experimental ABIEncoderV2;
+import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -15,28 +16,28 @@ import {Intervals} from "../library/Intervals.sol";
 
 /**
  *
- ***********************************************
- *___ooo____oooooooo_oooo____oooo____ooo____oo_*
- *_oo___oo_____oo_____oo___oo____oo__oooo___oo_*
- *oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
- *ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
- *oo_____oo____oo_____oo___oo____oo__oo___oooo_*
- *oo_____oo____oo____oooo____oooo____oo____ooo_*
- *_____________________________________________*
+ ************************************************
+ *____ooo____oooooooo_oooo____oooo____ooo____oo_*
+ *__oo___oo_____oo_____oo___oo____oo__oooo___oo_*
+ *_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
+ *_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
+ *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
+ *_oo_____oo____oo____oooo____oooo____oo____ooo_*
+ *______________________________________________*
  *       Dollar Cost Average Contracts
- ***********************************************
- *
+ ************************************************
+ *                  V0.6
  *  x.com/0xAtion
  *  x.com/e_labs_
- *
+ *  e-labs.co.uk
  *
  */
 
 contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
-    using Intervals for uint8;
-    using Intervals for uint256;
+    using Intervals for Interval;
     using Strategies for Strategy;
-    using Fee for uint256;
+    using Fee for uint16;
+    using Fee for FeeDistribution;
 
     mapping(address => mapping(uint256 => Strategy)) internal _strategies;
     mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
@@ -48,8 +49,8 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
     constructor(
         FeeDistribution memory feeDistrobution_,
         address executionEOA_
-    ) OnlyExecutor(_msgSender(), executionEOA_) {
-        _feeData = feeDistrobution_;
+    ) OnlyExecutor(msg.sender, executionEOA_) {
+        setFeeData(feeDistrobution_);
     }
 
     fallback() external payable {
@@ -68,7 +69,7 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
             "DCAexecutor : [Subscribe] Only Account Contract can unsubscribe"
         );
         require(
-            strategy_._isValidStrategy(),
+            strategy_.isValid(),
             "DCAexecutor : [Subscribe] Invalid strategy"
         );
 
@@ -110,10 +111,9 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         );
         for (uint256 i = 0; i < DCAAccount_.length; i++) {
             if (
-                _lastExecution[DCAAccount_[i]][strategyId_[i]]
-                    ._isStrategyInWindow(
-                        _strategies[DCAAccount_[i]][strategyId_[i]].interval
-                    )
+                _strategies[DCAAccount_[i]][strategyId_[i]].interval.isInWindow(
+                    _lastExecution[DCAAccount_[i]][strategyId_[i]]
+                )
             ) {
                 if (_singleExecution(DCAAccount_[i], strategyId_[i])) {
                     emit ExecutedDCA(DCAAccount_[i], strategyId_[i]);
@@ -132,7 +132,7 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
                 uint256 executorFee,
                 uint256 computingFee,
                 uint256 adminFee
-            ) = balance._getFees(_feeData);
+            ) = _feeData.getFees(balance);
             _transferFee(_feeData.executionAddress, executorFee, token);
             _transferFee(_feeData.computingAddress, computingFee, token);
             _transferFee(_feeData.adminAddress, adminFee, token);
@@ -159,6 +159,18 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         );
     }
 
+    function setFeeData(
+        IDCADataStructures.FeeDistribution memory fee_
+    ) public onlyOwner {
+        console.log("check total fee amount", fee_.feeAmount);
+        require(
+            fee_.checkPercentTotal(),
+            "DCAExecutor : [setFeeData] Total split percents don't equal 100%"
+        );
+        _feeData = fee_;
+        emit FeeDataChanged();
+    }
+
     function getTotalActiveStrategys() public view returns (uint256) {
         return _totalActiveStrategies;
     }
@@ -182,10 +194,6 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         return _feeData;
     }
 
-    function getFeeQuote(uint256 amount_) public view returns (uint256) {
-        return amount_._getFee(_feeData.feeAmount);
-    }
-
     function getTimeTillWindow(
         address account_,
         uint256 strategyId_
@@ -197,16 +205,6 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         return
             IDCAAccount(_strategies[account_][strategyId_].accountAddress)
                 .getTimeTillWindow(strategyId_);
-    }
-
-    function DEVgetFeeOfAmount(
-        uint256 amount_
-    )
-        public
-        view
-        returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
-    {
-        return amount_._getFees(_feeData);
     }
 
     /**
@@ -264,5 +262,36 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         IERC20 token_
     ) internal {
         token_.transfer(to_, amount_);
+    }
+
+    /** @notice DEV TESTING FUNCTIONS */
+
+    //  Test getFees
+    function DEVgetFeesOfAmount(
+        uint256 amount_
+    )
+        public
+        view
+        returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
+    {
+        return _feeData.getFees(amount_);
+    }
+    //   Test getFee to given amount
+    function DEVcalculateFeeOfAmount(
+        uint16 feeAmount_,
+        uint256 amount_
+    ) public pure returns (uint256) {
+        return feeAmount_.getFee(amount_);
+    }
+    // Test calculatePercentage
+    function DEVcalculateSplitFee(
+        uint16 feeAmount_,
+        uint256 amount_
+    ) public pure returns (uint256) {
+        return feeAmount_.calculatePercentage(amount_);
+    }
+    // test getFee of set fee data
+    function DEVgetFeeQuote(uint256 amount_) public view returns (uint256) {
+        return _feeData.feeAmount.getFee(amount_);
     }
 }

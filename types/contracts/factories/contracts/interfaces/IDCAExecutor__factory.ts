@@ -61,6 +61,12 @@ const _abi = [
   },
   {
     anonymous: false,
+    inputs: [],
+    name: "FeeDataChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
     inputs: [
       {
         indexed: true,

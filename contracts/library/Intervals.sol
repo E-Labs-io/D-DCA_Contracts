@@ -13,11 +13,11 @@ library Intervals {
 
     uint256 constant BLOCK_TIME = 15 seconds;
 
-    function _isStrategyInWindow(
+    function isInWindow(
         IDCADataStructures.Interval interval_,
         uint256 lastExecution_
     ) internal view returns (bool) {
-        return _secondsLeftTillWindow(interval_, lastExecution_) == 0;
+        return secondsLeftTillWindow(interval_, lastExecution_) == 0;
     }
 
     /**
@@ -25,7 +25,7 @@ library Intervals {
      * @param interval_ {Interval} The interval key
      * @return Amount of blocks to interval
      */
-    function _getIntervalLength(
+    function getIntervalLength(
         IDCADataStructures.Interval interval_
     ) internal pure returns (uint256) {
         if (interval_ == IDCADataStructures.Interval.TestIntervalOneMin)
@@ -50,18 +50,18 @@ library Intervals {
      * @param interval_ {Interval} Interval key to work from
      * @return {uint256} time left till window is open in seconds
      */
-    function _secondsLeftTillWindow(
+    function secondsLeftTillWindow(
         IDCADataStructures.Interval interval_,
         uint256 lastExecution_
     ) internal view returns (uint256) {
-        uint256 intervalEnd = lastExecution_ + _getIntervalLength(interval_);
+        uint256 intervalEnd = lastExecution_ + getIntervalLength(interval_);
         return
             block.timestamp > intervalEnd ? 0 : intervalEnd - block.timestamp;
     }
 
-    function _intervalToBlockAmount(
+    function intervalToBlockAmount(
         IDCADataStructures.Interval interval_
     ) internal pure returns (uint256) {
-        return _getIntervalLength(interval_) / BLOCK_TIME;
+        return getIntervalLength(interval_) / BLOCK_TIME;
     }
 }

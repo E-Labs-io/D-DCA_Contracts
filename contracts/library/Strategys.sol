@@ -11,7 +11,7 @@ library Strategies {
      * @param strategy the strategy object to check
      * @return {bool} if the Strategy data is valid
      */
-    function _isValidStrategy(
+    function isValid(
         IDCADataStructures.Strategy memory strategy
     ) internal pure returns (bool) {
         // Define the maximum valid enum value
@@ -27,6 +27,9 @@ library Strategies {
             isValidInterval);
     }
 
-
-
+    function isActive(
+        IDCADataStructures.Strategy memory strategy_
+    ) internal pure returns (bool) {
+        return strategy_.active;
+    }
 }

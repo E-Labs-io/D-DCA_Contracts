@@ -32,6 +32,8 @@ interface IDCAExecutor is IDCADataStructures {
      */
     event FeesDistributed(address indexed token_, uint256 indexed amount_);
 
+    event FeeDataChanged();
+
     /**
      * @notice Called by a DCAAccount to subscribe a strategy to the DCAExecutor
      * @param strategy_ The full strategy data of the subscribing strategy

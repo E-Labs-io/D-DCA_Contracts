@@ -9,9 +9,9 @@ export function DCAExecutorArguments(
   networkName: string,
 ): any[] {
   const feeDistrobution_: IDCADataStructures.FeeDistributionStruct = {
-    amountToAdmin: 2000, //  20%
-    amountToComputing: 4500, //  45%
-    amountToExecutor: 3500, //  35%
+    amountToAdmin: 2500, //  25%
+    amountToComputing: 5000, //  45%
+    amountToExecutor: 2500, //  25%
     feeAmount: 30, //  0.3%
     executionAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     computingAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
@@ -19,6 +19,8 @@ export function DCAExecutorArguments(
   };
   const executionEOA_: AddressLike =
     "0xe272653f2FF11D1F7bd24cdE149a29f4110d03B1";
+
+  console.log("+++ Check Arguemtns Fee", feeDistrobution_);
 
   return [feeDistrobution_, executionEOA_];
 }

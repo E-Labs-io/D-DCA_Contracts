@@ -311,28 +311,6 @@ function getBaseTokenCostPerBlock(address token_) external view returns (uint256
 |---|---|---|
 | _0 | uint256 | {uint256} amount of the base token strategies use per block |
 
-### getBaseTokenRemainingBlocks
-
-```solidity
-function getBaseTokenRemainingBlocks(address token_) external view returns (uint256)
-```
-
-
-
-*get amount of blocks remaining for given base token*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token_ | address | {address} Base token address |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | {uint256} amount of blocks left for given base token balance |
-
 ### getExecutorAddress
 
 ```solidity

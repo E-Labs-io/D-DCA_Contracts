@@ -1,13 +1,22 @@
 pragma solidity ^0.8.20;
+import "hardhat/console.sol";
 
 import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
 
 library Fee {
-    function _getFee(
+    /**
+     * @notice Function to calculate fee based on total fee percentage
+     * @param feeAmount_ Total fee percentage (100% represented as 10000)
+     * @param amount_ Total amount from which to calculate the fee
+     * @return {uint256} Fee amount to be deducted from the total amount
+     */
+    function getFee(
         uint16 feeAmount_,
         uint256 amount_
     ) internal pure returns (uint256) {
-        return _calculateFee(amount_, 10000, feeAmount_);
+        console.log("Total Fee Percent", feeAmount_);
+        console.log("total In", amount_);
+        return calculatePercentage(feeAmount_, amount_);
     }
     /**
      * @dev
@@ -17,52 +26,47 @@ library Fee {
      * @return computingFee
      * @return adminFee
      */
-    function _getFees(
-        uint256 total_,
-        IDCADataStructures.FeeDistribution storage fee_
+    function getFees(
+        IDCADataStructures.FeeDistribution storage fee_,
+        uint256 amount_
     )
         internal
         view
         returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
     {
-        executorFee = _calculateFee(
-            total_,
-            fee_.amountToExecutor,
-            fee_.feeAmount
-        );
-        computingFee = _calculateFee(
-            total_,
-            fee_.amountToComputing,
-            fee_.feeAmount
-        );
-        adminFee = _calculateFee(total_, fee_.amountToAdmin, fee_.feeAmount);
+        uint256 totalFee = calculatePercentage(fee_.feeAmount, amount_);
+        executorFee = calculatePercentage(fee_.amountToExecutor, totalFee);
+        computingFee = calculatePercentage(fee_.amountToComputing, totalFee);
+        adminFee = calculatePercentage(fee_.amountToAdmin, totalFee);
     }
 
     /**
-     * @notice Function to calculate fees
-     * @param amount {uint256} Amount of token to calculate to
-     * @param feePercentage The percent to be worked out
-     * @param totalFeePercentage The total fee percentage
-     * @return {uint256} How much the percent is of the given amount
+     * @notice Function to c alculate the percentage of an amount
+     * @param percent_ Percentage to calculate (1% represented as 100, 0.01% as 1, and 100% as 10000)
+     * @param amount_ Total amount from which to calculate the percentage
+     * @return {uint256} The calculated percentage of the amount
      */
-    function _calculateFee(
-        uint256 amount,
-        uint16 feePercentage,
-        uint16 totalFeePercentage
+    function calculatePercentage(
+        uint16 percent_,
+        uint256 amount_
     ) internal pure returns (uint256) {
-        uint256 feeDecimal = (amount * feePercentage) / totalFeePercentage;
-        return feeDecimal;
+        if (percent_ < 1) return 0;
+        console.log("Finding", percent_, "of", amount_);
+        uint256 percentageAmount = (amount_ * percent_) / 10000;
+        console.log("answer is", percentageAmount);
+
+        return percentageAmount;
     }
 
     /**
      * @dev gets the percent of each fee amount in the active fee structure
-     * @param fee_ teh fee strucutre
+     * @param fee_ tettheheh fee strucutre
      * @return totalFee
      * @return executorFee
      * @return computingFee
      * @return adminFee
      */
-    function _getFeeAmounts(
+    function getFeeAmounts(
         IDCADataStructures.FeeDistribution calldata fee_
     )
         internal
@@ -80,5 +84,20 @@ library Fee {
             fee_.amountToComputing,
             fee_.amountToAdmin
         );
+    }
+    /**
+     * @dev Check that the split percentages add upto 100% (10,000)
+     * @param fee_ fee data set to check
+     * @return {bool}
+     */
+
+    function checkPercentTotal(
+        IDCADataStructures.FeeDistribution memory fee_
+    ) internal pure returns (bool) {
+        return
+            fee_.amountToAdmin +
+                fee_.amountToExecutor +
+                fee_.amountToComputing ==
+            10000;
     }
 }

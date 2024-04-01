@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -19,55 +20,25 @@ import type {
   TypedContractMethod,
 } from "../../../common";
 
-export interface DCAReinvestLogicInterface extends Interface {
-  getFunction(
-    nameOrSignature:
-      | "ACTIVE_REINVESTS"
-      | "REINVEST_ACTIVE"
-      | "REINVEST_CHAIN"
-      | "REINVEST_VERSION"
-  ): FunctionFragment;
+export interface FeeInterface extends Interface {
+  getFunction(nameOrSignature: "calculatePercentage"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "ACTIVE_REINVESTS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REINVEST_ACTIVE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REINVEST_CHAIN",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REINVEST_VERSION",
-    values?: undefined
+    functionFragment: "calculatePercentage",
+    values: [BigNumberish, BigNumberish]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "ACTIVE_REINVESTS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "REINVEST_ACTIVE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "REINVEST_CHAIN",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "REINVEST_VERSION",
+    functionFragment: "calculatePercentage",
     data: BytesLike
   ): Result;
 }
 
-export interface DCAReinvestLogic extends BaseContract {
-  connect(runner?: ContractRunner | null): DCAReinvestLogic;
+export interface Fee extends BaseContract {
+  connect(runner?: ContractRunner | null): Fee;
   waitForDeployment(): Promise<this>;
 
-  interface: DCAReinvestLogicInterface;
+  interface: FeeInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -106,30 +77,23 @@ export interface DCAReinvestLogic extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  ACTIVE_REINVESTS: TypedContractMethod<[], [string], "view">;
-
-  REINVEST_ACTIVE: TypedContractMethod<[], [boolean], "view">;
-
-  REINVEST_CHAIN: TypedContractMethod<[], [bigint], "view">;
-
-  REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
+  calculatePercentage: TypedContractMethod<
+    [percent_: BigNumberish, amount_: BigNumberish],
+    [bigint],
+    "view"
+  >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "ACTIVE_REINVESTS"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "REINVEST_ACTIVE"
-  ): TypedContractMethod<[], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "REINVEST_CHAIN"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "REINVEST_VERSION"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: "calculatePercentage"
+  ): TypedContractMethod<
+    [percent_: BigNumberish, amount_: BigNumberish],
+    [bigint],
+    "view"
+  >;
 
   filters: {};
 }

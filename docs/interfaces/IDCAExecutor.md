@@ -175,6 +175,17 @@ Emitted once a strategy has finished executing
 | account_ `indexed` | address | {address} Address of the DCAAccount |
 | strategyId_ `indexed` | uint256 | {uint256} ID of teh strategy executed |
 
+### FeeDataChanged
+
+```solidity
+event FeeDataChanged()
+```
+
+
+
+
+
+
 ### FeesDistributed
 
 ```solidity

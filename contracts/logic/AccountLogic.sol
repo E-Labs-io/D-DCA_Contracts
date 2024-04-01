@@ -13,7 +13,6 @@ import {OnlyExecutor} from "../security/onlyExecutor.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
 
 abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
-    using Strategies for uint256;
     using Fee for uint16;
     using Strategies for Strategy;
     using Intervals for Interval;
@@ -40,7 +39,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
 
     modifier inWindow(uint256 strategyId_) {
         require(
-            _strategies[strategyId_].interval._isStrategyInWindow(
+            _strategies[strategyId_].interval.isInWindow(
                 _lastExecution[strategyId_]
             ),
             "DCAAccount : [inWindow] Strategy Interval not met"
@@ -64,7 +63,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         uint16 feePercent_
     ) internal returns (bool) {
         Strategy memory strategy = _strategies[strategyId_];
-        uint256 fee = feePercent_._getFee(strategy.amount);
+        uint256 fee = feePercent_.getFee(strategy.amount);
         uint256 tradeAmount = strategy.amount - fee;
 
         if (feePercent_ > 0) {
@@ -250,7 +249,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         uint256 amount_,
         Interval interval_
     ) internal pure returns (uint256) {
-        return amount_ / interval_._intervalToBlockAmount();
+        return amount_ / interval_.intervalToBlockAmount();
     }
     /**
      * @notice Helpers Logic
@@ -272,7 +271,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     {
         lastEx = _lastExecution[strategyId_];
         Interval inter = _strategies[strategyId_].interval;
-        secondsLeft = inter._secondsLeftTillWindow(lastEx);
+        secondsLeft = inter.secondsLeftTillWindow(lastEx);
         return (lastEx, secondsLeft, secondsLeft == 0);
     }
 }

@@ -10,5 +10,7 @@ library ReinvestCodes {
     uint8 constant HOP = 0x13;
     uint8 constant POOLTOGETHER_ETH = 0x14;
 
-
+    function checkCode(uint8 have_, uint8 want_) internal pure returns (bool) {
+        return have_ == want_;
+    }
 }

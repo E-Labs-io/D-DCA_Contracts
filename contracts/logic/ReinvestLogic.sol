@@ -33,11 +33,11 @@ abstract contract DCAReinvestLogic {
     ) internal returns (uint256 amount, bool success) {
         uint8 code = reinvestData_.investCode;
 
-        if (code == ReinvestCodes.NOT_ACTIVE) return (amount, success);
-        else if (code == ReinvestCodes.FORWARD)
+        if (code.checkCode(ReinvestCodes.NOT_ACTIVE)) return (amount, success);
+        else if (code.checkCode(ReinvestCodes.FORWARD))
             return
                 ForwardReinvest._execute(amount_, reinvestData_.reinvestData);
-        else if (code == ReinvestCodes.COMPOUND) {} else if (
+        else if (code.checkCode(ReinvestCodes.COMPOUND)) {} else if (
             code == ReinvestCodes.AAVE
         ) return AaveV3Reinvest._execute(amount_, reinvestData_.reinvestData);
     }

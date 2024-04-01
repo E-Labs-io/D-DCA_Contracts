@@ -118,6 +118,10 @@ export declare namespace IDCADataStructures {
 export interface DCAExecutorInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "DEVcalculateFeeOfAmount"
+      | "DEVcalculateSplitFee"
+      | "DEVgetFeeQuote"
+      | "DEVgetFeesOfAmount"
       | "DistributeFees"
       | "Execute"
       | "ExecuteBatch"
@@ -139,6 +143,7 @@ export interface DCAExecutorInterface extends Interface {
       | "removeExecutor"
       | "renounceOwnership"
       | "setActiveState"
+      | "setFeeData"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -148,10 +153,27 @@ export interface DCAExecutorInterface extends Interface {
       | "DCAAccountSubscription"
       | "ExecutedDCA"
       | "ExecutorAddressChange"
+      | "FeeDataChanged"
       | "FeesDistributed"
       | "OwnershipTransferred"
   ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "DEVcalculateFeeOfAmount",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEVcalculateSplitFee",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEVgetFeeQuote",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEVgetFeesOfAmount",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "DistributeFees",
     values: [AddressLike]
@@ -234,10 +256,30 @@ export interface DCAExecutorInterface extends Interface {
     values: [boolean]
   ): string;
   encodeFunctionData(
+    functionFragment: "setFeeData",
+    values: [IDCADataStructures.FeeDistributionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DEVcalculateFeeOfAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DEVcalculateSplitFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DEVgetFeeQuote",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DEVgetFeesOfAmount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "DistributeFees",
     data: BytesLike
@@ -307,6 +349,7 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "setActiveState",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setFeeData", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -369,6 +412,16 @@ export namespace ExecutorAddressChangeEvent {
   export interface OutputObject {
     newAddress_: string;
   }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace FeeDataChangedEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -443,6 +496,36 @@ export interface DCAExecutor extends BaseContract {
   removeAllListeners<TCEvent extends TypedContractEvent>(
     event?: TCEvent
   ): Promise<this>;
+
+  DEVcalculateFeeOfAmount: TypedContractMethod<
+    [feeAmount_: BigNumberish, amount_: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  DEVcalculateSplitFee: TypedContractMethod<
+    [feeAmount_: BigNumberish, amount_: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  DEVgetFeeQuote: TypedContractMethod<
+    [amount_: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  DEVgetFeesOfAmount: TypedContractMethod<
+    [amount_: BigNumberish],
+    [
+      [bigint, bigint, bigint] & {
+        executorFee: bigint;
+        computingFee: bigint;
+        adminFee: bigint;
+      }
+    ],
+    "view"
+  >;
 
   DistributeFees: TypedContractMethod<
     [tokenAddress_: AddressLike],
@@ -544,6 +627,12 @@ export interface DCAExecutor extends BaseContract {
     "nonpayable"
   >;
 
+  setFeeData: TypedContractMethod<
+    [fee_: IDCADataStructures.FeeDistributionStruct],
+    [void],
+    "nonpayable"
+  >;
+
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
     [void],
@@ -554,6 +643,36 @@ export interface DCAExecutor extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "DEVcalculateFeeOfAmount"
+  ): TypedContractMethod<
+    [feeAmount_: BigNumberish, amount_: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "DEVcalculateSplitFee"
+  ): TypedContractMethod<
+    [feeAmount_: BigNumberish, amount_: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "DEVgetFeeQuote"
+  ): TypedContractMethod<[amount_: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "DEVgetFeesOfAmount"
+  ): TypedContractMethod<
+    [amount_: BigNumberish],
+    [
+      [bigint, bigint, bigint] & {
+        executorFee: bigint;
+        computingFee: bigint;
+        adminFee: bigint;
+      }
+    ],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "DistributeFees"
   ): TypedContractMethod<[tokenAddress_: AddressLike], [void], "nonpayable">;
@@ -656,6 +775,13 @@ export interface DCAExecutor extends BaseContract {
     nameOrSignature: "setActiveState"
   ): TypedContractMethod<[newState_: boolean], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setFeeData"
+  ): TypedContractMethod<
+    [fee_: IDCADataStructures.FeeDistributionStruct],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
@@ -686,6 +812,13 @@ export interface DCAExecutor extends BaseContract {
     ExecutorAddressChangeEvent.InputTuple,
     ExecutorAddressChangeEvent.OutputTuple,
     ExecutorAddressChangeEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeeDataChanged"
+  ): TypedContractEvent<
+    FeeDataChangedEvent.InputTuple,
+    FeeDataChangedEvent.OutputTuple,
+    FeeDataChangedEvent.OutputObject
   >;
   getEvent(
     key: "FeesDistributed"
@@ -745,6 +878,17 @@ export interface DCAExecutor extends BaseContract {
       ExecutorAddressChangeEvent.InputTuple,
       ExecutorAddressChangeEvent.OutputTuple,
       ExecutorAddressChangeEvent.OutputObject
+    >;
+
+    "FeeDataChanged()": TypedContractEvent<
+      FeeDataChangedEvent.InputTuple,
+      FeeDataChangedEvent.OutputTuple,
+      FeeDataChangedEvent.OutputObject
+    >;
+    FeeDataChanged: TypedContractEvent<
+      FeeDataChangedEvent.InputTuple,
+      FeeDataChangedEvent.OutputTuple,
+      FeeDataChangedEvent.OutputObject
     >;
 
     "FeesDistributed(address,uint256)": TypedContractEvent<

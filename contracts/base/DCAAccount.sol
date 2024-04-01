@@ -69,7 +69,7 @@ contract DCAAccount is DCAAccountLogic {
         bool subscribeToExecutor_
     ) external override onlyOwner {
         require(
-            newStrategy_._isValidStrategy(),
+            newStrategy_.isValid(),
             "DCAAccount : [SetupStrategy] Invalid strategy data"
         );
 

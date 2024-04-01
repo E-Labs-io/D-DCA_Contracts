@@ -103,6 +103,7 @@ export interface IDCAExecutorInterface extends Interface {
     nameOrSignatureOrTopic:
       | "DCAAccountSubscription"
       | "ExecutedDCA"
+      | "FeeDataChanged"
       | "FeesDistributed"
   ): EventFragment;
 
@@ -191,6 +192,16 @@ export namespace ExecutedDCAEvent {
     account_: string;
     strategyId_: bigint;
   }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace FeeDataChangedEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -372,6 +383,13 @@ export interface IDCAExecutor extends BaseContract {
     ExecutedDCAEvent.OutputObject
   >;
   getEvent(
+    key: "FeeDataChanged"
+  ): TypedContractEvent<
+    FeeDataChangedEvent.InputTuple,
+    FeeDataChangedEvent.OutputTuple,
+    FeeDataChangedEvent.OutputObject
+  >;
+  getEvent(
     key: "FeesDistributed"
   ): TypedContractEvent<
     FeesDistributedEvent.InputTuple,
@@ -400,6 +418,17 @@ export interface IDCAExecutor extends BaseContract {
       ExecutedDCAEvent.InputTuple,
       ExecutedDCAEvent.OutputTuple,
       ExecutedDCAEvent.OutputObject
+    >;
+
+    "FeeDataChanged()": TypedContractEvent<
+      FeeDataChangedEvent.InputTuple,
+      FeeDataChangedEvent.OutputTuple,
+      FeeDataChangedEvent.OutputObject
+    >;
+    FeeDataChanged: TypedContractEvent<
+      FeeDataChangedEvent.InputTuple,
+      FeeDataChangedEvent.OutputTuple,
+      FeeDataChangedEvent.OutputObject
     >;
 
     "FeesDistributed(address,uint256)": TypedContractEvent<

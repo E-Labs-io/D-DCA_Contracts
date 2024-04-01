@@ -4,11 +4,103 @@
 
 
 
-
+************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*       Dollar Cost Average Contracts************************************************                  V0.6  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
 
 
 
 ## Methods
+
+### DEVcalculateFeeOfAmount
+
+```solidity
+function DEVcalculateFeeOfAmount(uint16 feeAmount_, uint256 amount_) external pure returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| feeAmount_ | uint16 | undefined |
+| amount_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
+### DEVcalculateSplitFee
+
+```solidity
+function DEVcalculateSplitFee(uint16 feeAmount_, uint256 amount_) external pure returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| feeAmount_ | uint16 | undefined |
+| amount_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
+### DEVgetFeeQuote
+
+```solidity
+function DEVgetFeeQuote(uint256 amount_) external view returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| amount_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
+### DEVgetFeesOfAmount
+
+```solidity
+function DEVgetFeesOfAmount(uint256 amount_) external view returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
+```
+
+DEV TESTING FUNCTIONS 
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| amount_ | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| executorFee | uint256 | undefined |
+| computingFee | uint256 | undefined |
+| adminFee | uint256 | undefined |
 
 ### DistributeFees
 
@@ -368,6 +460,22 @@ function setActiveState(bool newState_) external nonpayable
 |---|---|---|
 | newState_ | bool | undefined |
 
+### setFeeData
+
+```solidity
+function setFeeData(IDCADataStructures.FeeDistribution fee_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| fee_ | IDCADataStructures.FeeDistribution | undefined |
+
 ### transferOwnership
 
 ```solidity
@@ -455,6 +563,17 @@ event ExecutorAddressChange(address indexed newAddress_)
 | Name | Type | Description |
 |---|---|---|
 | newAddress_ `indexed` | address | undefined |
+
+### FeeDataChanged
+
+```solidity
+event FeeDataChanged()
+```
+
+
+
+
+
 
 ### FeesDistributed
 
