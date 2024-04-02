@@ -25,9 +25,9 @@ import type {
 export interface OnlyActiveInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "isActive"
       | "owner"
       | "renounceOwnership"
-      | "setActiveState"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -35,27 +35,21 @@ export interface OnlyActiveInterface extends Interface {
     nameOrSignatureOrTopic: "ContractActiveStateChange" | "OwnershipTransferred"
   ): EventFragment;
 
+  encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setActiveState",
-    values: [boolean]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setActiveState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -132,15 +126,11 @@ export interface OnlyActive extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  isActive: TypedContractMethod<[], [boolean], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
-
-  setActiveState: TypedContractMethod<
-    [newState_: boolean],
-    [void],
-    "nonpayable"
-  >;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -153,14 +143,14 @@ export interface OnlyActive extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "isActive"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setActiveState"
-  ): TypedContractMethod<[newState_: boolean], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;

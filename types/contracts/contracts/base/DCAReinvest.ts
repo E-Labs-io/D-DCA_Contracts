@@ -48,11 +48,11 @@ export interface DCAReinvestInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "ACTIVE_REINVESTS"
-      | "REINVEST_ACTIVE"
       | "REINVEST_CHAIN"
       | "REINVEST_VERSION"
       | "executeReinvest"
       | "getLibraryVersion"
+      | "isActive"
       | "migrateReinvest"
       | "owner"
       | "renounceOwnership"
@@ -61,14 +61,12 @@ export interface DCAReinvestInterface extends Interface {
       | "unwindReinvest"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ContractActiveStateChange" | "OwnershipTransferred"
+  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "ACTIVE_REINVESTS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REINVEST_ACTIVE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -87,6 +85,7 @@ export interface DCAReinvestInterface extends Interface {
     functionFragment: "getLibraryVersion",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "migrateReinvest",
     values: [
@@ -118,10 +117,6 @@ export interface DCAReinvestInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "REINVEST_ACTIVE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "REINVEST_CHAIN",
     data: BytesLike
   ): Result;
@@ -137,6 +132,7 @@ export interface DCAReinvestInterface extends Interface {
     functionFragment: "getLibraryVersion",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "migrateReinvest",
     data: BytesLike
@@ -158,6 +154,18 @@ export interface DCAReinvestInterface extends Interface {
     functionFragment: "unwindReinvest",
     data: BytesLike
   ): Result;
+}
+
+export namespace ContractActiveStateChangeEvent {
+  export type InputTuple = [newState_: boolean];
+  export type OutputTuple = [newState_: boolean];
+  export interface OutputObject {
+    newState_: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace OwnershipTransferredEvent {
@@ -218,8 +226,6 @@ export interface DCAReinvest extends BaseContract {
 
   ACTIVE_REINVESTS: TypedContractMethod<[], [string], "view">;
 
-  REINVEST_ACTIVE: TypedContractMethod<[], [boolean], "view">;
-
   REINVEST_CHAIN: TypedContractMethod<[], [bigint], "view">;
 
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
@@ -231,6 +237,8 @@ export interface DCAReinvest extends BaseContract {
   >;
 
   getLibraryVersion: TypedContractMethod<[], [string], "view">;
+
+  isActive: TypedContractMethod<[], [boolean], "view">;
 
   migrateReinvest: TypedContractMethod<
     [
@@ -268,9 +276,6 @@ export interface DCAReinvest extends BaseContract {
     nameOrSignature: "ACTIVE_REINVESTS"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "REINVEST_ACTIVE"
-  ): TypedContractMethod<[], [boolean], "view">;
-  getFunction(
     nameOrSignature: "REINVEST_CHAIN"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -286,6 +291,9 @@ export interface DCAReinvest extends BaseContract {
   getFunction(
     nameOrSignature: "getLibraryVersion"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "isActive"
+  ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "migrateReinvest"
   ): TypedContractMethod<
@@ -318,6 +326,13 @@ export interface DCAReinvest extends BaseContract {
   >;
 
   getEvent(
+    key: "ContractActiveStateChange"
+  ): TypedContractEvent<
+    ContractActiveStateChangeEvent.InputTuple,
+    ContractActiveStateChangeEvent.OutputTuple,
+    ContractActiveStateChangeEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -326,6 +341,17 @@ export interface DCAReinvest extends BaseContract {
   >;
 
   filters: {
+    "ContractActiveStateChange(bool)": TypedContractEvent<
+      ContractActiveStateChangeEvent.InputTuple,
+      ContractActiveStateChangeEvent.OutputTuple,
+      ContractActiveStateChangeEvent.OutputObject
+    >;
+    ContractActiveStateChange: TypedContractEvent<
+      ContractActiveStateChangeEvent.InputTuple,
+      ContractActiveStateChangeEvent.OutputTuple,
+      ContractActiveStateChangeEvent.OutputObject
+    >;
+
     "OwnershipTransferred(address,address)": TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,

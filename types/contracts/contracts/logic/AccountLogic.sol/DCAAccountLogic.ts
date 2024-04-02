@@ -93,7 +93,6 @@ export interface DCAAccountLogicInterface extends Interface {
       | "Execute"
       | "ExecutorDeactivateStrategy"
       | "FundAccount"
-      | "SWAP"
       | "SWAP_ROUTER"
       | "SetupStrategy"
       | "SubscribeStrategy"
@@ -136,10 +135,6 @@ export interface DCAAccountLogicInterface extends Interface {
   encodeFunctionData(
     functionFragment: "FundAccount",
     values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "SWAP",
-    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "SWAP_ROUTER",
@@ -212,7 +207,6 @@ export interface DCAAccountLogicInterface extends Interface {
     functionFragment: "FundAccount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "SWAP", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "SWAP_ROUTER",
     data: BytesLike
@@ -329,17 +323,17 @@ export namespace StrategyExecutedEvent {
   export type InputTuple = [
     strategyId_: BigNumberish,
     amountIn_: BigNumberish,
-    reInvest_: boolean
+    reInvested_: boolean
   ];
   export type OutputTuple = [
     strategyId_: bigint,
     amountIn_: bigint,
-    reInvest_: boolean
+    reInvested_: boolean
   ];
   export interface OutputObject {
     strategyId_: bigint;
     amountIn_: bigint;
-    reInvest_: boolean;
+    reInvested_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -468,12 +462,6 @@ export interface DCAAccountLogic extends BaseContract {
     "nonpayable"
   >;
 
-  SWAP: TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
 
   SetupStrategy: TypedContractMethod<
@@ -578,13 +566,6 @@ export interface DCAAccountLogic extends BaseContract {
     nameOrSignature: "FundAccount"
   ): TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "SWAP"
-  ): TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
     [void],
     "nonpayable"
   >;

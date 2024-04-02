@@ -10,29 +10,6 @@ import type {
 
 const _abi = [
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "baseToken_",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "targetToken_",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount_",
-        type: "uint256",
-      },
-    ],
-    name: "SWAP",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "SWAP_ROUTER",
     outputs: [

@@ -48,7 +48,6 @@ export interface DCAReinvestProxyInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "ACTIVE_REINVESTS"
-      | "REINVEST_ACTIVE"
       | "REINVEST_CHAIN"
       | "REINVEST_VERSION"
       | "executeReinvest"
@@ -57,7 +56,6 @@ export interface DCAReinvestProxyInterface extends Interface {
       | "migrateReinvest"
       | "owner"
       | "renounceOwnership"
-      | "setActiveState"
       | "testCall"
       | "transferOwnership"
       | "unwindReinvest"
@@ -69,10 +67,6 @@ export interface DCAReinvestProxyInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "ACTIVE_REINVESTS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REINVEST_ACTIVE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -105,10 +99,6 @@ export interface DCAReinvestProxyInterface extends Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "setActiveState",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "testCall", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -121,10 +111,6 @@ export interface DCAReinvestProxyInterface extends Interface {
 
   decodeFunctionResult(
     functionFragment: "ACTIVE_REINVESTS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "REINVEST_ACTIVE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -151,10 +137,6 @@ export interface DCAReinvestProxyInterface extends Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setActiveState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "testCall", data: BytesLike): Result;
@@ -248,8 +230,6 @@ export interface DCAReinvestProxy extends BaseContract {
 
   ACTIVE_REINVESTS: TypedContractMethod<[], [string], "view">;
 
-  REINVEST_ACTIVE: TypedContractMethod<[], [boolean], "view">;
-
   REINVEST_CHAIN: TypedContractMethod<[], [bigint], "view">;
 
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
@@ -278,8 +258,6 @@ export interface DCAReinvestProxy extends BaseContract {
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
-  setActiveState: TypedContractMethod<[], [void], "nonpayable">;
-
   testCall: TypedContractMethod<[], [[bigint, boolean]], "nonpayable">;
 
   transferOwnership: TypedContractMethod<
@@ -301,9 +279,6 @@ export interface DCAReinvestProxy extends BaseContract {
   getFunction(
     nameOrSignature: "ACTIVE_REINVESTS"
   ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "REINVEST_ACTIVE"
-  ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "REINVEST_CHAIN"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -339,9 +314,6 @@ export interface DCAReinvestProxy extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setActiveState"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "testCall"

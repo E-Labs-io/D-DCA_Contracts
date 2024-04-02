@@ -2,7 +2,24 @@ pragma solidity ^0.8.20;
 import "hardhat/console.sol";
 
 import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
-
+/**
+ *
+ ************************************************
+ *____ooo____oooooooo_oooo____oooo____ooo____oo_*
+ *__oo___oo_____oo_____oo___oo____oo__oooo___oo_*
+ *_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
+ *_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
+ *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
+ *_oo_____oo____oo____oooo____oooo____oo____ooo_*
+ *______________________________________________*
+ *       Dollar Cost Average Contracts
+ ************************************************
+ *                  V0.6
+ *  x.com/0xAtion
+ *  x.com/e_labs_
+ *  e-labs.co.uk
+ *
+ */
 library Fee {
     /**
      * @notice Function to calculate fee based on total fee percentage
@@ -14,8 +31,6 @@ library Fee {
         uint16 feeAmount_,
         uint256 amount_
     ) internal pure returns (uint256) {
-        console.log("Total Fee Percent", feeAmount_);
-        console.log("total In", amount_);
         return calculatePercentage(feeAmount_, amount_);
     }
     /**
@@ -26,7 +41,7 @@ library Fee {
      * @return computingFee
      * @return adminFee
      */
-    function getFees(
+    function getFeeSplit(
         IDCADataStructures.FeeDistribution storage fee_,
         uint256 amount_
     )
@@ -34,10 +49,9 @@ library Fee {
         view
         returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
     {
-        uint256 totalFee = calculatePercentage(fee_.feeAmount, amount_);
-        executorFee = calculatePercentage(fee_.amountToExecutor, totalFee);
-        computingFee = calculatePercentage(fee_.amountToComputing, totalFee);
-        adminFee = calculatePercentage(fee_.amountToAdmin, totalFee);
+        executorFee = calculatePercentage(fee_.amountToExecutor, amount_);
+        computingFee = calculatePercentage(fee_.amountToComputing, amount_);
+        adminFee = calculatePercentage(fee_.amountToAdmin, amount_);
     }
 
     /**
@@ -51,10 +65,7 @@ library Fee {
         uint256 amount_
     ) internal pure returns (uint256) {
         if (percent_ < 1) return 0;
-        console.log("Finding", percent_, "of", amount_);
         uint256 percentageAmount = (amount_ * percent_) / 10000;
-        console.log("answer is", percentageAmount);
-
         return percentageAmount;
     }
 

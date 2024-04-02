@@ -4,7 +4,7 @@
 
 
 
-
+************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*       Dollar Cost Average Contracts************************************************                  V0.6  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
 
 
 
@@ -25,22 +25,6 @@ function addAdmin(address newAdmin_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | newAdmin_ | address | undefined |
-
-### changeExecutor
-
-```solidity
-function changeExecutor(address executorAddress_) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| executorAddress_ | address | undefined |
 
 ### checkIfAdmin
 
@@ -63,23 +47,6 @@ function checkIfAdmin(address addressToCheck_) external view returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined |
-
-### getExecutorAddress
-
-```solidity
-function getExecutorAddress() external view returns (address)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
 
 ### owner
 
@@ -114,17 +81,6 @@ function removeAdmin(address oldAdmin_) external nonpayable
 |---|---|---|
 | oldAdmin_ | address | undefined |
 
-### removeExecutor
-
-```solidity
-function removeExecutor() external nonpayable
-```
-
-
-
-
-
-
 ### renounceOwnership
 
 ```solidity
@@ -155,22 +111,6 @@ function transferOwnership(address newOwner) external nonpayable
 
 
 ## Events
-
-### ExecutorAddressChange
-
-```solidity
-event ExecutorAddressChange(address indexed newAddress_)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newAddress_ `indexed` | address | undefined |
 
 ### OwnershipTransferred
 

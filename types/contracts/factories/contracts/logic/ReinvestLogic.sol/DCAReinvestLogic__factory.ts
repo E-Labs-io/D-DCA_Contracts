@@ -24,19 +24,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "REINVEST_ACTIVE",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "REINVEST_CHAIN",
     outputs: [
       {

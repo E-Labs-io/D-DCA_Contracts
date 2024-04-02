@@ -4,9 +4,27 @@ pragma solidity ^0.8.20;
 import "hardhat/console.sol";
 
 import {DCAReinvestLogic, IDCADataStructures} from "../logic/ReinvestLogic.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "../security/onlyActive.sol";
 
-contract DCAReinvest is DCAReinvestLogic, Ownable {
+/**
+ *
+ ************************************************
+ *____ooo____oooooooo_oooo____oooo____ooo____oo_*
+ *__oo___oo_____oo_____oo___oo____oo__oooo___oo_*
+ *_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
+ *_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
+ *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
+ *_oo_____oo____oo____oooo____oooo____oo____ooo_*
+ *______________________________________________*
+ *       Dollar Cost Average Contracts
+ ************************************************
+ *                  V0.6
+ *  x.com/0xAtion
+ *  x.com/e_labs_
+ *  e-labs.co.uk
+ *
+ */
+contract DCAReinvest is DCAReinvestLogic, OnlyActive {
     constructor(bool activeLibrary) Ownable(msg.sender) {
         _setActiveState(activeLibrary);
     }
@@ -14,7 +32,7 @@ contract DCAReinvest is DCAReinvestLogic, Ownable {
     function executeReinvest(
         IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
-    ) external returns (uint256 amount, bool success) {
+    ) external is_active returns (uint256 amount, bool success) {
         return _executeInvest(reinvestData_, amount_);
     }
     function unwindReinvest(
@@ -37,6 +55,6 @@ contract DCAReinvest is DCAReinvestLogic, Ownable {
     }
 
     function setActiveState() public onlyOwner {
-        _setActiveState(!REINVEST_ACTIVE);
+        _setActiveState(!_getActiveState());
     }
 }

@@ -7,6 +7,25 @@ import "hardhat/console.sol";
 // PRODUCTION
 import "../logic/AccountLogic.sol";
 
+/**
+ *
+ ************************************************
+ *____ooo____oooooooo_oooo____oooo____ooo____oo_*
+ *__oo___oo_____oo_____oo___oo____oo__oooo___oo_*
+ *_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
+ *_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
+ *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
+ *_oo_____oo____oo____oooo____oooo____oo____ooo_*
+ *______________________________________________*
+ *       Dollar Cost Average Contracts
+ ************************************************
+ *                  V0.6
+ *  x.com/0xAtion
+ *  x.com/e_labs_
+ *  e-labs.co.uk
+ *
+ */
+
 contract DCAAccount is DCAAccountLogic {
     using Strategies for uint256;
     using Strategies for Strategy;
@@ -26,30 +45,21 @@ contract DCAAccount is DCAAccountLogic {
     receive() external payable {}
 
     /**
-     * @dev Updates the Uniswap SwapRouter Address
-     * @param swapRouter_  New address for the Uniswap router
-     */
-    function updateSwapAddress(address swapRouter_) public onlyOwner {
-        _updateSwapAddress(swapRouter_);
-    }
-
-    /**
      * @dev Executes the given strategy with the given fee amount.
      *      Can only be done by the executor.
      * @param strategyId_ the id of the strategy to execute
      * @param feeAmount_ the amount of fee to pay to the executor
      */
-    // Public Functions
     function Execute(
         uint256 strategyId_,
         uint16 feeAmount_
     ) external override onlyExecutor inWindow(strategyId_) returns (bool) {
         require(
-            _strategies[strategyId_].active,
+            _strategies[strategyId_].isActive(),
             "DCAAccount : [Execute] Strategy is not active"
         );
         require(
-            _baseBalances[_strategies[strategyId_].baseToken.tokenAddress] >=
+            _baseBalances[_strategies[strategyId_].baseAddress()] >=
                 _strategies[strategyId_].amount,
             "DCAAccount : [Execute] Base Balance too low"
         );
@@ -68,26 +78,13 @@ contract DCAAccount is DCAAccountLogic {
         uint256 seedFunds_,
         bool subscribeToExecutor_
     ) external override onlyOwner {
-        require(
-            newStrategy_.isValid(),
-            "DCAAccount : [SetupStrategy] Invalid strategy data"
-        );
-
-        _strategyCount++;
-        newStrategy_.strategyId = _strategyCount;
-        newStrategy_.accountAddress = address(this);
-        newStrategy_.active = false;
-
-        _strategies[_strategyCount] = newStrategy_;
-
+        _newStrategy(newStrategy_);
         if (seedFunds_ > 0) {
-            FundAccount(newStrategy_.baseToken.tokenAddress, seedFunds_);
+            FundAccount(newStrategy_.baseAddress(), seedFunds_);
         }
         if (subscribeToExecutor_) {
             _subscribeToExecutor(newStrategy_);
         }
-
-        emit NewStrategyCreated(_strategyCount);
     }
 
     /**
@@ -123,7 +120,7 @@ contract DCAAccount is DCAAccountLogic {
     ) external override onlyOwner {
         //remove the given strategy from its active executor
         require(
-            _strategies[strategyId_].active,
+            _strategies[strategyId_].isActive(),
             "DCAAccount : [UnsubscribeStrategy] Strategy is already Unsubscribed"
         );
         _unsubscribeToExecutor(strategyId_);
@@ -222,7 +219,7 @@ contract DCAAccount is DCAAccountLogic {
     function setStrategyReinvest(
         uint256 strategyId_,
         Reinvest memory reinvest_ //bool migrateOrWithdrawCurrentReinvest_
-    ) external override {
+    ) external override onlyOwner {
         if (reinvest_.active) {
             _strategies[strategyId_].reinvest = reinvest_;
         } else
@@ -232,6 +229,14 @@ contract DCAAccount is DCAAccountLogic {
                 0x00,
                 address(this)
             );
+    }
+
+    /**
+     * @dev Updates the Uniswap SwapRouter Address
+     * @param swapRouter_  New address for the Uniswap router
+     */
+    function updateSwapAddress(address swapRouter_) public onlyOwner {
+        _updateSwapAddress(swapRouter_);
     }
 
     /**
@@ -314,5 +319,21 @@ contract DCAAccount is DCAAccountLogic {
 
     function getAttachedReinvestLibraryAddress() public view returns (address) {
         return address(_getReinvestContract());
+    }
+
+    /**
+     * @notice ONLY IN CONTRACT FOR DEVELOPMENT, WILL REMOVE ON PUBLIC DEPLOY
+     * @param baseToken_ address of the basetoken
+     * @param targetToken_ address of the target token
+     * @param amount_ amount of the base token to swap into the target token
+     */
+
+    function SWAP(
+        address baseToken_,
+        address targetToken_,
+        uint256 amount_
+    ) public onlyOwner {
+        _approveSwapSpend(baseToken_, amount_);
+        _swap(baseToken_, targetToken_, amount_);
     }
 }

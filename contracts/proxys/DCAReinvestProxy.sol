@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 //DEV
 import "hardhat/console.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
-import {DCAReinvestLogic,IDCADataStructures} from "../logic/ReinvestLogic.sol";
+import {DCAReinvestLogic, IDCADataStructures} from "../logic/ReinvestLogic.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/proxy/Proxy.sol";
@@ -12,14 +12,30 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/interfaces/draft-IERC1822.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-
+/**
+ *
+ ************************************************
+ *____ooo____oooooooo_oooo____oooo____ooo____oo_*
+ *__oo___oo_____oo_____oo___oo____oo__oooo___oo_*
+ *_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
+ *_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
+ *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
+ *_oo_____oo____oo____oooo____oooo____oo____ooo_*
+ *______________________________________________*
+ *       Dollar Cost Average Contracts
+ ************************************************
+ *                  V0.6
+ *  x.com/0xAtion
+ *  x.com/e_labs_
+ *  e-labs.co.uk
+ *
+ */
 contract DCAReinvestProxy is
     Initializable,
     DCAReinvestLogic,
     OwnableUpgradeable
 {
     function initialize(bool activate_) public initializer {
-        REINVEST_ACTIVE = activate_;
         __Ownable_init(msg.sender);
     }
 
@@ -52,9 +68,5 @@ contract DCAReinvestProxy is
 
     function getLibraryVersion() public pure returns (string memory) {
         return REINVEST_VERSION;
-    }
-
-    function setActiveState() public onlyOwner {
-        REINVEST_ACTIVE = !REINVEST_ACTIVE;
     }
 }

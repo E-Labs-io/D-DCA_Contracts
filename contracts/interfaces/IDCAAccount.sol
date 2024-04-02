@@ -8,14 +8,13 @@ interface IDCAAccount is IDCADataStructures {
      * @notice Emitted when a strategy has been executed
      * @param strategyId_ {uint256} the id for the executed strategy
      * @param amountIn_ {uint256} amount received from the swap
-     * @param reInvest_ {bool} wether the strategy reinvested or not
+     * @param reInvested_ {bool} wether the strategy reinvested or not
      */
     event StrategyExecuted(
         uint256 indexed strategyId_,
         uint256 indexed amountIn_,
-        bool reInvest_
+        bool reInvested_
     );
-
     /**
      * @notice Emitted when the Strategy is confirmed to be subscribed to an Executor
      * @param strategyId_ {uint256} ID of the strategy that has been subscribed
@@ -35,7 +34,10 @@ interface IDCAAccount is IDCADataStructures {
      * @param strategyId_ {uint256} Id of the newly created strategy
      */
     event NewStrategyCreated(uint256 indexed strategyId_);
-
+    /**
+     * @notice Emits when the reinvest address has been changed
+     * @param newLibraryAddress ne address for the Library contract
+     */
     event DCAReinvestLibraryChanged(address indexed newLibraryAddress);
 
     event StrategyReinvestExecuted(

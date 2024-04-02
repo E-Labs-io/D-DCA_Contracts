@@ -1,5 +1,4 @@
 /** @format */
-import DCAAccountDeployer from "./deployers/deployer-DCAAccount";
 import GenericDeployer from "./deployers/deployer";
 import ProxyDeployer from "./deployers/deployProxy";
 import {

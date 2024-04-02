@@ -7,7 +7,8 @@ import {
   IDCADataStructures,
 } from "~/types/contracts/contracts/base/DCAExecutor";
 import deployedDCAContracts from "~/bin/deployedAddress";
-import {type DCAReinvest } from "~/types/contracts";
+import { type DCAReinvest } from "~/types/contracts";
+import { EMPTY_REINVEST_OBJECT } from "~/bin/emptyData";
 
 const deployedAddresses = (networkName: ChainName) =>
   deployedDCAContracts[networkName]!;
@@ -17,10 +18,10 @@ export function DCAExecutorArguments(
   networkName: string,
 ): any[] {
   const feeDistrobution_: IDCADataStructures.FeeDistributionStruct = {
-    amountToAdmin: 2000, //  20%
-    amountToComputing: 4500, //  45%
-    amountToExecutor: 3500, //  35%
-    feeAmount: 50, //  0.3%
+    amountToAdmin: 2500, //  25%
+    amountToComputing: 5000, //  45%
+    amountToExecutor: 2500, //  25%
+    feeAmount: 30, //  0.3%
     executionAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     computingAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     adminAddress: deployer,
@@ -95,12 +96,7 @@ export const newStrat = (
     },
     interval: 0,
     amount: 100000000,
-    reinvest: reinvest ?? {
-      reinvestData: "0x00",
-      active: false,
-      investCode: "0x00",
-      dcaAccountAddress: accountAddress,
-    },
+    reinvest: reinvest ?? EMPTY_REINVEST_OBJECT,
     active: false,
     strategyId: 1,
   };

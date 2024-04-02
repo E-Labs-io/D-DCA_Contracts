@@ -53,7 +53,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "bool",
-        name: "reInvest_",
+        name: "reInvested_",
         type: "bool",
       },
     ],

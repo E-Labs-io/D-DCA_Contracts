@@ -24,7 +24,10 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   const deploymentAddresses: DeploymentStore[] = [];
   const delayTime = 20000;
 
+  let reinvestAddress;
+
   const contractsToDeploy: ContractNames[] = [
+    "DCAReinvest",
     "DCAExecutor",
     "DCAAccount",
     "DCAFactory",
@@ -48,10 +51,16 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
         network.name,
       );
 
+      if (contractsToDeploy[0] === "DCAReinvest")
+        if (deployment === "DCAAccount") args[3] = reinvestAddress;
+        else if (deployment === "DCAFactory") args[2] = reinvestAddress;
+
       if (contractsToDeploy[0] === "DCAExecutor")
-        if (deployment === "DCAAccount" || deployment === "DCAFactory") {
+        if (deployment === "DCAAccount" || deployment === "DCAFactory")
           args[0] = deploymentAddresses[0].deployment;
-        }
+      if (contractsToDeploy[1] === "DCAExecutor")
+        if (deployment === "DCAAccount" || deployment === "DCAFactory")
+          args[0] = deploymentAddresses[1].deployment;
 
       await deploymentFiles[deployment]({
         hre,
@@ -64,6 +73,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
       }).then(async (address: DeploymentReturn) => {
         if (address !== false) {
           logDeployment(deployment, address, deployer.address, network);
+          if (deployment == "DCAReinvest") reinvestAddress = address;
           deploymentAddresses.push({
             deployment: address,
             contractName: deployment,

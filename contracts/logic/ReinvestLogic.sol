@@ -7,18 +7,32 @@ import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
 import {AaveV3Reinvest} from "../modules/AaveV3Reinvest.sol";
 import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
 
+/**
+ *
+ ************************************************
+ *____ooo____oooooooo_oooo____oooo____ooo____oo_*
+ *__oo___oo_____oo_____oo___oo____oo__oooo___oo_*
+ *_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
+ *_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
+ *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
+ *_oo_____oo____oo____oooo____oooo____oo____ooo_*
+ *______________________________________________*
+ *       Dollar Cost Average Contracts
+ ************************************************
+ *                  V0.6
+ *  x.com/0xAtion
+ *  x.com/e_labs_
+ *  e-labs.co.uk
+ *
+ */
+
 abstract contract DCAReinvestLogic {
     using ReinvestCodes for uint8;
-    bool public REINVEST_ACTIVE;
     string public constant REINVEST_VERSION = "TEST V0.4";
     uint256 public constant REINVEST_CHAIN = 420;
 
     bytes public constant ACTIVE_REINVESTS =
         abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
-
-    function _setActiveState(bool state_) internal {
-        REINVEST_ACTIVE = state_;
-    }
 
     /**
      *

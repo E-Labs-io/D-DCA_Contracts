@@ -389,6 +389,23 @@ function getTotalExecutions() external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined |
 
+### isActive
+
+```solidity
+function isActive() external view returns (bool)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### owner
 
 ```solidity
@@ -443,22 +460,6 @@ function renounceOwnership() external nonpayable
 
 *Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.*
 
-
-### setActiveState
-
-```solidity
-function setActiveState(bool newState_) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newState_ | bool | undefined |
 
 ### setFeeData
 

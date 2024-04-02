@@ -392,17 +392,17 @@ export namespace StrategyExecutedEvent {
   export type InputTuple = [
     strategyId_: BigNumberish,
     amountIn_: BigNumberish,
-    reInvest_: boolean
+    reInvested_: boolean
   ];
   export type OutputTuple = [
     strategyId_: bigint,
     amountIn_: bigint,
-    reInvest_: boolean
+    reInvested_: boolean
   ];
   export interface OutputObject {
     strategyId_: bigint;
     amountIn_: bigint;
-    reInvest_: boolean;
+    reInvested_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;

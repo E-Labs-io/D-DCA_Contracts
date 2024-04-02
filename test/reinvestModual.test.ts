@@ -89,12 +89,12 @@ describe("> DCA Reinvest Modula Test", () => {
       expect(version).to.equal("TEST V0.4");
     });
     it("🧪 Should Return the Reinvest is Not Active", async function () {
-      const active = await reinvestDeployment.REINVEST_ACTIVE();
+      const active = await reinvestDeployment.isActive();
       expect(active).to.be.false;
     });
     it("🧪 Should Return the Reinvest is Active", async function () {
       await reinvestDeployment.setActiveState();
-      const active = await reinvestDeployment.REINVEST_ACTIVE();
+      const active = await reinvestDeployment.isActive();
       expect(active).to.be.true;
     });
     it("🧪 Should Return the active reinvest strat array length of 2", async function () {

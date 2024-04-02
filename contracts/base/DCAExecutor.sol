@@ -33,7 +33,7 @@ import {Intervals} from "../library/Intervals.sol";
  *
  */
 
-contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
+contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     using Intervals for Interval;
     using Strategies for Strategy;
     using Fee for uint16;
@@ -132,7 +132,7 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
                 uint256 executorFee,
                 uint256 computingFee,
                 uint256 adminFee
-            ) = _feeData.getFees(balance);
+            ) = _feeData.getFeeSplit(balance);
             _transferFee(_feeData.executionAddress, executorFee, token);
             _transferFee(_feeData.computingAddress, computingFee, token);
             _transferFee(_feeData.adminAddress, adminFee, token);
@@ -162,7 +162,6 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
     function setFeeData(
         IDCADataStructures.FeeDistribution memory fee_
     ) public onlyOwner {
-        console.log("check total fee amount", fee_.feeAmount);
         require(
             fee_.checkPercentTotal(),
             "DCAExecutor : [setFeeData] Total split percents don't equal 100%"
@@ -274,7 +273,7 @@ contract DCAExecutor is OnlyAdmin, OnlyActive, IDCAExecutor {
         view
         returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
     {
-        return _feeData.getFees(amount_);
+        return _feeData.getFeeSplit(amount_);
     }
     //   Test getFee to given amount
     function DEVcalculateFeeOfAmount(

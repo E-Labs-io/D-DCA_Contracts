@@ -4,7 +4,7 @@
 
 
 
-
+************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*       Dollar Cost Average Contracts************************************************                  V0.6  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
 
 
 
@@ -494,7 +494,7 @@ function updateSwapAddress(address swapRouter_) external nonpayable
 event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
 ```
 
-
+Emits when the reinvest address has been changed
 
 
 
@@ -502,7 +502,7 @@ event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
 
 | Name | Type | Description |
 |---|---|---|
-| newLibraryAddress `indexed` | address | undefined |
+| newLibraryAddress `indexed` | address | ne address for the Library contract |
 
 ### ExecutorAddressChange
 
@@ -556,7 +556,7 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 ### StrategyExecuted
 
 ```solidity
-event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_, bool reInvest_)
+event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_, bool reInvested_)
 ```
 
 Emitted when a strategy has been executed
@@ -569,7 +569,7 @@ Emitted when a strategy has been executed
 |---|---|---|
 | strategyId_ `indexed` | uint256 | {uint256} the id for the executed strategy |
 | amountIn_ `indexed` | uint256 | {uint256} amount received from the swap |
-| reInvest_  | bool | {bool} wether the strategy reinvested or not |
+| reInvested_  | bool | {bool} wether the strategy reinvested or not |
 
 ### StrategyReinvestExecuted
 

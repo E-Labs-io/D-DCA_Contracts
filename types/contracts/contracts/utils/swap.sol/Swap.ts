@@ -3,12 +3,10 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
   Interface,
-  AddressLike,
   ContractRunner,
   ContractMethod,
   Listener,
@@ -22,18 +20,13 @@ import type {
 } from "../../../common";
 
 export interface SwapInterface extends Interface {
-  getFunction(nameOrSignature: "SWAP" | "SWAP_ROUTER"): FunctionFragment;
+  getFunction(nameOrSignature: "SWAP_ROUTER"): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "SWAP",
-    values: [AddressLike, AddressLike, BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "SWAP_ROUTER",
     values?: undefined
   ): string;
 
-  decodeFunctionResult(functionFragment: "SWAP", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "SWAP_ROUTER",
     data: BytesLike
@@ -83,25 +76,12 @@ export interface Swap extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  SWAP: TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
-  getFunction(
-    nameOrSignature: "SWAP"
-  ): TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "SWAP_ROUTER"
   ): TypedContractMethod<[], [string], "view">;

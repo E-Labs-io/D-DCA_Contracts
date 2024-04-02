@@ -65,6 +65,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "isActive",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "owner",
     outputs: [
       {
@@ -79,19 +92,6 @@ const _abi = [
   {
     inputs: [],
     name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bool",
-        name: "newState_",
-        type: "bool",
-      },
-    ],
-    name: "setActiveState",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

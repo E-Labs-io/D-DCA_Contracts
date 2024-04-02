@@ -7,7 +7,7 @@ import { ChainName, MainnetNames } from "./tokenAddress";
 
 export default function deploymentConfig() {
   const deployCue: ContractNames[] = [];
-  const masterChain: MainnetNames = "optimism";
+  const masterChain: MainnetNames = "eth";
   const forkBlockNumber = () => {
     const list: { [chain in MainnetNames]?: number } = {
       eth: 19493637,

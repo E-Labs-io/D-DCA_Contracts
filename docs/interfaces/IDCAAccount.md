@@ -245,7 +245,7 @@ function setStrategyReinvest(uint256 strategyId_, IDCADataStructures.Reinvest re
 event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
 ```
 
-
+Emits when the reinvest address has been changed
 
 
 
@@ -253,7 +253,7 @@ event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
 
 | Name | Type | Description |
 |---|---|---|
-| newLibraryAddress `indexed` | address | undefined |
+| newLibraryAddress `indexed` | address | ne address for the Library contract |
 
 ### NewStrategyCreated
 
@@ -274,7 +274,7 @@ Emitted when a new strategy has been created
 ### StrategyExecuted
 
 ```solidity
-event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_, bool reInvest_)
+event StrategyExecuted(uint256 indexed strategyId_, uint256 indexed amountIn_, bool reInvested_)
 ```
 
 Emitted when a strategy has been executed
@@ -287,7 +287,7 @@ Emitted when a strategy has been executed
 |---|---|---|
 | strategyId_ `indexed` | uint256 | {uint256} the id for the executed strategy |
 | amountIn_ `indexed` | uint256 | {uint256} amount received from the swap |
-| reInvest_  | bool | {bool} wether the strategy reinvested or not |
+| reInvested_  | bool | {bool} wether the strategy reinvested or not |
 
 ### StrategyReinvestExecuted
 

@@ -107,7 +107,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "bool",
-        name: "reInvest_",
+        name: "reInvested_",
         type: "bool",
       },
     ],
@@ -241,29 +241,6 @@ const _abi = [
       },
     ],
     name: "FundAccount",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "baseToken_",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "targetToken_",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount_",
-        type: "uint256",
-      },
-    ],
-    name: "SWAP",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

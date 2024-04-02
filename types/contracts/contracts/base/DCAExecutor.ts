@@ -138,11 +138,11 @@ export interface DCAExecutorInterface extends Interface {
       | "getTimeTillWindow"
       | "getTotalActiveStrategys"
       | "getTotalExecutions"
+      | "isActive"
       | "owner"
       | "removeAdmin"
       | "removeExecutor"
       | "renounceOwnership"
-      | "setActiveState"
       | "setFeeData"
       | "transferOwnership"
   ): FunctionFragment;
@@ -238,6 +238,7 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "getTotalExecutions",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeAdmin",
@@ -250,10 +251,6 @@ export interface DCAExecutorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setActiveState",
-    values: [boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setFeeData",
@@ -332,6 +329,7 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "getTotalExecutions",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeAdmin",
@@ -343,10 +341,6 @@ export interface DCAExecutorInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setActiveState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setFeeData", data: BytesLike): Result;
@@ -609,6 +603,8 @@ export interface DCAExecutor extends BaseContract {
 
   getTotalExecutions: TypedContractMethod<[], [bigint], "view">;
 
+  isActive: TypedContractMethod<[], [boolean], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   removeAdmin: TypedContractMethod<
@@ -620,12 +616,6 @@ export interface DCAExecutor extends BaseContract {
   removeExecutor: TypedContractMethod<[], [void], "nonpayable">;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
-
-  setActiveState: TypedContractMethod<
-    [newState_: boolean],
-    [void],
-    "nonpayable"
-  >;
 
   setFeeData: TypedContractMethod<
     [fee_: IDCADataStructures.FeeDistributionStruct],
@@ -760,6 +750,9 @@ export interface DCAExecutor extends BaseContract {
     nameOrSignature: "getTotalExecutions"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "isActive"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -771,9 +764,6 @@ export interface DCAExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setActiveState"
-  ): TypedContractMethod<[newState_: boolean], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setFeeData"
   ): TypedContractMethod<

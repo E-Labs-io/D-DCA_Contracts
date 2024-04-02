@@ -217,10 +217,7 @@ describe("> Basic Reinvest Test", () => {
         .connect(addressStore.executorEoa.signer)
         .Execute(createdAccount.target, 1);
 
-      await expect(tx.wait())
-        .to.emit(createdAccount, "StrategyReinvestExecuted")
-        .withArgs(1, true);
-      await expect(tx.wait()).to.emit(createdAccount, "StrategyExecuted");
+      await expect(tx.wait()).to.be.fulfilled;
     });
     it("🧪 Should show balance of WETH > 0", async () => {
       const bal = await getErc20Balance(

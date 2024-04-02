@@ -12,6 +12,24 @@ import {DCAReinvestLogic, DCAReinvest} from "../base/DCAReinvest.sol";
 import {OnlyExecutor} from "../security/onlyExecutor.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
 
+/**
+ *
+ ************************************************
+ *____ooo____oooooooo_oooo____oooo____ooo____oo_*
+ *__oo___oo_____oo_____oo___oo____oo__oooo___oo_*
+ *_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*
+ *_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*
+ *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
+ *_oo_____oo____oo____oooo____oooo____oo____ooo_*
+ *______________________________________________*
+ *       Dollar Cost Average Contracts
+ ************************************************
+ *                  V0.6
+ *  x.com/0xAtion
+ *  x.com/e_labs_
+ *  e-labs.co.uk
+ *
+ */
 abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     using Fee for uint16;
     using Strategies for Strategy;
@@ -51,6 +69,21 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @notice EXECUTE Logic
      */
 
+    function _newStrategy(Strategy memory newStrategy_) internal {
+        require(
+            newStrategy_.isValid(),
+            "DCAAccount : [SetupStrategy] Invalid strategy data"
+        );
+
+        _strategyCount++;
+        newStrategy_.strategyId = _strategyCount;
+        newStrategy_.accountAddress = address(this);
+        newStrategy_.active = false;
+
+        _strategies[_strategyCount] = newStrategy_;
+        emit NewStrategyCreated(_strategyCount);
+    }
+
     /**
      * @dev logic for executing a strategy
      * @param strategyId_ Strategy Id of the strategy data to execute
@@ -66,23 +99,21 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         uint256 fee = feePercent_.getFee(strategy.amount);
         uint256 tradeAmount = strategy.amount - fee;
 
-        if (feePercent_ > 0) {
-            _transferFee(fee, strategy.baseToken.tokenAddress);
+        (address baseAddress, address targetAddress) = strategy
+            .getTokenAddresses();
+
+        if (fee > 0) {
+            _transferFee(fee, baseAddress);
         }
 
-        _approveSwapSpend(strategy.baseToken.tokenAddress, tradeAmount);
-        uint256 amountIn = _swap(
-            strategy.baseToken.tokenAddress,
-            strategy.targetToken.tokenAddress,
-            tradeAmount
-        );
+        _approveSwapSpend(baseAddress, tradeAmount);
+        uint256 amountIn = _swap(baseAddress, targetAddress, tradeAmount);
         uint256 reinvestAmount;
         bool success;
 
         if (amountIn > 0) {
             if (strategy.reinvest.active) {
                 (reinvestAmount, success) = _executeReinvest(
-                    strategyId_,
                     strategy.reinvest,
                     amountIn
                 );
@@ -90,18 +121,13 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
 
             if (success) {
                 _reinvestLiquidityTokenBalance[strategyId_] += reinvestAmount;
-            } else
-                _targetBalances[strategy.targetToken.tokenAddress] += amountIn;
+            } else _targetBalances[targetAddress] += amountIn;
 
-            _baseBalances[strategy.baseToken.tokenAddress] -= strategy.amount;
+            _baseBalances[baseAddress] -= strategy.amount;
             _lastExecution[strategyId_] = block.timestamp;
             _totalIntervalsExecuted++;
 
-            emit StrategyExecuted(
-                strategyId_,
-                amountIn,
-                strategy.reinvest.active
-            );
+            emit StrategyExecuted(strategyId_, amountIn, success);
             return true;
         } else {
             return false;
@@ -132,9 +158,10 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      */
     function _unsubscribeToExecutor(uint256 strategyId_) internal {
         Strategy memory oldStrategy = _strategies[strategyId_];
-        _costPerBlock[
-            oldStrategy.baseToken.tokenAddress
-        ] -= _calculateCostPerBlock(oldStrategy.amount, oldStrategy.interval);
+        _costPerBlock[oldStrategy.baseAddress()] -= _calculateCostPerBlock(
+            oldStrategy.amount,
+            oldStrategy.interval
+        );
 
         IDCAExecutor(_executor()).Unsubscribe(address(this), strategyId_);
         _strategies[oldStrategy.strategyId].active = false;
@@ -148,7 +175,6 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param tokenAddress_ token address of the payable fee token
      */
     function _transferFee(uint256 feeAmount_, address tokenAddress_) private {
-        // Transfer teh fee to the DCAExecutpr
         require(
             IERC20(tokenAddress_).transfer(_executor(), feeAmount_),
             "Fee transfer failed"
@@ -161,16 +187,14 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     /**
      * @dev logic to execute a reinvest portion of the strategy
      * @notice Only working on call, not delegatecall
-     * @param strategyId_ id of the strategy being executed
      * @param reinvest_ reinvest data struct of the strategy being executed
      * @param amount_ amount of the target   token to reinvest
      */
     function _executeReinvest(
-        uint256 strategyId_,
         Reinvest memory reinvest_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-        if (DCAREINVEST_LIBRARY.REINVEST_ACTIVE()) {
+        if (DCAREINVEST_LIBRARY.isActive()) {
             (bool txSuccess, bytes memory returnData) = address(
                 DCAREINVEST_LIBRARY
             ).delegatecall(
@@ -182,11 +206,9 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
                 );
             if (txSuccess) {
                 (amount, success) = abi.decode(returnData, (uint256, bool));
-                emit StrategyReinvestExecuted(strategyId_, success);
                 return (amount, success);
             }
         }
-        emit StrategyReinvestExecuted(strategyId_, false);
         return (0, false);
     }
     /**
