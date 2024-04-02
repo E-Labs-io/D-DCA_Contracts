@@ -22,7 +22,8 @@ import {ReinvestCodes} from "../library/Codes.sol";
  *
  */
 library ReinvestTemplate {
-    string public constant STRATEGY_NAME = "ReinvestTemplate";
+    string public constant MODULE_NAME = "ReinvestTemplate";
+    uint8 public constant MODULE_ID = 0x00;
 
     /**
      * @notice Reinvest modal Data Template

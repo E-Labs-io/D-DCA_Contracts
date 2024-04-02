@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 //DEV
 import "hardhat/console.sol";
 
-import {DCAReinvestLogic, IDCADataStructures} from "../logic/ReinvestLogic.sol";
+import {DCAReinvestLogic, IDCADataStructures, ReinvestCodes} from "../logic/ReinvestLogic.sol";
 import "../security/onlyActive.sol";
 
 /**
@@ -25,6 +25,8 @@ import "../security/onlyActive.sol";
  *
  */
 contract DCAReinvest is DCAReinvestLogic, OnlyActive {
+    using ReinvestCodes for uint8;
+
     constructor(bool activeLibrary) Ownable(msg.sender) {
         _setActiveState(activeLibrary);
     }
@@ -56,5 +58,9 @@ contract DCAReinvest is DCAReinvestLogic, OnlyActive {
 
     function setActiveState() public onlyOwner {
         _setActiveState(!_getActiveState());
+    }
+
+    function getModuleName(uint8 code_) external pure returns (string memory) {
+        return code_._getModuleName();
     }
 }

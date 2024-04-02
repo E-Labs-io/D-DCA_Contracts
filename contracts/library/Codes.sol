@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
+
+import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
+import {AaveV3Reinvest} from "../modules/AaveV3Reinvest.sol";
 /**
  *
  ************************************************
@@ -29,5 +32,16 @@ library ReinvestCodes {
 
     function checkCode(uint8 have_, uint8 want_) internal pure returns (bool) {
         return have_ == want_;
+    }
+
+    function _getModuleName(
+        uint8 code_
+    ) internal pure returns (string memory moduleName) {
+        if (checkCode(code_, ReinvestCodes.NOT_ACTIVE))
+            moduleName = "Not Active";
+        else if (checkCode(code_, ReinvestCodes.FORWARD))
+            moduleName = ForwardReinvest.MODULE_NAME;
+        else if (checkCode(code_, ReinvestCodes.AAVE))
+            moduleName = AaveV3Reinvest.MODULE_NAME;
     }
 }

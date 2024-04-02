@@ -27,7 +27,9 @@ import {AaveIPool} from "../protocols/aaveV3/IPool.sol";
  *
  */
 library AaveV3Reinvest {
-    string public constant STRATEGY_NAME = "Aave V3 Reinvest";
+    string public constant MODULE_NAME = "Aave V3 Reinvest";
+    uint8 public constant MODULE_ID = 0x12;
+
     address constant AAVE_CONTRACT = 0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951; //ETH SEPOLIA ADDRESS
     AaveIPool constant AAVE_POOL = AaveIPool(AAVE_CONTRACT);
 

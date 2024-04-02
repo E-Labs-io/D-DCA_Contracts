@@ -23,7 +23,8 @@ import {ReinvestCodes} from "../library/Codes.sol";
  *
  */
 library ForwardReinvest {
-    string public constant STRATEGY_NAME = "Forward Reinvest V0.2";
+    string public constant MODULE_NAME = "Forward Reinvest V0.2";
+    uint8 public constant MODULE_ID = 0x01;
 
     struct ReinvestDataStruct {
         uint8 moduleCode;

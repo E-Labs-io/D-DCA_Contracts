@@ -2,9 +2,8 @@
 pragma solidity ^0.8.20;
 //DEV
 import "hardhat/console.sol";
-import {ReinvestCodes} from "../library/Codes.sol";
-import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
-import {AaveV3Reinvest} from "../modules/AaveV3Reinvest.sol";
+import "../library/Codes.sol";
+
 import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
 
 /**
@@ -29,8 +28,6 @@ import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
 abstract contract DCAReinvestLogic {
     using ReinvestCodes for uint8;
     string public constant REINVEST_VERSION = "TEST V0.4";
-    uint256 public constant REINVEST_CHAIN = 420;
-
     bytes public constant ACTIVE_REINVESTS =
         abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
 

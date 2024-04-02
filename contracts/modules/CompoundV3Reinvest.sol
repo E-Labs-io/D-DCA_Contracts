@@ -22,7 +22,9 @@ import {ReinvestCodes} from "../library/Codes.sol";
  *
  */
 library CompoundV3Reinvest {
-    string public constant STRATEGY_NAME = "Compound V3 Reinvest";
+    string public constant MODULE_NAME = "Compound V3 Reinvest";
+    uint8 public constant MODULE_ID = 0x11;
+
     address internal constant COMPOUND_ETH_CONTRACT =
         0x1d573274E19174260c5aCE3f2251598959d24456;
 
