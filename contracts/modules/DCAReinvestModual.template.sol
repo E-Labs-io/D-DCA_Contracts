@@ -24,6 +24,14 @@ import {ReinvestCodes} from "../library/Codes.sol";
 library ReinvestTemplate {
     string public constant STRATEGY_NAME = "ReinvestTemplate";
 
+    /**
+     * @notice Reinvest modal Data Template
+     * @dev change for the needs of your reinvest modal
+     * moduleCode - code for any sub commands needed in the reinvest
+     * receiver - The reciever of the tokens
+     * token - address of the token to reinvest
+     */
+
     struct ReinvestDataStruct {
         uint8 moduleCode;
         address receiver;
