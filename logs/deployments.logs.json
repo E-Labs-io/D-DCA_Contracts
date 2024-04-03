@@ -1,5 +1,15 @@
 [
   {
+    "timestamp": "03/04/24, 18:19:13",
+    "contractName": "DCAReinvest",
+    "contractAddress": "0x27df786e26C825dc183Da89C2Efd824cf2477161",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "ethSepolia",
+      "chainId": "11155111"
+    }
+  },
+  {
     "timestamp": "02/04/24, 18:02:45",
     "contractName": "DCAFactory",
     "contractAddress": "0xbc25BbbFEb33a5B475E557D7cFDC0b35e3A5b538",

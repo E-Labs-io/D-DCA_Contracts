@@ -20,15 +20,17 @@ import type {
 } from "../../common";
 
 export interface ForwardReinvestInterface extends Interface {
-  getFunction(nameOrSignature: "STRATEGY_NAME"): FunctionFragment;
+  getFunction(nameOrSignature: "MODULE_ID" | "MODULE_NAME"): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "MODULE_ID", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "STRATEGY_NAME",
+    functionFragment: "MODULE_NAME",
     values?: undefined
   ): string;
 
+  decodeFunctionResult(functionFragment: "MODULE_ID", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "STRATEGY_NAME",
+    functionFragment: "MODULE_NAME",
     data: BytesLike
   ): Result;
 }
@@ -76,14 +78,19 @@ export interface ForwardReinvest extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  STRATEGY_NAME: TypedContractMethod<[], [string], "view">;
+  MODULE_ID: TypedContractMethod<[], [bigint], "view">;
+
+  MODULE_NAME: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "STRATEGY_NAME"
+    nameOrSignature: "MODULE_ID"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "MODULE_NAME"
   ): TypedContractMethod<[], [string], "view">;
 
   filters: {};

@@ -14,7 +14,7 @@
     "deploy-opGoerli": "npx hardhat deployContracts --network opGoerli",
     "deploy-mumbai": "npx hardhat deployContracts --network mumbai",
     "deploy-arbGoerli": "npx hardhat deployContracts --network arbGoerli",
-    "deploy-sepolia": "npx hardhat deployContracts --network sepolia",
+    "deploy-sepolia": "npx hardhat deployContracts --network ethSepolia",
     "deploy-ethGoerli": "npx hardhat deployContracts --network ethGoerli",
     "deploy-local": "npx hardhat deployContracts --network localhost"
   },

@@ -10,10 +10,27 @@
 
 ## Methods
 
-### STRATEGY_NAME
+### MODULE_ID
 
 ```solidity
-function STRATEGY_NAME() external view returns (string)
+function MODULE_ID() external view returns (uint8)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint8 | undefined |
+
+### MODULE_NAME
+
+```solidity
+function MODULE_NAME() external view returns (string)
 ```
 
 

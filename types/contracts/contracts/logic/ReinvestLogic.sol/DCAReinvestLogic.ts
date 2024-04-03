@@ -21,15 +21,11 @@ import type {
 
 export interface DCAReinvestLogicInterface extends Interface {
   getFunction(
-    nameOrSignature: "ACTIVE_REINVESTS" | "REINVEST_CHAIN" | "REINVEST_VERSION"
+    nameOrSignature: "ACTIVE_REINVESTS" | "REINVEST_VERSION"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "ACTIVE_REINVESTS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REINVEST_CHAIN",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -39,10 +35,6 @@ export interface DCAReinvestLogicInterface extends Interface {
 
   decodeFunctionResult(
     functionFragment: "ACTIVE_REINVESTS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "REINVEST_CHAIN",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -96,8 +88,6 @@ export interface DCAReinvestLogic extends BaseContract {
 
   ACTIVE_REINVESTS: TypedContractMethod<[], [string], "view">;
 
-  REINVEST_CHAIN: TypedContractMethod<[], [bigint], "view">;
-
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -107,9 +97,6 @@ export interface DCAReinvestLogic extends BaseContract {
   getFunction(
     nameOrSignature: "ACTIVE_REINVESTS"
   ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "REINVEST_CHAIN"
-  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "REINVEST_VERSION"
   ): TypedContractMethod<[], [string], "view">;

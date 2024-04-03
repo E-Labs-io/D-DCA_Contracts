@@ -27,7 +27,7 @@ import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
 
 abstract contract DCAReinvestLogic {
     using ReinvestCodes for uint8;
-    string public constant REINVEST_VERSION = "TEST V0.4";
+    string public constant REINVEST_VERSION = "TEST V0.5";
     bytes public constant ACTIVE_REINVESTS =
         abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
 

@@ -24,19 +24,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "REINVEST_CHAIN",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "REINVEST_VERSION",
     outputs: [
       {

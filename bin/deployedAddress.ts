@@ -20,7 +20,7 @@ const deployedDCAContracts: {
   ethSepolia: {
     DCAAccount: "0xce6397cFDdA3ED6396c02967b14a00e35c7a00d1",
     DCAExecutor: "0xa2b8a19a8a10C2fde3337CC64827C43c8E838541",
-    DCAReinvest: "0xF3A175F048Bb83f5F519a251628dBa123DE7DB77",
+    DCAReinvest: "0x27df786e26C825dc183Da89C2Efd824cf2477161",
     DCAFactory: "0xbc25BbbFEb33a5B475E557D7cFDC0b35e3A5b538",
     DCAReinvestProxy: "",
   },
@@ -29,7 +29,7 @@ const deployedDCAContracts: {
     DCAExecutor: "0xa780fb1fd71F87162B1700db18b2776769499589",
     DCAReinvest: "0xB44D215D8bd515A7499d6F77a93314C341d4B766",
     DCAFactory: "0x90107ADc242C003c0C142E315650f31D9B985C3D",
-    DCAReinvestProxy: "0xB44D215D8bd515A7499d6F77a93314C341d4B766",
+    DCAReinvestProxy: "",
   },
 };
 

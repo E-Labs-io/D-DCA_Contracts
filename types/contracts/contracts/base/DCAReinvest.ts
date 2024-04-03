@@ -48,10 +48,10 @@ export interface DCAReinvestInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "ACTIVE_REINVESTS"
-      | "REINVEST_CHAIN"
       | "REINVEST_VERSION"
       | "executeReinvest"
       | "getLibraryVersion"
+      | "getModuleName"
       | "isActive"
       | "migrateReinvest"
       | "owner"
@@ -70,10 +70,6 @@ export interface DCAReinvestInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "REINVEST_CHAIN",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "REINVEST_VERSION",
     values?: undefined
   ): string;
@@ -84,6 +80,10 @@ export interface DCAReinvestInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getLibraryVersion",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getModuleName",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
   encodeFunctionData(
@@ -117,10 +117,6 @@ export interface DCAReinvestInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "REINVEST_CHAIN",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "REINVEST_VERSION",
     data: BytesLike
   ): Result;
@@ -130,6 +126,10 @@ export interface DCAReinvestInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getLibraryVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getModuleName",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
@@ -226,8 +226,6 @@ export interface DCAReinvest extends BaseContract {
 
   ACTIVE_REINVESTS: TypedContractMethod<[], [string], "view">;
 
-  REINVEST_CHAIN: TypedContractMethod<[], [bigint], "view">;
-
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
 
   executeReinvest: TypedContractMethod<
@@ -237,6 +235,8 @@ export interface DCAReinvest extends BaseContract {
   >;
 
   getLibraryVersion: TypedContractMethod<[], [string], "view">;
+
+  getModuleName: TypedContractMethod<[code_: BigNumberish], [string], "view">;
 
   isActive: TypedContractMethod<[], [boolean], "view">;
 
@@ -276,9 +276,6 @@ export interface DCAReinvest extends BaseContract {
     nameOrSignature: "ACTIVE_REINVESTS"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "REINVEST_CHAIN"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "REINVEST_VERSION"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -291,6 +288,9 @@ export interface DCAReinvest extends BaseContract {
   getFunction(
     nameOrSignature: "getLibraryVersion"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getModuleName"
+  ): TypedContractMethod<[code_: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "isActive"
   ): TypedContractMethod<[], [boolean], "view">;

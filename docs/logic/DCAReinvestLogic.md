@@ -27,23 +27,6 @@ function ACTIVE_REINVESTS() external view returns (bytes)
 |---|---|---|
 | _0 | bytes | undefined |
 
-### REINVEST_CHAIN
-
-```solidity
-function REINVEST_CHAIN() external view returns (uint256)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-
 ### REINVEST_VERSION
 
 ```solidity
