@@ -94,4 +94,12 @@ interface IDCAExecutor is IDCADataStructures {
         external
         view
         returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn);
+
+    /**
+     * @notice Allows the admin to turn Strategy timings on & off
+     * @param interval_ The strategy interval
+     * @param status_ if teh interval is active or not
+     */
+    function setIntervalActive(Interval interval_, bool status_) external;
 }
+

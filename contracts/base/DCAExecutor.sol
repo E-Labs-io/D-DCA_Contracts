@@ -27,6 +27,7 @@ import {Intervals} from "../library/Intervals.sol";
  *       Dollar Cost Average Contracts
  ************************************************
  *                  V0.6
+ *  ation.capital
  *  x.com/0xAtion
  *  x.com/e_labs_
  *  e-labs.co.uk
@@ -38,6 +39,8 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     using Strategies for Strategy;
     using Fee for uint16;
     using Fee for FeeDistribution;
+
+    mapping(Interval => bool) private _activeIntervals;
 
     mapping(address => mapping(uint256 => Strategy)) internal _strategies;
     mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
@@ -72,7 +75,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
             strategy_.isValid(),
             "DCAexecutor : [Subscribe] Invalid strategy"
         );
-
+        require(
+            isIntervalActive(strategy_.interval),
+            "DCAexecutor : [Subscribe] Interval Not Active"
+        );
         _subscribeAccount(strategy_);
         _totalActiveStrategies++;
     }
@@ -204,6 +210,16 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         return
             IDCAAccount(_strategies[account_][strategyId_].accountAddress)
                 .getTimeTillWindow(strategyId_);
+    }
+
+    function setIntervalActive(
+        Interval interval_,
+        bool status_
+    ) external onlyAdmins {
+        _activeIntervals[interval_] = status_;
+    }
+    function isIntervalActive(Interval interval_) public view returns (bool) {
+        return _activeIntervals[interval_];
     }
 
     /**

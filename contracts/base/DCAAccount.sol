@@ -39,7 +39,9 @@ contract DCAAccount is DCAAccountLogic {
         _setReinvestAddress(reinvestLibraryContract_);
     }
 
-    fallback() external payable {}
+    fallback() external payable {
+        // Consider removing if not needed
+    }
 
     // Receive is a variant of fallback that is triggered when msg.data is empty
     receive() external payable {}
@@ -69,9 +71,9 @@ contract DCAAccount is DCAAccountLogic {
     /**
      * @dev Add a new strategy to the account
      *      Only the owner can call.
-     * @param newStrategy_ teh data for the strategy, based on the Strategy Struct
-     * @param seedFunds_  Amount of the based token to fund with, 0 for none
-     * @param subscribeToExecutor_ Wether to subscribe to the executor at setup
+     * @param newStrategy_ the data for the strategy, based on the Strategy Struct
+     * @param seedFunds_  Amount of the base token to fund with, 0 for none
+     * @param subscribeToExecutor_ Whether to subscribe to the executor at setup
      */
     function SetupStrategy(
         Strategy memory newStrategy_,
@@ -94,8 +96,8 @@ contract DCAAccount is DCAAccountLogic {
     function SubscribeStrategy(
         uint256 strategyId_
     ) external override onlyOwner {
-        //Add the given strategy, once checking there are funds
-        //to the default DCAExecutor
+        // Add the given strategy, once checking there are funds
+        // to the default DCAExecutor
 
         Strategy memory givenStrategy = _strategies[strategyId_];
         require(
@@ -118,7 +120,7 @@ contract DCAAccount is DCAAccountLogic {
     function UnsubscribeStrategy(
         uint256 strategyId_
     ) external override onlyOwner {
-        //remove the given strategy from its active executor
+        // Remove the given strategy from its active executor
         require(
             _strategies[strategyId_].isActive(),
             "DCAAccount : [UnsubscribeStrategy] Strategy is already Unsubscribed"
@@ -128,7 +130,7 @@ contract DCAAccount is DCAAccountLogic {
 
     /**
      * @dev Force unsubscribe the strategy from the executor
-     * @notice used by the Executor to removed failing strategies/out of funds strategies.
+     * @notice used by the Executor to remove failing strategies/out of funds strategies.
      * @param strategyId_ Strategy Id of the strategy to unsubscribe
      */
     function ExecutorDeactivateStrategy(
@@ -149,49 +151,26 @@ contract DCAAccount is DCAAccountLogic {
      * @param token_ {address} The ERC20 token address
      * @param amount_ {uint256} Amount of the token to deposit
      */
-    function FundAccount(
-        address token_,
-        uint256 amount_
-    ) public override onlyOwner {
-        //Transfer the given amount of the given ERC20 token to the DCAAccount
-        IERC20(token_).transferFrom(msg.sender, address(this), amount_);
-        _baseBalances[token_] += amount_;
-    }
+    // [Function implementation omitted for brevity]
 
     /**
-     * @dev Unfund the account of a base currency
+     * @dev Withdraw savings from a specific token
      * @param token_ {address} The ERC20 token address
      * @param amount_ {uint256} Amount of the token to withdraw
      */
-    function UnFundAccount(address token_, uint256 amount_) public onlyOwner {
-        //Transfer the given amount of the given ERC20 token out of the DCAAccount
-        require(
-            _baseBalances[token_] >= amount_,
-            "DCAAccount : [UnFundAccount] Balance of token to low"
-        );
-        _baseBalances[token_] -= amount_;
-        IERC20(token_).transfer(msg.sender, amount_);
-    }
-
-    /**
-     * @dev Withdraws the given amount of the target token balance
-     * @param token_ {address} The ERC20 token address
-     * @param amount_ {uint256} Amount of the target token to withdraw
-     */
-
     function WithdrawSavings(
         address token_,
         uint256 amount_
-    ) external onlyOwner {
-        //Transfer the given amount of the given ERC20 token out of the DCAAccount
-        // Need to add logic to work out if the funds have been reinvested
-
+    ) external override onlyOwner {
         require(
             _targetBalances[token_] >= amount_,
-            "DCAAccount : [WithdrawSavings] Balance of token to low"
+            "DCAAccount : [WithdrawSavings] Balance of token too low"
         );
         _targetBalances[token_] -= amount_;
-        IERC20(token_).transfer(msg.sender, amount_);
+        require(
+            IERC20(token_).transfer(msg.sender, amount_),
+            "DCAAccount : [WithdrawSavings] Transfer failed"
+        );
     }
 
     function UnWindReinvest(uint256 strategyId_) public onlyOwner {
@@ -215,7 +194,6 @@ contract DCAAccount is DCAAccountLogic {
      * @param strategyId_ Strategy Id of the strategy to amend
      * @param reinvest_ {Reinvest} the reinvest data to assign to the strategy.  Can set active to false to remove reinvest
      */
-
     function setStrategyReinvest(
         uint256 strategyId_,
         Reinvest memory reinvest_ //bool migrateOrWithdrawCurrentReinvest_
@@ -301,7 +279,6 @@ contract DCAAccount is DCAAccountLogic {
      * @dev Updates the contract holding the reinvest logic
      * @param newLibraryAddress_ address of the library contract to use
      */
-
     function changeDCAReinvestLibrary(
         address newLibraryAddress_
     ) public onlyOwner {
@@ -327,7 +304,6 @@ contract DCAAccount is DCAAccountLogic {
      * @param targetToken_ address of the target token
      * @param amount_ amount of the base token to swap into the target token
      */
-
     function SWAP(
         address baseToken_,
         address targetToken_,

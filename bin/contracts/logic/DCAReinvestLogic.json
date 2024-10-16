@@ -1,0 +1,1597 @@
+{
+    "contractName": "DCAReinvestLogic",
+    "abi": [
+        {
+            "inputs": [],
+            "name": "ACTIVE_REINVESTS",
+            "outputs": [
+                {
+                    "internalType": "bytes",
+                    "name": "",
+                    "type": "bytes"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "REINVEST_VERSION",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ],
+    "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"ACTIVE_REINVESTS\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"REINVEST_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*    Decentralised Cost Average Contracts************************************************                  V0.6  ation.capital  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/logic/ReinvestLogic.sol\":\"DCAReinvestLogic\"},\"evmVersion\":\"shanghai\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/interfaces/IDCADataStructures.sol\":{\"keccak256\":\"0x35c8efa0ff3e70a7c408d670e2de279941fe7a8ac682bb702d9557e61e0c71be\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://fd7a9236e0d3efd8e105624ba0eb992e69dfd25b13cb333c7326fa633e0c5aa8\",\"dweb:/ipfs/QmZjgQv4xifdsrq7Wc2Nn9RCV2MGqoj5o6CWYVQgqXaewY\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/library/Codes.sol\":{\"keccak256\":\"0xad7739b62e6ef1be9b034d155888990a7cab8617931b5dfc8dc72df3a4e840c1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e316fe38303acd6e1022c6a2e57859637c908fe077cd311322d19ce7c63b7b5c\",\"dweb:/ipfs/QmTGBSPBU3Kwzz1wQRCjeDF5jU2rVtN213Q7WiUePe9x1o\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/logic/ReinvestLogic.sol\":{\"keccak256\":\"0xaf2ed62054c90435b9458a16edf62458da9460b2e80dbfc14fd6cd9dbb4cbc8e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ab965c5dc9eb61527ac780fa2df89227d33defd11b3eb6cd01f19509eaaa7031\",\"dweb:/ipfs/QmXj82qj1ooUcN6rjHRJcHRTaZ9uVdEWeA7x6sV1Hqxwk6\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/modules/AaveV3Reinvest.sol\":{\"keccak256\":\"0x6b7b0b6d41baf0b22c0f83068561dfa896dde6f0d8bc717cdf1ab6b049d15df5\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://424f206e917e9d7b72e98390bad07377858c4c208382f5f6bb9ce802cd08bb6c\",\"dweb:/ipfs/QmdRipeB8anCVKC9k7UnCcbJb1CtM5tPnYqkUnAzFefA5h\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/modules/ForwardReinvest.sol\":{\"keccak256\":\"0xc9f5fefdf834ff48bc6fbd0ca7d09d48f336002157eb235623999f60d122e6d1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e88e475dcdbc4424289d7b5f9329c40960a87b36646597dc500fb3f13501bbbd\",\"dweb:/ipfs/Qmd2asJhknXBUSBtTUzWZDQvmKd2quitUWJ6KodTdkjURm\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/protocols/aaveV3/IPool.sol\":{\"keccak256\":\"0x1c175df098162a062651d9957b1234a7175be87128e133c756fbb3ee251a3c34\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://30db41f7df1b391ac4ea8d38910f3165676ff4c0e16592673ad26550b1469997\",\"dweb:/ipfs/QmYDraTH3sCU4av6T1v7phEMXU7VQXPFPz534Rw8i18ag8\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"keccak256\":\"0x631188737069917d2f909d29ce62c4d48611d326686ba6683e26b72a23bfac0b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7a61054ae84cd6c4d04c0c4450ba1d6de41e27e0a2c4f1bcdf58f796b401c609\",\"dweb:/ipfs/QmUvtdp7X1mRVyC3CsHrtPbgoqWaXHp3S1ZR24tpAQYJWM\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0ea104e577e63faea3b69c415637e99e755dcbf64c5833d7140c35a714d6d90c\",\"dweb:/ipfs/Qmau6x4Ns9XdyynRCNNp3RhLqijJjFm7z5fyZazfYFGYdq\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/hardhat/console.sol\":{\"keccak256\":\"0x7434453e6d3b7d0e5d0eb7846ffdbc27f0ccf3b163591263739b628074dc103a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://49355f780520494d1d5a0f01858385e51bb5280ce0ecfb960f16995065dca395\",\"dweb:/ipfs/QmSwJ6C5QLz6xKeQZS8wbwjU1KxRFTYfwbGmtzisd5sRW4\"]}},\"version\":1}",
+    "bytecode": "",
+    "deployedBytecode": "",
+    "sourceMap": "",
+    "deployedSourceMap": "",
+    "sourcePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/logic/ReinvestLogic.sol",
+    "compiler": {
+        "name": "solc",
+        "version": "0.8.20+commit.a1b79de6"
+    },
+    "ast": {
+        "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/logic/ReinvestLogic.sol",
+        "exportedSymbols": {
+            "AaveV3Reinvest": [
+                443
+            ],
+            "DCAReinvestLogic": [
+                261
+            ],
+            "ForwardReinvest": [
+                532
+            ],
+            "IDCADataStructures": [
+                64
+            ],
+            "ReinvestCodes": [
+                144
+            ],
+            "console": [
+                9358
+            ]
+        },
+        "id": 262,
+        "license": "MIT",
+        "nodeType": "SourceUnit",
+        "nodes": [
+            {
+                "id": 146,
+                "literals": [
+                    "solidity",
+                    "^",
+                    "0.8",
+                    ".20"
+                ],
+                "nodeType": "PragmaDirective",
+                "src": "32:24:2"
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/hardhat/console.sol",
+                "file": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/hardhat/console.sol",
+                "id": 147,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 262,
+                "sourceUnit": 9359,
+                "src": "63:98:2",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/library/Codes.sol",
+                "file": "../library/Codes.sol",
+                "id": 148,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 262,
+                "sourceUnit": 145,
+                "src": "162:30:2",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/interfaces/IDCADataStructures.sol",
+                "file": "../interfaces/IDCADataStructures.sol",
+                "id": 150,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 262,
+                "sourceUnit": 65,
+                "src": "194:72:2",
+                "symbolAliases": [
+                    {
+                        "foreign": {
+                            "id": 149,
+                            "name": "IDCADataStructures",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 64,
+                            "src": "202:18:2",
+                            "typeDescriptions": {}
+                        },
+                        "nameLocation": "-1:-1:-1"
+                    }
+                ],
+                "unitAlias": ""
+            },
+            {
+                "abstract": true,
+                "baseContracts": [],
+                "canonicalName": "DCAReinvestLogic",
+                "contractDependencies": [],
+                "contractKind": "contract",
+                "documentation": {
+                    "id": 151,
+                    "nodeType": "StructuredDocumentation",
+                    "src": "268:602:2",
+                    "text": "************************************************\n____ooo____oooooooo_oooo____oooo____ooo____oo_*\n__oo___oo_____oo_____oo___oo____oo__oooo___oo_*\n_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*\n_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*\n_oo_____oo____oo_____oo___oo____oo__oo___oooo_*\n_oo_____oo____oo____oooo____oooo____oo____ooo_*\n______________________________________________*\n    Decentralised Cost Average Contracts************************************************\n                  V0.6\n  ation.capital\n  x.com/0xAtion\n  x.com/e_labs_\n  e-labs.co.uk"
+                },
+                "fullyImplemented": true,
+                "id": 261,
+                "linearizedBaseContracts": [
+                    261
+                ],
+                "name": "DCAReinvestLogic",
+                "nameLocation": "890:16:2",
+                "nodeType": "ContractDefinition",
+                "nodes": [
+                    {
+                        "global": false,
+                        "id": 154,
+                        "libraryName": {
+                            "id": 152,
+                            "name": "ReinvestCodes",
+                            "nameLocations": [
+                                "919:13:2"
+                            ],
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 144,
+                            "src": "919:13:2"
+                        },
+                        "nodeType": "UsingForDirective",
+                        "src": "913:30:2",
+                        "typeName": {
+                            "id": 153,
+                            "name": "uint8",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "937:5:2",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_uint8",
+                                "typeString": "uint8"
+                            }
+                        }
+                    },
+                    {
+                        "constant": true,
+                        "functionSelector": "738800b7",
+                        "id": 157,
+                        "mutability": "constant",
+                        "name": "REINVEST_VERSION",
+                        "nameLocation": "971:16:2",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 261,
+                        "src": "948:53:2",
+                        "stateVariable": true,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_string_memory_ptr",
+                            "typeString": "string"
+                        },
+                        "typeName": {
+                            "id": 155,
+                            "name": "string",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "948:6:2",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_string_storage_ptr",
+                                "typeString": "string"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "544553542056302e35",
+                            "id": 156,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "string",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "990:11:2",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_0103ae246ecd77b4d7a123ee3b3cf40b68ada0ae24936ea20a94673beb72f4d2",
+                                "typeString": "literal_string \"TEST V0.5\""
+                            },
+                            "value": "TEST V0.5"
+                        },
+                        "visibility": "public"
+                    },
+                    {
+                        "constant": true,
+                        "functionSelector": "c9f6d48f",
+                        "id": 166,
+                        "mutability": "constant",
+                        "name": "ACTIVE_REINVESTS",
+                        "nameLocation": "1029:16:2",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 261,
+                        "src": "1007:108:2",
+                        "stateVariable": true,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_bytes_memory_ptr",
+                            "typeString": "bytes"
+                        },
+                        "typeName": {
+                            "id": 158,
+                            "name": "bytes",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1007:5:2",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_bytes_storage_ptr",
+                                "typeString": "bytes"
+                            }
+                        },
+                        "value": {
+                            "arguments": [
+                                {
+                                    "expression": {
+                                        "id": 161,
+                                        "name": "ReinvestCodes",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": [],
+                                        "referencedDeclaration": 144,
+                                        "src": "1073:13:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_type$_t_contract$_ReinvestCodes_$144_$",
+                                            "typeString": "type(library ReinvestCodes)"
+                                        }
+                                    },
+                                    "id": 162,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "lValueRequested": false,
+                                    "memberLocation": "1087:7:2",
+                                    "memberName": "FORWARD",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 77,
+                                    "src": "1073:21:2",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint8",
+                                        "typeString": "uint8"
+                                    }
+                                },
+                                {
+                                    "expression": {
+                                        "id": 163,
+                                        "name": "ReinvestCodes",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": [],
+                                        "referencedDeclaration": 144,
+                                        "src": "1096:13:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_type$_t_contract$_ReinvestCodes_$144_$",
+                                            "typeString": "type(library ReinvestCodes)"
+                                        }
+                                    },
+                                    "id": 164,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "lValueRequested": false,
+                                    "memberLocation": "1110:4:2",
+                                    "memberName": "AAVE",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 83,
+                                    "src": "1096:18:2",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint8",
+                                        "typeString": "uint8"
+                                    }
+                                }
+                            ],
+                            "expression": {
+                                "argumentTypes": [
+                                    {
+                                        "typeIdentifier": "t_uint8",
+                                        "typeString": "uint8"
+                                    },
+                                    {
+                                        "typeIdentifier": "t_uint8",
+                                        "typeString": "uint8"
+                                    }
+                                ],
+                                "expression": {
+                                    "id": 159,
+                                    "name": "abi",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 4294967295,
+                                    "src": "1056:3:2",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_magic_abi",
+                                        "typeString": "abi"
+                                    }
+                                },
+                                "id": 160,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": true,
+                                "lValueRequested": false,
+                                "memberLocation": "1060:12:2",
+                                "memberName": "encodePacked",
+                                "nodeType": "MemberAccess",
+                                "src": "1056:16:2",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_function_abiencodepacked_pure$__$returns$_t_bytes_memory_ptr_$",
+                                    "typeString": "function () pure returns (bytes memory)"
+                                }
+                            },
+                            "id": 165,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "functionCall",
+                            "lValueRequested": false,
+                            "nameLocations": [],
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "1056:59:2",
+                            "tryCall": false,
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_bytes_memory_ptr",
+                                "typeString": "bytes memory"
+                            }
+                        },
+                        "visibility": "public"
+                    },
+                    {
+                        "body": {
+                            "id": 226,
+                            "nodeType": "Block",
+                            "src": "1520:477:2",
+                            "statements": [
+                                {
+                                    "assignments": [
+                                        180
+                                    ],
+                                    "declarations": [
+                                        {
+                                            "constant": false,
+                                            "id": 180,
+                                            "mutability": "mutable",
+                                            "name": "code",
+                                            "nameLocation": "1536:4:2",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 226,
+                                            "src": "1530:10:2",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_uint8",
+                                                "typeString": "uint8"
+                                            },
+                                            "typeName": {
+                                                "id": 179,
+                                                "name": "uint8",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "1530:5:2",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint8",
+                                                    "typeString": "uint8"
+                                                }
+                                            },
+                                            "visibility": "internal"
+                                        }
+                                    ],
+                                    "id": 183,
+                                    "initialValue": {
+                                        "expression": {
+                                            "id": 181,
+                                            "name": "reinvestData_",
+                                            "nodeType": "Identifier",
+                                            "overloadedDeclarations": [],
+                                            "referencedDeclaration": 170,
+                                            "src": "1543:13:2",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_struct$_Reinvest_$63_memory_ptr",
+                                                "typeString": "struct IDCADataStructures.Reinvest memory"
+                                            }
+                                        },
+                                        "id": 182,
+                                        "isConstant": false,
+                                        "isLValue": true,
+                                        "isPure": false,
+                                        "lValueRequested": false,
+                                        "memberLocation": "1557:10:2",
+                                        "memberName": "investCode",
+                                        "nodeType": "MemberAccess",
+                                        "referencedDeclaration": 60,
+                                        "src": "1543:24:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint8",
+                                            "typeString": "uint8"
+                                        }
+                                    },
+                                    "nodeType": "VariableDeclarationStatement",
+                                    "src": "1530:37:2"
+                                },
+                                {
+                                    "condition": {
+                                        "arguments": [
+                                            {
+                                                "expression": {
+                                                    "id": 186,
+                                                    "name": "ReinvestCodes",
+                                                    "nodeType": "Identifier",
+                                                    "overloadedDeclarations": [],
+                                                    "referencedDeclaration": 144,
+                                                    "src": "1597:13:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_type$_t_contract$_ReinvestCodes_$144_$",
+                                                        "typeString": "type(library ReinvestCodes)"
+                                                    }
+                                                },
+                                                "id": 187,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": true,
+                                                "lValueRequested": false,
+                                                "memberLocation": "1611:10:2",
+                                                "memberName": "NOT_ACTIVE",
+                                                "nodeType": "MemberAccess",
+                                                "referencedDeclaration": 74,
+                                                "src": "1597:24:2",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint8",
+                                                    "typeString": "uint8"
+                                                }
+                                            }
+                                        ],
+                                        "expression": {
+                                            "argumentTypes": [
+                                                {
+                                                    "typeIdentifier": "t_uint8",
+                                                    "typeString": "uint8"
+                                                }
+                                            ],
+                                            "expression": {
+                                                "id": 184,
+                                                "name": "code",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 180,
+                                                "src": "1582:4:2",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint8",
+                                                    "typeString": "uint8"
+                                                }
+                                            },
+                                            "id": 185,
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": false,
+                                            "lValueRequested": false,
+                                            "memberLocation": "1587:9:2",
+                                            "memberName": "checkCode",
+                                            "nodeType": "MemberAccess",
+                                            "referencedDeclaration": 103,
+                                            "src": "1582:14:2",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_function_internal_pure$_t_uint8_$_t_uint8_$returns$_t_bool_$attached_to$_t_uint8_$",
+                                                "typeString": "function (uint8,uint8) pure returns (bool)"
+                                            }
+                                        },
+                                        "id": 188,
+                                        "isConstant": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "kind": "functionCall",
+                                        "lValueRequested": false,
+                                        "nameLocations": [],
+                                        "names": [],
+                                        "nodeType": "FunctionCall",
+                                        "src": "1582:40:2",
+                                        "tryCall": false,
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "falseBody": {
+                                        "condition": {
+                                            "arguments": [
+                                                {
+                                                    "expression": {
+                                                        "id": 195,
+                                                        "name": "ReinvestCodes",
+                                                        "nodeType": "Identifier",
+                                                        "overloadedDeclarations": [],
+                                                        "referencedDeclaration": 144,
+                                                        "src": "1682:13:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_type$_t_contract$_ReinvestCodes_$144_$",
+                                                            "typeString": "type(library ReinvestCodes)"
+                                                        }
+                                                    },
+                                                    "id": 196,
+                                                    "isConstant": false,
+                                                    "isLValue": false,
+                                                    "isPure": true,
+                                                    "lValueRequested": false,
+                                                    "memberLocation": "1696:7:2",
+                                                    "memberName": "FORWARD",
+                                                    "nodeType": "MemberAccess",
+                                                    "referencedDeclaration": 77,
+                                                    "src": "1682:21:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_uint8",
+                                                        "typeString": "uint8"
+                                                    }
+                                                }
+                                            ],
+                                            "expression": {
+                                                "argumentTypes": [
+                                                    {
+                                                        "typeIdentifier": "t_uint8",
+                                                        "typeString": "uint8"
+                                                    }
+                                                ],
+                                                "expression": {
+                                                    "id": 193,
+                                                    "name": "code",
+                                                    "nodeType": "Identifier",
+                                                    "overloadedDeclarations": [],
+                                                    "referencedDeclaration": 180,
+                                                    "src": "1667:4:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_uint8",
+                                                        "typeString": "uint8"
+                                                    }
+                                                },
+                                                "id": 194,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": false,
+                                                "lValueRequested": false,
+                                                "memberLocation": "1672:9:2",
+                                                "memberName": "checkCode",
+                                                "nodeType": "MemberAccess",
+                                                "referencedDeclaration": 103,
+                                                "src": "1667:14:2",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_function_internal_pure$_t_uint8_$_t_uint8_$returns$_t_bool_$attached_to$_t_uint8_$",
+                                                    "typeString": "function (uint8,uint8) pure returns (bool)"
+                                                }
+                                            },
+                                            "id": 197,
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": false,
+                                            "kind": "functionCall",
+                                            "lValueRequested": false,
+                                            "nameLocations": [],
+                                            "names": [],
+                                            "nodeType": "FunctionCall",
+                                            "src": "1667:37:2",
+                                            "tryCall": false,
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_bool",
+                                                "typeString": "bool"
+                                            }
+                                        },
+                                        "falseBody": {
+                                            "condition": {
+                                                "arguments": [
+                                                    {
+                                                        "expression": {
+                                                            "id": 207,
+                                                            "name": "ReinvestCodes",
+                                                            "nodeType": "Identifier",
+                                                            "overloadedDeclarations": [],
+                                                            "referencedDeclaration": 144,
+                                                            "src": "1836:13:2",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_type$_t_contract$_ReinvestCodes_$144_$",
+                                                                "typeString": "type(library ReinvestCodes)"
+                                                            }
+                                                        },
+                                                        "id": 208,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": true,
+                                                        "lValueRequested": false,
+                                                        "memberLocation": "1850:8:2",
+                                                        "memberName": "COMPOUND",
+                                                        "nodeType": "MemberAccess",
+                                                        "referencedDeclaration": 80,
+                                                        "src": "1836:22:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint8",
+                                                            "typeString": "uint8"
+                                                        }
+                                                    }
+                                                ],
+                                                "expression": {
+                                                    "argumentTypes": [
+                                                        {
+                                                            "typeIdentifier": "t_uint8",
+                                                            "typeString": "uint8"
+                                                        }
+                                                    ],
+                                                    "expression": {
+                                                        "id": 205,
+                                                        "name": "code",
+                                                        "nodeType": "Identifier",
+                                                        "overloadedDeclarations": [],
+                                                        "referencedDeclaration": 180,
+                                                        "src": "1821:4:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint8",
+                                                            "typeString": "uint8"
+                                                        }
+                                                    },
+                                                    "id": 206,
+                                                    "isConstant": false,
+                                                    "isLValue": false,
+                                                    "isPure": false,
+                                                    "lValueRequested": false,
+                                                    "memberLocation": "1826:9:2",
+                                                    "memberName": "checkCode",
+                                                    "nodeType": "MemberAccess",
+                                                    "referencedDeclaration": 103,
+                                                    "src": "1821:14:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_function_internal_pure$_t_uint8_$_t_uint8_$returns$_t_bool_$attached_to$_t_uint8_$",
+                                                        "typeString": "function (uint8,uint8) pure returns (bool)"
+                                                    }
+                                                },
+                                                "id": 209,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": false,
+                                                "kind": "functionCall",
+                                                "lValueRequested": false,
+                                                "nameLocations": [],
+                                                "names": [],
+                                                "nodeType": "FunctionCall",
+                                                "src": "1821:38:2",
+                                                "tryCall": false,
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_bool",
+                                                    "typeString": "bool"
+                                                }
+                                            },
+                                            "falseBody": {
+                                                "condition": {
+                                                    "commonType": {
+                                                        "typeIdentifier": "t_uint8",
+                                                        "typeString": "uint8"
+                                                    },
+                                                    "id": 214,
+                                                    "isConstant": false,
+                                                    "isLValue": false,
+                                                    "isPure": false,
+                                                    "lValueRequested": false,
+                                                    "leftExpression": {
+                                                        "id": 211,
+                                                        "name": "code",
+                                                        "nodeType": "Identifier",
+                                                        "overloadedDeclarations": [],
+                                                        "referencedDeclaration": 180,
+                                                        "src": "1886:4:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint8",
+                                                            "typeString": "uint8"
+                                                        }
+                                                    },
+                                                    "nodeType": "BinaryOperation",
+                                                    "operator": "==",
+                                                    "rightExpression": {
+                                                        "expression": {
+                                                            "id": 212,
+                                                            "name": "ReinvestCodes",
+                                                            "nodeType": "Identifier",
+                                                            "overloadedDeclarations": [],
+                                                            "referencedDeclaration": 144,
+                                                            "src": "1894:13:2",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_type$_t_contract$_ReinvestCodes_$144_$",
+                                                                "typeString": "type(library ReinvestCodes)"
+                                                            }
+                                                        },
+                                                        "id": 213,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": true,
+                                                        "lValueRequested": false,
+                                                        "memberLocation": "1908:4:2",
+                                                        "memberName": "AAVE",
+                                                        "nodeType": "MemberAccess",
+                                                        "referencedDeclaration": 83,
+                                                        "src": "1894:18:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint8",
+                                                            "typeString": "uint8"
+                                                        }
+                                                    },
+                                                    "src": "1886:26:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_bool",
+                                                        "typeString": "bool"
+                                                    }
+                                                },
+                                                "id": 222,
+                                                "nodeType": "IfStatement",
+                                                "src": "1869:121:2",
+                                                "trueBody": {
+                                                    "expression": {
+                                                        "arguments": [
+                                                            {
+                                                                "id": 217,
+                                                                "name": "amount_",
+                                                                "nodeType": "Identifier",
+                                                                "overloadedDeclarations": [],
+                                                                "referencedDeclaration": 172,
+                                                                "src": "1954:7:2",
+                                                                "typeDescriptions": {
+                                                                    "typeIdentifier": "t_uint256",
+                                                                    "typeString": "uint256"
+                                                                }
+                                                            },
+                                                            {
+                                                                "expression": {
+                                                                    "id": 218,
+                                                                    "name": "reinvestData_",
+                                                                    "nodeType": "Identifier",
+                                                                    "overloadedDeclarations": [],
+                                                                    "referencedDeclaration": 170,
+                                                                    "src": "1963:13:2",
+                                                                    "typeDescriptions": {
+                                                                        "typeIdentifier": "t_struct$_Reinvest_$63_memory_ptr",
+                                                                        "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                                    }
+                                                                },
+                                                                "id": 219,
+                                                                "isConstant": false,
+                                                                "isLValue": true,
+                                                                "isPure": false,
+                                                                "lValueRequested": false,
+                                                                "memberLocation": "1977:12:2",
+                                                                "memberName": "reinvestData",
+                                                                "nodeType": "MemberAccess",
+                                                                "referencedDeclaration": 56,
+                                                                "src": "1963:26:2",
+                                                                "typeDescriptions": {
+                                                                    "typeIdentifier": "t_bytes_memory_ptr",
+                                                                    "typeString": "bytes memory"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "expression": {
+                                                            "argumentTypes": [
+                                                                {
+                                                                    "typeIdentifier": "t_uint256",
+                                                                    "typeString": "uint256"
+                                                                },
+                                                                {
+                                                                    "typeIdentifier": "t_bytes_memory_ptr",
+                                                                    "typeString": "bytes memory"
+                                                                }
+                                                            ],
+                                                            "expression": {
+                                                                "id": 215,
+                                                                "name": "AaveV3Reinvest",
+                                                                "nodeType": "Identifier",
+                                                                "overloadedDeclarations": [],
+                                                                "referencedDeclaration": 443,
+                                                                "src": "1930:14:2",
+                                                                "typeDescriptions": {
+                                                                    "typeIdentifier": "t_type$_t_contract$_AaveV3Reinvest_$443_$",
+                                                                    "typeString": "type(library AaveV3Reinvest)"
+                                                                }
+                                                            },
+                                                            "id": 216,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "memberLocation": "1945:8:2",
+                                                            "memberName": "_execute",
+                                                            "nodeType": "MemberAccess",
+                                                            "referencedDeclaration": 384,
+                                                            "src": "1930:23:2",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_bytes_memory_ptr_$returns$_t_uint256_$_t_bool_$",
+                                                                "typeString": "function (uint256,bytes memory) returns (uint256,bool)"
+                                                            }
+                                                        },
+                                                        "id": 220,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": false,
+                                                        "kind": "functionCall",
+                                                        "lValueRequested": false,
+                                                        "nameLocations": [],
+                                                        "names": [],
+                                                        "nodeType": "FunctionCall",
+                                                        "src": "1930:60:2",
+                                                        "tryCall": false,
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_tuple$_t_uint256_$_t_bool_$",
+                                                            "typeString": "tuple(uint256,bool)"
+                                                        }
+                                                    },
+                                                    "functionReturnParameters": 178,
+                                                    "id": 221,
+                                                    "nodeType": "Return",
+                                                    "src": "1923:67:2"
+                                                }
+                                            },
+                                            "id": 223,
+                                            "nodeType": "IfStatement",
+                                            "src": "1817:173:2",
+                                            "trueBody": {
+                                                "id": 210,
+                                                "nodeType": "Block",
+                                                "src": "1861:2:2",
+                                                "statements": []
+                                            }
+                                        },
+                                        "id": 224,
+                                        "nodeType": "IfStatement",
+                                        "src": "1663:327:2",
+                                        "trueBody": {
+                                            "expression": {
+                                                "arguments": [
+                                                    {
+                                                        "id": 200,
+                                                        "name": "amount_",
+                                                        "nodeType": "Identifier",
+                                                        "overloadedDeclarations": [],
+                                                        "referencedDeclaration": 172,
+                                                        "src": "1766:7:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint256",
+                                                            "typeString": "uint256"
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "id": 201,
+                                                            "name": "reinvestData_",
+                                                            "nodeType": "Identifier",
+                                                            "overloadedDeclarations": [],
+                                                            "referencedDeclaration": 170,
+                                                            "src": "1775:13:2",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_struct$_Reinvest_$63_memory_ptr",
+                                                                "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                            }
+                                                        },
+                                                        "id": 202,
+                                                        "isConstant": false,
+                                                        "isLValue": true,
+                                                        "isPure": false,
+                                                        "lValueRequested": false,
+                                                        "memberLocation": "1789:12:2",
+                                                        "memberName": "reinvestData",
+                                                        "nodeType": "MemberAccess",
+                                                        "referencedDeclaration": 56,
+                                                        "src": "1775:26:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_bytes_memory_ptr",
+                                                            "typeString": "bytes memory"
+                                                        }
+                                                    }
+                                                ],
+                                                "expression": {
+                                                    "argumentTypes": [
+                                                        {
+                                                            "typeIdentifier": "t_uint256",
+                                                            "typeString": "uint256"
+                                                        },
+                                                        {
+                                                            "typeIdentifier": "t_bytes_memory_ptr",
+                                                            "typeString": "bytes memory"
+                                                        }
+                                                    ],
+                                                    "expression": {
+                                                        "id": 198,
+                                                        "name": "ForwardReinvest",
+                                                        "nodeType": "Identifier",
+                                                        "overloadedDeclarations": [],
+                                                        "referencedDeclaration": 532,
+                                                        "src": "1741:15:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_type$_t_contract$_ForwardReinvest_$532_$",
+                                                            "typeString": "type(library ForwardReinvest)"
+                                                        }
+                                                    },
+                                                    "id": 199,
+                                                    "isConstant": false,
+                                                    "isLValue": false,
+                                                    "isPure": false,
+                                                    "lValueRequested": false,
+                                                    "memberLocation": "1757:8:2",
+                                                    "memberName": "_execute",
+                                                    "nodeType": "MemberAccess",
+                                                    "referencedDeclaration": 499,
+                                                    "src": "1741:24:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_bytes_memory_ptr_$returns$_t_uint256_$_t_bool_$",
+                                                        "typeString": "function (uint256,bytes memory) returns (uint256,bool)"
+                                                    }
+                                                },
+                                                "id": 203,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": false,
+                                                "kind": "functionCall",
+                                                "lValueRequested": false,
+                                                "nameLocations": [],
+                                                "names": [],
+                                                "nodeType": "FunctionCall",
+                                                "src": "1741:61:2",
+                                                "tryCall": false,
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_tuple$_t_uint256_$_t_bool_$",
+                                                    "typeString": "tuple(uint256,bool)"
+                                                }
+                                            },
+                                            "functionReturnParameters": 178,
+                                            "id": 204,
+                                            "nodeType": "Return",
+                                            "src": "1718:84:2"
+                                        }
+                                    },
+                                    "id": 225,
+                                    "nodeType": "IfStatement",
+                                    "src": "1578:412:2",
+                                    "trueBody": {
+                                        "expression": {
+                                            "components": [
+                                                {
+                                                    "id": 189,
+                                                    "name": "amount",
+                                                    "nodeType": "Identifier",
+                                                    "overloadedDeclarations": [],
+                                                    "referencedDeclaration": 175,
+                                                    "src": "1632:6:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_uint256",
+                                                        "typeString": "uint256"
+                                                    }
+                                                },
+                                                {
+                                                    "id": 190,
+                                                    "name": "success",
+                                                    "nodeType": "Identifier",
+                                                    "overloadedDeclarations": [],
+                                                    "referencedDeclaration": 177,
+                                                    "src": "1640:7:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_bool",
+                                                        "typeString": "bool"
+                                                    }
+                                                }
+                                            ],
+                                            "id": 191,
+                                            "isConstant": false,
+                                            "isInlineArray": false,
+                                            "isLValue": false,
+                                            "isPure": false,
+                                            "lValueRequested": false,
+                                            "nodeType": "TupleExpression",
+                                            "src": "1631:17:2",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_tuple$_t_uint256_$_t_bool_$",
+                                                "typeString": "tuple(uint256,bool)"
+                                            }
+                                        },
+                                        "functionReturnParameters": 178,
+                                        "id": 192,
+                                        "nodeType": "Return",
+                                        "src": "1624:24:2"
+                                    }
+                                }
+                            ]
+                        },
+                        "documentation": {
+                            "id": 167,
+                            "nodeType": "StructuredDocumentation",
+                            "src": "1122:231:2",
+                            "text": " @param reinvestData_ {Reinvest} Data of the reinvest strategy\n @param amount_ {uint256} amount of the token to be invested\n @return amount {uint256} the amount of the yield baring token recived"
+                        },
+                        "id": 227,
+                        "implemented": true,
+                        "kind": "function",
+                        "modifiers": [],
+                        "name": "_executeInvest",
+                        "nameLocation": "1368:14:2",
+                        "nodeType": "FunctionDefinition",
+                        "parameters": {
+                            "id": 173,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 170,
+                                    "mutability": "mutable",
+                                    "name": "reinvestData_",
+                                    "nameLocation": "1427:13:2",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 227,
+                                    "src": "1392:48:2",
+                                    "stateVariable": false,
+                                    "storageLocation": "memory",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Reinvest_$63_memory_ptr",
+                                        "typeString": "struct IDCADataStructures.Reinvest"
+                                    },
+                                    "typeName": {
+                                        "id": 169,
+                                        "nodeType": "UserDefinedTypeName",
+                                        "pathNode": {
+                                            "id": 168,
+                                            "name": "IDCADataStructures.Reinvest",
+                                            "nameLocations": [
+                                                "1392:18:2",
+                                                "1411:8:2"
+                                            ],
+                                            "nodeType": "IdentifierPath",
+                                            "referencedDeclaration": 63,
+                                            "src": "1392:27:2"
+                                        },
+                                        "referencedDeclaration": 63,
+                                        "src": "1392:27:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_struct$_Reinvest_$63_storage_ptr",
+                                            "typeString": "struct IDCADataStructures.Reinvest"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 172,
+                                    "mutability": "mutable",
+                                    "name": "amount_",
+                                    "nameLocation": "1458:7:2",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 227,
+                                    "src": "1450:15:2",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 171,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "1450:7:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "1382:89:2"
+                        },
+                        "returnParameters": {
+                            "id": 178,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 175,
+                                    "mutability": "mutable",
+                                    "name": "amount",
+                                    "nameLocation": "1498:6:2",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 227,
+                                    "src": "1490:14:2",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 174,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "1490:7:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 177,
+                                    "mutability": "mutable",
+                                    "name": "success",
+                                    "nameLocation": "1511:7:2",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 227,
+                                    "src": "1506:12:2",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_bool",
+                                        "typeString": "bool"
+                                    },
+                                    "typeName": {
+                                        "id": 176,
+                                        "name": "bool",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "1506:4:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "1489:30:2"
+                        },
+                        "scope": 261,
+                        "src": "1359:638:2",
+                        "stateMutability": "nonpayable",
+                        "virtual": false,
+                        "visibility": "internal"
+                    },
+                    {
+                        "body": {
+                            "id": 259,
+                            "nodeType": "Block",
+                            "src": "2166:221:2",
+                            "statements": [
+                                {
+                                    "condition": {
+                                        "commonType": {
+                                            "typeIdentifier": "t_uint8",
+                                            "typeString": "uint8"
+                                        },
+                                        "id": 243,
+                                        "isConstant": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "lValueRequested": false,
+                                        "leftExpression": {
+                                            "expression": {
+                                                "id": 239,
+                                                "name": "reinvestData_",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 230,
+                                                "src": "2180:13:2",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_struct$_Reinvest_$63_memory_ptr",
+                                                    "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                }
+                                            },
+                                            "id": 240,
+                                            "isConstant": false,
+                                            "isLValue": true,
+                                            "isPure": false,
+                                            "lValueRequested": false,
+                                            "memberLocation": "2194:10:2",
+                                            "memberName": "investCode",
+                                            "nodeType": "MemberAccess",
+                                            "referencedDeclaration": 60,
+                                            "src": "2180:24:2",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_uint8",
+                                                "typeString": "uint8"
+                                            }
+                                        },
+                                        "nodeType": "BinaryOperation",
+                                        "operator": "<=",
+                                        "rightExpression": {
+                                            "expression": {
+                                                "id": 241,
+                                                "name": "ReinvestCodes",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 144,
+                                                "src": "2208:13:2",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_type$_t_contract$_ReinvestCodes_$144_$",
+                                                    "typeString": "type(library ReinvestCodes)"
+                                                }
+                                            },
+                                            "id": 242,
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": true,
+                                            "lValueRequested": false,
+                                            "memberLocation": "2222:8:2",
+                                            "memberName": "COMPOUND",
+                                            "nodeType": "MemberAccess",
+                                            "referencedDeclaration": 80,
+                                            "src": "2208:22:2",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_uint8",
+                                                "typeString": "uint8"
+                                            }
+                                        },
+                                        "src": "2180:50:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "falseBody": {
+                                        "condition": {
+                                            "commonType": {
+                                                "typeIdentifier": "t_uint8",
+                                                "typeString": "uint8"
+                                            },
+                                            "id": 249,
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": false,
+                                            "lValueRequested": false,
+                                            "leftExpression": {
+                                                "expression": {
+                                                    "id": 245,
+                                                    "name": "reinvestData_",
+                                                    "nodeType": "Identifier",
+                                                    "overloadedDeclarations": [],
+                                                    "referencedDeclaration": 230,
+                                                    "src": "2257:13:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_struct$_Reinvest_$63_memory_ptr",
+                                                        "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                    }
+                                                },
+                                                "id": 246,
+                                                "isConstant": false,
+                                                "isLValue": true,
+                                                "isPure": false,
+                                                "lValueRequested": false,
+                                                "memberLocation": "2271:10:2",
+                                                "memberName": "investCode",
+                                                "nodeType": "MemberAccess",
+                                                "referencedDeclaration": 60,
+                                                "src": "2257:24:2",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint8",
+                                                    "typeString": "uint8"
+                                                }
+                                            },
+                                            "nodeType": "BinaryOperation",
+                                            "operator": "==",
+                                            "rightExpression": {
+                                                "expression": {
+                                                    "id": 247,
+                                                    "name": "ReinvestCodes",
+                                                    "nodeType": "Identifier",
+                                                    "overloadedDeclarations": [],
+                                                    "referencedDeclaration": 144,
+                                                    "src": "2285:13:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_type$_t_contract$_ReinvestCodes_$144_$",
+                                                        "typeString": "type(library ReinvestCodes)"
+                                                    }
+                                                },
+                                                "id": 248,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": true,
+                                                "lValueRequested": false,
+                                                "memberLocation": "2299:4:2",
+                                                "memberName": "AAVE",
+                                                "nodeType": "MemberAccess",
+                                                "referencedDeclaration": 83,
+                                                "src": "2285:18:2",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint8",
+                                                    "typeString": "uint8"
+                                                }
+                                            },
+                                            "src": "2257:46:2",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_bool",
+                                                "typeString": "bool"
+                                            }
+                                        },
+                                        "id": 257,
+                                        "nodeType": "IfStatement",
+                                        "src": "2240:140:2",
+                                        "trueBody": {
+                                            "expression": {
+                                                "arguments": [
+                                                    {
+                                                        "id": 252,
+                                                        "name": "amount_",
+                                                        "nodeType": "Identifier",
+                                                        "overloadedDeclarations": [],
+                                                        "referencedDeclaration": 232,
+                                                        "src": "2344:7:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint256",
+                                                            "typeString": "uint256"
+                                                        }
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "id": 253,
+                                                            "name": "reinvestData_",
+                                                            "nodeType": "Identifier",
+                                                            "overloadedDeclarations": [],
+                                                            "referencedDeclaration": 230,
+                                                            "src": "2353:13:2",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_struct$_Reinvest_$63_memory_ptr",
+                                                                "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                            }
+                                                        },
+                                                        "id": 254,
+                                                        "isConstant": false,
+                                                        "isLValue": true,
+                                                        "isPure": false,
+                                                        "lValueRequested": false,
+                                                        "memberLocation": "2367:12:2",
+                                                        "memberName": "reinvestData",
+                                                        "nodeType": "MemberAccess",
+                                                        "referencedDeclaration": 56,
+                                                        "src": "2353:26:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_bytes_memory_ptr",
+                                                            "typeString": "bytes memory"
+                                                        }
+                                                    }
+                                                ],
+                                                "expression": {
+                                                    "argumentTypes": [
+                                                        {
+                                                            "typeIdentifier": "t_uint256",
+                                                            "typeString": "uint256"
+                                                        },
+                                                        {
+                                                            "typeIdentifier": "t_bytes_memory_ptr",
+                                                            "typeString": "bytes memory"
+                                                        }
+                                                    ],
+                                                    "expression": {
+                                                        "id": 250,
+                                                        "name": "AaveV3Reinvest",
+                                                        "nodeType": "Identifier",
+                                                        "overloadedDeclarations": [],
+                                                        "referencedDeclaration": 443,
+                                                        "src": "2321:14:2",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_type$_t_contract$_AaveV3Reinvest_$443_$",
+                                                            "typeString": "type(library AaveV3Reinvest)"
+                                                        }
+                                                    },
+                                                    "id": 251,
+                                                    "isConstant": false,
+                                                    "isLValue": false,
+                                                    "isPure": false,
+                                                    "lValueRequested": false,
+                                                    "memberLocation": "2336:7:2",
+                                                    "memberName": "_unwind",
+                                                    "nodeType": "MemberAccess",
+                                                    "referencedDeclaration": 426,
+                                                    "src": "2321:22:2",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_bytes_memory_ptr_$returns$_t_uint256_$_t_bool_$",
+                                                        "typeString": "function (uint256,bytes memory) returns (uint256,bool)"
+                                                    }
+                                                },
+                                                "id": 255,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": false,
+                                                "kind": "functionCall",
+                                                "lValueRequested": false,
+                                                "nameLocations": [],
+                                                "names": [],
+                                                "nodeType": "FunctionCall",
+                                                "src": "2321:59:2",
+                                                "tryCall": false,
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_tuple$_t_uint256_$_t_bool_$",
+                                                    "typeString": "tuple(uint256,bool)"
+                                                }
+                                            },
+                                            "functionReturnParameters": 238,
+                                            "id": 256,
+                                            "nodeType": "Return",
+                                            "src": "2314:66:2"
+                                        }
+                                    },
+                                    "id": 258,
+                                    "nodeType": "IfStatement",
+                                    "src": "2176:204:2",
+                                    "trueBody": {
+                                        "id": 244,
+                                        "nodeType": "Block",
+                                        "src": "2232:2:2",
+                                        "statements": []
+                                    }
+                                }
+                            ]
+                        },
+                        "id": 260,
+                        "implemented": true,
+                        "kind": "function",
+                        "modifiers": [],
+                        "name": "_executeWithdraw",
+                        "nameLocation": "2012:16:2",
+                        "nodeType": "FunctionDefinition",
+                        "parameters": {
+                            "id": 233,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 230,
+                                    "mutability": "mutable",
+                                    "name": "reinvestData_",
+                                    "nameLocation": "2073:13:2",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 260,
+                                    "src": "2038:48:2",
+                                    "stateVariable": false,
+                                    "storageLocation": "memory",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Reinvest_$63_memory_ptr",
+                                        "typeString": "struct IDCADataStructures.Reinvest"
+                                    },
+                                    "typeName": {
+                                        "id": 229,
+                                        "nodeType": "UserDefinedTypeName",
+                                        "pathNode": {
+                                            "id": 228,
+                                            "name": "IDCADataStructures.Reinvest",
+                                            "nameLocations": [
+                                                "2038:18:2",
+                                                "2057:8:2"
+                                            ],
+                                            "nodeType": "IdentifierPath",
+                                            "referencedDeclaration": 63,
+                                            "src": "2038:27:2"
+                                        },
+                                        "referencedDeclaration": 63,
+                                        "src": "2038:27:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_struct$_Reinvest_$63_storage_ptr",
+                                            "typeString": "struct IDCADataStructures.Reinvest"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 232,
+                                    "mutability": "mutable",
+                                    "name": "amount_",
+                                    "nameLocation": "2104:7:2",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 260,
+                                    "src": "2096:15:2",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 231,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2096:7:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2028:89:2"
+                        },
+                        "returnParameters": {
+                            "id": 238,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 235,
+                                    "mutability": "mutable",
+                                    "name": "amount",
+                                    "nameLocation": "2144:6:2",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 260,
+                                    "src": "2136:14:2",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 234,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2136:7:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 237,
+                                    "mutability": "mutable",
+                                    "name": "success",
+                                    "nameLocation": "2157:7:2",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 260,
+                                    "src": "2152:12:2",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_bool",
+                                        "typeString": "bool"
+                                    },
+                                    "typeName": {
+                                        "id": 236,
+                                        "name": "bool",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2152:4:2",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2135:30:2"
+                        },
+                        "scope": 261,
+                        "src": "2003:384:2",
+                        "stateMutability": "nonpayable",
+                        "virtual": false,
+                        "visibility": "internal"
+                    }
+                ],
+                "scope": 262,
+                "src": "872:1517:2",
+                "usedErrors": [],
+                "usedEvents": []
+            }
+        ],
+        "src": "32:2358:2"
+    },
+    "functionHashes": {
+        "ACTIVE_REINVESTS()": "c9f6d48f",
+        "REINVEST_VERSION()": "738800b7"
+    },
+    "gasEstimates": null
+}

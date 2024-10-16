@@ -108,10 +108,11 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
 
         _approveSwapSpend(baseAddress, tradeAmount);
         uint256 amountIn = _swap(baseAddress, targetAddress, tradeAmount);
-        uint256 reinvestAmount;
         bool success;
 
         if (amountIn > 0) {
+            uint256 reinvestAmount;
+
             if (strategy.reinvest.active) {
                 (reinvestAmount, success) = _executeReinvest(
                     strategy.reinvest,
