@@ -4,7 +4,7 @@ import "hardhat/console.sol";
 
 //import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {ISwapRouter02} from "../protocols/uniswap/ISwapRouter2.sol";
-import {IERC20} from "../tokens/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"; // Added import for SafeERC20
 /**
  *
  ************************************************
@@ -30,7 +30,6 @@ abstract contract Swap {
     constructor(address swapAddress) {
         SWAP_ROUTER = ISwapRouter02(swapAddress);
     }
-
 
     /**
      * @dev swaps from base token for set amount into any amount of target token

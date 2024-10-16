@@ -151,13 +151,36 @@ contract DCAAccount is DCAAccountLogic {
      * @param token_ {address} The ERC20 token address
      * @param amount_ {uint256} Amount of the token to deposit
      */
-    // [Function implementation omitted for brevity]
+    function FundAccount(
+        address token_,
+        uint256 amount_
+    ) public override onlyOwner {
+        //Transfer the given amount of the given ERC20 token to the DCAAccount
+        IERC20(token_).transferFrom(msg.sender, address(this), amount_);
+        _baseBalances[token_] += amount_;
+    }
 
     /**
-     * @dev Withdraw savings from a specific token
+     * @dev Unfund account of a base token
      * @param token_ {address} The ERC20 token address
      * @param amount_ {uint256} Amount of the token to withdraw
      */
+    function UnFundAccount(address token_, uint256 amount_) public onlyOwner {
+        //Transfer the given amount of the given ERC20 token out of the DCAAccount
+        require(
+            _baseBalances[token_] >= amount_,
+            "DCAAccount : [UnFundAccount] Balance of token to low"
+        );
+        _baseBalances[token_] -= amount_;
+        IERC20(token_).transfer(msg.sender, amount_);
+    }
+
+    /**
+     * @dev Withdraws the given amount of the target token balance
+     * @param token_ {address} The ERC20 token address
+     * @param amount_ {uint256} Amount of the target token to withdraw
+     */
+
     function WithdrawSavings(
         address token_,
         uint256 amount_

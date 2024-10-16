@@ -12,6 +12,7 @@ import {DCAReinvestLogic, DCAReinvest} from "../base/DCAReinvest.sol";
 import {OnlyExecutor} from "../security/onlyExecutor.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
 
+
 /**
  *
  ************************************************
@@ -30,10 +31,12 @@ import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
  *  e-labs.co.uk
  *
  */
+
 abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     using Fee for uint16;
     using Strategies for Strategy;
     using Intervals for Interval;
+    using SafeERC20 for IERC20; // Added using statement for SafeERC20
 
     mapping(uint256 => Strategy) internal _strategies;
 
@@ -54,7 +57,6 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @dev Modifier to check if a strategy is within the allowed execution window
      * @param strategyId_ {uint256} Id of the strategy to check if is in window
      */
-
     modifier inWindow(uint256 strategyId_) {
         require(
             _strategies[strategyId_].interval.isInWindow(
@@ -89,7 +91,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param strategyId_ Strategy Id of the strategy data to execute
      * @param feePercent_ Amount to charge as fee in percent
      * @notice percent breakdown where 10000 = 100%, 100 = 1%, etc.
-     * @return {bool} if the execution was sucsessful
+     * @return {bool} if the execution was successful
      */
     function _executeDCATrade(
         uint256 strategyId_,
@@ -167,7 +169,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         IDCAExecutor(_executor()).Unsubscribe(address(this), strategyId_);
         _strategies[oldStrategy.strategyId].active = false;
         _totalActiveStrategies--;
-        emit StrategyUnsubscribed(oldStrategy.strategyId);
+        emit StrategyUnsubscribed(strategyId_);
     }
 
     /**
@@ -176,10 +178,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param tokenAddress_ token address of the payable fee token
      */
     function _transferFee(uint256 feeAmount_, address tokenAddress_) private {
-        require(
-            IERC20(tokenAddress_).transfer(_executor(), feeAmount_),
-            "Fee transfer failed"
-        );
+        IERC20(tokenAddress_).safeTransfer(_executor(), feeAmount_);
     }
 
     /**
@@ -189,7 +188,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @dev logic to execute a reinvest portion of the strategy
      * @notice Only working on call, not delegatecall
      * @param reinvest_ reinvest data struct of the strategy being executed
-     * @param amount_ amount of the target   token to reinvest
+     * @param amount_ amount of the target token to reinvest
      */
     function _executeReinvest(
         Reinvest memory reinvest_,
@@ -212,6 +211,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         }
         return (0, false);
     }
+
     /**
      * @dev withdraws and unwinds a given amount of the reinvest amount
      * @notice NOT WORKING YET
@@ -237,20 +237,23 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
             _reinvestLiquidityTokenBalance[strategyId_] -= amount_;
             _targetBalances[
                 _strategies[strategyId_].targetToken.tokenAddress
-            ] += amount;
+            ] += amount_;
 
             return (amount, success);
         }
 
         return (amount, success);
     }
+
     /**
      * @dev set a new Reinvest contract address
      * @param newAddress_ the address of the new reinvest contract
      */
-    function _setReinvestAddress(address newAddress_) internal {
+    function _setReinvestAddress(address newAddress_) internal onlyOwner {
+        require(newAddress_ != address(0), "Invalid Reinvest Library Address");
         DCAREINVEST_LIBRARY = DCAReinvest(newAddress_);
     }
+
     /**
      * @dev get the Reinvest Contract
      * @return the Reinvest Contract instance
@@ -272,8 +275,13 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         uint256 amount_,
         Interval interval_
     ) internal pure returns (uint256) {
+        require(
+            interval_.intervalToBlockAmount() > 0,
+            "Invalid block amount for interval"
+        );
         return amount_ / interval_.intervalToBlockAmount();
     }
+
     /**
      * @notice Helpers Logic
      */
@@ -282,7 +290,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @dev returns UI data for strategy interval timing
      * @param strategyId_ Strategy Id of the strategy data to get
      * @return lastEx {uint256} time of last execution (seconds)
-     * @return secondsLeft {uint256} seconds left timm strategy is in window
+     * @return secondsLeft {uint256} seconds left till strategy is in window
      * @return checkReturn {bool} if the strategy is in the window
      */
     function getTimeTillWindow(
@@ -295,6 +303,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         lastEx = _lastExecution[strategyId_];
         Interval inter = _strategies[strategyId_].interval;
         secondsLeft = inter.secondsLeftTillWindow(lastEx);
-        return (lastEx, secondsLeft, secondsLeft == 0);
+        checkReturn = secondsLeft == 0;
+        return (lastEx, secondsLeft, checkReturn);
     }
 }
