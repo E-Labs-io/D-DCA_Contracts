@@ -12,7 +12,6 @@ import {DCAReinvestLogic, DCAReinvest} from "../base/DCAReinvest.sol";
 import {OnlyExecutor} from "../security/onlyExecutor.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
 
-
 /**
  *
  ************************************************
@@ -97,6 +96,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         uint256 strategyId_,
         uint16 feePercent_
     ) internal returns (bool) {
+        _lastExecution[strategyId_] = block.timestamp;
         Strategy memory strategy = _strategies[strategyId_];
         uint256 fee = feePercent_.getFee(strategy.amount);
         uint256 tradeAmount = strategy.amount - fee;
@@ -127,7 +127,6 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
             } else _targetBalances[targetAddress] += amountIn;
 
             _baseBalances[baseAddress] -= strategy.amount;
-            _lastExecution[strategyId_] = block.timestamp;
             _totalIntervalsExecuted++;
 
             emit StrategyExecuted(strategyId_, amountIn, success);
@@ -249,9 +248,10 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @dev set a new Reinvest contract address
      * @param newAddress_ the address of the new reinvest contract
      */
-    function _setReinvestAddress(address newAddress_) internal onlyOwner {
+    function _setReinvestAddress(address newAddress_) internal {
         require(newAddress_ != address(0), "Invalid Reinvest Library Address");
         DCAREINVEST_LIBRARY = DCAReinvest(newAddress_);
+        emit DCAReinvestLibraryChanged(newAddress_);
     }
 
     /**

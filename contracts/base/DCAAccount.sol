@@ -306,7 +306,6 @@ contract DCAAccount is DCAAccountLogic {
         address newLibraryAddress_
     ) public onlyOwner {
         _setReinvestAddress(newLibraryAddress_);
-        emit DCAReinvestLibraryChanged(newLibraryAddress_);
     }
 
     function getAttachedReinvestLibraryVersion()

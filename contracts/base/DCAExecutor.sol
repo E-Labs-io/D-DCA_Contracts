@@ -46,6 +46,8 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
     FeeDistribution internal _feeData;
 
+    mapping(Interval => uint256) internal _totalActiveStrategiesByIntervals;
+
     uint256 private _totalActiveStrategies;
     uint256 private _totalIntervalsExecuted;
 
@@ -81,6 +83,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         );
         _subscribeAccount(strategy_);
         _totalActiveStrategies++;
+        _totalActiveStrategiesByIntervals[strategy_.interval]++;
     }
 
     function Unsubscribe(
@@ -176,10 +179,6 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         emit FeeDataChanged();
     }
 
-    function getTotalActiveStrategys() public view returns (uint256) {
-        return _totalActiveStrategies;
-    }
-
     function getSpecificStrategy(
         address dcaAccountAddress_,
         uint256 accountStrategyId_
@@ -244,11 +243,14 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         address DCAAccountAddress_,
         uint256 strategyId_
     ) private {
+        Strategy memory strategy = _strategies[DCAAccountAddress_][strategyId_];
         _strategies[DCAAccountAddress_][strategyId_].active = false;
+        _totalActiveStrategiesByIntervals[strategy.interval]--;
+
         emit DCAAccountSubscription(
             DCAAccountAddress_,
             strategyId_,
-            _strategies[DCAAccountAddress_][strategyId_].interval,
+            strategy.interval,
             false
         );
     }
@@ -277,6 +279,16 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         IERC20 token_
     ) internal {
         token_.transfer(to_, amount_);
+    }
+
+    /** Stats Getters */
+    function getTotalActiveStrategys() public view returns (uint256) {
+        return _totalActiveStrategies;
+    }
+    function getIntervalTotalActiveStrategys(
+        Interval interval_
+    ) public view returns (uint256) {
+        return _totalActiveStrategiesByIntervals[interval_];
     }
 
     /** @notice DEV TESTING FUNCTIONS */
