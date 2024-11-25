@@ -135,6 +135,23 @@ function getTimeTillWindow(address account_, uint256 strategyId_) external view 
 | secondsLeft | uint256 | undefined |
 | checkReturn | bool | undefined |
 
+### setIntervalActive
+
+```solidity
+function setIntervalActive(enum IDCADataStructures.Interval interval_, bool status_) external nonpayable
+```
+
+Allows the admin to turn Strategy timings on &amp; off
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| interval_ | enum IDCADataStructures.Interval | The strategy interval |
+| status_ | bool | if teh interval is active or not |
+
 
 
 ## Events

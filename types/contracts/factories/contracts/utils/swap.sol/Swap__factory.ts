@@ -14,7 +14,7 @@ const _abi = [
     name: "SWAP_ROUTER",
     outputs: [
       {
-        internalType: "contract ISwapRouter02",
+        internalType: "contract ISwapRouter",
         name: "",
         type: "address",
       },

@@ -100,7 +100,6 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         Strategy memory strategy = _strategies[strategyId_];
         uint256 fee = feePercent_.getFee(strategy.amount);
         uint256 tradeAmount = strategy.amount - fee;
-
         (address baseAddress, address targetAddress) = strategy
             .getTokenAddresses();
 
@@ -119,6 +118,11 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
                 (reinvestAmount, success) = _executeReinvest(
                     strategy.reinvest,
                     amountIn
+                );
+                emit StrategyReinvestExecuted(
+                    strategyId_,
+                    success,
+                    reinvestAmount
                 );
             }
 
@@ -208,6 +212,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
                 return (amount, success);
             }
         }
+
         return (0, false);
     }
 
@@ -249,7 +254,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param newAddress_ the address of the new reinvest contract
      */
     function _setReinvestAddress(address newAddress_) internal {
-        require(newAddress_ != address(0), "Invalid Reinvest Library Address");
+        // require(newAddress_ != address(0), "Invalid Reinvest Library Address");
         DCAREINVEST_LIBRARY = DCAReinvest(newAddress_);
         emit DCAReinvestLibraryChanged(newAddress_);
     }

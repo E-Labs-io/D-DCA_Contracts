@@ -139,6 +139,12 @@ describe("> Aave V3 Reinvest Test", () => {
       expect(executorContract.target).to.not.equal(ZeroAddress);
     });
 
+    it("🧪 Should activate the interval", async () => {
+      expect(await executorContract.isIntervalActive(0)).to.be.false;
+      await executorContract.setIntervalActive(0, true);
+      expect(await executorContract.isIntervalActive(0)).to.be.true;
+    });
+
     it("🧪 Should update the Executor Address", async function () {
       const updateAddressTx = await createdAccount
         .connect(addressStore.user.signer)
@@ -258,7 +264,7 @@ describe("> Aave V3 Reinvest Test", () => {
   describe("💡 Execution", () => {
     it("🧪 Should show balance of aWETH == 0", async () => {
       const bal = await getErc20Balance(aWethContract, createdAccount.target);
-      expect(bal === 0n).to.be.true;
+      expect(bal).to.equal(0n);
     });
 
     it("🧪 Should execute strategy 1", async () => {
@@ -276,7 +282,7 @@ describe("> Aave V3 Reinvest Test", () => {
 
     it("🧪 Should show balance of aWETH > 0", async () => {
       const bal = await getErc20Balance(aWethContract, createdAccount.target);
-      expect(bal > 0n).to.be.true;
+      expect(bal).to.be.greaterThan(0n);
     });
   });
 

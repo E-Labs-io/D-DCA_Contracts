@@ -314,6 +314,24 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "enum IDCADataStructures.Interval",
+        name: "interval_",
+        type: "uint8",
+      },
+      {
+        internalType: "bool",
+        name: "status_",
+        type: "bool",
+      },
+    ],
+    name: "setIntervalActive",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export class IDCAExecutor__factory {

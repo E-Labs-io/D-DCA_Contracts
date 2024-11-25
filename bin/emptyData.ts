@@ -2,7 +2,7 @@ import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-export const EMPTY_TOKEN_DATA = [ZERO_ADDRESS, 0n, "0x00"];
+export const EMPTY_TOKEN_DATA = [ZERO_ADDRESS, 0n, ""];
 
 export const EMPTY_REINVEST = ["0x", false, 0n, ZERO_ADDRESS];
 export const EMPTY_STRATEGY = [

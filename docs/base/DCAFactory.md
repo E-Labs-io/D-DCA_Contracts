@@ -27,6 +27,23 @@ function SWAP_ROUTER() external view returns (address)
 |---|---|---|
 | _0 | address | undefined |
 
+### accountsCreated
+
+```solidity
+function accountsCreated() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
 ### createDCAAccount
 
 ```solidity
@@ -93,6 +110,23 @@ function getFactoryActiveState() external view returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined |
+
+### getTotalDeployedAccounts
+
+```solidity
+function getTotalDeployedAccounts() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### isActive
 

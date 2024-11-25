@@ -69,7 +69,7 @@ Allows the account owner to fund the account for strategy&#39;s
 ### SWAP_ROUTER
 
 ```solidity
-function SWAP_ROUTER() external view returns (contract ISwapRouter02)
+function SWAP_ROUTER() external view returns (contract ISwapRouter)
 ```
 
 
@@ -81,7 +81,7 @@ function SWAP_ROUTER() external view returns (contract ISwapRouter02)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | contract ISwapRouter02 | undefined |
+| _0 | contract ISwapRouter | undefined |
 
 ### SetupStrategy
 
@@ -265,7 +265,7 @@ function getTimeTillWindow(uint256 strategyId_) external view returns (uint256 l
 | Name | Type | Description |
 |---|---|---|
 | lastEx | uint256 | {uint256} time of last execution (seconds) |
-| secondsLeft | uint256 | {uint256} seconds left timm strategy is in window |
+| secondsLeft | uint256 | {uint256} seconds left till strategy is in window |
 | checkReturn | bool | {bool} if the strategy is in the window |
 
 ### owner
@@ -430,7 +430,7 @@ Emitted when a strategy has been executed
 ### StrategyReinvestExecuted
 
 ```solidity
-event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success)
+event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success, uint256 amountReturned)
 ```
 
 
@@ -443,6 +443,7 @@ event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success
 |---|---|---|
 | strategyId_ `indexed` | uint256 | undefined |
 | success `indexed` | bool | undefined |
+| amountReturned  | uint256 | undefined |
 
 ### StrategyReinvestUnwound
 

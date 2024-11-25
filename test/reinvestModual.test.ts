@@ -86,7 +86,7 @@ describe("> DCA Reinvest Modula Test", () => {
   describe("💡 Contract State", function () {
     it("🧪 Should Return the Reinvest Version", async function () {
       const version = await reinvestDeployment.getLibraryVersion();
-      expect(version).to.equal("TEST V0.4");
+      expect(version).to.equal("TEST V0.5");
     });
     it("🧪 Should Return the Reinvest is Not Active", async function () {
       const active = await reinvestDeployment.isActive();

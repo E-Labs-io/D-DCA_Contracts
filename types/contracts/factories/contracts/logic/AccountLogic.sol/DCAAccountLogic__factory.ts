@@ -129,6 +129,12 @@ const _abi = [
         name: "success",
         type: "bool",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountReturned",
+        type: "uint256",
+      },
     ],
     name: "StrategyReinvestExecuted",
     type: "event",
@@ -250,7 +256,7 @@ const _abi = [
     name: "SWAP_ROUTER",
     outputs: [
       {
-        internalType: "contract ISwapRouter02",
+        internalType: "contract ISwapRouter",
         name: "",
         type: "address",
       },

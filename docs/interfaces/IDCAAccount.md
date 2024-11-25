@@ -292,7 +292,7 @@ Emitted when a strategy has been executed
 ### StrategyReinvestExecuted
 
 ```solidity
-event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success)
+event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success, uint256 amountReturned)
 ```
 
 
@@ -305,6 +305,7 @@ event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success
 |---|---|---|
 | strategyId_ `indexed` | uint256 | undefined |
 | success `indexed` | bool | undefined |
+| amountReturned  | uint256 | undefined |
 
 ### StrategyReinvestUnwound
 

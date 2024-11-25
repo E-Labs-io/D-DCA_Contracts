@@ -4,7 +4,7 @@
 
 
 
-************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*       Dollar Cost Average Contracts************************************************                  V0.6  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
+************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*       Dollar Cost Average Contracts************************************************                  V0.7  ation.capital  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
 
 
 
@@ -307,6 +307,28 @@ function getFeeData() external view returns (struct IDCADataStructures.FeeDistri
 |---|---|---|
 | _0 | IDCADataStructures.FeeDistribution | undefined |
 
+### getIntervalTotalActiveStrategys
+
+```solidity
+function getIntervalTotalActiveStrategys(enum IDCADataStructures.Interval interval_) external view returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| interval_ | enum IDCADataStructures.Interval | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
 ### getSpecificStrategy
 
 ```solidity
@@ -361,7 +383,7 @@ function getTimeTillWindow(address account_, uint256 strategyId_) external view 
 function getTotalActiveStrategys() external view returns (uint256)
 ```
 
-
+Stats Getters 
 
 
 
@@ -399,6 +421,28 @@ function isActive() external view returns (bool)
 
 
 
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
+### isIntervalActive
+
+```solidity
+function isIntervalActive(enum IDCADataStructures.Interval interval_) external view returns (bool)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| interval_ | enum IDCADataStructures.Interval | undefined |
 
 #### Returns
 
@@ -461,6 +505,22 @@ function renounceOwnership() external nonpayable
 *Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.*
 
 
+### setActiveState
+
+```solidity
+function setActiveState(bool newFlag_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newFlag_ | bool | undefined |
+
 ### setFeeData
 
 ```solidity
@@ -476,6 +536,23 @@ function setFeeData(IDCADataStructures.FeeDistribution fee_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | fee_ | IDCADataStructures.FeeDistribution | undefined |
+
+### setIntervalActive
+
+```solidity
+function setIntervalActive(enum IDCADataStructures.Interval interval_, bool status_) external nonpayable
+```
+
+Allows the admin to turn Strategy timings on &amp; off
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| interval_ | enum IDCADataStructures.Interval | The strategy interval |
+| status_ | bool | if teh interval is active or not |
 
 ### transferOwnership
 

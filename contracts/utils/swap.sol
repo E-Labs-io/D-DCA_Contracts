@@ -3,8 +3,12 @@ pragma solidity ^0.8.20;
 import "hardhat/console.sol";
 
 //import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-import {ISwapRouter02} from "../protocols/uniswap/ISwapRouter2.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"; // Added import for SafeERC20
+//import "@uniswap/v3-periphery/contracts/interfaces/external/IWETH9.sol";
+
+import {ISwapRouter, IWETH9} from "../protocols/uniswap/ISwapRouterv3.sol";
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 /**
  *
  ************************************************
@@ -24,31 +28,32 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"; // Added impor
  *
  */
 abstract contract Swap {
-    ISwapRouter02 public SWAP_ROUTER;
+    ISwapRouter public SWAP_ROUTER;
     uint24 private _poolFee = 3000;
 
     constructor(address swapAddress) {
-        SWAP_ROUTER = ISwapRouter02(swapAddress);
+        SWAP_ROUTER = ISwapRouter(swapAddress);
     }
 
     /**
      * @dev swaps from base token for set amount into any amount of target token
-     * @param baseToken_ {address}  token address of the token to swap from
-     * @param targetToken_ {address} token address of the token to recieve
-     * @param amount_ {uint256} amount returned from the swap
-     * @return {uint256} amount returned by the swap
+     * @param baseToken_  token address of the token to swap from
+     * @param targetToken_  token address of the token to receive
+     * @param amount_  amount to swap
+     * @return amount  amount returned by the swap
      */
     function _swap(
         address baseToken_,
         address targetToken_,
         uint256 amount_
-    ) internal returns (uint256) {
+    ) internal returns (uint256 amount) {
         //  The call to `exactInputSingle` executes the swap.
-        return
-            SWAP_ROUTER.exactInputSingle(
-                ISwapRouter02.ExactInputSingleParams({
+        if (targetToken_ == address(0)) {
+            // Swap tokens for WETH then convert to ETH
+            amount = SWAP_ROUTER.exactInputSingle(
+                ISwapRouter.ExactInputSingleParams({
                     tokenIn: baseToken_,
-                    tokenOut: targetToken_,
+                    tokenOut: SWAP_ROUTER.WETH9(),
                     fee: _poolFee,
                     recipient: address(this),
                     amountIn: amount_,
@@ -56,6 +61,23 @@ abstract contract Swap {
                     sqrtPriceLimitX96: 0
                 })
             );
+
+            IWETH9(SWAP_ROUTER.WETH9()).withdraw(amount);
+
+            return amount;
+        } else
+            return
+                SWAP_ROUTER.exactInputSingle(
+                    ISwapRouter.ExactInputSingleParams({
+                        tokenIn: baseToken_,
+                        tokenOut: targetToken_,
+                        fee: _poolFee,
+                        recipient: address(this),
+                        amountIn: amount_,
+                        amountOutMinimum: 0,
+                        sqrtPriceLimitX96: 0
+                    })
+                );
     }
 
     /**
@@ -95,6 +117,6 @@ abstract contract Swap {
     }
 
     function _updateSwapAddress(address newSwapRouter_) internal {
-        SWAP_ROUTER = ISwapRouter02(newSwapRouter_);
+        SWAP_ROUTER = ISwapRouter(newSwapRouter_);
     }
 }

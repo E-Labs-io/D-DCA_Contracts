@@ -3,7 +3,6 @@
 import { ContractNames } from "./deployedAddress";
 import { ChainName, MainnetNames } from "./tokenAddress";
 
-// BlockToken BlockSales BlockStore
 
 export default function deploymentConfig() {
   const deployCue: ContractNames[] = [];

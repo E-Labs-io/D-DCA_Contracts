@@ -134,16 +134,20 @@ export interface DCAExecutorInterface extends Interface {
       | "getActiveExecutorAddress"
       | "getExecutorAddress"
       | "getFeeData"
+      | "getIntervalTotalActiveStrategys"
       | "getSpecificStrategy"
       | "getTimeTillWindow"
       | "getTotalActiveStrategys"
       | "getTotalExecutions"
       | "isActive"
+      | "isIntervalActive"
       | "owner"
       | "removeAdmin"
       | "removeExecutor"
       | "renounceOwnership"
+      | "setActiveState"
       | "setFeeData"
+      | "setIntervalActive"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -223,6 +227,10 @@ export interface DCAExecutorInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getIntervalTotalActiveStrategys",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSpecificStrategy",
     values: [AddressLike, BigNumberish]
   ): string;
@@ -239,6 +247,10 @@ export interface DCAExecutorInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isIntervalActive",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeAdmin",
@@ -253,8 +265,16 @@ export interface DCAExecutorInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setActiveState",
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setFeeData",
     values: [IDCADataStructures.FeeDistributionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setIntervalActive",
+    values: [BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -314,6 +334,10 @@ export interface DCAExecutorInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getFeeData", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getIntervalTotalActiveStrategys",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getSpecificStrategy",
     data: BytesLike
   ): Result;
@@ -330,6 +354,10 @@ export interface DCAExecutorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isIntervalActive",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeAdmin",
@@ -343,7 +371,15 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setActiveState",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setFeeData", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setIntervalActive",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -581,6 +617,12 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
+  getIntervalTotalActiveStrategys: TypedContractMethod<
+    [interval_: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
   getSpecificStrategy: TypedContractMethod<
     [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
     [IDCADataStructures.StrategyStructOutput],
@@ -605,6 +647,12 @@ export interface DCAExecutor extends BaseContract {
 
   isActive: TypedContractMethod<[], [boolean], "view">;
 
+  isIntervalActive: TypedContractMethod<
+    [interval_: BigNumberish],
+    [boolean],
+    "view"
+  >;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   removeAdmin: TypedContractMethod<
@@ -617,8 +665,20 @@ export interface DCAExecutor extends BaseContract {
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
+  setActiveState: TypedContractMethod<
+    [newFlag_: boolean],
+    [void],
+    "nonpayable"
+  >;
+
   setFeeData: TypedContractMethod<
     [fee_: IDCADataStructures.FeeDistributionStruct],
+    [void],
+    "nonpayable"
+  >;
+
+  setIntervalActive: TypedContractMethod<
+    [interval_: BigNumberish, status_: boolean],
     [void],
     "nonpayable"
   >;
@@ -724,6 +784,9 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "getIntervalTotalActiveStrategys"
+  ): TypedContractMethod<[interval_: BigNumberish], [bigint], "view">;
+  getFunction(
     nameOrSignature: "getSpecificStrategy"
   ): TypedContractMethod<
     [dcaAccountAddress_: AddressLike, accountStrategyId_: BigNumberish],
@@ -753,6 +816,9 @@ export interface DCAExecutor extends BaseContract {
     nameOrSignature: "isActive"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
+    nameOrSignature: "isIntervalActive"
+  ): TypedContractMethod<[interval_: BigNumberish], [boolean], "view">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -765,9 +831,19 @@ export interface DCAExecutor extends BaseContract {
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setActiveState"
+  ): TypedContractMethod<[newFlag_: boolean], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setFeeData"
   ): TypedContractMethod<
     [fee_: IDCADataStructures.FeeDistributionStruct],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setIntervalActive"
+  ): TypedContractMethod<
+    [interval_: BigNumberish, status_: boolean],
     [void],
     "nonpayable"
   >;

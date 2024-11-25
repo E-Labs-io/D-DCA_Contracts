@@ -27,10 +27,12 @@ export interface DCAFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "SWAP_ROUTER"
+      | "accountsCreated"
       | "createDCAAccount"
       | "getActiveExecutorAddress"
       | "getDCAAccountsOfUser"
       | "getFactoryActiveState"
+      | "getTotalDeployedAccounts"
       | "isActive"
       | "owner"
       | "reInvestLogicContract"
@@ -55,6 +57,10 @@ export interface DCAFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "accountsCreated",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "createDCAAccount",
     values?: undefined
   ): string;
@@ -68,6 +74,10 @@ export interface DCAFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getFactoryActiveState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalDeployedAccounts",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
@@ -102,6 +112,10 @@ export interface DCAFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "accountsCreated",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "createDCAAccount",
     data: BytesLike
   ): Result;
@@ -115,6 +129,10 @@ export interface DCAFactoryInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getFactoryActiveState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalDeployedAccounts",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
@@ -252,6 +270,8 @@ export interface DCAFactory extends BaseContract {
 
   SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
 
+  accountsCreated: TypedContractMethod<[], [bigint], "view">;
+
   createDCAAccount: TypedContractMethod<[], [void], "nonpayable">;
 
   getActiveExecutorAddress: TypedContractMethod<[], [string], "view">;
@@ -263,6 +283,8 @@ export interface DCAFactory extends BaseContract {
   >;
 
   getFactoryActiveState: TypedContractMethod<[], [boolean], "view">;
+
+  getTotalDeployedAccounts: TypedContractMethod<[], [bigint], "view">;
 
   isActive: TypedContractMethod<[], [boolean], "view">;
 
@@ -304,6 +326,9 @@ export interface DCAFactory extends BaseContract {
     nameOrSignature: "SWAP_ROUTER"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "accountsCreated"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "createDCAAccount"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -315,6 +340,9 @@ export interface DCAFactory extends BaseContract {
   getFunction(
     nameOrSignature: "getFactoryActiveState"
   ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "getTotalDeployedAccounts"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "isActive"
   ): TypedContractMethod<[], [boolean], "view">;

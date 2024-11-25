@@ -39,7 +39,7 @@ function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable ret
 function ExecutorDeactivateStrategy(uint256 strategyId_) external nonpayable
 ```
 
-used by the Executor to removed failing strategies/out of funds strategies.
+used by the Executor to remove failing strategies/out of funds strategies.
 
 *Force unsubscribe the strategy from the executor*
 
@@ -87,7 +87,7 @@ ONLY IN CONTRACT FOR DEVELOPMENT, WILL REMOVE ON PUBLIC DEPLOY
 ### SWAP_ROUTER
 
 ```solidity
-function SWAP_ROUTER() external view returns (contract ISwapRouter02)
+function SWAP_ROUTER() external view returns (contract ISwapRouter)
 ```
 
 
@@ -99,7 +99,7 @@ function SWAP_ROUTER() external view returns (contract ISwapRouter02)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | contract ISwapRouter02 | undefined |
+| _0 | contract ISwapRouter | undefined |
 
 ### SetupStrategy
 
@@ -143,7 +143,7 @@ function UnFundAccount(address token_, uint256 amount_) external nonpayable
 
 
 
-*Unfund the account of a base currency*
+*Unfund account of a base token*
 
 #### Parameters
 
@@ -393,7 +393,7 @@ function getTimeTillWindow(uint256 strategyId_) external view returns (uint256 l
 | Name | Type | Description |
 |---|---|---|
 | lastEx | uint256 | {uint256} time of last execution (seconds) |
-| secondsLeft | uint256 | {uint256} seconds left timm strategy is in window |
+| secondsLeft | uint256 | {uint256} seconds left till strategy is in window |
 | checkReturn | bool | {bool} if the strategy is in the window |
 
 ### owner
@@ -574,7 +574,7 @@ Emitted when a strategy has been executed
 ### StrategyReinvestExecuted
 
 ```solidity
-event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success)
+event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success, uint256 amountReturned)
 ```
 
 
@@ -587,6 +587,7 @@ event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success
 |---|---|---|
 | strategyId_ `indexed` | uint256 | undefined |
 | success `indexed` | bool | undefined |
+| amountReturned  | uint256 | undefined |
 
 ### StrategyReinvestUnwound
 
@@ -643,6 +644,49 @@ Emitted when a strategy has been unsubscribed from an Executor
 
 ## Errors
 
+### AddressEmptyCode
+
+```solidity
+error AddressEmptyCode(address target)
+```
+
+
+
+*There&#39;s no code at `target` (it is not a contract).*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| target | address | undefined |
+
+### AddressInsufficientBalance
+
+```solidity
+error AddressInsufficientBalance(address account)
+```
+
+
+
+*The ETH balance of the account is not enough to perform the operation.*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | undefined |
+
+### FailedInnerCall
+
+```solidity
+error FailedInnerCall()
+```
+
+
+
+*A call to an address target failed. The target may have reverted.*
+
+
 ### OwnableInvalidOwner
 
 ```solidity
@@ -674,5 +718,21 @@ error OwnableUnauthorizedAccount(address account)
 | Name | Type | Description |
 |---|---|---|
 | account | address | undefined |
+
+### SafeERC20FailedOperation
+
+```solidity
+error SafeERC20FailedOperation(address token)
+```
+
+
+
+*An operation with an ERC20 token failed.*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | undefined |
 
 

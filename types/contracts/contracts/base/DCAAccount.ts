@@ -411,11 +411,20 @@ export namespace StrategyExecutedEvent {
 }
 
 export namespace StrategyReinvestExecutedEvent {
-  export type InputTuple = [strategyId_: BigNumberish, success: boolean];
-  export type OutputTuple = [strategyId_: bigint, success: boolean];
+  export type InputTuple = [
+    strategyId_: BigNumberish,
+    success: boolean,
+    amountReturned: BigNumberish
+  ];
+  export type OutputTuple = [
+    strategyId_: bigint,
+    success: boolean,
+    amountReturned: bigint
+  ];
   export interface OutputObject {
     strategyId_: bigint;
     success: boolean;
+    amountReturned: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -909,7 +918,7 @@ export interface DCAAccount extends BaseContract {
       StrategyExecutedEvent.OutputObject
     >;
 
-    "StrategyReinvestExecuted(uint256,bool)": TypedContractEvent<
+    "StrategyReinvestExecuted(uint256,bool,uint256)": TypedContractEvent<
       StrategyReinvestExecutedEvent.InputTuple,
       StrategyReinvestExecutedEvent.OutputTuple,
       StrategyReinvestExecutedEvent.OutputObject

@@ -97,6 +97,7 @@ export interface IDCAExecutorInterface extends Interface {
       | "Subscribe"
       | "Unsubscribe"
       | "getTimeTillWindow"
+      | "setIntervalActive"
   ): FunctionFragment;
 
   getEvent(
@@ -135,6 +136,10 @@ export interface IDCAExecutorInterface extends Interface {
     functionFragment: "getTimeTillWindow",
     values: [AddressLike, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setIntervalActive",
+    values: [BigNumberish, boolean]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "DistributeFees",
@@ -156,6 +161,10 @@ export interface IDCAExecutorInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTimeTillWindow",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setIntervalActive",
     data: BytesLike
   ): Result;
 }
@@ -312,6 +321,12 @@ export interface IDCAExecutor extends BaseContract {
     "view"
   >;
 
+  setIntervalActive: TypedContractMethod<
+    [interval_: BigNumberish, status_: boolean],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -366,6 +381,13 @@ export interface IDCAExecutor extends BaseContract {
       }
     ],
     "view"
+  >;
+  getFunction(
+    nameOrSignature: "setIntervalActive"
+  ): TypedContractMethod<
+    [interval_: BigNumberish, status_: boolean],
+    [void],
+    "nonpayable"
   >;
 
   getEvent(

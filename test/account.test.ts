@@ -40,10 +40,10 @@ describe("> DCA Account Tests", () => {
   let executorContract: DCAExecutor;
   let addressStore: SignerStore;
 
- before(async function () {
-   await resetFork(hre);
-   await preTest();
- });
+  before(async function () {
+    await resetFork(hre);
+    await preTest();
+  });
 
   async function preTest() {
     addressStore = await signerStore(ethers, [
@@ -177,6 +177,12 @@ describe("> DCA Account Tests", () => {
       expect(executorContract.target).to.not.equal(ZeroAddress);
     });
 
+    it("🧪 Should activate the interval", async () => {
+      expect(await executorContract.isIntervalActive(0)).to.be.false;
+      await executorContract.setIntervalActive(0, true);
+      expect(await executorContract.isIntervalActive(0)).to.be.true;
+    });
+
     it("🧪 Should update the Executor Address", async function () {
       const updateAddressTx = await createdAccount
         .connect(addressStore.user.signer)
@@ -196,11 +202,11 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should Return the Reinvest Version", async function () {
       const version = await createdAccount.getAttachedReinvestLibraryVersion();
-      expect(version).to.equal("TEST V0.4");
+      expect(version).to.equal("TEST V0.5");
     });
   });
 
-  describe("💡 Execute a SWAP test", () => {
+  describe("💡 Execute a ERC20-ERC20 SWAP test", () => {
     it("🧪Should fail to execute a SWAP test", async function () {
       await expect(
         createdAccount.SWAP(
@@ -220,13 +226,56 @@ describe("> DCA Account Tests", () => {
       ).to.be.fulfilled;
     });
 
-    it("🧪Should execute a SWAP test", async function () {
+    it("🧪Should execute a SWAP test for WETH", async function () {
       const tx = await createdAccount.SWAP(
         tokenAddress.usdc![forkedChain]!,
         tokenAddress.weth![forkedChain]!,
         ethers.parseUnits("100", 6),
       );
       await expect(tx.wait()).to.be.fulfilled;
+    });
+  });
+  describe("💡 Execute a ERC20-ETH SWAP test", () => {
+    let oldBalance = 0;
+
+    it("🧪Should get the ETH balance of the account", async function () {
+      oldBalance = await checkEthBalanceAndTransfer(
+        createdAccount.target as string,
+        addressStore.deployer.signer,
+        { topUpTo: 1 },
+      );
+
+      expect(oldBalance >= 1).to.be.true;
+    });
+    it("🧪Should transfer USDC to account", async function () {
+      await expect(
+        usdcContract.transfer(
+          createdAccount.target,
+          ethers.parseUnits("100", 6),
+        ),
+      ).to.be.fulfilled;
+    });
+
+    it("🧪Should execute a SWAP test for ETH", async function () {
+      const tx = await createdAccount.SWAP(
+        tokenAddress.usdc![forkedChain]!,
+        ZeroAddress,
+        ethers.parseUnits("100", 6),
+      );
+      await expect(tx.wait()).to.be.fulfilled;
+    });
+
+    it("🧪Should get the new ETH balance of the account", async function () {
+      const newBalance = await checkEthBalanceAndTransfer(
+        createdAccount.target as string,
+        addressStore.deployer.signer,
+        { justBalance: true },
+      );
+
+      console.log("Old Balance:", oldBalance);
+      console.log("New Balance:", newBalance);
+
+      expect(newBalance > oldBalance).to.be.true;
     });
   });
 
@@ -260,8 +309,8 @@ describe("> DCA Account Tests", () => {
       await expect(createStratTx.wait()).to.be.fulfilled;
     });
     it("🧪 Should return there is 1 strategy on the account", async function () {
-      const strats = await createdAccount.getStrategyData(1);
-      const checker = strats[0];
+      const stratsCheck = await createdAccount.getStrategyData(1);
+      const checker = stratsCheck[0];
       expect(checker).to.equal(createdAccount.target);
     });
     it("🧪 Should return the Base Block Cost as 0", async function () {
@@ -331,7 +380,7 @@ describe("> DCA Account Tests", () => {
           ethers.parseUnits("100", 6),
         ),
       ).to.be.revertedWith(
-        "DCAAccount : [WithdrawSavings] Balance of token to low",
+        "DCAAccount : [WithdrawSavings] Balance of token too low",
       );
     });
     it("🧪 Should return the Base Block Cost as 0", async function () {
@@ -486,9 +535,10 @@ describe("> DCA Account Tests", () => {
         .withArgs(createdAccount.target, 1);
 
       await expect(tx.wait()).to.emit(createdAccount, "StrategyExecuted");
-      await expect(tx.wait())
-        .to.emit(createdAccount, "StrategyReinvestExecuted")
-        .withArgs(1, true);
+      await expect(tx.wait()).to.emit(
+        createdAccount,
+        "StrategyReinvestExecuted",
+      );
     });
     it("🧪 Should return target3 weth balance of more than zero", async () => {
       const bal = await getErc20Balance(

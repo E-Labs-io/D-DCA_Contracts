@@ -6,7 +6,7 @@ import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 
-import { ISwapRouter02 } from "~/types/contracts";
+import { ISwapRouter } from "~/types/contracts";
 import deploymentConfig from "~/bin/deployments.config";
 import {
   checkEthBalanceAndTransfer,
@@ -25,22 +25,21 @@ describe("> Uniswap Tests Tests", () => {
   const forkedChain = deploymentConfig().masterChain;
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
 
-  let swapParams: ISwapRouter02.ExactInputSingleParamsStruct;
+  let swapParams: ISwapRouter.ExactInputSingleParamsStruct;
 
   let usdcContract: IERC20;
   let wethContract: IERC20;
 
   let createdAccount: DCAAccount;
   let addressStore: SignerStore;
-  let swapRouter: ISwapRouter02;
+  let swapRouter: ISwapRouter;
 
- before(async function () {
-   await resetFork(hre);
-   await preTest();
- });
+  before(async function () {
+    await resetFork(hre);
+    await preTest();
+  });
 
   async function preTest() {
-
     addressStore = await signerStore(ethers, ["deployer"]);
 
     // SWAP ROUTER
@@ -48,7 +47,7 @@ describe("> Uniswap Tests Tests", () => {
       swapRouterABI,
       tokenAddress.swapRouter![forkedChain]! as string,
       addressStore.deployer.signer,
-    )) as unknown as ISwapRouter02;
+    )) as unknown as ISwapRouter;
 
     // USDC
     const usedImpersonater = await ethers.getImpersonatedSigner(
@@ -77,7 +76,6 @@ describe("> Uniswap Tests Tests", () => {
       addressStore.deployer.signer,
     );
 
-
     const block = await hre.ethers.provider.getBlock("latest");
     swapParams = {
       tokenIn: tokenAddress.usdc![forkedChain]!,
@@ -87,6 +85,7 @@ describe("> Uniswap Tests Tests", () => {
       amountIn: ethers.parseUnits("1000", 6),
       amountOutMinimum: 0,
       sqrtPriceLimitX96: 0,
+      deadline: 0,
     };
   }
 
@@ -213,6 +212,50 @@ describe("> Uniswap Tests Tests", () => {
           ethers.parseUnits("100", 6),
         ),
       ).to.be.fulfilled;
+    });
+  });
+
+  describe("💡 Execute a ERC20-ETH SWAP test", () => {
+    let oldBalance = 0;
+
+    it("🧪Should get the ETH balance of the account", async function () {
+      oldBalance = await checkEthBalanceAndTransfer(
+        createdAccount.target as string,
+        addressStore.deployer.signer,
+        { topUpTo: 1 },
+      );
+
+      expect(oldBalance >= 1).to.be.true;
+    });
+    it("🧪Should transfer USDC to account", async function () {
+      await expect(
+        usdcContract.transfer(
+          createdAccount.target,
+          ethers.parseUnits("100", 6),
+        ),
+      ).to.be.fulfilled;
+    });
+
+    it("🧪Should execute a SWAP test for ETH", async function () {
+      const tx = await createdAccount.SWAP(
+        tokenAddress.usdc![forkedChain]!,
+        ZeroAddress,
+        ethers.parseUnits("100", 6),
+      );
+      await expect(tx.wait()).to.be.fulfilled;
+    });
+
+    it("🧪Should get the new ETH balance of the account", async function () {
+      const newBalance = await checkEthBalanceAndTransfer(
+        createdAccount.target as string,
+        addressStore.deployer.signer,
+        { justBalance: true },
+      );
+
+      console.log("Old Balance:", oldBalance);
+      console.log("New Balance:", newBalance);
+
+      expect(newBalance > oldBalance).to.be.true;
     });
   });
 });

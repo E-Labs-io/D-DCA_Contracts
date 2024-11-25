@@ -39,7 +39,6 @@ library Strategies {
 
         return (strategy.accountAddress != address(0) &&
             strategy.baseToken.tokenAddress != address(0) &&
-            strategy.targetToken.tokenAddress != address(0) &&
             strategy.amount > 0 &&
             isValidInterval);
     }

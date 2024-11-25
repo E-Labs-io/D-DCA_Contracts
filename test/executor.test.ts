@@ -10,11 +10,7 @@ import {
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
-import {
-
-  EMPTY_STRATEGY_OBJECT,
-  ZERO_ADDRESS,
-} from "~/bin/emptyData";
+import { EMPTY_STRATEGY_OBJECT, ZERO_ADDRESS } from "~/bin/emptyData";
 import { compareStructs } from "~/scripts/tests/comparisons";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
@@ -124,6 +120,12 @@ describe("> DCA Executor Tests", () => {
         addressStore.executorEoa.address,
       );
       await expect(executorContract.waitForDeployment()).to.be.fulfilled;
+    });
+
+    it("🧪 Should activate the interval", async () => {
+      expect(await executorContract.isIntervalActive(0)).to.be.false;
+      await executorContract.setIntervalActive(0, true);
+      expect(await executorContract.isIntervalActive(0)).to.be.true;
     });
 
     it("🧪 Should have the correct owner", async () => {
@@ -293,7 +295,6 @@ describe("> DCA Executor Tests", () => {
         executorContract.Subscribe(EMPTY_STRATEGY_OBJECT),
       ).to.be.revertedWith("OnlyActive : [isActive] Contract is paused");
     });
-    
   });
 });
 

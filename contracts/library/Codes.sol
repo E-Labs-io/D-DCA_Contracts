@@ -29,6 +29,7 @@ library ReinvestCodes {
     uint8 constant AAVE = 0x12;
     uint8 constant HOP = 0x13;
     uint8 constant POOLTOGETHER_ETH = 0x14;
+    uint8 constant LIDO_STETH = 0x15;
 
     function checkCode(uint8 have_, uint8 want_) internal pure returns (bool) {
         return have_ == want_;

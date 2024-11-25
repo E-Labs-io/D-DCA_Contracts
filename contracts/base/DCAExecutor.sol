@@ -26,7 +26,7 @@ import {Intervals} from "../library/Intervals.sol";
  *______________________________________________*
  *       Dollar Cost Average Contracts
  ************************************************
- *                  V0.6
+ *                  V0.7
  *  ation.capital
  *  x.com/0xAtion
  *  x.com/e_labs_
@@ -103,7 +103,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         uint256 strategyId_
     ) external override onlyExecutor is_active {
         bool success = _singleExecution(DCAAccount_, strategyId_);
-        if (success) emit ExecutedDCA(DCAAccount_, strategyId_);
+        if (success) {
+            emit ExecutedDCA(DCAAccount_, strategyId_);
+            _totalIntervalsExecuted++;
+        }
     }
 
     function ExecuteBatch(
@@ -177,6 +180,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         );
         _feeData = fee_;
         emit FeeDataChanged();
+    }
+
+    function setActiveState(bool newFlag_) public onlyAdmins {
+        _setActiveState(newFlag_);
     }
 
     function getSpecificStrategy(

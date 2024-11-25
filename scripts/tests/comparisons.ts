@@ -1,7 +1,7 @@
 import { BytesLike } from "ethers";
 import { ethers } from "hardhat";
 
-export const compareStructs = (actual: any, expected: any) => {
+export const compareStructs = (actual: any, expected: any): boolean => {
   // Check if the actual and expected values are arrays
   if (Array.isArray(actual) && Array.isArray(expected)) {
     // If they are arrays, compare their lengths

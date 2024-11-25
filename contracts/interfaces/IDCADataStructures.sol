@@ -31,7 +31,7 @@ interface IDCADataStructures {
     struct Strategy {
         address accountAddress;
         TokeData baseToken;
-        TokeData targetToken;
+        TokeData targetToken; //use 0x0 for ETH
         Interval interval;
         uint256 amount;
         uint256 strategyId;

@@ -1,8 +1,10 @@
 pragma solidity ^0.8.20;
 
+import "../../tokens/IERC20.sol";
+
 /// @title Router token swapping functionality
 /// @notice Functions for swapping tokens via Uniswap V3
-interface ISwapRouter02 {
+interface ISwapRouter {
     struct ExactInputSingleParams {
         address tokenIn;
         address tokenOut;
@@ -72,4 +74,13 @@ interface ISwapRouter02 {
     function exactOutput(
         ExactOutputParams calldata params
     ) external payable returns (uint256 amountIn);
+}
+
+/// @title Interface for WETH9
+interface IWETH9 is IERC20 {
+    /// @notice Deposit ether to get wrapped ether
+    function deposit() external payable;
+
+    /// @notice Withdraw wrapped ether to get ether
+    function withdraw(uint256) external;
 }

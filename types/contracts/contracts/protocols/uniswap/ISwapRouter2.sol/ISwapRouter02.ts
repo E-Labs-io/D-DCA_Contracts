@@ -125,6 +125,7 @@ export interface ISwapRouter02Interface extends Interface {
       | "exactInputSingle"
       | "exactOutput"
       | "exactOutputSingle"
+      | "swapExactTokensForETH"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "WETH9", values?: undefined): string;
@@ -144,6 +145,16 @@ export interface ISwapRouter02Interface extends Interface {
     functionFragment: "exactOutputSingle",
     values: [ISwapRouter02.ExactOutputSingleParamsStruct]
   ): string;
+  encodeFunctionData(
+    functionFragment: "swapExactTokensForETH",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      AddressLike[],
+      AddressLike,
+      BigNumberish
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "WETH9", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exactInput", data: BytesLike): Result;
@@ -157,6 +168,10 @@ export interface ISwapRouter02Interface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "exactOutputSingle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapExactTokensForETH",
     data: BytesLike
   ): Result;
 }
@@ -230,6 +245,18 @@ export interface ISwapRouter02 extends BaseContract {
     "payable"
   >;
 
+  swapExactTokensForETH: TypedContractMethod<
+    [
+      amountIn: BigNumberish,
+      amountOutMin: BigNumberish,
+      path: AddressLike[],
+      to: AddressLike,
+      deadline: BigNumberish
+    ],
+    [bigint[]],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -264,6 +291,19 @@ export interface ISwapRouter02 extends BaseContract {
     [params: ISwapRouter02.ExactOutputSingleParamsStruct],
     [bigint],
     "payable"
+  >;
+  getFunction(
+    nameOrSignature: "swapExactTokensForETH"
+  ): TypedContractMethod<
+    [
+      amountIn: BigNumberish,
+      amountOutMin: BigNumberish,
+      path: AddressLike[],
+      to: AddressLike,
+      deadline: BigNumberish
+    ],
+    [bigint[]],
+    "nonpayable"
   >;
 
   filters: {};

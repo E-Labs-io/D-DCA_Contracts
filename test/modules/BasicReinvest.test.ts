@@ -131,6 +131,12 @@ describe("> Basic Reinvest Test", () => {
       expect(executorContract.target).to.not.equal(ZeroAddress);
     });
 
+    it("🧪 Should activate the interval", async () => {
+      expect(await executorContract.isIntervalActive(0)).to.be.false;
+      await executorContract.setIntervalActive(0, true);
+      expect(await executorContract.isIntervalActive(0)).to.be.true;
+    });
+
     it("🧪 Should update the Executor Address", async function () {
       const updateAddressTx = await createdAccount
         .connect(addressStore.user.signer)

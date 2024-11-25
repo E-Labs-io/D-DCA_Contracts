@@ -72,9 +72,18 @@ export const getErc20ImpersonatedFunds = async (
 export const checkEthBalanceAndTransfer = async (
   address: string,
   bank: Signer,
-  options?: { amount?: BigNumberish; force?: true; topUpTo?: number },
-) => {
-  const balance = await ethers.provider.getBalance(address);
+  options?: {
+    amount?: BigNumberish;
+    force?: true;
+    topUpTo?: number;
+    justBalance?: true;
+  },
+): Promise<number> => {
+  let balance = await ethers.provider.getBalance(address);
+
+  if (options?.justBalance) {
+    return parseFloat(ethers.formatEther(balance));
+  }
 
   if (balance < 1 || options?.force) {
     const message = {
@@ -83,7 +92,8 @@ export const checkEthBalanceAndTransfer = async (
     };
     const tx = await bank.sendTransaction(message);
     await tx.wait();
-    const balance = await ethers.provider.getBalance(address);
+    balance = await ethers.provider.getBalance(address);
+    return parseFloat(ethers.formatEther(balance));
   } else if (options?.topUpTo) {
     const defisate = options?.topUpTo - Number(balance);
     if (defisate > 0) {
@@ -94,5 +104,10 @@ export const checkEthBalanceAndTransfer = async (
       const tx = await bank.sendTransaction(message);
       await tx.wait();
     }
+    balance = await ethers.provider.getBalance(address);
+    return parseFloat(ethers.formatEther(balance));
   }
+
+  balance = await ethers.provider.getBalance(address);
+  return parseFloat(ethers.formatEther(balance));
 };

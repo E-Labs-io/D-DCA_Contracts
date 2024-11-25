@@ -35,6 +35,8 @@ contract DCAFactory is OnlyActive {
     address private _executorAddress;
     address public reInvestLogicContract;
 
+    uint256 public accountsCreated;
+
     constructor(
         address executorAddress_,
         address swapRouter_,
@@ -70,6 +72,7 @@ contract DCAFactory is OnlyActive {
 
         // Emit an event for the frontend to listen to.
         emit DCAAccountCreated(sender, address(newAccount));
+        accountsCreated++;
     }
 
     // Function to get all DCAAccounts created by a user.
@@ -104,5 +107,9 @@ contract DCAFactory is OnlyActive {
 
     function getActiveExecutorAddress() public view returns (address) {
         return _executorAddress;
+    }
+
+    function getTotalDeployedAccounts() public view returns (uint256) {
+        return accountsCreated;
     }
 }

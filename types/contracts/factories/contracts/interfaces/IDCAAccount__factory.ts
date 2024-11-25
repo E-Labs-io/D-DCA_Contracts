@@ -75,6 +75,12 @@ const _abi = [
         name: "success",
         type: "bool",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountReturned",
+        type: "uint256",
+      },
     ],
     name: "StrategyReinvestExecuted",
     type: "event",

@@ -13,7 +13,7 @@
 ### SWAP_ROUTER
 
 ```solidity
-function SWAP_ROUTER() external view returns (contract ISwapRouter02)
+function SWAP_ROUTER() external view returns (contract ISwapRouter)
 ```
 
 
@@ -25,7 +25,7 @@ function SWAP_ROUTER() external view returns (contract ISwapRouter02)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | contract ISwapRouter02 | undefined |
+| _0 | contract ISwapRouter | undefined |
 
 
 

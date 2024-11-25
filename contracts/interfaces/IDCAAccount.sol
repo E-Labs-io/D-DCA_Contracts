@@ -42,7 +42,8 @@ interface IDCAAccount is IDCADataStructures {
 
     event StrategyReinvestExecuted(
         uint256 indexed strategyId_,
-        bool indexed success
+        bool indexed success,
+        uint256 amountReturned
     );
 
     event StrategyReinvestUnwound(

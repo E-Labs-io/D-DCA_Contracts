@@ -190,10 +190,13 @@ contract DCAAccount is DCAAccountLogic {
             "DCAAccount : [WithdrawSavings] Balance of token too low"
         );
         _targetBalances[token_] -= amount_;
-        require(
-            IERC20(token_).transfer(msg.sender, amount_),
-            "DCAAccount : [WithdrawSavings] Transfer failed"
-        );
+        bool success;
+        if (token_ == address(0)) {
+            payable(msg.sender).transfer(amount_);
+            success = true;
+        } else success = IERC20(token_).transfer(msg.sender, amount_);
+
+        require(success, "DCAAccount : [WithdrawSavings] Transfer failed");
     }
 
     function UnWindReinvest(uint256 strategyId_) public onlyOwner {
