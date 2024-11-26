@@ -269,7 +269,9 @@ export type AcceptedProtocolsAndContracts =
   | "universalRouter"
   | "compoundV3Usdc"
   | "ccipRouter"
-  | "permit2";
+  | "permit2"
+  | "lido"
+  | "compoundV3ETH";
 
 export type TokenListKeys = AcceptedProtocolsAndContracts | AcceptedTokens;
 export type TokenAddressList = {

@@ -272,9 +272,6 @@ describe("> DCA Account Tests", () => {
         { justBalance: true },
       );
 
-      console.log("Old Balance:", oldBalance);
-      console.log("New Balance:", newBalance);
-
       expect(newBalance > oldBalance).to.be.true;
     });
   });

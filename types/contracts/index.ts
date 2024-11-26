@@ -62,6 +62,8 @@ export type { ReinvestTemplate } from "./contracts/modules/DCAReinvestModual.tem
 export { ReinvestTemplate__factory } from "./factories/contracts/modules/DCAReinvestModual.template.sol/ReinvestTemplate__factory";
 export type { ForwardReinvest } from "./contracts/modules/ForwardReinvest";
 export { ForwardReinvest__factory } from "./factories/contracts/modules/ForwardReinvest__factory";
+export type { LidoReinvest } from "./contracts/modules/LidoStaking.sol/LidoReinvest";
+export { LidoReinvest__factory } from "./factories/contracts/modules/LidoStaking.sol/LidoReinvest__factory";
 export type { IAToken } from "./contracts/protocols/aaveV3/IAToken";
 export { IAToken__factory } from "./factories/contracts/protocols/aaveV3/IAToken__factory";
 export type { AaveIPool } from "./contracts/protocols/aaveV3/IPool.sol/AaveIPool";

@@ -122,6 +122,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ForwardReinvest__factory>;
     getContractFactory(
+      name: "LidoReinvest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LidoReinvest__factory>;
+    getContractFactory(
       name: "ReinvestTemplate",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReinvestTemplate__factory>;
@@ -338,6 +342,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ForwardReinvest>;
     getContractAt(
+      name: "LidoReinvest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LidoReinvest>;
+    getContractAt(
       name: "ReinvestTemplate",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -547,6 +556,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ForwardReinvest>;
     deployContract(
+      name: "LidoReinvest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LidoReinvest>;
+    deployContract(
       name: "ReinvestTemplate",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReinvestTemplate>;
@@ -762,6 +775,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ForwardReinvest>;
+    deployContract(
+      name: "LidoReinvest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LidoReinvest>;
     deployContract(
       name: "ReinvestTemplate",
       args: any[],

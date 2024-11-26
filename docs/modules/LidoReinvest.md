@@ -1,4 +1,4 @@
-# ReinvestTemplate
+# LidoReinvest
 
 
 
@@ -9,6 +9,23 @@
 
 
 ## Methods
+
+### LIDO_CONTRACT
+
+```solidity
+function LIDO_CONTRACT() external view returns (address)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### MODULE_ID
 

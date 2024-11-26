@@ -101,3 +101,34 @@ export const newStrat = (
     strategyId: 1,
   };
 };
+
+export const buildStrat = (
+  accountAddress: string,
+  network: string,
+  options?: {
+    baseToken?: IDCADataStructures.TokeDataStruct;
+    targetToken?: IDCADataStructures.TokeDataStruct;
+    reinvest?: IDCADataStructures.ReinvestStruct;
+    amount?: number;
+    interval?: number;
+  },
+): IDCADataStructures.StrategyStruct => {
+  return {
+    accountAddress: accountAddress,
+    baseToken: options?.baseToken ?? {
+      tokenAddress: tokenAddress.usdc![network as ChainName]!,
+      decimals: 6,
+      ticker: "USDC",
+    },
+    targetToken: options?.targetToken ?? {
+      tokenAddress: tokenAddress.weth![network as ChainName]!,
+      decimals: 18,
+      ticker: "WETH",
+    },
+    interval: options?.interval ?? 0,
+    amount: options?.amount ?? 100000000,
+    reinvest: options?.reinvest ?? EMPTY_REINVEST_OBJECT,
+    active: false,
+    strategyId: 1,
+  };
+};

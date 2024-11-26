@@ -21,7 +21,7 @@ import {ReinvestCodes} from "../library/Codes.sol";
  *  e-labs.co.uk
  *
  */
-library ReinvestTemplate {
+library LidoReinvest {
     string public constant MODULE_NAME = "Lido stETH";
     uint8 public constant MODULE_ID = 0x15;
 
