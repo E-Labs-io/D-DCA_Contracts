@@ -2,4 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export { LidoReinvest__factory } from "./LidoReinvest__factory";
-export { ReinvestTemplate__factory } from "./ReinvestTemplate__factory";

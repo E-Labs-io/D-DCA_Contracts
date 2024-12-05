@@ -126,10 +126,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LidoReinvest__factory>;
     getContractFactory(
-      name: "ReinvestTemplate",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ReinvestTemplate__factory>;
-    getContractFactory(
       name: "IAToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAToken__factory>;
@@ -347,11 +343,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LidoReinvest>;
     getContractAt(
-      name: "ReinvestTemplate",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ReinvestTemplate>;
-    getContractAt(
       name: "IAToken",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -559,10 +550,6 @@ declare module "hardhat/types/runtime" {
       name: "LidoReinvest",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.LidoReinvest>;
-    deployContract(
-      name: "ReinvestTemplate",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ReinvestTemplate>;
     deployContract(
       name: "IAToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -780,11 +767,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.LidoReinvest>;
-    deployContract(
-      name: "ReinvestTemplate",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ReinvestTemplate>;
     deployContract(
       name: "IAToken",
       args: any[],

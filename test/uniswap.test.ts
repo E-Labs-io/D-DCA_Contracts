@@ -6,6 +6,7 @@ import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 
+import { ISwapRouter__factory } from "../types/contracts/factories/contracts/protocols/uniswap/ISwapRouterv3.sol";
 import { ISwapRouter } from "~/types/contracts";
 import deploymentConfig from "~/bin/deployments.config";
 import {
@@ -13,10 +14,6 @@ import {
   connectToErc20,
 } from "~/scripts/tests/contractInteraction";
 
-import {
-  abi as swapRouterABI,
-  bytecode as SWAP_ROUTER_BYTECODE,
-} from "@uniswap/swap-router-contracts/artifacts/contracts/SwapRouter02.sol/SwapRouter02.json";
 import { resetFork } from "~/scripts/tests/forking";
 
 describe("> Uniswap Tests Tests", () => {
@@ -44,7 +41,7 @@ describe("> Uniswap Tests Tests", () => {
 
     // SWAP ROUTER
     swapRouter = (await ethers.getContractAt(
-      swapRouterABI,
+      [...ISwapRouter__factory.abi],
       tokenAddress.swapRouter![forkedChain]! as string,
       addressStore.deployer.signer,
     )) as unknown as ISwapRouter;
@@ -251,9 +248,6 @@ describe("> Uniswap Tests Tests", () => {
         addressStore.deployer.signer,
         { justBalance: true },
       );
-
-      console.log("Old Balance:", oldBalance);
-      console.log("New Balance:", newBalance);
 
       expect(newBalance > oldBalance).to.be.true;
     });

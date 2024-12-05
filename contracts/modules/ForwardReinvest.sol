@@ -37,10 +37,16 @@ library ForwardReinvest {
         bytes memory data_
     ) internal returns (uint256, bool success) {
         ReinvestDataStruct memory investData = _decodeData(data_);
-        success = IERC20(investData.token).transfer(
-            investData.receiver,
-            amount_
-        );
+        if (investData.token == address(0))
+            (success, ) = payable(address(investData.receiver)).call{
+                value: amount_
+            }("");
+        else
+            success = IERC20(investData.token).transfer(
+                investData.receiver,
+                amount_
+            );
+
         return (amount_, success);
     }
 

@@ -63,13 +63,13 @@ const productionChainAddresses: {
     universalRouter: "0x198EF79F1F515F02dFE9e3115eD9fC07183f02fC",
     swapRouter: "0x2626664c2603336E57B271c5C0b26F421741e481",
     weth: "0x4200000000000000000000000000000000000006",
-    wbtc: "0x1ceA84203673764244E05693e42E6Ace62bE9BA5",
+    wbtc: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
     dai: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
     usdc: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
     usdt: "",
     aaveV3Pool: "0xA238Dd80C259a72e81d7e4664a9801593F98d1c5",
     aWeth: "0xD4a0e0b9149BCee3C920d2E00b5dE09138fd8bb7",
-    aWbtc: "",
+    aWbtc: "0xBdb9300b7CDE636d9cD4AFF00f6F009fFBBc8EE6",
   },
 };
 
@@ -97,11 +97,12 @@ export const productionChainImpersonators: ImpersonatorList = {
     dai: "0xd28843e10c3795e51a6e574378f8698afe803029",
   },
   base: {
-    usdc: "0xd403c5a0D47cA5301bA3310e1907288A2c2A6536",
-    weth: "0x39f1F2AE7708AFe1E383dd503e982db5F3EA153d",
-    wbtc: "",
+    usdc: "0x3304E22DDaa22bCdC5fCa2269b418046aE7b566A",
+    weth: "0x621e7c767004266c8109e83143ab0Da521B650d6",
+    wbtc: "0x15abb66bA754F05cBC0165A64A11cDed1543dE48",
     usdt: "",
-    dai: "0x9c52A65e1b3C325Cd7C1a8C01f210fC843746E11",
+    dai: "0x9646D8F3F59bd7882237eE0EE1c00d483552397D",
+    native: "0x3304E22DDaa22bCdC5fCa2269b418046aE7b566A",
   },
 };
 
@@ -254,6 +255,7 @@ export type AcceptedTokens =
   | "weth"
   | "wbtc"
   | "eth"
+  | "native"
   | "usdc"
   | "usdt"
   | "dai"

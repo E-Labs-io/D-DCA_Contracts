@@ -119,6 +119,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
                     strategy.reinvest,
                     amountIn
                 );
+
                 emit StrategyReinvestExecuted(
                     strategyId_,
                     success,
@@ -135,9 +136,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
 
             emit StrategyExecuted(strategyId_, amountIn, success);
             return true;
-        } else {
-            return false;
-        }
+        } else return false;
     }
 
     /**

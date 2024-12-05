@@ -11,13 +11,11 @@ import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 import { EMPTY_STRATEGY_OBJECT, ZERO_ADDRESS } from "~/bin/emptyData";
-import { compareStructs } from "~/scripts/tests/comparisons";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
 import {
   checkEthBalanceAndTransfer,
   connectToErc20,
-  getErc20Balance,
 } from "~/scripts/tests/contractInteraction";
 import { resetFork } from "~/scripts/tests/forking";
 

@@ -13,7 +13,7 @@ import {
 import logDeployment from "~/scripts/saveDeployLog";
 
 const taskId = "deploydca";
-const taskDescription = "Deploy the fully DCA suite";
+const taskDescription = "Deploy the full DCA suite";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
   console.log(`🟢 [TASK] ${taskId} : Mounted`);

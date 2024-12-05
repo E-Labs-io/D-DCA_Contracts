@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["DCAREINVEST", "ethernal", "recived"],
+  "cSpell.words": ["DCAREINVEST", "ethernal", "IERC", "recived"],
   "solidity.compileUsingRemoteVersion": "v0.8.20+commit.a1b79de6",
   "solidity.packageDefaultDependenciesContractsDirectory": "",
   "solidity.packageDefaultDependenciesDirectory": "node_modules",

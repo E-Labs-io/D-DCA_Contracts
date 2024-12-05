@@ -76,7 +76,7 @@ contract DCAAccount is DCAAccountLogic {
      * @param subscribeToExecutor_ Whether to subscribe to the executor at setup
      */
     function SetupStrategy(
-        Strategy memory newStrategy_,
+        Strategy calldata newStrategy_,
         uint256 seedFunds_,
         bool subscribeToExecutor_
     ) external override onlyOwner {

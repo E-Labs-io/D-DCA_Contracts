@@ -1,13 +1,9 @@
 /** @format */
 
-import { AddressLike, Addressable, ZeroAddress, ethers } from "ethers";
+import { AddressLike, Addressable } from "ethers";
 import { ChainName, tokenAddress } from "../../bin/tokenAddress";
-import {
-  DCAExecutor,
-  IDCADataStructures,
-} from "~/types/contracts/contracts/base/DCAExecutor";
+import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deployedDCAContracts from "~/bin/deployedAddress";
-import { type DCAReinvest } from "~/types/contracts";
 import { EMPTY_REINVEST_OBJECT } from "~/bin/emptyData";
 
 const deployedAddresses = (networkName: ChainName) =>
@@ -19,10 +15,10 @@ export function DCAExecutorArguments(
 ): any[] {
   const feeDistrobution_: IDCADataStructures.FeeDistributionStruct = {
     amountToAdmin: 2500, //  25%
-    amountToComputing: 5000, //  45%
-    amountToExecutor: 2500, //  25%
+    amountToComputing: 0, //  45%
+    amountToExecutor: 7500, //  25%
     feeAmount: 30, //  0.3%
-    executionAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    executionAddress: "0xe272653f2FF11D1F7bd24cdE149a29f4110d03B1",
     computingAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     adminAddress: deployer,
   };
@@ -105,12 +101,14 @@ export const newStrat = (
 export const buildStrat = (
   accountAddress: string,
   network: string,
+
   options?: {
     baseToken?: IDCADataStructures.TokeDataStruct;
     targetToken?: IDCADataStructures.TokeDataStruct;
     reinvest?: IDCADataStructures.ReinvestStruct;
     amount?: number;
     interval?: number;
+    strategyId?: number;
   },
 ): IDCADataStructures.StrategyStruct => {
   return {
@@ -129,6 +127,6 @@ export const buildStrat = (
     amount: options?.amount ?? 100000000,
     reinvest: options?.reinvest ?? EMPTY_REINVEST_OBJECT,
     active: false,
-    strategyId: 1,
+    strategyId: options?.strategyId ?? 1,
   };
 };

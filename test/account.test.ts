@@ -434,12 +434,12 @@ describe("> DCA Account Tests", () => {
         "DCAAccount : [SubscribeStrategy] Strategy is already Subscribed",
       );
     });
-    it("🧪 Should create new strategy, fund & subscribe", async () => {
+    it("🧪 Should create new strategy (2), fund & subscribe", async () => {
       const strat: IDCADataStructures.StrategyStruct = newStrat(
         createdAccount.target as string,
         forkedChain,
       );
-      const contract = await await ethers.getContractAt(
+      const contract = await ethers.getContractAt(
         "contracts/tokens/IERC20.sol:IERC20",
         tokenAddress?.usdc?.[forkedChain]! as string,
         addressStore.user.signer,
