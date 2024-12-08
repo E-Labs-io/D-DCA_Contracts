@@ -12,11 +12,7 @@ import { EMPTY_STRATEGY } from "~/bin/emptyData";
 import { compareStructs } from "~/scripts/tests/comparisons";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
-import type {
-  AaveIPool,
-  DCAReinvest,
-  DCAReinvestLogic,
-} from "~/types/contracts";
+import type { AaveIPool, DCAReinvest } from "~/types/contracts";
 import {
   approveErc20Spend,
   connectToErc20,
@@ -58,8 +54,6 @@ describe("> Aave V3 Reinvest Test", () => {
       tokenAddress?.aWeth?.[forkedChain]! as string,
       addressStore.deployer.signer,
     );
-
-    
 
     usdcContract = await getErc20ImpersonatedFunds(
       forkedChain,
@@ -159,7 +153,7 @@ describe("> Aave V3 Reinvest Test", () => {
     it("🧪 Should update the Reinvest Address", async function () {
       const updateAddressTx = await createdAccount
         .connect(addressStore.user.signer)
-        .changeDCAReinvestLibrary(reinvestContract.target);
+        .changeReinvestLibrary(reinvestContract.target);
       await updateAddressTx.wait();
       const address = await createdAccount.getAttachedReinvestLibraryAddress();
       expect(address).to.equal(reinvestContract.target);
@@ -213,7 +207,7 @@ describe("> Aave V3 Reinvest Test", () => {
         .catch((error) => console.log("Create Strat wait() Error:", error));
 
       await expect(success)
-        .to.emit(createdAccount, "NewStrategyCreated")
+        .to.emit(createdAccount, "StrategyCreated")
         .withArgs(1);
     });
     it("🧪 Should return there is strategy 1 on the account", async function () {
@@ -277,7 +271,7 @@ describe("> Aave V3 Reinvest Test", () => {
       const recipt = await tx.wait();
 
       expect(recipt)
-        .to.emit(createdAccount, "StrategyReinvestExecuted")
+        .to.emit(createdAccount, "ReinvestExecuted")
         .withArgs(1, true);
       expect(recipt).to.emit(createdAccount, "StrategyExecuted");
     });
@@ -292,10 +286,7 @@ describe("> Aave V3 Reinvest Test", () => {
     it("🧪 Should withdraw the accounts balance of aWeth", async () => {
       const tx = await createdAccount.UnWindReinvest(1);
       await expect(tx.wait()).to.be.fulfilled;
-      await expect(tx.wait()).to.emit(
-        createdAccount,
-        "StrategyReinvestUnwound",
-      );
+      await expect(tx.wait()).to.emit(createdAccount, "ReinvestUnwound");
     });
   });
 });

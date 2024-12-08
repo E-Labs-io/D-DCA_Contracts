@@ -4,3 +4,4 @@
 export type { IDCAAccount } from "./IDCAAccount";
 export type { IDCAExecutor } from "./IDCAExecutor";
 export type { IDCAFactory } from "./IDCAFactory";
+export type { IDCAReinvest } from "./IDCAReinvest";

@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-//DEV
-import "hardhat/console.sol";
-
 // PRODUCTION
 import "../logic/AccountLogic.sol";
 

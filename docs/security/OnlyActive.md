@@ -25,7 +25,7 @@ Returns the active state of the contract
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | True if the contract is active, false otherwise |
+| _0 | bool | isActive True if the contract is active, false otherwise |
 
 
 

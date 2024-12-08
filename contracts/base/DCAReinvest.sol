@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-//DEV
-import "hardhat/console.sol";
 
-import {DCAReinvestLogic, IDCADataStructures, ReinvestCodes} from "../logic/ReinvestLogic.sol";
+import {DCAReinvestLogic, ReinvestCodes, IDCADataStructures, IDCAReinvest} from "../logic/ReinvestLogic.sol";
 import "../security/onlyActive.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -47,7 +45,7 @@ contract DCAReinvest is DCAReinvestLogic, OnlyActive, Ownable {
     function executeReinvest(
         IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
-    ) external is_active returns (uint256 amount, bool success) {
+    ) external override is_active returns (uint256 amount, bool success) {
         return _executeInvest(reinvestData_, amount_);
     }
     /**
@@ -60,24 +58,8 @@ contract DCAReinvest is DCAReinvestLogic, OnlyActive, Ownable {
     function unwindReinvest(
         IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
-    ) external returns (uint256 amount, bool success) {
+    ) external override returns (uint256 amount, bool success) {
         return _executeWithdraw(reinvestData_, amount_);
-    }
-
-    /**
-     * @dev Migrates the reinvestment
-     * @param oldReinvestData_ The old reinvestment data
-     * @param newReinvestData_ The new reinvestment data
-     * @param withdrawFunds_ Whether to withdraw funds
-     * @return amount The amount of the migration
-     * @return success The success of the migration
-     */
-    function migrateReinvest(
-        IDCADataStructures.Reinvest memory oldReinvestData_,
-        IDCADataStructures.Reinvest memory newReinvestData_,
-        bool withdrawFunds_
-    ) external returns (uint256 amount, bool success) {
-        return (amount, success);
     }
 
     /**
@@ -86,6 +68,31 @@ contract DCAReinvest is DCAReinvestLogic, OnlyActive, Ownable {
      */
     function getLibraryVersion() public pure returns (string memory) {
         return REINVEST_VERSION;
+    }
+    /**
+     * @dev Returns whether the reinvest library is active
+     * @return Whether the reinvest library is active
+     */
+    function isActive()
+        external
+        view
+        override(IDCAReinvest, OnlyActive)
+        returns (bool)
+    {
+        return _getActiveState();
+    }
+
+    /**
+     * @dev Returns the active moduals
+     * @return The active moduals
+     */
+    function getActiveModuals()
+        external
+        view
+        override
+        returns (uint8[] memory)
+    {
+        return abi.decode(ACTIVE_REINVESTS, (uint8[]));
     }
 
     /**

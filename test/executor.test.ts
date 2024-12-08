@@ -162,41 +162,6 @@ describe("> DCA Executor Tests", () => {
       expect(feeData[5]).to.equal(FeeData.computingAddress);
       expect(feeData[6]).to.equal(FeeData.adminAddress);
     });
-    it("🧪 [DEVgetFeeQuote] Should return the correct total fee of $100 execution", async () => {
-      const feeAmount = await executorContract.DEVgetFeeQuote(
-        ethers.parseUnits("100", 6),
-      );
-      expect(Number(feeAmount)).to.equal(300000);
-    });
-
-    it("🧪 [DEVcalculateSplitFee] Should return 10% of 100,000,000", async () => {
-      const amount = await executorContract.DEVcalculateSplitFee(
-        1000,
-        ethers.parseUnits("100", 6),
-      );
-      expect(amount).to.equal(10000000);
-    });
-
-    it("🧪 [DEVgetFeesOfAmount] Should return the correct splits for $100", async () => {
-      const totalFee = calculatePercentage(
-        Number(FeeData.feeAmount),
-        Number(ethers.parseUnits("100", 6)),
-      );
-      const amount = await executorContract.DEVgetFeesOfAmount(totalFee);
-
-      // Executor
-      expect(Number(amount[0])).to.equal(
-        calculatePercentage(Number(FeeData.amountToExecutor), totalFee),
-      );
-      // Compute
-      expect(Number(amount[1])).to.equal(
-        calculatePercentage(Number(FeeData.amountToComputing), totalFee),
-      );
-      // Admin
-      expect(Number(amount[2])).to.equal(
-        calculatePercentage(Number(FeeData.amountToAdmin), totalFee),
-      );
-    });
   });
 
   describe("💡 Test fee receiving and distribution", () => {

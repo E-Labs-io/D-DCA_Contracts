@@ -1,0 +1,1923 @@
+{
+    "contractName": "DCAReinvestProxy",
+    "abi": [
+        {
+            "inputs": [],
+            "name": "InvalidInitialization",
+            "type": "error"
+        },
+        {
+            "inputs": [],
+            "name": "NotInitializing",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnableInvalidOwner",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnableUnauthorizedAccount",
+            "type": "error"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "internalType": "uint64",
+                    "name": "version",
+                    "type": "uint64"
+                }
+            ],
+            "name": "Initialized",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "previousOwner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnershipTransferred",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [],
+            "name": "TestCall",
+            "type": "event"
+        },
+        {
+            "inputs": [],
+            "name": "ACTIVE_REINVESTS",
+            "outputs": [
+                {
+                    "internalType": "bytes",
+                    "name": "",
+                    "type": "bytes"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "REINVEST_VERSION",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "bytes",
+                            "name": "reinvestData",
+                            "type": "bytes"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "active",
+                            "type": "bool"
+                        },
+                        {
+                            "internalType": "uint8",
+                            "name": "investCode",
+                            "type": "uint8"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "dcaAccountAddress",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct IDCADataStructures.Reinvest",
+                    "name": "reinvestData_",
+                    "type": "tuple"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amount_",
+                    "type": "uint256"
+                }
+            ],
+            "name": "executeReinvest",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "success",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getLibraryVersion",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "pure",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "bool",
+                    "name": "activate_",
+                    "type": "bool"
+                }
+            ],
+            "name": "initialize",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "isActive",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "isActive",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "bytes",
+                            "name": "reinvestData",
+                            "type": "bytes"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "active",
+                            "type": "bool"
+                        },
+                        {
+                            "internalType": "uint8",
+                            "name": "investCode",
+                            "type": "uint8"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "dcaAccountAddress",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct IDCADataStructures.Reinvest",
+                    "name": "oldReinvestData_",
+                    "type": "tuple"
+                },
+                {
+                    "components": [
+                        {
+                            "internalType": "bytes",
+                            "name": "reinvestData",
+                            "type": "bytes"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "active",
+                            "type": "bool"
+                        },
+                        {
+                            "internalType": "uint8",
+                            "name": "investCode",
+                            "type": "uint8"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "dcaAccountAddress",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct IDCADataStructures.Reinvest",
+                    "name": "newReinvestData_",
+                    "type": "tuple"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "withdrawFunds_",
+                    "type": "bool"
+                }
+            ],
+            "name": "migrateReinvest",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "success",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "renounceOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "testCall",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "transferOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "bytes",
+                            "name": "reinvestData",
+                            "type": "bytes"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "active",
+                            "type": "bool"
+                        },
+                        {
+                            "internalType": "uint8",
+                            "name": "investCode",
+                            "type": "uint8"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "dcaAccountAddress",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct IDCADataStructures.Reinvest",
+                    "name": "reinvestData_",
+                    "type": "tuple"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amount_",
+                    "type": "uint256"
+                }
+            ],
+            "name": "unwindReinvest",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "success",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ],
+    "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"TestCall\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"ACTIVE_REINVESTS\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"REINVEST_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"bytes\",\"name\":\"reinvestData\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"},{\"internalType\":\"uint8\",\"name\":\"investCode\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"dcaAccountAddress\",\"type\":\"address\"}],\"internalType\":\"struct IDCADataStructures.Reinvest\",\"name\":\"reinvestData_\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"amount_\",\"type\":\"uint256\"}],\"name\":\"executeReinvest\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"success\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLibraryVersion\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"activate_\",\"type\":\"bool\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isActive\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"bytes\",\"name\":\"reinvestData\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"},{\"internalType\":\"uint8\",\"name\":\"investCode\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"dcaAccountAddress\",\"type\":\"address\"}],\"internalType\":\"struct IDCADataStructures.Reinvest\",\"name\":\"oldReinvestData_\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes\",\"name\":\"reinvestData\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"},{\"internalType\":\"uint8\",\"name\":\"investCode\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"dcaAccountAddress\",\"type\":\"address\"}],\"internalType\":\"struct IDCADataStructures.Reinvest\",\"name\":\"newReinvestData_\",\"type\":\"tuple\"},{\"internalType\":\"bool\",\"name\":\"withdrawFunds_\",\"type\":\"bool\"}],\"name\":\"migrateReinvest\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"success\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"testCall\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"bytes\",\"name\":\"reinvestData\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"},{\"internalType\":\"uint8\",\"name\":\"investCode\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"dcaAccountAddress\",\"type\":\"address\"}],\"internalType\":\"struct IDCADataStructures.Reinvest\",\"name\":\"reinvestData_\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"amount_\",\"type\":\"uint256\"}],\"name\":\"unwindReinvest\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"success\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"InvalidInitialization()\":[{\"details\":\"The contract is already initialized.\"}],\"NotInitializing()\":[{\"details\":\"The contract is not initializing.\"}],\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"events\":{\"Initialized(uint64)\":{\"details\":\"Triggered when the contract has been initialized or reinitialized.\"}},\"kind\":\"dev\",\"methods\":{\"executeReinvest((bytes,bool,uint8,address),uint256)\":{\"details\":\"Executes the reinvestment\",\"params\":{\"amount_\":\"The amount to reinvest\",\"reinvestData_\":\"The reinvestment data\"},\"returns\":{\"amount\":\"The amount of the reinvestment\",\"success\":\"The success of the reinvestment\"}},\"getLibraryVersion()\":{\"details\":\"Returns the version of the reinvestment\",\"returns\":{\"_0\":\"The version of the reinvestment\"}},\"isActive()\":{\"details\":\"Checks if the reinvestment is active\",\"returns\":{\"isActive\":\"Whether the reinvestment is active\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"unwindReinvest((bytes,bool,uint8,address),uint256)\":{\"details\":\"Unwinds the reinvestment\",\"params\":{\"amount_\":\"The amount to unwind\",\"reinvestData_\":\"The reinvestment data\"},\"returns\":{\"amount\":\"The amount of the unwind\",\"success\":\"The success of the unwind\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*       Dollar Cost Average Contracts************************************************                  V0.6  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/proxys/DCAReinvestProxy.sol\":\"DCAReinvestProxy\"},\"evmVersion\":\"shanghai\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/interfaces/IDCADataStructures.sol\":{\"keccak256\":\"0x6b55c5f71025212f758711bc455655ce1c52185bf0ba6e89fbb9604f31244dd6\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://84295f2107eb449ba604aedecb4b87a52f928658567283db25131c785ba16d53\",\"dweb:/ipfs/QmTdipQk1Hq433y3FjNLDCcFEw2VXmnvurPQPwKJZ9iNke\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/interfaces/IDCAReinvest.sol\":{\"keccak256\":\"0x02a26a816f7d149f4e1effdcb43dca0ccd0fd960bc55f87c84c2b32cf2f0b402\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://54d80b843821ea81a774ef201c8cbb678bd62d394b41d58c919e97ba5ee60222\",\"dweb:/ipfs/QmdbULkBnkDDi61umPpzavmDVGnvG3TnJpPngQtsvsLwrq\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/library/Codes.sol\":{\"keccak256\":\"0x5e204af55705d43c3f60c48e894ba0ca005b255a4c4a4944e1e1b24e5bc7f908\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5f4f294abe612fb54b7a8c661cf0dec5a5d94dbbfcc6d500c40436ebf7084bd6\",\"dweb:/ipfs/Qmf1yXyZt99yzBwXC2BNUZJEyHtbWWDrF9BVANLfKB4dxW\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/logic/ReinvestLogic.sol\":{\"keccak256\":\"0x03bd3a7008af01a3d4b6992961781b4639e878715ed71a3e460010584d4bb390\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a887c295875f6b7b1ae3ea654fdb7b1bb0f68c2f00e6f492eff2d53dffa79d1b\",\"dweb:/ipfs/QmQcrqzpwR4BTLjB8CCt91eovPKoAFLS6VgCy6Z1K4ddMn\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/modules/AaveV3Reinvest.sol\":{\"keccak256\":\"0xa2078f810c1e4c0621a7012722f76c8e4ca119e4f8e7b4981114ace4cdfab400\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2ca5bc47909d288ecf09dfd18d0d3f6f5edde040b4eb6341bd6fecb41bff929a\",\"dweb:/ipfs/QmPkHpuiDiobjnE4aC4mtQSSYx3tqieoFg3xTgJ6QYU5Ht\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/modules/ForwardReinvest.sol\":{\"keccak256\":\"0x963babb49593cb7b366f72b5675ea5f51ef24d3e592a8fb7bf5397110b80b3f1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://742ba876657aa8d083dbfa23d50d92d562ae4e60f7602f894514b109321ac272\",\"dweb:/ipfs/QmRLLv7buDhdYNS2g2VjEuETPK92AB4f7g2V3wJBhhjzAX\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/protocols/aaveV3/IPool.sol\":{\"keccak256\":\"0x1c175df098162a062651d9957b1234a7175be87128e133c756fbb3ee251a3c34\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://30db41f7df1b391ac4ea8d38910f3165676ff4c0e16592673ad26550b1469997\",\"dweb:/ipfs/QmYDraTH3sCU4av6T1v7phEMXU7VQXPFPz534Rw8i18ag8\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/proxys/DCAReinvestProxy.sol\":{\"keccak256\":\"0x5b020d05bf7dfc28b8ee9dcccef73c9cc427299b800980cb89c6f5cc83661d91\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ca7fda9c08ef39c33e3a2ed7cc61603803a682dfe84d9f8ea83a8a429d30c02c\",\"dweb:/ipfs/QmQGYAEKuCHbkHEXwRiYroYqBXJNn1NcGvusiJH2HhBR7f\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol\":{\"keccak256\":\"0xc163fcf9bb10138631a9ba5564df1fa25db9adff73bd9ee868a8ae1858fe093a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9706d43a0124053d9880f6e31a59f31bc0a6a3dc1acd66ce0a16e1111658c5f6\",\"dweb:/ipfs/QmUFmfowzkRwGtDu36cXV9SPTBHJ3n7dG9xQiK5B28jTf2\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"keccak256\":\"0x631188737069917d2f909d29ce62c4d48611d326686ba6683e26b72a23bfac0b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7a61054ae84cd6c4d04c0c4450ba1d6de41e27e0a2c4f1bcdf58f796b401c609\",\"dweb:/ipfs/QmUvtdp7X1mRVyC3CsHrtPbgoqWaXHp3S1ZR24tpAQYJWM\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol\":{\"keccak256\":\"0x4d754571e2ba898774b03eee9320d8499092bec13aa4d6e0a714ba00b9579409\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c4061ab1e9daf749c9f57e3200f5838d61a117e4ae4f7cd4fbc5a3cf2feb9cc0\",\"dweb:/ipfs/QmX1xYKcpWfW1CiDPkpRJEzr5SAcCtdTRszosn3VQDX9nM\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol\":{\"keccak256\":\"0xdbef5f0c787055227243a7318ef74c8a5a1108ca3a07f2b3a00ef67769e1e397\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://08e39f23d5b4692f9a40803e53a8156b72b4c1f9902a88cd65ba964db103dab9\",\"dweb:/ipfs/QmPKn6EYDgpga7KtpkA8wV2yJCYGMtc9K4LkJfhKX2RVSV\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol\":{\"keccak256\":\"0x2a1f9944df2015c081d89cd41ba22ffaf10aa6285969f0dc612b235cc448999c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ef381843676aec64421200ee85eaa0b1356a35f28b9fc67e746a6bbb832077d9\",\"dweb:/ipfs/QmY8aorMYA2TeTCnu6ejDjzb4rW4t7TCtW4GZ6LoxTFm7v\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol\":{\"keccak256\":\"0x06a78f9b3ee3e6d0eb4e4cd635ba49960bea34cac1db8c0a27c75f2319f1fd65\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://547d21aa17f4f3f1a1a7edf7167beff8dd9496a0348d5588f15cc8a4b29d052a\",\"dweb:/ipfs/QmT16JtRQSWNpLo9W23jr6CzaMuTAcQcjJJcdRd8HLJ6cE\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/proxy/Proxy.sol\":{\"keccak256\":\"0xc3f2ec76a3de8ed7a7007c46166f5550c72c7709e3fc7e8bb3111a7191cdedbd\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e73efb4c2ca655882dc237c6b4f234a9bd36d97159d8fcaa837eb01171f726ac\",\"dweb:/ipfs/QmTNnnv7Gu5fs5G1ZMh7Fexp8N4XUs3XrNAngjcxgiss3e\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/proxy/beacon/IBeacon.sol\":{\"keccak256\":\"0xc59a78b07b44b2cf2e8ab4175fca91e8eca1eee2df7357b8d2a8833e5ea1f64c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5aa4f07e65444784c29cd7bfcc2341b34381e4e5b5da9f0c5bd00d7f430e66fa\",\"dweb:/ipfs/QmWRMh4Q9DpaU9GvsiXmDdoNYMyyece9if7hnfLz7uqzWM\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0ea104e577e63faea3b69c415637e99e755dcbf64c5833d7140c35a714d6d90c\",\"dweb:/ipfs/Qmau6x4Ns9XdyynRCNNp3RhLqijJjFm7z5fyZazfYFGYdq\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/utils/Address.sol\":{\"keccak256\":\"0xaf28a975a78550e45f65e559a3ad6a5ad43b9b8a37366999abd1b7084eb70721\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b7bd24e224f67f65bfadf85dc2929fa965456bb2415478bd0125471b5ce35245\",\"dweb:/ipfs/QmRaydGr8BTHs1kvaZfsNU69pKzUAGFrvABn1KiRSbE51y\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/utils/StorageSlot.sol\":{\"keccak256\":\"0x32ba59b4b7299237c8ba56319110989d7978a039faf754793064e967e5894418\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://1ae50c8b562427df610cc4540c9bf104acca7ef8e2dcae567ae7e52272281e9c\",\"dweb:/ipfs/QmTHiadFCSJUPpRjNegc5SahmeU8bAoY8i9Aq6tVscbcKR\"]},\"/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/hardhat/console.sol\":{\"keccak256\":\"0x7434453e6d3b7d0e5d0eb7846ffdbc27f0ccf3b163591263739b628074dc103a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://49355f780520494d1d5a0f01858385e51bb5280ce0ecfb960f16995065dca395\",\"dweb:/ipfs/QmSwJ6C5QLz6xKeQZS8wbwjU1KxRFTYfwbGmtzisd5sRW4\"]}},\"version\":1}",
+    "bytecode": "",
+    "deployedBytecode": "",
+    "sourceMap": "",
+    "deployedSourceMap": "",
+    "sourcePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/proxys/DCAReinvestProxy.sol",
+    "compiler": {
+        "name": "solc",
+        "version": "0.8.20+commit.a1b79de6"
+    },
+    "ast": {
+        "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/proxys/DCAReinvestProxy.sol",
+        "exportedSymbols": {
+            "Address": [
+                2527
+            ],
+            "ContextUpgradeable": [
+                1837
+            ],
+            "DCAReinvestLogic": [
+                327
+            ],
+            "DCAReinvestProxy": [
+                1160
+            ],
+            "ERC1967Utils": [
+                2150
+            ],
+            "IBeacon": [
+                2196
+            ],
+            "IDCADataStructures": [
+                67
+            ],
+            "IERC1822Proxiable": [
+                1847
+            ],
+            "Initializable": [
+                1609
+            ],
+            "OwnableUpgradeable": [
+                1355
+            ],
+            "Proxy": [
+                2186
+            ],
+            "ReinvestCodes": [
+                206
+            ],
+            "StorageSlot": [
+                2637
+            ],
+            "UUPSUpgradeable": [
+                1791
+            ],
+            "console": [
+                10722
+            ]
+        },
+        "id": 1161,
+        "license": "MIT",
+        "nodeType": "SourceUnit",
+        "nodes": [
+            {
+                "id": 1038,
+                "literals": [
+                    "solidity",
+                    "^",
+                    "0.8",
+                    ".20"
+                ],
+                "nodeType": "PragmaDirective",
+                "src": "32:24:7"
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/hardhat/console.sol",
+                "file": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/hardhat/console.sol",
+                "id": 1039,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 10723,
+                "src": "63:98:7",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/library/Codes.sol",
+                "file": "../library/Codes.sol",
+                "id": 1041,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 207,
+                "src": "162:51:7",
+                "symbolAliases": [
+                    {
+                        "foreign": {
+                            "id": 1040,
+                            "name": "ReinvestCodes",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 206,
+                            "src": "170:13:7",
+                            "typeDescriptions": {}
+                        },
+                        "nameLocation": "-1:-1:-1"
+                    }
+                ],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/contracts/logic/ReinvestLogic.sol",
+                "file": "../logic/ReinvestLogic.sol",
+                "id": 1044,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 328,
+                "src": "214:80:7",
+                "symbolAliases": [
+                    {
+                        "foreign": {
+                            "id": 1042,
+                            "name": "DCAReinvestLogic",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 327,
+                            "src": "222:16:7",
+                            "typeDescriptions": {}
+                        },
+                        "nameLocation": "-1:-1:-1"
+                    },
+                    {
+                        "foreign": {
+                            "id": 1043,
+                            "name": "IDCADataStructures",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 67,
+                            "src": "240:18:7",
+                            "typeDescriptions": {}
+                        },
+                        "nameLocation": "-1:-1:-1"
+                    }
+                ],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+                "file": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+                "id": 1045,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 1610,
+                "src": "296:144:7",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/proxy/Proxy.sol",
+                "file": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/proxy/Proxy.sol",
+                "id": 1046,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 2187,
+                "src": "441:118:7",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+                "file": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+                "id": 1047,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 1356,
+                "src": "561:144:7",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
+                "file": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
+                "id": 1048,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 1848,
+                "src": "706:132:7",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol",
+                "file": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol",
+                "id": 1049,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 2151,
+                "src": "839:133:7",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "absolutePath": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+                "file": "/Users/tuck/Documents/E-Labs/Products/DCA/DCA-contracts/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+                "id": 1050,
+                "nameLocation": "-1:-1:-1",
+                "nodeType": "ImportDirective",
+                "scope": 1161,
+                "sourceUnit": 1792,
+                "src": "973:146:7",
+                "symbolAliases": [],
+                "unitAlias": ""
+            },
+            {
+                "abstract": true,
+                "baseContracts": [
+                    {
+                        "baseName": {
+                            "id": 1052,
+                            "name": "Initializable",
+                            "nameLocations": [
+                                "1743:13:7"
+                            ],
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 1609,
+                            "src": "1743:13:7"
+                        },
+                        "id": 1053,
+                        "nodeType": "InheritanceSpecifier",
+                        "src": "1743:13:7"
+                    },
+                    {
+                        "baseName": {
+                            "id": 1054,
+                            "name": "DCAReinvestLogic",
+                            "nameLocations": [
+                                "1762:16:7"
+                            ],
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 327,
+                            "src": "1762:16:7"
+                        },
+                        "id": 1055,
+                        "nodeType": "InheritanceSpecifier",
+                        "src": "1762:16:7"
+                    },
+                    {
+                        "baseName": {
+                            "id": 1056,
+                            "name": "OwnableUpgradeable",
+                            "nameLocations": [
+                                "1784:18:7"
+                            ],
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 1355,
+                            "src": "1784:18:7"
+                        },
+                        "id": 1057,
+                        "nodeType": "InheritanceSpecifier",
+                        "src": "1784:18:7"
+                    }
+                ],
+                "canonicalName": "DCAReinvestProxy",
+                "contractDependencies": [],
+                "contractKind": "contract",
+                "documentation": {
+                    "id": 1051,
+                    "nodeType": "StructuredDocumentation",
+                    "src": "1120:580:7",
+                    "text": "************************************************\n____ooo____oooooooo_oooo____oooo____ooo____oo_*\n__oo___oo_____oo_____oo___oo____oo__oooo___oo_*\n_oo_____oo____oo_____oo__oo______oo_oo_oo__oo_*\n_ooooooooo____oo_____oo__oo______oo_oo__oo_oo_*\n_oo_____oo____oo_____oo___oo____oo__oo___oooo_*\n_oo_____oo____oo____oooo____oooo____oo____ooo_*\n______________________________________________*\n       Dollar Cost Average Contracts************************************************\n                  V0.6\n  x.com/0xAtion\n  x.com/e_labs_\n  e-labs.co.uk"
+                },
+                "fullyImplemented": false,
+                "id": 1160,
+                "linearizedBaseContracts": [
+                    1160,
+                    1355,
+                    1837,
+                    327,
+                    1609,
+                    110
+                ],
+                "name": "DCAReinvestProxy",
+                "nameLocation": "1719:16:7",
+                "nodeType": "ContractDefinition",
+                "nodes": [
+                    {
+                        "body": {
+                            "id": 1069,
+                            "nodeType": "Block",
+                            "src": "1864:43:7",
+                            "statements": [
+                                {
+                                    "expression": {
+                                        "arguments": [
+                                            {
+                                                "expression": {
+                                                    "id": 1065,
+                                                    "name": "msg",
+                                                    "nodeType": "Identifier",
+                                                    "overloadedDeclarations": [],
+                                                    "referencedDeclaration": 4294967281,
+                                                    "src": "1889:3:7",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_magic_message",
+                                                        "typeString": "msg"
+                                                    }
+                                                },
+                                                "id": 1066,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": false,
+                                                "lValueRequested": false,
+                                                "memberLocation": "1893:6:7",
+                                                "memberName": "sender",
+                                                "nodeType": "MemberAccess",
+                                                "src": "1889:10:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_address",
+                                                    "typeString": "address"
+                                                }
+                                            }
+                                        ],
+                                        "expression": {
+                                            "argumentTypes": [
+                                                {
+                                                    "typeIdentifier": "t_address",
+                                                    "typeString": "address"
+                                                }
+                                            ],
+                                            "id": 1064,
+                                            "name": "__Ownable_init",
+                                            "nodeType": "Identifier",
+                                            "overloadedDeclarations": [],
+                                            "referencedDeclaration": 1215,
+                                            "src": "1874:14:7",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
+                                                "typeString": "function (address)"
+                                            }
+                                        },
+                                        "id": 1067,
+                                        "isConstant": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "kind": "functionCall",
+                                        "lValueRequested": false,
+                                        "nameLocations": [],
+                                        "names": [],
+                                        "nodeType": "FunctionCall",
+                                        "src": "1874:26:7",
+                                        "tryCall": false,
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_tuple$__$",
+                                            "typeString": "tuple()"
+                                        }
+                                    },
+                                    "id": 1068,
+                                    "nodeType": "ExpressionStatement",
+                                    "src": "1874:26:7"
+                                }
+                            ]
+                        },
+                        "functionSelector": "d53a822f",
+                        "id": 1070,
+                        "implemented": true,
+                        "kind": "function",
+                        "modifiers": [
+                            {
+                                "id": 1062,
+                                "kind": "modifierInvocation",
+                                "modifierName": {
+                                    "id": 1061,
+                                    "name": "initializer",
+                                    "nameLocations": [
+                                        "1852:11:7"
+                                    ],
+                                    "nodeType": "IdentifierPath",
+                                    "referencedDeclaration": 1463,
+                                    "src": "1852:11:7"
+                                },
+                                "nodeType": "ModifierInvocation",
+                                "src": "1852:11:7"
+                            }
+                        ],
+                        "name": "initialize",
+                        "nameLocation": "1818:10:7",
+                        "nodeType": "FunctionDefinition",
+                        "parameters": {
+                            "id": 1060,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1059,
+                                    "mutability": "mutable",
+                                    "name": "activate_",
+                                    "nameLocation": "1834:9:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1070,
+                                    "src": "1829:14:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_bool",
+                                        "typeString": "bool"
+                                    },
+                                    "typeName": {
+                                        "id": 1058,
+                                        "name": "bool",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "1829:4:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "1828:16:7"
+                        },
+                        "returnParameters": {
+                            "id": 1063,
+                            "nodeType": "ParameterList",
+                            "parameters": [],
+                            "src": "1864:0:7"
+                        },
+                        "scope": 1160,
+                        "src": "1809:98:7",
+                        "stateMutability": "nonpayable",
+                        "virtual": false,
+                        "visibility": "public"
+                    },
+                    {
+                        "baseFunctions": [
+                            84
+                        ],
+                        "body": {
+                            "id": 1087,
+                            "nodeType": "Block",
+                            "src": "2075:62:7",
+                            "statements": [
+                                {
+                                    "expression": {
+                                        "arguments": [
+                                            {
+                                                "id": 1083,
+                                                "name": "reinvestData_",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 1073,
+                                                "src": "2107:13:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_struct$_Reinvest_$66_memory_ptr",
+                                                    "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                }
+                                            },
+                                            {
+                                                "id": 1084,
+                                                "name": "amount_",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 1075,
+                                                "src": "2122:7:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint256",
+                                                    "typeString": "uint256"
+                                                }
+                                            }
+                                        ],
+                                        "expression": {
+                                            "argumentTypes": [
+                                                {
+                                                    "typeIdentifier": "t_struct$_Reinvest_$66_memory_ptr",
+                                                    "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                },
+                                                {
+                                                    "typeIdentifier": "t_uint256",
+                                                    "typeString": "uint256"
+                                                }
+                                            ],
+                                            "id": 1082,
+                                            "name": "_executeInvest",
+                                            "nodeType": "Identifier",
+                                            "overloadedDeclarations": [],
+                                            "referencedDeclaration": 292,
+                                            "src": "2092:14:7",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_Reinvest_$66_memory_ptr_$_t_uint256_$returns$_t_uint256_$_t_bool_$",
+                                                "typeString": "function (struct IDCADataStructures.Reinvest memory,uint256) returns (uint256,bool)"
+                                            }
+                                        },
+                                        "id": 1085,
+                                        "isConstant": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "kind": "functionCall",
+                                        "lValueRequested": false,
+                                        "nameLocations": [],
+                                        "names": [],
+                                        "nodeType": "FunctionCall",
+                                        "src": "2092:38:7",
+                                        "tryCall": false,
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_tuple$_t_uint256_$_t_bool_$",
+                                            "typeString": "tuple(uint256,bool)"
+                                        }
+                                    },
+                                    "functionReturnParameters": 1081,
+                                    "id": 1086,
+                                    "nodeType": "Return",
+                                    "src": "2085:45:7"
+                                }
+                            ]
+                        },
+                        "functionSelector": "454f002a",
+                        "id": 1088,
+                        "implemented": true,
+                        "kind": "function",
+                        "modifiers": [],
+                        "name": "executeReinvest",
+                        "nameLocation": "1922:15:7",
+                        "nodeType": "FunctionDefinition",
+                        "parameters": {
+                            "id": 1076,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1073,
+                                    "mutability": "mutable",
+                                    "name": "reinvestData_",
+                                    "nameLocation": "1982:13:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1088,
+                                    "src": "1947:48:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "memory",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Reinvest_$66_memory_ptr",
+                                        "typeString": "struct IDCADataStructures.Reinvest"
+                                    },
+                                    "typeName": {
+                                        "id": 1072,
+                                        "nodeType": "UserDefinedTypeName",
+                                        "pathNode": {
+                                            "id": 1071,
+                                            "name": "IDCADataStructures.Reinvest",
+                                            "nameLocations": [
+                                                "1947:18:7",
+                                                "1966:8:7"
+                                            ],
+                                            "nodeType": "IdentifierPath",
+                                            "referencedDeclaration": 66,
+                                            "src": "1947:27:7"
+                                        },
+                                        "referencedDeclaration": 66,
+                                        "src": "1947:27:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_struct$_Reinvest_$66_storage_ptr",
+                                            "typeString": "struct IDCADataStructures.Reinvest"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 1075,
+                                    "mutability": "mutable",
+                                    "name": "amount_",
+                                    "nameLocation": "2013:7:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1088,
+                                    "src": "2005:15:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 1074,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2005:7:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "1937:89:7"
+                        },
+                        "returnParameters": {
+                            "id": 1081,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1078,
+                                    "mutability": "mutable",
+                                    "name": "amount",
+                                    "nameLocation": "2053:6:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1088,
+                                    "src": "2045:14:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 1077,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2045:7:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 1080,
+                                    "mutability": "mutable",
+                                    "name": "success",
+                                    "nameLocation": "2066:7:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1088,
+                                    "src": "2061:12:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_bool",
+                                        "typeString": "bool"
+                                    },
+                                    "typeName": {
+                                        "id": 1079,
+                                        "name": "bool",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2061:4:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2044:30:7"
+                        },
+                        "scope": 1160,
+                        "src": "1913:224:7",
+                        "stateMutability": "nonpayable",
+                        "virtual": false,
+                        "visibility": "external"
+                    },
+                    {
+                        "anonymous": false,
+                        "eventSelector": "7628a2add1c8ac905e8699a1bf09feba86d0d90c0a354ee84653d24909f74a64",
+                        "id": 1090,
+                        "name": "TestCall",
+                        "nameLocation": "2148:8:7",
+                        "nodeType": "EventDefinition",
+                        "parameters": {
+                            "id": 1089,
+                            "nodeType": "ParameterList",
+                            "parameters": [],
+                            "src": "2156:2:7"
+                        },
+                        "src": "2142:17:7"
+                    },
+                    {
+                        "body": {
+                            "id": 1112,
+                            "nodeType": "Block",
+                            "src": "2217:120:7",
+                            "statements": [
+                                {
+                                    "assignments": [
+                                        1098,
+                                        1100
+                                    ],
+                                    "declarations": [
+                                        {
+                                            "constant": false,
+                                            "id": 1098,
+                                            "mutability": "mutable",
+                                            "name": "amount",
+                                            "nameLocation": "2236:6:7",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 1112,
+                                            "src": "2228:14:7",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_uint256",
+                                                "typeString": "uint256"
+                                            },
+                                            "typeName": {
+                                                "id": 1097,
+                                                "name": "uint256",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "2228:7:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint256",
+                                                    "typeString": "uint256"
+                                                }
+                                            },
+                                            "visibility": "internal"
+                                        },
+                                        {
+                                            "constant": false,
+                                            "id": 1100,
+                                            "mutability": "mutable",
+                                            "name": "success",
+                                            "nameLocation": "2249:7:7",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 1112,
+                                            "src": "2244:12:7",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_bool",
+                                                "typeString": "bool"
+                                            },
+                                            "typeName": {
+                                                "id": 1099,
+                                                "name": "bool",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "2244:4:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_bool",
+                                                    "typeString": "bool"
+                                                }
+                                            },
+                                            "visibility": "internal"
+                                        }
+                                    ],
+                                    "id": 1104,
+                                    "initialValue": {
+                                        "components": [
+                                            {
+                                                "hexValue": "343230",
+                                                "id": 1101,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": true,
+                                                "kind": "number",
+                                                "lValueRequested": false,
+                                                "nodeType": "Literal",
+                                                "src": "2261:3:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_rational_420_by_1",
+                                                    "typeString": "int_const 420"
+                                                },
+                                                "value": "420"
+                                            },
+                                            {
+                                                "hexValue": "74727565",
+                                                "id": 1102,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": true,
+                                                "kind": "bool",
+                                                "lValueRequested": false,
+                                                "nodeType": "Literal",
+                                                "src": "2266:4:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_bool",
+                                                    "typeString": "bool"
+                                                },
+                                                "value": "true"
+                                            }
+                                        ],
+                                        "id": 1103,
+                                        "isConstant": false,
+                                        "isInlineArray": false,
+                                        "isLValue": false,
+                                        "isPure": true,
+                                        "lValueRequested": false,
+                                        "nodeType": "TupleExpression",
+                                        "src": "2260:11:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_tuple$_t_rational_420_by_1_$_t_bool_$",
+                                            "typeString": "tuple(int_const 420,bool)"
+                                        }
+                                    },
+                                    "nodeType": "VariableDeclarationStatement",
+                                    "src": "2227:44:7"
+                                },
+                                {
+                                    "eventCall": {
+                                        "arguments": [],
+                                        "expression": {
+                                            "argumentTypes": [],
+                                            "id": 1105,
+                                            "name": "TestCall",
+                                            "nodeType": "Identifier",
+                                            "overloadedDeclarations": [],
+                                            "referencedDeclaration": 1090,
+                                            "src": "2286:8:7",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_function_event_nonpayable$__$returns$__$",
+                                                "typeString": "function ()"
+                                            }
+                                        },
+                                        "id": 1106,
+                                        "isConstant": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "kind": "functionCall",
+                                        "lValueRequested": false,
+                                        "nameLocations": [],
+                                        "names": [],
+                                        "nodeType": "FunctionCall",
+                                        "src": "2286:10:7",
+                                        "tryCall": false,
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_tuple$__$",
+                                            "typeString": "tuple()"
+                                        }
+                                    },
+                                    "id": 1107,
+                                    "nodeType": "EmitStatement",
+                                    "src": "2281:15:7"
+                                },
+                                {
+                                    "expression": {
+                                        "components": [
+                                            {
+                                                "id": 1108,
+                                                "name": "amount",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 1098,
+                                                "src": "2314:6:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint256",
+                                                    "typeString": "uint256"
+                                                }
+                                            },
+                                            {
+                                                "id": 1109,
+                                                "name": "success",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 1100,
+                                                "src": "2322:7:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_bool",
+                                                    "typeString": "bool"
+                                                }
+                                            }
+                                        ],
+                                        "id": 1110,
+                                        "isConstant": false,
+                                        "isInlineArray": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "lValueRequested": false,
+                                        "nodeType": "TupleExpression",
+                                        "src": "2313:17:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_tuple$_t_uint256_$_t_bool_$",
+                                            "typeString": "tuple(uint256,bool)"
+                                        }
+                                    },
+                                    "functionReturnParameters": 1096,
+                                    "id": 1111,
+                                    "nodeType": "Return",
+                                    "src": "2306:24:7"
+                                }
+                            ]
+                        },
+                        "functionSelector": "b7f05836",
+                        "id": 1113,
+                        "implemented": true,
+                        "kind": "function",
+                        "modifiers": [],
+                        "name": "testCall",
+                        "nameLocation": "2173:8:7",
+                        "nodeType": "FunctionDefinition",
+                        "parameters": {
+                            "id": 1091,
+                            "nodeType": "ParameterList",
+                            "parameters": [],
+                            "src": "2181:2:7"
+                        },
+                        "returnParameters": {
+                            "id": 1096,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1093,
+                                    "mutability": "mutable",
+                                    "name": "",
+                                    "nameLocation": "-1:-1:-1",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1113,
+                                    "src": "2202:7:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 1092,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2202:7:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 1095,
+                                    "mutability": "mutable",
+                                    "name": "",
+                                    "nameLocation": "-1:-1:-1",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1113,
+                                    "src": "2211:4:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_bool",
+                                        "typeString": "bool"
+                                    },
+                                    "typeName": {
+                                        "id": 1094,
+                                        "name": "bool",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2211:4:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2201:15:7"
+                        },
+                        "scope": 1160,
+                        "src": "2164:173:7",
+                        "stateMutability": "nonpayable",
+                        "virtual": false,
+                        "visibility": "external"
+                    },
+                    {
+                        "baseFunctions": [
+                            97
+                        ],
+                        "body": {
+                            "id": 1130,
+                            "nodeType": "Block",
+                            "src": "2503:64:7",
+                            "statements": [
+                                {
+                                    "expression": {
+                                        "arguments": [
+                                            {
+                                                "id": 1126,
+                                                "name": "reinvestData_",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 1116,
+                                                "src": "2537:13:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_struct$_Reinvest_$66_memory_ptr",
+                                                    "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                }
+                                            },
+                                            {
+                                                "id": 1127,
+                                                "name": "amount_",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 1118,
+                                                "src": "2552:7:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint256",
+                                                    "typeString": "uint256"
+                                                }
+                                            }
+                                        ],
+                                        "expression": {
+                                            "argumentTypes": [
+                                                {
+                                                    "typeIdentifier": "t_struct$_Reinvest_$66_memory_ptr",
+                                                    "typeString": "struct IDCADataStructures.Reinvest memory"
+                                                },
+                                                {
+                                                    "typeIdentifier": "t_uint256",
+                                                    "typeString": "uint256"
+                                                }
+                                            ],
+                                            "id": 1125,
+                                            "name": "_executeWithdraw",
+                                            "nodeType": "Identifier",
+                                            "overloadedDeclarations": [],
+                                            "referencedDeclaration": 326,
+                                            "src": "2520:16:7",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_Reinvest_$66_memory_ptr_$_t_uint256_$returns$_t_uint256_$_t_bool_$",
+                                                "typeString": "function (struct IDCADataStructures.Reinvest memory,uint256) returns (uint256,bool)"
+                                            }
+                                        },
+                                        "id": 1128,
+                                        "isConstant": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "kind": "functionCall",
+                                        "lValueRequested": false,
+                                        "nameLocations": [],
+                                        "names": [],
+                                        "nodeType": "FunctionCall",
+                                        "src": "2520:40:7",
+                                        "tryCall": false,
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_tuple$_t_uint256_$_t_bool_$",
+                                            "typeString": "tuple(uint256,bool)"
+                                        }
+                                    },
+                                    "functionReturnParameters": 1124,
+                                    "id": 1129,
+                                    "nodeType": "Return",
+                                    "src": "2513:47:7"
+                                }
+                            ]
+                        },
+                        "functionSelector": "bcb9236e",
+                        "id": 1131,
+                        "implemented": true,
+                        "kind": "function",
+                        "modifiers": [],
+                        "name": "unwindReinvest",
+                        "nameLocation": "2351:14:7",
+                        "nodeType": "FunctionDefinition",
+                        "parameters": {
+                            "id": 1119,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1116,
+                                    "mutability": "mutable",
+                                    "name": "reinvestData_",
+                                    "nameLocation": "2410:13:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1131,
+                                    "src": "2375:48:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "memory",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Reinvest_$66_memory_ptr",
+                                        "typeString": "struct IDCADataStructures.Reinvest"
+                                    },
+                                    "typeName": {
+                                        "id": 1115,
+                                        "nodeType": "UserDefinedTypeName",
+                                        "pathNode": {
+                                            "id": 1114,
+                                            "name": "IDCADataStructures.Reinvest",
+                                            "nameLocations": [
+                                                "2375:18:7",
+                                                "2394:8:7"
+                                            ],
+                                            "nodeType": "IdentifierPath",
+                                            "referencedDeclaration": 66,
+                                            "src": "2375:27:7"
+                                        },
+                                        "referencedDeclaration": 66,
+                                        "src": "2375:27:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_struct$_Reinvest_$66_storage_ptr",
+                                            "typeString": "struct IDCADataStructures.Reinvest"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 1118,
+                                    "mutability": "mutable",
+                                    "name": "amount_",
+                                    "nameLocation": "2441:7:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1131,
+                                    "src": "2433:15:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 1117,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2433:7:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2365:89:7"
+                        },
+                        "returnParameters": {
+                            "id": 1124,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1121,
+                                    "mutability": "mutable",
+                                    "name": "amount",
+                                    "nameLocation": "2481:6:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1131,
+                                    "src": "2473:14:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 1120,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2473:7:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 1123,
+                                    "mutability": "mutable",
+                                    "name": "success",
+                                    "nameLocation": "2494:7:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1131,
+                                    "src": "2489:12:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_bool",
+                                        "typeString": "bool"
+                                    },
+                                    "typeName": {
+                                        "id": 1122,
+                                        "name": "bool",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2489:4:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2472:30:7"
+                        },
+                        "scope": 1160,
+                        "src": "2342:225:7",
+                        "stateMutability": "nonpayable",
+                        "virtual": false,
+                        "visibility": "external"
+                    },
+                    {
+                        "body": {
+                            "id": 1150,
+                            "nodeType": "Block",
+                            "src": "2803:41:7",
+                            "statements": [
+                                {
+                                    "expression": {
+                                        "components": [
+                                            {
+                                                "id": 1146,
+                                                "name": "amount",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 1142,
+                                                "src": "2821:6:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_uint256",
+                                                    "typeString": "uint256"
+                                                }
+                                            },
+                                            {
+                                                "id": 1147,
+                                                "name": "success",
+                                                "nodeType": "Identifier",
+                                                "overloadedDeclarations": [],
+                                                "referencedDeclaration": 1144,
+                                                "src": "2829:7:7",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_bool",
+                                                    "typeString": "bool"
+                                                }
+                                            }
+                                        ],
+                                        "id": 1148,
+                                        "isConstant": false,
+                                        "isInlineArray": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "lValueRequested": false,
+                                        "nodeType": "TupleExpression",
+                                        "src": "2820:17:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_tuple$_t_uint256_$_t_bool_$",
+                                            "typeString": "tuple(uint256,bool)"
+                                        }
+                                    },
+                                    "functionReturnParameters": 1145,
+                                    "id": 1149,
+                                    "nodeType": "Return",
+                                    "src": "2813:24:7"
+                                }
+                            ]
+                        },
+                        "functionSelector": "f58a5936",
+                        "id": 1151,
+                        "implemented": true,
+                        "kind": "function",
+                        "modifiers": [],
+                        "name": "migrateReinvest",
+                        "nameLocation": "2582:15:7",
+                        "nodeType": "FunctionDefinition",
+                        "parameters": {
+                            "id": 1140,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1134,
+                                    "mutability": "mutable",
+                                    "name": "oldReinvestData_",
+                                    "nameLocation": "2642:16:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1151,
+                                    "src": "2607:51:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "memory",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Reinvest_$66_memory_ptr",
+                                        "typeString": "struct IDCADataStructures.Reinvest"
+                                    },
+                                    "typeName": {
+                                        "id": 1133,
+                                        "nodeType": "UserDefinedTypeName",
+                                        "pathNode": {
+                                            "id": 1132,
+                                            "name": "IDCADataStructures.Reinvest",
+                                            "nameLocations": [
+                                                "2607:18:7",
+                                                "2626:8:7"
+                                            ],
+                                            "nodeType": "IdentifierPath",
+                                            "referencedDeclaration": 66,
+                                            "src": "2607:27:7"
+                                        },
+                                        "referencedDeclaration": 66,
+                                        "src": "2607:27:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_struct$_Reinvest_$66_storage_ptr",
+                                            "typeString": "struct IDCADataStructures.Reinvest"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 1137,
+                                    "mutability": "mutable",
+                                    "name": "newReinvestData_",
+                                    "nameLocation": "2703:16:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1151,
+                                    "src": "2668:51:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "memory",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Reinvest_$66_memory_ptr",
+                                        "typeString": "struct IDCADataStructures.Reinvest"
+                                    },
+                                    "typeName": {
+                                        "id": 1136,
+                                        "nodeType": "UserDefinedTypeName",
+                                        "pathNode": {
+                                            "id": 1135,
+                                            "name": "IDCADataStructures.Reinvest",
+                                            "nameLocations": [
+                                                "2668:18:7",
+                                                "2687:8:7"
+                                            ],
+                                            "nodeType": "IdentifierPath",
+                                            "referencedDeclaration": 66,
+                                            "src": "2668:27:7"
+                                        },
+                                        "referencedDeclaration": 66,
+                                        "src": "2668:27:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_struct$_Reinvest_$66_storage_ptr",
+                                            "typeString": "struct IDCADataStructures.Reinvest"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 1139,
+                                    "mutability": "mutable",
+                                    "name": "withdrawFunds_",
+                                    "nameLocation": "2734:14:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1151,
+                                    "src": "2729:19:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_bool",
+                                        "typeString": "bool"
+                                    },
+                                    "typeName": {
+                                        "id": 1138,
+                                        "name": "bool",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2729:4:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2597:157:7"
+                        },
+                        "returnParameters": {
+                            "id": 1145,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1142,
+                                    "mutability": "mutable",
+                                    "name": "amount",
+                                    "nameLocation": "2781:6:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1151,
+                                    "src": "2773:14:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    },
+                                    "typeName": {
+                                        "id": 1141,
+                                        "name": "uint256",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2773:7:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_uint256",
+                                            "typeString": "uint256"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                },
+                                {
+                                    "constant": false,
+                                    "id": 1144,
+                                    "mutability": "mutable",
+                                    "name": "success",
+                                    "nameLocation": "2794:7:7",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1151,
+                                    "src": "2789:12:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "default",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_bool",
+                                        "typeString": "bool"
+                                    },
+                                    "typeName": {
+                                        "id": 1143,
+                                        "name": "bool",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2789:4:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_bool",
+                                            "typeString": "bool"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2772:30:7"
+                        },
+                        "scope": 1160,
+                        "src": "2573:271:7",
+                        "stateMutability": "nonpayable",
+                        "virtual": false,
+                        "visibility": "external"
+                    },
+                    {
+                        "baseFunctions": [
+                            109
+                        ],
+                        "body": {
+                            "id": 1158,
+                            "nodeType": "Block",
+                            "src": "2915:40:7",
+                            "statements": [
+                                {
+                                    "expression": {
+                                        "id": 1156,
+                                        "name": "REINVEST_VERSION",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": [],
+                                        "referencedDeclaration": 222,
+                                        "src": "2932:16:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_string_memory_ptr",
+                                            "typeString": "string memory"
+                                        }
+                                    },
+                                    "functionReturnParameters": 1155,
+                                    "id": 1157,
+                                    "nodeType": "Return",
+                                    "src": "2925:23:7"
+                                }
+                            ]
+                        },
+                        "functionSelector": "0ca75044",
+                        "id": 1159,
+                        "implemented": true,
+                        "kind": "function",
+                        "modifiers": [],
+                        "name": "getLibraryVersion",
+                        "nameLocation": "2859:17:7",
+                        "nodeType": "FunctionDefinition",
+                        "parameters": {
+                            "id": 1152,
+                            "nodeType": "ParameterList",
+                            "parameters": [],
+                            "src": "2876:2:7"
+                        },
+                        "returnParameters": {
+                            "id": 1155,
+                            "nodeType": "ParameterList",
+                            "parameters": [
+                                {
+                                    "constant": false,
+                                    "id": 1154,
+                                    "mutability": "mutable",
+                                    "name": "",
+                                    "nameLocation": "-1:-1:-1",
+                                    "nodeType": "VariableDeclaration",
+                                    "scope": 1159,
+                                    "src": "2900:13:7",
+                                    "stateVariable": false,
+                                    "storageLocation": "memory",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_string_memory_ptr",
+                                        "typeString": "string"
+                                    },
+                                    "typeName": {
+                                        "id": 1153,
+                                        "name": "string",
+                                        "nodeType": "ElementaryTypeName",
+                                        "src": "2900:6:7",
+                                        "typeDescriptions": {
+                                            "typeIdentifier": "t_string_storage_ptr",
+                                            "typeString": "string"
+                                        }
+                                    },
+                                    "visibility": "internal"
+                                }
+                            ],
+                            "src": "2899:15:7"
+                        },
+                        "scope": 1160,
+                        "src": "2850:105:7",
+                        "stateMutability": "pure",
+                        "virtual": false,
+                        "visibility": "public"
+                    }
+                ],
+                "scope": 1161,
+                "src": "1701:1256:7",
+                "usedErrors": [
+                    1191,
+                    1196,
+                    1372,
+                    1375
+                ],
+                "usedEvents": [
+                    1090,
+                    1202,
+                    1380
+                ]
+            }
+        ],
+        "src": "32:2926:7"
+    },
+    "functionHashes": {
+        "ACTIVE_REINVESTS()": "c9f6d48f",
+        "REINVEST_VERSION()": "738800b7",
+        "executeReinvest((bytes,bool,uint8,address),uint256)": "454f002a",
+        "getLibraryVersion()": "0ca75044",
+        "initialize(bool)": "d53a822f",
+        "isActive()": "22f3e2d4",
+        "migrateReinvest((bytes,bool,uint8,address),(bytes,bool,uint8,address),bool)": "f58a5936",
+        "owner()": "8da5cb5b",
+        "renounceOwnership()": "715018a6",
+        "testCall()": "b7f05836",
+        "transferOwnership(address)": "f2fde38b",
+        "unwindReinvest((bytes,bool,uint8,address),uint256)": "bcb9236e"
+    },
+    "gasEstimates": null
+}

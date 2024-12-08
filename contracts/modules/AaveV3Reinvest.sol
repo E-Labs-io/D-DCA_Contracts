@@ -33,12 +33,23 @@ library AaveV3Reinvest {
     address constant AAVE_CONTRACT = 0xA238Dd80C259a72e81d7e4664a9801593F98d1c5; //OPTIMISM ADDRESS
     AaveIPool constant AAVE_POOL = AaveIPool(AAVE_CONTRACT);
 
+    /**
+     * @dev The reinvest data structure
+     *
+     */
     struct ReinvestDataStruct {
-        uint8 moduleCode;
+        uint8 moduleCode; // Module code
         address token;
         address aToken;
     }
 
+    /**
+     * @dev Executes the reinvest logic
+     * @param amount_ The amount of tokens to reinvest
+     * @param data_ The encoded reinvest data
+     * @return amount The amount of tokens reinvested
+     * @return success A boolean indicating success
+     */
     function _execute(
         uint256 amount_,
         bytes memory data_
@@ -66,6 +77,13 @@ library AaveV3Reinvest {
         return (amount, success);
     }
 
+    /**
+     * @dev Unwinds the reinvest logic
+     * @param amount_ The amount of tokens to unwind
+     * @param data_ The encoded unwind data
+     * @return amount The amount of tokens unwound
+     * @return success A boolean indicating success
+     */
     function _unwind(
         uint256 amount_,
         bytes memory data_
@@ -77,6 +95,11 @@ library AaveV3Reinvest {
         return (amount, success);
     }
 
+    /**
+     * @dev Decodes the reinvest data
+     * @param data_ The encoded reinvest data
+     * @return The reinvest data structure
+     */
     function _decodeData(
         bytes memory data_
     ) private pure returns (ReinvestDataStruct memory) {

@@ -80,12 +80,13 @@ abstract contract Swap {
      * @dev logic to approve external address to spend given token
      * @param baseToken_ address of the base token to allow contract to spend
      * @param amount_ amount to limit the spend
+     * @return success The success of the approval
      */
     function _approveSwapSpend(
         address baseToken_,
         uint256 amount_
     ) internal returns (bool success) {
-        success = _checkSendAllowance(
+        success = _checkSpendAllowance(
             baseToken_,
             address(SWAP_ROUTER),
             amount_
@@ -101,8 +102,9 @@ abstract contract Swap {
      * @param baseToken_ Address of the base token to check allowance of
      * @param spender_ address of the spending contract
      * @param neededAllowance_ amount of the base token the allowance
+     * @return If the allowance is enough
      */
-    function _checkSendAllowance(
+    function _checkSpendAllowance(
         address baseToken_,
         address spender_,
         uint256 neededAllowance_

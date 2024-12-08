@@ -45,9 +45,9 @@ abstract contract OnlyActive {
 
     /**
      * @notice Returns the active state of the contract
-     * @return True if the contract is active, false otherwise
+     * @return isActive True if the contract is active, false otherwise
      */
-    function isActive() public view returns (bool) {
+    function isActive() external view virtual returns (bool) {
         return _active;
     }
 

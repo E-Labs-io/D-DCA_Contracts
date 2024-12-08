@@ -149,7 +149,7 @@ describe("> Basic Reinvest Test", () => {
     it("🧪 Should update the Reinvest Address", async function () {
       const updateAddressTx = await createdAccount
         .connect(addressStore.user.signer)
-        .changeDCAReinvestLibrary(reinvestContract.target);
+        .changeReinvestLibrary(reinvestContract.target);
       await updateAddressTx.wait();
       const address = await createdAccount.getAttachedReinvestLibraryAddress();
       expect(address).to.equal(reinvestContract.target);

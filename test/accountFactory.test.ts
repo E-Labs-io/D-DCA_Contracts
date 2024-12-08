@@ -155,7 +155,7 @@ describe("> DCA Account Factory Tests", () => {
     it("🧪 Should deploy a new Account", async function () {
       const createTx = await factoryContract
         .connect(addressStore.user.signer)
-        .createDCAAccount();
+        .CreateAccount();
       await expect(createTx.wait()).to.be.fulfilled;
     });
 

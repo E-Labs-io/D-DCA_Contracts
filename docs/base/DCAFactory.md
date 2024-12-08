@@ -16,9 +16,9 @@
 function CreateAccount() external nonpayable
 ```
 
-Creates a new DCAAccount to belong to the caller.Emits a DCAAccountCreated event.
+Will create a new DCAAccount with the sender as the initial owner.
 
-*Access control is handled by the OnlyActive inheritance.*
+*Creates a new DCAAccount*
 
 
 ### SWAP_ROUTER
@@ -29,14 +29,14 @@ function SWAP_ROUTER() external view returns (address)
 
 
 
-
+*The swap router address*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
+| _0 | address | The swap router address |
 
 ### accountsCreated
 
@@ -46,14 +46,14 @@ function accountsCreated() external view returns (uint256)
 
 
 
-
+*The total deployed accounts*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | undefined |
+| _0 | uint256 | The total deployed accounts |
 
 ### getActiveExecutorAddress
 
@@ -61,16 +61,16 @@ function accountsCreated() external view returns (uint256)
 function getActiveExecutorAddress() external view returns (address)
 ```
 
-Returns the active address of the DCAExecutor.
 
 
+*Gets the executor address*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | The address of the active DCAExecutor. |
+| _0 | address | The executor address |
 
 ### getDCAAccountsOfUser
 
@@ -78,21 +78,21 @@ Returns the active address of the DCAExecutor.
 function getDCAAccountsOfUser(address _user) external view returns (address[])
 ```
 
-Returns all DCAAccounts that belong to a user.
 
 
+*Gets all DCAAccounts created by a user*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _user | address | Address of the account creator. |
+| _user | address | The address of the user |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address[] | An array of DCAAccount addresses. |
+| _0 | address[] | The addresses of the DCAAccounts created by the user |
 
 ### getFactoryActiveState
 
@@ -100,16 +100,16 @@ Returns all DCAAccounts that belong to a user.
 function getFactoryActiveState() external view returns (bool)
 ```
 
-Returns the active state of the factory.
 
 
+*Gets the active state of the factory*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | A boolean indicating whether the factory is active. |
+| _0 | bool | The active state of the factory |
 
 ### getTotalDeployedAccounts
 
@@ -117,16 +117,16 @@ Returns the active state of the factory.
 function getTotalDeployedAccounts() external view returns (uint256)
 ```
 
-Returns the total number of deployed DCAAccounts.
 
 
+*Gets the total deployed accounts*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | The total number of deployed DCAAccounts. |
+| _0 | uint256 | The total deployed accounts |
 
 ### isActive
 
@@ -143,7 +143,7 @@ Returns the active state of the contract
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | True if the contract is active, false otherwise |
+| _0 | bool | isActive True if the contract is active, false otherwise |
 
 ### owner
 
@@ -170,14 +170,14 @@ function reInvestLogicContract() external view returns (address)
 
 
 
-
+*The reinvest logic contract address*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
+| _0 | address | The reinvest logic contract address |
 
 ### renounceOwnership
 
@@ -212,15 +212,15 @@ function transferOwnership(address newOwner) external nonpayable
 function updateExecutorAddress(address _newExecutorAddress) external nonpayable
 ```
 
-Updates the DCAExecutor address.
 
 
+*Updates the executor address*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _newExecutorAddress | address | The new address of the DCAExecutor. |
+| _newExecutorAddress | address | The address of the new executor |
 
 ### updateReinvestLibraryAddress
 
@@ -228,15 +228,15 @@ Updates the DCAExecutor address.
 function updateReinvestLibraryAddress(address newAddress_) external nonpayable
 ```
 
-Updates the DCAReinvestLibrary address.
 
 
+*Updates the reinvest library address*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| newAddress_ | address | The new address of the DCAReinvestLibrary. |
+| newAddress_ | address | The address of the new reinvest library |
 
 ### userDCAAccounts
 

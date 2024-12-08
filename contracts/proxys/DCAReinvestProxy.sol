@@ -30,7 +30,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
  *  e-labs.co.uk
  *
  */
-contract DCAReinvestProxy is
+abstract contract DCAReinvestProxy is
     Initializable,
     DCAReinvestLogic,
     OwnableUpgradeable

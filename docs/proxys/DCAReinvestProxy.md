@@ -68,6 +68,23 @@ function executeReinvest(IDCADataStructures.Reinvest reinvestData_, uint256 amou
 | amount | uint256 | undefined |
 | success | bool | undefined |
 
+### getActiveModuals
+
+```solidity
+function getActiveModuals() external view returns (uint8[])
+```
+
+
+
+*Returns the active moduals*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint8[] | The active moduals |
+
 ### getLibraryVersion
 
 ```solidity
@@ -76,14 +93,14 @@ function getLibraryVersion() external pure returns (string)
 
 
 
-
+*Returns the version of the reinvestment*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | undefined |
+| _0 | string | The version of the reinvestment |
 
 ### initialize
 
@@ -100,6 +117,23 @@ function initialize(bool activate_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | activate_ | bool | undefined |
+
+### isActive
+
+```solidity
+function isActive() external view returns (bool)
+```
+
+
+
+*Checks if the reinvestment is active*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | isActive Whether the reinvestment is active |
 
 ### migrateReinvest
 

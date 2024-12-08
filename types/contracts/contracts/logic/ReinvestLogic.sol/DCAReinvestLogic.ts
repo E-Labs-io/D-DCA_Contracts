@@ -3,10 +3,12 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
   Interface,
+  AddressLike,
   ContractRunner,
   ContractMethod,
   Listener,
@@ -19,9 +21,37 @@ import type {
   TypedContractMethod,
 } from "../../../common";
 
+export declare namespace IDCADataStructures {
+  export type ReinvestStruct = {
+    reinvestData: BytesLike;
+    active: boolean;
+    investCode: BigNumberish;
+    dcaAccountAddress: AddressLike;
+  };
+
+  export type ReinvestStructOutput = [
+    reinvestData: string,
+    active: boolean,
+    investCode: bigint,
+    dcaAccountAddress: string
+  ] & {
+    reinvestData: string;
+    active: boolean;
+    investCode: bigint;
+    dcaAccountAddress: string;
+  };
+}
+
 export interface DCAReinvestLogicInterface extends Interface {
   getFunction(
-    nameOrSignature: "ACTIVE_REINVESTS" | "REINVEST_VERSION"
+    nameOrSignature:
+      | "ACTIVE_REINVESTS"
+      | "REINVEST_VERSION"
+      | "executeReinvest"
+      | "getActiveModuals"
+      | "getLibraryVersion"
+      | "isActive"
+      | "unwindReinvest"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -32,6 +62,23 @@ export interface DCAReinvestLogicInterface extends Interface {
     functionFragment: "REINVEST_VERSION",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "executeReinvest",
+    values: [IDCADataStructures.ReinvestStruct, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getActiveModuals",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLibraryVersion",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "unwindReinvest",
+    values: [IDCADataStructures.ReinvestStruct, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "ACTIVE_REINVESTS",
@@ -39,6 +86,23 @@ export interface DCAReinvestLogicInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "REINVEST_VERSION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "executeReinvest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getActiveModuals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLibraryVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "unwindReinvest",
     data: BytesLike
   ): Result;
 }
@@ -90,6 +154,24 @@ export interface DCAReinvestLogic extends BaseContract {
 
   REINVEST_VERSION: TypedContractMethod<[], [string], "view">;
 
+  executeReinvest: TypedContractMethod<
+    [reinvestData_: IDCADataStructures.ReinvestStruct, amount_: BigNumberish],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
+
+  getActiveModuals: TypedContractMethod<[], [bigint[]], "view">;
+
+  getLibraryVersion: TypedContractMethod<[], [string], "view">;
+
+  isActive: TypedContractMethod<[], [boolean], "view">;
+
+  unwindReinvest: TypedContractMethod<
+    [reinvestData_: IDCADataStructures.ReinvestStruct, amount_: BigNumberish],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -100,6 +182,29 @@ export interface DCAReinvestLogic extends BaseContract {
   getFunction(
     nameOrSignature: "REINVEST_VERSION"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "executeReinvest"
+  ): TypedContractMethod<
+    [reinvestData_: IDCADataStructures.ReinvestStruct, amount_: BigNumberish],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "getActiveModuals"
+  ): TypedContractMethod<[], [bigint[]], "view">;
+  getFunction(
+    nameOrSignature: "getLibraryVersion"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "isActive"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "unwindReinvest"
+  ): TypedContractMethod<
+    [reinvestData_: IDCADataStructures.ReinvestStruct, amount_: BigNumberish],
+    [[bigint, boolean] & { amount: bigint; success: boolean }],
+    "nonpayable"
+  >;
 
   filters: {};
 }

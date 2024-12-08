@@ -132,14 +132,15 @@ describe("> DCA Strategy Executions Tests", () => {
         addressStore.deployer.signer,
       );
 
-      createdAccount = await factoryFactory.deploy(
+      const tx = await factoryFactory.deploy(
         ZeroAddress,
         tokenAddress.swapRouter![forkedChain]!,
         addressStore.user.address,
         ZeroAddress,
       );
-      await createdAccount.waitForDeployment();
-      createdAccount = createdAccount.connect(addressStore.user.signer);
+      await tx.waitForDeployment();
+      createdAccount = tx.connect(addressStore.user.signer);
+      expect(tx).to.emit(factoryFactory, "AccountCreated");
       expect(createdAccount.target).to.not.equal(ZeroAddress);
     });
 
@@ -227,7 +228,7 @@ describe("> DCA Strategy Executions Tests", () => {
     it("🧪 Should update the Reinvest Address", async function () {
       const updateAddressTx = await createdAccount
         .connect(addressStore.user.signer)
-        .changeDCAReinvestLibrary(reinvestContract.target);
+        .changeReinvestLibrary(reinvestContract.target);
       await updateAddressTx.wait();
       const address = await createdAccount.getAttachedReinvestLibraryAddress();
       expect(address).to.equal(reinvestContract.target);
@@ -424,6 +425,7 @@ describe("> DCA Strategy Executions Tests", () => {
           true,
         );
         await expect(createStratTx.wait()).to.be.fulfilled;
+        await expect(createStratTx).to.emit(createdAccount, "StrategyCreated");
       });
       it("🧪 Should return there that strat 2 and reinvest is active", async function () {
         const stratsCheck = await createdAccount.getStrategyData(2);
@@ -444,11 +446,11 @@ describe("> DCA Strategy Executions Tests", () => {
 
         // Check for the ExecutedDCA event from the executorContract
         await expect(tx)
-          .to.emit(executorContract, "ExecutedDCA")
+          .to.emit(executorContract, "ExecutedStrategy")
           .withArgs(createdAccount.target, 2);
 
         await expect(tx.wait())
-          .to.emit(createdAccount, "StrategyReinvestExecuted")
+          .to.emit(createdAccount, "ReinvestExecuted")
           .withArgs(2, true, (amount: any) => {
             reinvestedAmount = amount;
             Stat2Total = Stat2Total + Number(amount);
@@ -484,11 +486,11 @@ describe("> DCA Strategy Executions Tests", () => {
 
           // Check for the ExecutedDCA event from the executorContract
           await expect(tx1)
-            .to.emit(executorContract, "ExecutedDCA")
+            .to.emit(executorContract, "ExecutedStrategy")
             .withArgs(createdAccount.target, 1);
 
           await expect(tx1.wait())
-            .to.emit(createdAccount, "StrategyReinvestExecuted")
+            .to.emit(createdAccount, "ReinvestExecuted")
             .withArgs(1, true, (amount: any) => {
               Stat1Total = Stat1Total + Number(amount);
               return amount > 0;
@@ -503,11 +505,11 @@ describe("> DCA Strategy Executions Tests", () => {
 
           // Check for the ExecutedDCA event from the executorContract
           await expect(tx2)
-            .to.emit(executorContract, "ExecutedDCA")
+            .to.emit(executorContract, "ExecutedStrategy")
             .withArgs(createdAccount.target, 2);
 
           await expect(tx2.wait())
-            .to.emit(createdAccount, "StrategyReinvestExecuted")
+            .to.emit(createdAccount, "ReinvestExecuted")
             .withArgs(2, true, (amount: any) => {
               Stat2Total = Stat2Total + Number(amount);
               return amount > 0;
@@ -561,11 +563,11 @@ describe("> DCA Strategy Executions Tests", () => {
 
           // Check for the ExecutedDCA event from the executorContract
           await expect(tx1)
-            .to.emit(executorContract, "ExecutedDCA")
+            .to.emit(executorContract, "ReinvestExecuted")
             .withArgs(createdAccount.target, 1);
 
           await expect(tx1.wait())
-            .to.emit(createdAccount, "StrategyReinvestExecuted")
+            .to.emit(createdAccount, "ReinvestExecuted")
             .withArgs(1, true, (amount: any) => {
               Stat1Total = Stat1Total + Number(amount);
               return amount > 0;
@@ -581,11 +583,11 @@ describe("> DCA Strategy Executions Tests", () => {
 
           // Check for the ExecutedDCA event from the executorContract
           await expect(tx2)
-            .to.emit(executorContract, "ExecutedDCA")
+            .to.emit(executorContract, "ReinvestExecuted")
             .withArgs(createdAccount.target, 2);
 
           await expect(tx2.wait())
-            .to.emit(createdAccount, "StrategyReinvestExecuted")
+            .to.emit(createdAccount, "ReinvestExecuted")
             .withArgs(2, true, (amount: any) => {
               Stat2Total = Stat2Total + Number(amount);
               return amount > 0;

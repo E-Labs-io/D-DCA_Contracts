@@ -50,8 +50,10 @@ export interface DCAReinvestProxyInterface extends Interface {
       | "ACTIVE_REINVESTS"
       | "REINVEST_VERSION"
       | "executeReinvest"
+      | "getActiveModuals"
       | "getLibraryVersion"
       | "initialize"
+      | "isActive"
       | "migrateReinvest"
       | "owner"
       | "renounceOwnership"
@@ -77,10 +79,15 @@ export interface DCAReinvestProxyInterface extends Interface {
     values: [IDCADataStructures.ReinvestStruct, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getActiveModuals",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getLibraryVersion",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "initialize", values: [boolean]): string;
+  encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "migrateReinvest",
     values: [
@@ -117,10 +124,15 @@ export interface DCAReinvestProxyInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getActiveModuals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getLibraryVersion",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "migrateReinvest",
     data: BytesLike
@@ -229,9 +241,13 @@ export interface DCAReinvestProxy extends BaseContract {
     "nonpayable"
   >;
 
+  getActiveModuals: TypedContractMethod<[], [bigint[]], "view">;
+
   getLibraryVersion: TypedContractMethod<[], [string], "view">;
 
   initialize: TypedContractMethod<[activate_: boolean], [void], "nonpayable">;
+
+  isActive: TypedContractMethod<[], [boolean], "view">;
 
   migrateReinvest: TypedContractMethod<
     [
@@ -279,11 +295,17 @@ export interface DCAReinvestProxy extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "getActiveModuals"
+  ): TypedContractMethod<[], [bigint[]], "view">;
+  getFunction(
     nameOrSignature: "getLibraryVersion"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "initialize"
   ): TypedContractMethod<[activate_: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "isActive"
+  ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "migrateReinvest"
   ): TypedContractMethod<

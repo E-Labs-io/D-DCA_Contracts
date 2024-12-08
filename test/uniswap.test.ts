@@ -184,30 +184,10 @@ describe("> Uniswap Tests Tests", () => {
   });
 
   describe("💡 Execute a SWAP test", () => {
-    it("🧪Should fail to execute a SWAP test", async function () {
-      await expect(
-        createdAccount.SWAP(
-          tokenAddress.usdc![forkedChain]!,
-          tokenAddress.weth![forkedChain]!,
-          ethers.parseUnits("100", 6),
-        ),
-      ).to.be.reverted;
-    });
-
     it("🧪Should transfer USDC to account", async () => {
       const contract = usdcContract.connect(addressStore.deployer.signer);
       await expect(
         contract.transfer(createdAccount.target, ethers.parseUnits("1000", 6)),
-      ).to.be.fulfilled;
-    });
-
-    it("🧪Should execute a SWAP test", async () => {
-      await expect(
-        createdAccount.SWAP(
-          tokenAddress.usdc![forkedChain]!,
-          tokenAddress.weth![forkedChain]!,
-          ethers.parseUnits("100", 6),
-        ),
       ).to.be.fulfilled;
     });
   });
@@ -231,15 +211,6 @@ describe("> Uniswap Tests Tests", () => {
           ethers.parseUnits("100", 6),
         ),
       ).to.be.fulfilled;
-    });
-
-    it("🧪Should execute a SWAP test for ETH", async function () {
-      const tx = await createdAccount.SWAP(
-        tokenAddress.usdc![forkedChain]!,
-        ZeroAddress,
-        ethers.parseUnits("100", 6),
-      );
-      await expect(tx.wait()).to.be.fulfilled;
     });
 
     it("🧪Should get the new ETH balance of the account", async function () {

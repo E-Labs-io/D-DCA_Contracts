@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "hardhat/console.sol";
 import "../library/Codes.sol";
 
-import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
+import {IDCAReinvest, IDCADataStructures} from "../interfaces/IDCAReinvest.sol";
 
 /**
  *
@@ -26,7 +26,7 @@ import {IDCADataStructures} from "../interfaces/IDCADataStructures.sol";
  *
  */
 
-abstract contract DCAReinvestLogic {
+abstract contract DCAReinvestLogic is IDCAReinvest {
     using ReinvestCodes for uint8;
     string public constant REINVEST_VERSION = "TEST V0.5";
     bytes public constant ACTIVE_REINVESTS =

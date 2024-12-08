@@ -6,10 +6,9 @@ import "hardhat/console.sol";
 import "../utils/swap.sol";
 import {Strategies, Intervals} from "../library/Strategys.sol";
 import {Fee} from "../library/Fees.sol";
-
-import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
-import {DCAReinvest} from "../base/DCAReinvest.sol";
 import {OnlyExecutor} from "../security/onlyExecutor.sol";
+import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
+import {IDCAReinvest} from "../interfaces/IDCAReinvest.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
 
 /**
@@ -48,7 +47,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     uint256 internal _totalActiveStrategies;
     uint256 internal _strategyCount;
 
-    DCAReinvest private DCAREINVEST_LIBRARY;
+    IDCAReinvest private DCAREINVEST_LIBRARY;
 
     /**
      * @dev Modifier to check if a strategy is within the allowed execution window
@@ -239,7 +238,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      */
     function _setReinvestAddress(address newAddress_) internal {
         // require(newAddress_ != address(0), "Invalid Reinvest Library Address");
-        DCAREINVEST_LIBRARY = DCAReinvest(newAddress_);
+        DCAREINVEST_LIBRARY = IDCAReinvest(newAddress_);
         emit ReinvestLibraryChanged(newAddress_);
     }
 
@@ -247,7 +246,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @dev get the Reinvest Contract
      * @return the Reinvest Contract instance
      */
-    function _getReinvestContract() internal view returns (DCAReinvest) {
+    function _getReinvestContract() internal view returns (IDCAReinvest) {
         return DCAREINVEST_LIBRARY;
     }
 

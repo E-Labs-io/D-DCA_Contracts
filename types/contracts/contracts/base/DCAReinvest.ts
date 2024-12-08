@@ -50,10 +50,10 @@ export interface DCAReinvestInterface extends Interface {
       | "ACTIVE_REINVESTS"
       | "REINVEST_VERSION"
       | "executeReinvest"
+      | "getActiveModuals"
       | "getLibraryVersion"
       | "getModuleName"
       | "isActive"
-      | "migrateReinvest"
       | "owner"
       | "renounceOwnership"
       | "setActiveState"
@@ -78,6 +78,10 @@ export interface DCAReinvestInterface extends Interface {
     values: [IDCADataStructures.ReinvestStruct, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getActiveModuals",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getLibraryVersion",
     values?: undefined
   ): string;
@@ -86,14 +90,6 @@ export interface DCAReinvestInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "migrateReinvest",
-    values: [
-      IDCADataStructures.ReinvestStruct,
-      IDCADataStructures.ReinvestStruct,
-      boolean
-    ]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -125,6 +121,10 @@ export interface DCAReinvestInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getActiveModuals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getLibraryVersion",
     data: BytesLike
   ): Result;
@@ -133,10 +133,6 @@ export interface DCAReinvestInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "migrateReinvest",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -234,21 +230,13 @@ export interface DCAReinvest extends BaseContract {
     "nonpayable"
   >;
 
+  getActiveModuals: TypedContractMethod<[], [bigint[]], "view">;
+
   getLibraryVersion: TypedContractMethod<[], [string], "view">;
 
   getModuleName: TypedContractMethod<[code_: BigNumberish], [string], "view">;
 
   isActive: TypedContractMethod<[], [boolean], "view">;
-
-  migrateReinvest: TypedContractMethod<
-    [
-      oldReinvestData_: IDCADataStructures.ReinvestStruct,
-      newReinvestData_: IDCADataStructures.ReinvestStruct,
-      withdrawFunds_: boolean
-    ],
-    [[bigint, boolean] & { amount: bigint; success: boolean }],
-    "nonpayable"
-  >;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -286,6 +274,9 @@ export interface DCAReinvest extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "getActiveModuals"
+  ): TypedContractMethod<[], [bigint[]], "view">;
+  getFunction(
     nameOrSignature: "getLibraryVersion"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -294,17 +285,6 @@ export interface DCAReinvest extends BaseContract {
   getFunction(
     nameOrSignature: "isActive"
   ): TypedContractMethod<[], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "migrateReinvest"
-  ): TypedContractMethod<
-    [
-      oldReinvestData_: IDCADataStructures.ReinvestStruct,
-      newReinvestData_: IDCADataStructures.ReinvestStruct,
-      withdrawFunds_: boolean
-    ],
-    [[bigint, boolean] & { amount: bigint; success: boolean }],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

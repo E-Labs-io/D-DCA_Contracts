@@ -68,6 +68,23 @@ function executeReinvest(IDCADataStructures.Reinvest reinvestData_, uint256 amou
 | amount | uint256 | undefined |
 | success | bool | undefined |
 
+### getActiveModuals
+
+```solidity
+function getActiveModuals() external view returns (uint8[])
+```
+
+
+
+*Returns the active moduals*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint8[] | The active moduals |
+
 ### getLibraryVersion
 
 ```solidity
@@ -113,41 +130,16 @@ function getModuleName(uint8 code_) external pure returns (string)
 function isActive() external view returns (bool)
 ```
 
-Returns the active state of the contract
 
 
+*Returns whether the reinvest library is active*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | True if the contract is active, false otherwise |
-
-### migrateReinvest
-
-```solidity
-function migrateReinvest(IDCADataStructures.Reinvest oldReinvestData_, IDCADataStructures.Reinvest newReinvestData_, bool withdrawFunds_) external nonpayable returns (uint256 amount, bool success)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| oldReinvestData_ | IDCADataStructures.Reinvest | undefined |
-| newReinvestData_ | IDCADataStructures.Reinvest | undefined |
-| withdrawFunds_ | bool | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| amount | uint256 | undefined |
-| success | bool | undefined |
+| _0 | bool | Whether the reinvest library is active |
 
 ### owner
 
