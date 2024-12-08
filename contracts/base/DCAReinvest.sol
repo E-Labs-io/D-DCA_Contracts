@@ -5,6 +5,7 @@ import "hardhat/console.sol";
 
 import {DCAReinvestLogic, IDCADataStructures, ReinvestCodes} from "../logic/ReinvestLogic.sol";
 import "../security/onlyActive.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  *
@@ -24,12 +25,24 @@ import "../security/onlyActive.sol";
  *  e-labs.co.uk
  *
  */
-contract DCAReinvest is DCAReinvestLogic, OnlyActive {
+contract DCAReinvest is DCAReinvestLogic, OnlyActive, Ownable {
     using ReinvestCodes for uint8;
 
-    constructor(bool activeLibrary) Ownable(msg.sender) {
-        _setActiveState(activeLibrary);
+    /**
+     * @dev Constructor for the DCAReinvest contract
+     * @param activeLibrary_ The state of the reinvest library
+     */
+    constructor(bool activeLibrary_) Ownable(msg.sender) {
+        _setActiveState(activeLibrary_);
     }
+
+    /**
+     * @dev Executes the reinvestment
+     * @param reinvestData_ The reinvestment data
+     * @param amount_ The amount to reinvest
+     * @return amount The amount of the reinvestment
+     * @return success The success of the reinvestment
+     */
 
     function executeReinvest(
         IDCADataStructures.Reinvest memory reinvestData_,
@@ -37,6 +50,13 @@ contract DCAReinvest is DCAReinvestLogic, OnlyActive {
     ) external is_active returns (uint256 amount, bool success) {
         return _executeInvest(reinvestData_, amount_);
     }
+    /**
+     * @dev Unwinds the reinvestment
+     * @param reinvestData_ The reinvestment data
+     * @param amount_ The amount to unwind
+     * @return amount The amount of the unwind
+     * @return success The success of the unwind
+     */
     function unwindReinvest(
         IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
@@ -44,6 +64,14 @@ contract DCAReinvest is DCAReinvestLogic, OnlyActive {
         return _executeWithdraw(reinvestData_, amount_);
     }
 
+    /**
+     * @dev Migrates the reinvestment
+     * @param oldReinvestData_ The old reinvestment data
+     * @param newReinvestData_ The new reinvestment data
+     * @param withdrawFunds_ Whether to withdraw funds
+     * @return amount The amount of the migration
+     * @return success The success of the migration
+     */
     function migrateReinvest(
         IDCADataStructures.Reinvest memory oldReinvestData_,
         IDCADataStructures.Reinvest memory newReinvestData_,
@@ -52,14 +80,26 @@ contract DCAReinvest is DCAReinvestLogic, OnlyActive {
         return (amount, success);
     }
 
+    /**
+     * @dev Returns the version of the reinvest library
+     * @return The version of the reinvest library
+     */
     function getLibraryVersion() public pure returns (string memory) {
         return REINVEST_VERSION;
     }
 
+    /**
+     * @dev Sets the active state of the reinvest library
+     */
     function setActiveState() public onlyOwner {
         _setActiveState(!_getActiveState());
     }
 
+    /**
+     * @dev Returns the module name for the given code
+     * @param code_ The code to get the module name for
+     * @return The module name for the given code
+     */
     function getModuleName(uint8 code_) external pure returns (string memory) {
         return code_._getModuleName();
     }

@@ -33,7 +33,7 @@ abstract contract DCAReinvestLogic {
         abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
 
     /**
-     *
+     * @dev Executes the reinvestment
      * @param reinvestData_ {Reinvest} Data of the reinvest strategy
      * @param amount_ {uint256} amount of the token to be invested
      * @return amount {uint256} the amount of the yield baring token recived
@@ -54,6 +54,13 @@ abstract contract DCAReinvestLogic {
         ) return AaveV3Reinvest._execute(amount_, reinvestData_.reinvestData);
     }
 
+    /**
+     * @dev Executes the unwind of the reinvestment
+     * @param reinvestData_ The reinvestment data
+     * @param amount_ The amount to unwind
+     * @return amount The amount of the unwind
+     * @return success The success of the unwind
+     */
     function _executeWithdraw(
         IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_

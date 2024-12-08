@@ -2,22 +2,34 @@
 pragma solidity ^0.8.20;
 
 interface IDCADataStructures {
-    // Define an enum to represent the interval type
-    // Interval enum as you defined
+    /**
+     * @notice List of available intervals for executions
+     * @notice Timing will be in seconds
+     * @dev Check agenst Executor if the strategy interval is active
+     */
     enum Interval {
-        TestIntervalOneMin, //Only for development 4 blocks
-        TestIntervalFiveMins, //Only for development 20 blocks
-        TwelveHours,
-        OneDay, // 1 day = 5760 blocks
-        TwoDays, // 2 days = 11520 blocks
-        OneWeek, // 1 week = 40320 blocks
+        TestIntervalOneMin, //Only for development
+        TestIntervalFiveMins, //Only for development
+        OneDay,
+        TwoDays,
+        OneWeek,
         TwoWeeks,
-        OneMonth // 1 month = 172800 blocks
+        OneMonth
     }
 
+    /**
+     * @notice The fee distribution struct
+     * @dev Working by a factor of 100 (100% = 10000)
+     * @dev Executor, Computing and Admin fees should add up to 100%
+     * @param amountToExecutor Percent of the FEE going to Executor EOA
+     * @param amountToComputing Percent of the FEE going to Executor Computing costs
+     * @param amountToAdmin Percent of the FEE going to admin
+     * @param feeAmount Total amount of the pre-execution to be taken as fee
+     * @param executionAddress The address of the executor
+     * @param computingAddress The address of the computing
+     * @param adminAddress The address of the admin
+     */
     struct FeeDistribution {
-        //These may move to s struct or set of if more call data is needed
-        //  Executor, Computing and Admin fees should add up to 100%
         uint16 amountToExecutor; //In percent (where 10000 = 100%, 100 = 1%, etc.)
         uint16 amountToComputing; //In percent (where 10000 = 100%, 100 = 1%, etc.)
         uint16 amountToAdmin; //In percent (where 10000 = 100%, 100 = 1%, etc.)
@@ -27,11 +39,24 @@ interface IDCADataStructures {
         address adminAddress;
     }
 
-    // Define the Strategy struct
+    /**
+     * @notice The data struct defining the DCA Strategy
+     * @param accountAddress Address of the account the strategy belongs to
+     * @param baseToken The base token data
+     * @param targetToken The target token data
+     * @param interval The interval for the strategy
+     * @param amount The amount of the base token to invest each interval
+     * @param strategyId The ID of the strategy
+     * @param active Whether the strategy is active
+     * @param reinvest The reinvest data
+     *
+     * @dev strategyId is assigned by the account contract
+     *
+     */
     struct Strategy {
         address accountAddress;
-        TokeData baseToken;
-        TokeData targetToken; //use 0x0 for ETH
+        TokenData baseToken;
+        TokenData targetToken; //use 0x0 for ETH
         Interval interval;
         uint256 amount;
         uint256 strategyId;
@@ -39,7 +64,13 @@ interface IDCADataStructures {
         Reinvest reinvest;
     }
 
-    struct TokeData {
+    /**
+     *  @notice Token Data struct
+     * @param tokenAddress The address of the token (i using native token use zero address address(0x0))
+     * @param decimals The amount of decimals the token uses
+     * @param ticker Of the token
+     */
+    struct TokenData {
         address tokenAddress;
         uint8 decimals;
         string ticker;

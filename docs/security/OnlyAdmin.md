@@ -16,7 +16,7 @@
 function addAdmin(address newAdmin_) external nonpayable
 ```
 
-
+Adds an admin to the contract
 
 
 
@@ -24,7 +24,7 @@ function addAdmin(address newAdmin_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| newAdmin_ | address | undefined |
+| newAdmin_ | address | The address to add as an admin |
 
 ### checkIfAdmin
 
@@ -32,7 +32,7 @@ function addAdmin(address newAdmin_) external nonpayable
 function checkIfAdmin(address addressToCheck_) external view returns (bool)
 ```
 
-
+Checks if an address is an admin
 
 
 
@@ -40,13 +40,13 @@ function checkIfAdmin(address addressToCheck_) external view returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| addressToCheck_ | address | undefined |
+| addressToCheck_ | address | The address to check |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
+| _0 | bool | True if the address is an admin, false otherwise |
 
 ### owner
 
@@ -71,7 +71,7 @@ function owner() external view returns (address)
 function removeAdmin(address oldAdmin_) external nonpayable
 ```
 
-
+Removes an admin from the contract
 
 
 
@@ -79,7 +79,7 @@ function removeAdmin(address oldAdmin_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| oldAdmin_ | address | undefined |
+| oldAdmin_ | address | The address to remove as an admin |
 
 ### renounceOwnership
 

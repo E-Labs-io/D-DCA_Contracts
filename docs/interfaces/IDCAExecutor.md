@@ -43,30 +43,13 @@ Called by the external Executor service wallet only, triggers the specified stra
 | DCAAccount_ | address | {address} Address of the DCAAccount holding the strategy to execute |
 | strategyId_ | uint256 | {uint256} ID of the strategy to execute |
 
-### ExecuteBatch
-
-```solidity
-function ExecuteBatch(address[] DCAAccount_, uint256[] strategyId_) external nonpayable
-```
-
-Called by the external Executor service wallet only, triggers the specified strategy&#39;s
-
-*testing for now, will execute a max of 10 strategies at a time*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| DCAAccount_ | address[] | {address[]} Address of the DCAAccount holding the strategy to execute |
-| strategyId_ | uint256[] | {uint256[]} ID of the strategy to execute |
-
 ### ForceUnsubscribe
 
 ```solidity
 function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external nonpayable
 ```
 
-Used by the Executor service to remove a strategy from the DCAExecutor      Used mostly for unfunded and failing accounts.
+Used by the Executor service to remove a strategy from the DCAExecutor Used mostly for unfunded and failing accounts.
 
 
 
@@ -156,13 +139,13 @@ Allows the admin to turn Strategy timings on &amp; off
 
 ## Events
 
-### DCAAccountSubscription
+### ExecutedStrategy
 
 ```solidity
-event DCAAccountSubscription(address indexed DCAAccountAddress_, uint256 indexed strategyId_, enum IDCADataStructures.Interval strategyInterval_, bool indexed active_)
+event ExecutedStrategy(address indexed account_, uint256 indexed strategyId_)
 ```
 
-Emitted when a new strategy subscribes or unsubscribes to the executor
+Emitted once a strategy has finished executing successfully
 
 
 
@@ -170,27 +153,8 @@ Emitted when a new strategy subscribes or unsubscribes to the executor
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccountAddress_ `indexed` | address | {address} address of the DCAAccount subscribing |
-| strategyId_ `indexed` | uint256 | {uint256} ID of the strategy to (un-)subscribe |
-| strategyInterval_  | enum IDCADataStructures.Interval | {Interval} Interval state of how ofter to be executed |
-| active_ `indexed` | bool | {bool} wether the strategy is being subscribed (true) or unsubscribed (false) |
-
-### ExecutedDCA
-
-```solidity
-event ExecutedDCA(address indexed account_, uint256 indexed strategyId_)
-```
-
-Emitted once a strategy has finished executing
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| account_ `indexed` | address | {address} Address of the DCAAccount |
-| strategyId_ `indexed` | uint256 | {uint256} ID of teh strategy executed |
+| account_ `indexed` | address | Address of the DCAAccount |
+| strategyId_ `indexed` | uint256 | ID of the strategy executed |
 
 ### FeeDataChanged
 
@@ -217,8 +181,27 @@ Emitted each time the protocol fees are distributed
 
 | Name | Type | Description |
 |---|---|---|
-| token_ `indexed` | address | {address} address of the token being distributed |
-| amount_ `indexed` | uint256 | {uint256} amount of the total token distributed |
+| token_ `indexed` | address | address of the token being distributed |
+| amount_ `indexed` | uint256 | amount of the total token distributed |
+
+### StrategySubscription
+
+```solidity
+event StrategySubscription(address indexed DCAAccountAddress_, uint256 indexed strategyId_, enum IDCADataStructures.Interval strategyInterval_, bool indexed active_)
+```
+
+Emitted when a new strategy subscribes or unsubscribes to the executor
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| DCAAccountAddress_ `indexed` | address | address of the DCAAccount subscribing |
+| strategyId_ `indexed` | uint256 | ID of the strategy to (un-)subscribe |
+| strategyInterval_  | enum IDCADataStructures.Interval | Interval state of how ofter to be executed |
+| active_ `indexed` | bool | wether the strategy is being subscribed (true) or unsubscribed (false) |
 
 
 

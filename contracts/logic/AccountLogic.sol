@@ -8,7 +8,7 @@ import {Strategies, Intervals} from "../library/Strategys.sol";
 import {Fee} from "../library/Fees.sol";
 
 import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
-import {DCAReinvestLogic, DCAReinvest} from "../base/DCAReinvest.sol";
+import {DCAReinvest} from "../base/DCAReinvest.sol";
 import {OnlyExecutor} from "../security/onlyExecutor.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
 
@@ -44,9 +44,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     mapping(uint256 => uint256) internal _reinvestLiquidityTokenBalance; // strat Id to balance of liquidity token
 
     mapping(uint256 => uint256) internal _lastExecution; // strategyId to block number
-    mapping(address => uint256) internal _costPerBlock; //  Base currency
 
-    uint256 internal _totalIntervalsExecuted;
     uint256 internal _totalActiveStrategies;
     uint256 internal _strategyCount;
 
@@ -70,6 +68,11 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @notice EXECUTE Logic
      */
 
+    /**
+     * @dev logic to create a new strategy
+     * @param newStrategy_ the strategy data to create
+     * @notice Emits a StrategyCreated event on completion
+     */
     function _newStrategy(Strategy memory newStrategy_) internal {
         require(
             newStrategy_.isValid(),
@@ -82,7 +85,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         newStrategy_.active = false;
 
         _strategies[_strategyCount] = newStrategy_;
-        emit NewStrategyCreated(_strategyCount);
+        emit StrategyCreated(_strategyCount);
     }
 
     /**
@@ -120,11 +123,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
                     amountIn
                 );
 
-                emit StrategyReinvestExecuted(
-                    strategyId_,
-                    success,
-                    reinvestAmount
-                );
+                emit ReinvestExecuted(strategyId_, success, reinvestAmount);
             }
 
             if (success) {
@@ -132,7 +131,6 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
             } else _targetBalances[targetAddress] += amountIn;
 
             _baseBalances[baseAddress] -= strategy.amount;
-            _totalIntervalsExecuted++;
 
             emit StrategyExecuted(strategyId_, amountIn, success);
             return true;
@@ -144,13 +142,6 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param strategyData_ data struct of the strategy to subscribe
      */
     function _subscribeToExecutor(Strategy memory strategyData_) internal {
-        _costPerBlock[
-            strategyData_.baseToken.tokenAddress
-        ] += _calculateCostPerBlock(
-            strategyData_.amount,
-            strategyData_.interval
-        );
-
         IDCAExecutor(_executor()).Subscribe(strategyData_);
         _strategies[strategyData_.strategyId].active = true;
         _totalActiveStrategies += 1;
@@ -162,14 +153,8 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param strategyId_ Id of the strategy to unsubscribe
      */
     function _unsubscribeToExecutor(uint256 strategyId_) internal {
-        Strategy memory oldStrategy = _strategies[strategyId_];
-        _costPerBlock[oldStrategy.baseAddress()] -= _calculateCostPerBlock(
-            oldStrategy.amount,
-            oldStrategy.interval
-        );
-
         IDCAExecutor(_executor()).Unsubscribe(address(this), strategyId_);
-        _strategies[oldStrategy.strategyId].active = false;
+        _strategies[strategyId_].active = false;
         _totalActiveStrategies--;
         emit StrategyUnsubscribed(strategyId_);
     }
@@ -255,7 +240,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     function _setReinvestAddress(address newAddress_) internal {
         // require(newAddress_ != address(0), "Invalid Reinvest Library Address");
         DCAREINVEST_LIBRARY = DCAReinvest(newAddress_);
-        emit DCAReinvestLibraryChanged(newAddress_);
+        emit ReinvestLibraryChanged(newAddress_);
     }
 
     /**
@@ -264,26 +249,6 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      */
     function _getReinvestContract() internal view returns (DCAReinvest) {
         return DCAREINVEST_LIBRARY;
-    }
-
-    /**
-     * @notice cost & fee calculations Logic
-     */
-
-    /**
-     * @dev calculate cost per block for the given interval & amount of spot sell
-     * @param amount_ amount of the token
-     * @param interval_ execution interval
-     */
-    function _calculateCostPerBlock(
-        uint256 amount_,
-        Interval interval_
-    ) internal pure returns (uint256) {
-        require(
-            interval_.intervalToBlockAmount() > 0,
-            "Invalid block amount for interval"
-        );
-        return amount_ / interval_.intervalToBlockAmount();
     }
 
     /**

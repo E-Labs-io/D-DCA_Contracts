@@ -31,10 +31,21 @@ library ReinvestCodes {
     uint8 constant POOLTOGETHER_ETH = 0x14;
     uint8 constant LIDO_STETH = 0x15;
 
+    /**
+     * @notice Checks if the have_ code matches the want_ code
+     * @param have_ The code to check
+     * @param want_ The code to compare against
+     * @return True if the codes match, false otherwise
+     */
     function checkCode(uint8 have_, uint8 want_) internal pure returns (bool) {
         return have_ == want_;
     }
 
+    /**
+     * @notice Returns the module name for the given code
+     * @param code_ The code to get the module name for
+     * @return moduleName The module name
+     */
     function _getModuleName(
         uint8 code_
     ) internal pure returns (string memory moduleName) {
@@ -43,6 +54,8 @@ library ReinvestCodes {
         else if (checkCode(code_, ReinvestCodes.FORWARD))
             moduleName = ForwardReinvest.MODULE_NAME;
         else if (checkCode(code_, ReinvestCodes.AAVE))
+            moduleName = AaveV3Reinvest.MODULE_NAME;
+        else if (checkCode(code_, ReinvestCodes.LIDO_STETH))
             moduleName = AaveV3Reinvest.MODULE_NAME;
     }
 }

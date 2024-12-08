@@ -1,4 +1,4 @@
-# DCAFactory
+# IDCAFactory
 
 
 
@@ -20,40 +20,6 @@ Creates a new DCAAccount to belong to the caller.Emits a DCAAccountCreated event
 
 *Access control is handled by the OnlyActive inheritance.*
 
-
-### SWAP_ROUTER
-
-```solidity
-function SWAP_ROUTER() external view returns (address)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-
-### accountsCreated
-
-```solidity
-function accountsCreated() external view returns (uint256)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
 
 ### getActiveExecutorAddress
 
@@ -128,84 +94,6 @@ Returns the total number of deployed DCAAccounts.
 |---|---|---|
 | _0 | uint256 | The total number of deployed DCAAccounts. |
 
-### isActive
-
-```solidity
-function isActive() external view returns (bool)
-```
-
-Returns the active state of the contract
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | True if the contract is active, false otherwise |
-
-### owner
-
-```solidity
-function owner() external view returns (address)
-```
-
-
-
-*Returns the address of the current owner.*
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-
-### reInvestLogicContract
-
-```solidity
-function reInvestLogicContract() external view returns (address)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-
-### renounceOwnership
-
-```solidity
-function renounceOwnership() external nonpayable
-```
-
-
-
-*Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.*
-
-
-### transferOwnership
-
-```solidity
-function transferOwnership(address newOwner) external nonpayable
-```
-
-
-
-*Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newOwner | address | undefined |
-
 ### updateExecutorAddress
 
 ```solidity
@@ -238,29 +126,6 @@ Updates the DCAReinvestLibrary address.
 |---|---|---|
 | newAddress_ | address | The new address of the DCAReinvestLibrary. |
 
-### userDCAAccounts
-
-```solidity
-function userDCAAccounts(address, uint256) external view returns (address)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-| _1 | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-
 
 
 ## Events
@@ -282,22 +147,6 @@ Emitted when a new DCAAccount is created.
 | owner `indexed` | address | The owner of the DCAAccount |
 | dcaAccount `indexed` | address | The address of the DCAAccount |
 
-### ContractActiveStateChange
-
-```solidity
-event ContractActiveStateChange(bool indexed active_)
-```
-
-Emitted when the active state of the contract is changed
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| active_ `indexed` | bool | The new active state |
-
 ### ExecutorChanged
 
 ```solidity
@@ -313,23 +162,6 @@ Emitted when the DCAExecutor address is changed.
 | Name | Type | Description |
 |---|---|---|
 | newAddress `indexed` | address | The new address of the DCAExecutor |
-
-### OwnershipTransferred
-
-```solidity
-event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| previousOwner `indexed` | address | undefined |
-| newOwner `indexed` | address | undefined |
 
 ### ReinvestLibraryChanged
 
@@ -347,51 +179,5 @@ Emitted when the DCAReinvestContract address is changed.
 |---|---|---|
 | newLibraryAddress `indexed` | address | The new address of the DCAReinvestContract |
 
-
-
-## Errors
-
-### ContractIsPaused
-
-```solidity
-error ContractIsPaused()
-```
-
-Error thrown when the contract is paused
-
-
-
-
-### OwnableInvalidOwner
-
-```solidity
-error OwnableInvalidOwner(address owner)
-```
-
-
-
-*The owner is not a valid owner account. (eg. `address(0)`)*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| owner | address | undefined |
-
-### OwnableUnauthorizedAccount
-
-```solidity
-error OwnableUnauthorizedAccount(address account)
-```
-
-
-
-*The caller account is not authorized to perform an operation.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| account | address | undefined |
 
 

@@ -3,7 +3,6 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -23,32 +22,22 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
-export interface DCAFactoryInterface extends Interface {
+export interface IDCAFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "CreateAccount"
-      | "SWAP_ROUTER"
-      | "accountsCreated"
       | "getActiveExecutorAddress"
       | "getDCAAccountsOfUser"
       | "getFactoryActiveState"
       | "getTotalDeployedAccounts"
-      | "isActive"
-      | "owner"
-      | "reInvestLogicContract"
-      | "renounceOwnership"
-      | "transferOwnership"
       | "updateExecutorAddress"
       | "updateReinvestLibraryAddress"
-      | "userDCAAccounts"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
       | "AccountCreated"
-      | "ContractActiveStateChange"
       | "ExecutorChanged"
-      | "OwnershipTransferred"
       | "ReinvestLibraryChanged"
   ): EventFragment;
 
@@ -57,14 +46,6 @@ export interface DCAFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "SWAP_ROUTER",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "accountsCreated",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getActiveExecutorAddress",
     values?: undefined
   ): string;
@@ -80,20 +61,6 @@ export interface DCAFactoryInterface extends Interface {
     functionFragment: "getTotalDeployedAccounts",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "reInvestLogicContract",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
-  ): string;
   encodeFunctionData(
     functionFragment: "updateExecutorAddress",
     values: [AddressLike]
@@ -101,10 +68,6 @@ export interface DCAFactoryInterface extends Interface {
   encodeFunctionData(
     functionFragment: "updateReinvestLibraryAddress",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "userDCAAccounts",
-    values: [AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -112,14 +75,6 @@ export interface DCAFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "SWAP_ROUTER",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "accountsCreated",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getActiveExecutorAddress",
     data: BytesLike
   ): Result;
@@ -135,30 +90,12 @@ export interface DCAFactoryInterface extends Interface {
     functionFragment: "getTotalDeployedAccounts",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "reInvestLogicContract",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "updateExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateReinvestLibraryAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "userDCAAccounts",
     data: BytesLike
   ): Result;
 }
@@ -169,18 +106,6 @@ export namespace AccountCreatedEvent {
   export interface OutputObject {
     owner: string;
     dcaAccount: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ContractActiveStateChangeEvent {
-  export type InputTuple = [active_: boolean];
-  export type OutputTuple = [active_: boolean];
-  export interface OutputObject {
-    active_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -200,19 +125,6 @@ export namespace ExecutorChangedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace ReinvestLibraryChangedEvent {
   export type InputTuple = [newLibraryAddress: AddressLike];
   export type OutputTuple = [newLibraryAddress: string];
@@ -225,11 +137,11 @@ export namespace ReinvestLibraryChangedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface DCAFactory extends BaseContract {
-  connect(runner?: ContractRunner | null): DCAFactory;
+export interface IDCAFactory extends BaseContract {
+  connect(runner?: ContractRunner | null): IDCAFactory;
   waitForDeployment(): Promise<this>;
 
-  interface: DCAFactoryInterface;
+  interface: IDCAFactoryInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -270,10 +182,6 @@ export interface DCAFactory extends BaseContract {
 
   CreateAccount: TypedContractMethod<[], [void], "nonpayable">;
 
-  SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
-
-  accountsCreated: TypedContractMethod<[], [bigint], "view">;
-
   getActiveExecutorAddress: TypedContractMethod<[], [string], "view">;
 
   getDCAAccountsOfUser: TypedContractMethod<
@@ -285,20 +193,6 @@ export interface DCAFactory extends BaseContract {
   getFactoryActiveState: TypedContractMethod<[], [boolean], "view">;
 
   getTotalDeployedAccounts: TypedContractMethod<[], [bigint], "view">;
-
-  isActive: TypedContractMethod<[], [boolean], "view">;
-
-  owner: TypedContractMethod<[], [string], "view">;
-
-  reInvestLogicContract: TypedContractMethod<[], [string], "view">;
-
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
-
-  transferOwnership: TypedContractMethod<
-    [newOwner: AddressLike],
-    [void],
-    "nonpayable"
-  >;
 
   updateExecutorAddress: TypedContractMethod<
     [_newExecutorAddress: AddressLike],
@@ -312,12 +206,6 @@ export interface DCAFactory extends BaseContract {
     "nonpayable"
   >;
 
-  userDCAAccounts: TypedContractMethod<
-    [arg0: AddressLike, arg1: BigNumberish],
-    [string],
-    "view"
-  >;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -325,12 +213,6 @@ export interface DCAFactory extends BaseContract {
   getFunction(
     nameOrSignature: "CreateAccount"
   ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "SWAP_ROUTER"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "accountsCreated"
-  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "getActiveExecutorAddress"
   ): TypedContractMethod<[], [string], "view">;
@@ -344,21 +226,6 @@ export interface DCAFactory extends BaseContract {
     nameOrSignature: "getTotalDeployedAccounts"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "isActive"
-  ): TypedContractMethod<[], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "owner"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "reInvestLogicContract"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "updateExecutorAddress"
   ): TypedContractMethod<
     [_newExecutorAddress: AddressLike],
@@ -368,13 +235,6 @@ export interface DCAFactory extends BaseContract {
   getFunction(
     nameOrSignature: "updateReinvestLibraryAddress"
   ): TypedContractMethod<[newAddress_: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "userDCAAccounts"
-  ): TypedContractMethod<
-    [arg0: AddressLike, arg1: BigNumberish],
-    [string],
-    "view"
-  >;
 
   getEvent(
     key: "AccountCreated"
@@ -384,25 +244,11 @@ export interface DCAFactory extends BaseContract {
     AccountCreatedEvent.OutputObject
   >;
   getEvent(
-    key: "ContractActiveStateChange"
-  ): TypedContractEvent<
-    ContractActiveStateChangeEvent.InputTuple,
-    ContractActiveStateChangeEvent.OutputTuple,
-    ContractActiveStateChangeEvent.OutputObject
-  >;
-  getEvent(
     key: "ExecutorChanged"
   ): TypedContractEvent<
     ExecutorChangedEvent.InputTuple,
     ExecutorChangedEvent.OutputTuple,
     ExecutorChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
     key: "ReinvestLibraryChanged"
@@ -424,17 +270,6 @@ export interface DCAFactory extends BaseContract {
       AccountCreatedEvent.OutputObject
     >;
 
-    "ContractActiveStateChange(bool)": TypedContractEvent<
-      ContractActiveStateChangeEvent.InputTuple,
-      ContractActiveStateChangeEvent.OutputTuple,
-      ContractActiveStateChangeEvent.OutputObject
-    >;
-    ContractActiveStateChange: TypedContractEvent<
-      ContractActiveStateChangeEvent.InputTuple,
-      ContractActiveStateChangeEvent.OutputTuple,
-      ContractActiveStateChangeEvent.OutputObject
-    >;
-
     "ExecutorChanged(address)": TypedContractEvent<
       ExecutorChangedEvent.InputTuple,
       ExecutorChangedEvent.OutputTuple,
@@ -444,17 +279,6 @@ export interface DCAFactory extends BaseContract {
       ExecutorChangedEvent.InputTuple,
       ExecutorChangedEvent.OutputTuple,
       ExecutorChangedEvent.OutputObject
-    >;
-
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
     >;
 
     "ReinvestLibraryChanged(address)": TypedContractEvent<

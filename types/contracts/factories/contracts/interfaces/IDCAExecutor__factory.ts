@@ -15,37 +15,6 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "DCAAccountAddress_",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "strategyId_",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "enum IDCADataStructures.Interval",
-        name: "strategyInterval_",
-        type: "uint8",
-      },
-      {
-        indexed: true,
-        internalType: "bool",
-        name: "active_",
-        type: "bool",
-      },
-    ],
-    name: "DCAAccountSubscription",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
         name: "account_",
         type: "address",
       },
@@ -56,7 +25,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ExecutedDCA",
+    name: "ExecutedStrategy",
     type: "event",
   },
   {
@@ -82,6 +51,37 @@ const _abi = [
       },
     ],
     name: "FeesDistributed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "DCAAccountAddress_",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "enum IDCADataStructures.Interval",
+        name: "strategyInterval_",
+        type: "uint8",
+      },
+      {
+        indexed: true,
+        internalType: "bool",
+        name: "active_",
+        type: "bool",
+      },
+    ],
+    name: "StrategySubscription",
     type: "event",
   },
   {
@@ -111,24 +111,6 @@ const _abi = [
       },
     ],
     name: "Execute",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "DCAAccount_",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "strategyId_",
-        type: "uint256[]",
-      },
-    ],
-    name: "ExecuteBatch",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -178,7 +160,7 @@ const _abi = [
                 type: "string",
               },
             ],
-            internalType: "struct IDCADataStructures.TokeData",
+            internalType: "struct IDCADataStructures.TokenData",
             name: "baseToken",
             type: "tuple",
           },
@@ -200,7 +182,7 @@ const _abi = [
                 type: "string",
               },
             ],
-            internalType: "struct IDCADataStructures.TokeData",
+            internalType: "struct IDCADataStructures.TokenData",
             name: "targetToken",
             type: "tuple",
           },

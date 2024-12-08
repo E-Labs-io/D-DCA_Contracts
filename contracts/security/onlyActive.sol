@@ -1,6 +1,5 @@
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 /**
  *
  ************************************************
@@ -19,25 +18,52 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  *  e-labs.co.uk
  *
  */
-abstract contract OnlyActive is Ownable {
+abstract contract OnlyActive {
+    /**
+     * @notice The active state of the contract
+     */
     bool private _active = true;
 
-    event ContractActiveStateChange(bool indexed newState_);
+    /**
+     * @notice Emitted when the active state of the contract is changed
+     * @param active_ The new active state
+     */
+    event ContractActiveStateChange(bool indexed active_);
 
+    /**
+     * @notice Error thrown when the contract is paused
+     */
+    error ContractIsPaused();
+
+    /**
+     * @notice Modifier to check if the contract is active
+     */
     modifier is_active() {
-        require(_active, "OnlyActive : [isActive] Contract is paused");
+        if (!_active) revert ContractIsPaused();
         _;
     }
 
+    /**
+     * @notice Returns the active state of the contract
+     * @return True if the contract is active, false otherwise
+     */
     function isActive() public view returns (bool) {
         return _active;
     }
 
-    function _setActiveState(bool newState_) internal {
-        _active = newState_;
-        emit ContractActiveStateChange(newState_);
+    /**
+     * @notice Sets the active state of the contract
+     * @param active_ The new active state
+     */
+    function _setActiveState(bool active_) internal {
+        _active = active_;
+        emit ContractActiveStateChange(active_);
     }
 
+    /**
+     * @notice Returns the active state of the contract
+     * @return True if the contract is active, false otherwise
+     */
     function _getActiveState() internal view returns (bool) {
         return _active;
     }

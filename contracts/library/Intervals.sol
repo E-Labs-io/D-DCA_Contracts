@@ -28,8 +28,12 @@ library Intervals {
     uint256 constant ONEWEEK = 1 weeks;
     uint256 constant ONEMONTH = 4 weeks;
 
-    uint256 constant BLOCK_TIME = 15 seconds;
-
+    /**
+     * @notice Checks if the interval is in the current execution window
+     * @param interval_ The interval to check
+     * @param lastExecution_ The last execution block number
+     * @return True if the interval is in the current execution window, false otherwise
+     */
     function isInWindow(
         IDCADataStructures.Interval interval_,
         uint256 lastExecution_
@@ -49,8 +53,6 @@ library Intervals {
             return ONEMINUTE;
         if (interval_ == IDCADataStructures.Interval.TestIntervalFiveMins)
             return ONEMINUTE * 5;
-        if (interval_ == IDCADataStructures.Interval.TwelveHours)
-            return ONEHOUR * 12;
         if (interval_ == IDCADataStructures.Interval.OneDay) return ONEDAY;
         if (interval_ == IDCADataStructures.Interval.TwoDays) return TWODAYS;
         if (interval_ == IDCADataStructures.Interval.OneWeek) return ONEWEEK;
@@ -74,11 +76,5 @@ library Intervals {
         uint256 intervalEnd = lastExecution_ + getIntervalLength(interval_);
         return
             block.timestamp > intervalEnd ? 0 : intervalEnd - block.timestamp;
-    }
-
-    function intervalToBlockAmount(
-        IDCADataStructures.Interval interval_
-    ) internal pure returns (uint256) {
-        return getIntervalLength(interval_) / BLOCK_TIME;
     }
 }

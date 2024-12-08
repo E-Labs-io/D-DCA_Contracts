@@ -6,9 +6,9 @@ import "./IDCAExecutor.sol";
 interface IDCAAccount is IDCADataStructures {
     /**
      * @notice Emitted when a strategy has been executed
-     * @param strategyId_ {uint256} the id for the executed strategy
-     * @param amountIn_ {uint256} amount received from the swap
-     * @param reInvested_ {bool} wether the strategy reinvested or not
+     * @param strategyId_ the id for the executed strategy
+     * @param amountIn_ amount received from the swap
+     * @param reInvested_  wether the strategy reinvested or not
      */
     event StrategyExecuted(
         uint256 indexed strategyId_,
@@ -17,8 +17,8 @@ interface IDCAAccount is IDCADataStructures {
     );
     /**
      * @notice Emitted when the Strategy is confirmed to be subscribed to an Executor
-     * @param strategyId_ {uint256} ID of the strategy that has been subscribed
-     * @param executor_ {address} Address of the Executor contract subscribed to
+     * @param strategyId_ ID of the strategy that has been subscribed
+     * @param executor_ Address of the Executor contract subscribed to
      */
     event StrategySubscribed(
         uint256 indexed strategyId_,
@@ -26,27 +26,39 @@ interface IDCAAccount is IDCADataStructures {
     );
     /**
      * @notice Emitted when a strategy has been unsubscribed from an Executor
-     * @param strategyId_ {uint256} Id of the strategy being unsubscribed
+     * @param strategyId_ Id of the strategy being unsubscribed
      */
     event StrategyUnsubscribed(uint256 indexed strategyId_);
     /**
      * @notice Emitted when a new strategy has been created
-     * @param strategyId_ {uint256} Id of the newly created strategy
+     * @param strategyId_ Id of the newly created strategy
      */
-    event NewStrategyCreated(uint256 indexed strategyId_);
+    event StrategyCreated(uint256 indexed strategyId_);
     /**
      * @notice Emits when the reinvest address has been changed
-     * @param newLibraryAddress ne address for the Library contract
+     * @param newLibraryAddress The address for the Library contract
      */
-    event DCAReinvestLibraryChanged(address indexed newLibraryAddress);
+    event ReinvestLibraryChanged(address indexed newLibraryAddress);
 
-    event StrategyReinvestExecuted(
+    /**
+     * @notice Emits when a Reinvest modula has been executed
+     * @param strategyId_ the ID of the strategy executed
+     * @param success Wether the reinvest was successful
+     * @param amountReturned The amount returned by the Reinvest
+     */
+    event ReinvestExecuted(
         uint256 indexed strategyId_,
         bool indexed success,
         uint256 amountReturned
     );
 
-    event StrategyReinvestUnwound(
+    /**
+     * @notice Emited when a Reinvest is unwound
+     * @param strategyId The ID of the strategy
+     * @param amount The amount unwond and returned to the account
+     * @param success If the unwind was successful
+     */
+    event ReinvestUnwound(
         uint256 indexed strategyId,
         uint256 amount,
         bool indexed success
@@ -54,8 +66,8 @@ interface IDCAAccount is IDCADataStructures {
 
     /**
      * @notice Triggered by the assigned executor to execute the given strategy
-     * @param strategyId_ {uint256} Id for the Strategy to be executed
-     * @param feeAmount_ (uint16) amount of the strategy amount to be paid via fee (percent)
+     * @param strategyId_  Id for the Strategy to be executed
+     * @param feeAmount_ amount of the strategy amount to be paid via fee (percent)
      * @return If the function was successful
      */
     function Execute(
@@ -65,10 +77,10 @@ interface IDCAAccount is IDCADataStructures {
 
     /**
      * @notice Used by the account owner to setup a new strategy
-     * @param newStrategy_ {Strategy} Strategy data for the new strategy to be created from
-     * @param seedFunds_ {uin256} amount of the base token to fun the subscription with
+     * @param newStrategy_  Strategy data for the new strategy to be created from
+     * @param seedFunds_ amount of the base token to fund the strategy with now (optional)
      * @dev if no seed fund set to 0.  Any seed funds will need to be approved before this function is called
-     * @param subscribeToExecutor_ {bool} wether to auto subscribe to the default executor
+     * @param subscribeToExecutor_  wether to auto subscribe to the default executor
      * @dev the Account needs to have 5 executions worth of funds to be subscribed
      */
     function SetupStrategy(
@@ -79,21 +91,22 @@ interface IDCAAccount is IDCADataStructures {
 
     /**
      * @notice Used by the account owner to subscribe the strategy to the executor
-     * @param strategyId_ {uint256} The Id of the strategy to subscribe to the executor
+     * @param strategyId_ The Id of the strategy to subscribe to the executor
+     * @dev the Account needs to have 5 executions worth of funds to be subscribed
      */
     function SubscribeStrategy(uint256 strategyId_) external;
 
     /**
      * @notice Used by the account owner to unsubscribe the strategy to the executor
-     * @param strategyId_ {uint256} ID of the strategy to unsubscribe
+     * @param strategyId_ ID of the strategy to unsubscribe
      */
     function UnsubscribeStrategy(uint256 strategyId_) external;
 
     /**
      * @notice Allows the account owner to fund the account for strategy's
      * @dev the funds are not strategy specific
-     * @param token_ {address} Address for the base token being funded
-     * @param amount_ {uint256} Amount of the token to be deposited
+     * @param token_ Address for the base token being funded
+     * @param amount_ Amount of the token to be deposited
      * @dev Must approve the spend before calling this function
      */
 
@@ -101,29 +114,29 @@ interface IDCAAccount is IDCADataStructures {
 
     /**
      * @notice Removes a given amount from the Address of the given base token
-     * @param token_ {address} Address of the base token to remove from the contract
-     * @param amount_ {uint256} Amount of the base token to remove from the address
+     * @param token_ Address of the base token to remove from the contract
+     * @param amount_ Amount of the base token to remove from the address
      */
     function UnFundAccount(address token_, uint256 amount_) external;
 
     /**
      * @notice Removes a given amount from the Address of the given target token
-     * @param token_ {address} Address of the target token to remove from the account
-     * @param amount_ {uint256} Amount of the target token to remove from the account
+     * @param token_ Address of the target token to remove from the account
+     * @param amount_ Amount of the target token to remove from the account
      */
     function WithdrawSavings(address token_, uint256 amount_) external;
 
     /**
      * @notice Ony callable by the DCAExecutor contract to remove the strategy from the executor
      * @dev used when a strategy runs out of funds to execute
-     * @param strategyId_ {uint256} Id of the strategy to remove
+     * @param strategyId_ Id of the strategy to remove
      */
-    function ExecutorDeactivateStrategy(uint256 strategyId_) external;
+    function ExecutorDeactivate(uint256 strategyId_) external;
 
     /**
      * @notice Allows the account owner to set, remove and update a strategy reinvest
-     * @param strategyId_ {uint256} Id of the strategy
-     * @param reinvest_ {Reinvest} Reinvest data to amend
+     * @param strategyId_ Id of the strategy
+     * @param reinvest_ Reinvest data to amend
      */
     function setStrategyReinvest(
         uint256 strategyId_,
@@ -132,18 +145,25 @@ interface IDCAAccount is IDCADataStructures {
 
     /**
      * @notice Gets Account balance of the provided base token
-     * @param token_ {address} Address for the token to check
-     * @return {uint256} Amount of that token in the account
+     * @param token_ Address for the token to check
+     * @return Amount of that token in the account
      */
     function getBaseBalance(address token_) external returns (uint256);
 
     /**
      * @notice Gets Account balance of the provided target token
-     * @param token_ {address} Address for the token to check
-     * @return {uint256} Amount of that token in the account
+     * @param token_ Address for the token to check
+     * @return Amount of that token in the account
      */
     function getTargetBalance(address token_) external returns (uint256);
 
+    /**
+     *
+     * @param strategyId_ The ID of the strategy to check
+     * @return lastEx Timestamp of the last execution of the given strategy
+     * @return secondsLeft Seconds left till the window for the strategys next execution
+     * @return checkReturn
+     */
     function getTimeTillWindow(
         uint256 strategyId_
     )

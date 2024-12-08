@@ -10,98 +10,6 @@
 
 ## Methods
 
-### DEVcalculateFeeOfAmount
-
-```solidity
-function DEVcalculateFeeOfAmount(uint16 feeAmount_, uint256 amount_) external pure returns (uint256)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| feeAmount_ | uint16 | undefined |
-| amount_ | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-
-### DEVcalculateSplitFee
-
-```solidity
-function DEVcalculateSplitFee(uint16 feeAmount_, uint256 amount_) external pure returns (uint256)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| feeAmount_ | uint16 | undefined |
-| amount_ | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-
-### DEVgetFeeQuote
-
-```solidity
-function DEVgetFeeQuote(uint256 amount_) external view returns (uint256)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| amount_ | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-
-### DEVgetFeesOfAmount
-
-```solidity
-function DEVgetFeesOfAmount(uint256 amount_) external view returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
-```
-
-DEV TESTING FUNCTIONS 
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| amount_ | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| executorFee | uint256 | undefined |
-| computingFee | uint256 | undefined |
-| adminFee | uint256 | undefined |
-
 ### DistributeFees
 
 ```solidity
@@ -110,13 +18,13 @@ function DistributeFees(address tokenAddress_) external nonpayable
 
 
 
-
+*Distributes the fees for the given token*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress_ | address | undefined |
+| tokenAddress_ | address | The address of the token to distribute fees for |
 
 ### Execute
 
@@ -124,33 +32,16 @@ function DistributeFees(address tokenAddress_) external nonpayable
 function Execute(address DCAAccount_, uint256 strategyId_) external nonpayable
 ```
 
-Called by the external Executor service wallet only, triggers the specified strategy
 
 
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| DCAAccount_ | address | {address} Address of the DCAAccount holding the strategy to execute |
-| strategyId_ | uint256 | {uint256} ID of the strategy to execute |
-
-### ExecuteBatch
-
-```solidity
-function ExecuteBatch(address[] DCAAccount_, uint256[] strategyId_) external nonpayable
-```
-
-Called by the external Executor service wallet only, triggers the specified strategy&#39;s
-
-*testing for now, will execute a max of 10 strategies at a time*
+*Executes a single strategy*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccount_ | address[] | {address[]} Address of the DCAAccount holding the strategy to execute |
-| strategyId_ | uint256[] | {uint256[]} ID of the strategy to execute |
+| DCAAccount_ | address | The address of the DCAAccount |
+| strategyId_ | uint256 | The id of the strategy to execute |
 
 ### ForceUnsubscribe
 
@@ -158,16 +49,16 @@ Called by the external Executor service wallet only, triggers the specified stra
 function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external nonpayable
 ```
 
-Used by the Executor service to remove a strategy from the DCAExecutor      Used mostly for unfunded and failing accounts.
 
 
+*Forces the unsubscription of a strategy*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccount_ | address | {address} Address of the DCAAccount to be unsubscribed |
-| strategyId_ | uint256 | {uint256} ID of the strategy to be unsubscribed |
+| DCAAccount_ | address | The address of the DCAAccount |
+| strategyId_ | uint256 | The id of the strategy to unsubscribe |
 
 ### Subscribe
 
@@ -191,16 +82,16 @@ function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable
 function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable
 ```
 
-Called by the DCAAccount to remove itself from the executor
 
 
+*Unsubscribes a strategy from the DCAExecutor*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccountAddress_ | address | Address of the unsubscribing DCAAccount |
-| strategyId_ | uint256 | ID of the strategy being unsubscribed |
+| DCAAccountAddress_ | address | The address of the DCAAccount |
+| strategyId_ | uint256 | The id of the strategy to unsubscribe |
 
 ### addAdmin
 
@@ -208,7 +99,7 @@ Called by the DCAAccount to remove itself from the executor
 function addAdmin(address newAdmin_) external nonpayable
 ```
 
-
+Adds an admin to the contract
 
 
 
@@ -216,7 +107,7 @@ function addAdmin(address newAdmin_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| newAdmin_ | address | undefined |
+| newAdmin_ | address | The address to add as an admin |
 
 ### changeExecutor
 
@@ -240,7 +131,7 @@ function changeExecutor(address executorAddress_) external nonpayable
 function checkIfAdmin(address addressToCheck_) external view returns (bool)
 ```
 
-
+Checks if an address is an admin
 
 
 
@@ -248,13 +139,13 @@ function checkIfAdmin(address addressToCheck_) external view returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| addressToCheck_ | address | undefined |
+| addressToCheck_ | address | The address to check |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
+| _0 | bool | True if the address is an admin, false otherwise |
 
 ### getActiveExecutorAddress
 
@@ -264,14 +155,14 @@ function getActiveExecutorAddress() external view returns (address)
 
 
 
-
+*Returns the active executor address*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
+| _0 | address | The active executor address |
 
 ### getExecutorAddress
 
@@ -279,7 +170,7 @@ function getActiveExecutorAddress() external view returns (address)
 function getExecutorAddress() external view returns (address)
 ```
 
-
+Returns the executor address
 
 
 
@@ -288,7 +179,7 @@ function getExecutorAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
+| _0 | address | The executor address |
 
 ### getFeeData
 
@@ -298,14 +189,14 @@ function getFeeData() external view returns (struct IDCADataStructures.FeeDistri
 
 
 
-
+*Returns the fee data for the DCAExecutor*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | IDCADataStructures.FeeDistribution | undefined |
+| _0 | IDCADataStructures.FeeDistribution | The fee data |
 
 ### getIntervalTotalActiveStrategys
 
@@ -315,19 +206,19 @@ function getIntervalTotalActiveStrategys(enum IDCADataStructures.Interval interv
 
 
 
-
+*Returns the total number of active strategies for the given interval*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| interval_ | enum IDCADataStructures.Interval | undefined |
+| interval_ | enum IDCADataStructures.Interval | The interval to get the total number of active strategies for |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | undefined |
+| _0 | uint256 | The total number of active strategies for the given interval |
 
 ### getSpecificStrategy
 
@@ -337,20 +228,20 @@ function getSpecificStrategy(address dcaAccountAddress_, uint256 accountStrategy
 
 
 
-
+*Returns the specific strategy for the given DCAAccount and strategy id*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| dcaAccountAddress_ | address | undefined |
-| accountStrategyId_ | uint256 | undefined |
+| dcaAccountAddress_ | address | The address of the DCAAccount |
+| accountStrategyId_ | uint256 | The id of the strategy |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | IDCADataStructures.Strategy | undefined |
+| _0 | IDCADataStructures.Strategy | The strategy data |
 
 ### getTimeTillWindow
 
@@ -360,22 +251,22 @@ function getTimeTillWindow(address account_, uint256 strategyId_) external view 
 
 
 
-
+*Returns the time till window for the given DCAAccount and strategy id*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| account_ | address | undefined |
-| strategyId_ | uint256 | undefined |
+| account_ | address | The address of the DCAAccount |
+| strategyId_ | uint256 | The id of the strategy |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| lastEx | uint256 | undefined |
-| secondsLeft | uint256 | undefined |
-| checkReturn | bool | undefined |
+| lastEx | uint256 | The last execution block number |
+| secondsLeft | uint256 | The seconds left till window |
+| checkReturn | bool | The check return |
 
 ### getTotalActiveStrategys
 
@@ -383,16 +274,16 @@ function getTimeTillWindow(address account_, uint256 strategyId_) external view 
 function getTotalActiveStrategys() external view returns (uint256)
 ```
 
-Stats Getters 
 
 
+*Returns the total number of active strategies*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | undefined |
+| _0 | uint256 | The total number of active strategies |
 
 ### getTotalExecutions
 
@@ -402,14 +293,14 @@ function getTotalExecutions() external view returns (uint256)
 
 
 
-
+*Returns the total number of executions*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | undefined |
+| _0 | uint256 | The total number of executions |
 
 ### isActive
 
@@ -417,7 +308,7 @@ function getTotalExecutions() external view returns (uint256)
 function isActive() external view returns (bool)
 ```
 
-
+Returns the active state of the contract
 
 
 
@@ -426,7 +317,7 @@ function isActive() external view returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
+| _0 | bool | True if the contract is active, false otherwise |
 
 ### isIntervalActive
 
@@ -436,19 +327,19 @@ function isIntervalActive(enum IDCADataStructures.Interval interval_) external v
 
 
 
-
+*Returns the active state of the given interval*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| interval_ | enum IDCADataStructures.Interval | undefined |
+| interval_ | enum IDCADataStructures.Interval | The interval to get the active state for |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
+| _0 | bool | The active state of the given interval |
 
 ### owner
 
@@ -473,7 +364,7 @@ function owner() external view returns (address)
 function removeAdmin(address oldAdmin_) external nonpayable
 ```
 
-
+Removes an admin from the contract
 
 
 
@@ -481,7 +372,7 @@ function removeAdmin(address oldAdmin_) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| oldAdmin_ | address | undefined |
+| oldAdmin_ | address | The address to remove as an admin |
 
 ### removeExecutor
 
@@ -489,7 +380,7 @@ function removeAdmin(address oldAdmin_) external nonpayable
 function removeExecutor() external nonpayable
 ```
 
-
+Removes the executor address
 
 
 
@@ -513,13 +404,13 @@ function setActiveState(bool newFlag_) external nonpayable
 
 
 
-
+*Sets the active state of the DCAExecutor*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| newFlag_ | bool | undefined |
+| newFlag_ | bool | The new active state |
 
 ### setFeeData
 
@@ -543,16 +434,16 @@ function setFeeData(IDCADataStructures.FeeDistribution fee_) external nonpayable
 function setIntervalActive(enum IDCADataStructures.Interval interval_, bool status_) external nonpayable
 ```
 
-Allows the admin to turn Strategy timings on &amp; off
 
 
+*Sets the active state of the given interval*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| interval_ | enum IDCADataStructures.Interval | The strategy interval |
-| status_ | bool | if teh interval is active or not |
+| interval_ | enum IDCADataStructures.Interval | The interval to set the active state for |
+| status_ | bool | The new active state |
 
 ### transferOwnership
 
@@ -577,10 +468,10 @@ function transferOwnership(address newOwner) external nonpayable
 ### ContractActiveStateChange
 
 ```solidity
-event ContractActiveStateChange(bool indexed newState_)
+event ContractActiveStateChange(bool indexed active_)
 ```
 
-
+Emitted when the active state of the contract is changed
 
 
 
@@ -588,15 +479,15 @@ event ContractActiveStateChange(bool indexed newState_)
 
 | Name | Type | Description |
 |---|---|---|
-| newState_ `indexed` | bool | undefined |
+| active_ `indexed` | bool | The new active state |
 
-### DCAAccountSubscription
+### ExecutedStrategy
 
 ```solidity
-event DCAAccountSubscription(address indexed DCAAccountAddress_, uint256 indexed strategyId_, enum IDCADataStructures.Interval strategyInterval_, bool indexed active_)
+event ExecutedStrategy(address indexed account_, uint256 indexed strategyId_)
 ```
 
-Emitted when a new strategy subscribes or unsubscribes to the executor
+Emitted once a strategy has finished executing successfully
 
 
 
@@ -604,27 +495,8 @@ Emitted when a new strategy subscribes or unsubscribes to the executor
 
 | Name | Type | Description |
 |---|---|---|
-| DCAAccountAddress_ `indexed` | address | {address} address of the DCAAccount subscribing |
-| strategyId_ `indexed` | uint256 | {uint256} ID of the strategy to (un-)subscribe |
-| strategyInterval_  | enum IDCADataStructures.Interval | {Interval} Interval state of how ofter to be executed |
-| active_ `indexed` | bool | {bool} wether the strategy is being subscribed (true) or unsubscribed (false) |
-
-### ExecutedDCA
-
-```solidity
-event ExecutedDCA(address indexed account_, uint256 indexed strategyId_)
-```
-
-Emitted once a strategy has finished executing
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| account_ `indexed` | address | {address} Address of the DCAAccount |
-| strategyId_ `indexed` | uint256 | {uint256} ID of teh strategy executed |
+| account_ `indexed` | address | Address of the DCAAccount |
+| strategyId_ `indexed` | uint256 | ID of the strategy executed |
 
 ### ExecutorAddressChange
 
@@ -632,7 +504,7 @@ Emitted once a strategy has finished executing
 event ExecutorAddressChange(address indexed newAddress_)
 ```
 
-
+Emitted when the executor address is changed
 
 
 
@@ -640,7 +512,7 @@ event ExecutorAddressChange(address indexed newAddress_)
 
 | Name | Type | Description |
 |---|---|---|
-| newAddress_ `indexed` | address | undefined |
+| newAddress_ `indexed` | address | The new executor address |
 
 ### FeeDataChanged
 
@@ -667,8 +539,8 @@ Emitted each time the protocol fees are distributed
 
 | Name | Type | Description |
 |---|---|---|
-| token_ `indexed` | address | {address} address of the token being distributed |
-| amount_ `indexed` | uint256 | {uint256} amount of the total token distributed |
+| token_ `indexed` | address | address of the token being distributed |
+| amount_ `indexed` | uint256 | amount of the total token distributed |
 
 ### OwnershipTransferred
 
@@ -687,9 +559,39 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 | previousOwner `indexed` | address | undefined |
 | newOwner `indexed` | address | undefined |
 
+### StrategySubscription
+
+```solidity
+event StrategySubscription(address indexed DCAAccountAddress_, uint256 indexed strategyId_, enum IDCADataStructures.Interval strategyInterval_, bool indexed active_)
+```
+
+Emitted when a new strategy subscribes or unsubscribes to the executor
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| DCAAccountAddress_ `indexed` | address | address of the DCAAccount subscribing |
+| strategyId_ `indexed` | uint256 | ID of the strategy to (un-)subscribe |
+| strategyInterval_  | enum IDCADataStructures.Interval | Interval state of how ofter to be executed |
+| active_ `indexed` | bool | wether the strategy is being subscribed (true) or unsubscribed (false) |
+
 
 
 ## Errors
+
+### ContractIsPaused
+
+```solidity
+error ContractIsPaused()
+```
+
+Error thrown when the contract is paused
+
+
+
 
 ### OwnableInvalidOwner
 

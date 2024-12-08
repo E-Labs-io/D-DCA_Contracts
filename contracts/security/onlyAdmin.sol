@@ -21,8 +21,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  *
  */
 abstract contract OnlyAdmin is Ownable {
+    /**
+     * @notice Mapping of admin access addresses
+     */
     mapping(address => bool) private _admins;
 
+    /**
+     * @notice Modifier to check if the caller is an admin
+     */
     modifier onlyAdmins() {
         require(
             _admins[_msgSender()] || (_msgSender() == owner()),
@@ -31,14 +37,27 @@ abstract contract OnlyAdmin is Ownable {
         _;
     }
 
+    /**
+     * @notice Adds an admin to the contract
+     * @param newAdmin_ The address to add as an admin
+     */
     function addAdmin(address newAdmin_) public onlyOwner {
         _admins[newAdmin_] = true;
     }
 
+    /**
+     * @notice Removes an admin from the contract
+     * @param oldAdmin_ The address to remove as an admin
+     */
     function removeAdmin(address oldAdmin_) public onlyOwner {
         _admins[oldAdmin_] = false;
     }
 
+    /**
+     * @notice Checks if an address is an admin
+     * @param addressToCheck_ The address to check
+     * @return True if the address is an admin, false otherwise
+     */
     function checkIfAdmin(address addressToCheck_) public view returns (bool) {
         return _admins[addressToCheck_];
     }

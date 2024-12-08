@@ -50,6 +50,8 @@ export type { IDCAAccount } from "./contracts/interfaces/IDCAAccount";
 export { IDCAAccount__factory } from "./factories/contracts/interfaces/IDCAAccount__factory";
 export type { IDCAExecutor } from "./contracts/interfaces/IDCAExecutor";
 export { IDCAExecutor__factory } from "./factories/contracts/interfaces/IDCAExecutor__factory";
+export type { IDCAFactory } from "./contracts/interfaces/IDCAFactory";
+export { IDCAFactory__factory } from "./factories/contracts/interfaces/IDCAFactory__factory";
 export type { DCAAccountLogic } from "./contracts/logic/AccountLogic.sol/DCAAccountLogic";
 export { DCAAccountLogic__factory } from "./factories/contracts/logic/AccountLogic.sol/DCAAccountLogic__factory";
 export type { DCAReinvestLogic } from "./contracts/logic/ReinvestLogic.sol/DCAReinvestLogic";

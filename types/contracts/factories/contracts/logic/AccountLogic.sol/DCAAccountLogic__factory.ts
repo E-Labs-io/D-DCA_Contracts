@@ -37,37 +37,11 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "newLibraryAddress",
-        type: "address",
-      },
-    ],
-    name: "DCAReinvestLibraryChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
         name: "newAddress_",
         type: "address",
       },
     ],
     name: "ExecutorAddressChange",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "strategyId_",
-        type: "uint256",
-      },
-    ],
-    name: "NewStrategyCreated",
     type: "event",
   },
   {
@@ -100,31 +74,6 @@ const _abi = [
       },
       {
         indexed: true,
-        internalType: "uint256",
-        name: "amountIn_",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "reInvested_",
-        type: "bool",
-      },
-    ],
-    name: "StrategyExecuted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "strategyId_",
-        type: "uint256",
-      },
-      {
-        indexed: true,
         internalType: "bool",
         name: "success",
         type: "bool",
@@ -136,7 +85,20 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "StrategyReinvestExecuted",
+    name: "ReinvestExecuted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newLibraryAddress",
+        type: "address",
+      },
+    ],
+    name: "ReinvestLibraryChanged",
     type: "event",
   },
   {
@@ -161,7 +123,45 @@ const _abi = [
         type: "bool",
       },
     ],
-    name: "StrategyReinvestUnwound",
+    name: "ReinvestUnwound",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+    ],
+    name: "StrategyCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "amountIn_",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "reInvested_",
+        type: "bool",
+      },
+    ],
+    name: "StrategyExecuted",
     type: "event",
   },
   {
@@ -228,7 +228,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ExecutorDeactivateStrategy",
+    name: "ExecutorDeactivate",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -291,7 +291,7 @@ const _abi = [
                 type: "string",
               },
             ],
-            internalType: "struct IDCADataStructures.TokeData",
+            internalType: "struct IDCADataStructures.TokenData",
             name: "baseToken",
             type: "tuple",
           },
@@ -313,7 +313,7 @@ const _abi = [
                 type: "string",
               },
             ],
-            internalType: "struct IDCADataStructures.TokeData",
+            internalType: "struct IDCADataStructures.TokenData",
             name: "targetToken",
             type: "tuple",
           },

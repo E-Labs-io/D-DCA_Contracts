@@ -76,14 +76,14 @@ function getLibraryVersion() external pure returns (string)
 
 
 
-
+*Returns the version of the reinvest library*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | undefined |
+| _0 | string | The version of the reinvest library |
 
 ### getModuleName
 
@@ -93,19 +93,19 @@ function getModuleName(uint8 code_) external pure returns (string)
 
 
 
-
+*Returns the module name for the given code*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| code_ | uint8 | undefined |
+| code_ | uint8 | The code to get the module name for |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | undefined |
+| _0 | string | The module name for the given code |
 
 ### isActive
 
@@ -113,7 +113,7 @@ function getModuleName(uint8 code_) external pure returns (string)
 function isActive() external view returns (bool)
 ```
 
-
+Returns the active state of the contract
 
 
 
@@ -122,7 +122,7 @@ function isActive() external view returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
+| _0 | bool | True if the contract is active, false otherwise |
 
 ### migrateReinvest
 
@@ -185,7 +185,7 @@ function setActiveState() external nonpayable
 
 
 
-
+*Sets the active state of the reinvest library*
 
 
 ### transferOwnership
@@ -235,10 +235,10 @@ function unwindReinvest(IDCADataStructures.Reinvest reinvestData_, uint256 amoun
 ### ContractActiveStateChange
 
 ```solidity
-event ContractActiveStateChange(bool indexed newState_)
+event ContractActiveStateChange(bool indexed active_)
 ```
 
-
+Emitted when the active state of the contract is changed
 
 
 
@@ -246,7 +246,7 @@ event ContractActiveStateChange(bool indexed newState_)
 
 | Name | Type | Description |
 |---|---|---|
-| newState_ `indexed` | bool | undefined |
+| active_ `indexed` | bool | The new active state |
 
 ### OwnershipTransferred
 
@@ -268,6 +268,17 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 
 
 ## Errors
+
+### ContractIsPaused
+
+```solidity
+error ContractIsPaused()
+```
+
+Error thrown when the contract is paused
+
+
+
 
 ### OwnableInvalidOwner
 

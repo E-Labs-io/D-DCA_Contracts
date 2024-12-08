@@ -33,10 +33,10 @@ function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable ret
 |---|---|---|
 | _0 | bool | undefined |
 
-### ExecutorDeactivateStrategy
+### ExecutorDeactivate
 
 ```solidity
-function ExecutorDeactivateStrategy(uint256 strategyId_) external nonpayable
+function ExecutorDeactivate(uint256 strategyId_) external nonpayable
 ```
 
 used by the Executor to remove failing strategies/out of funds strategies.
@@ -65,24 +65,6 @@ function FundAccount(address token_, uint256 amount_) external nonpayable
 |---|---|---|
 | token_ | address | {address} The ERC20 token address |
 | amount_ | uint256 | {uint256} Amount of the token to deposit |
-
-### SWAP
-
-```solidity
-function SWAP(address baseToken_, address targetToken_, uint256 amount_) external nonpayable
-```
-
-ONLY IN CONTRACT FOR DEVELOPMENT, WILL REMOVE ON PUBLIC DEPLOY
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| baseToken_ | address | address of the basetoken |
-| targetToken_ | address | address of the target token |
-| amount_ | uint256 | amount of the base token to swap into the target token |
 
 ### SWAP_ROUTER
 
@@ -160,13 +142,13 @@ function UnWindReinvest(uint256 strategyId_) external nonpayable
 
 
 
-
+*Unwinds the reinvestment for the given strategy*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_ | uint256 | undefined |
+| strategyId_ | uint256 | The id of the strategy to unwind |
 
 ### UnsubscribeStrategy
 
@@ -201,22 +183,6 @@ function WithdrawSavings(address token_, uint256 amount_) external nonpayable
 | token_ | address | {address} The ERC20 token address |
 | amount_ | uint256 | {uint256} Amount of the target token to withdraw |
 
-### changeDCAReinvestLibrary
-
-```solidity
-function changeDCAReinvestLibrary(address newLibraryAddress_) external nonpayable
-```
-
-
-
-*Updates the contract holding the reinvest logic*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newLibraryAddress_ | address | address of the library contract to use |
-
 ### changeExecutor
 
 ```solidity
@@ -233,6 +199,22 @@ function changeExecutor(address executorAddress_) external nonpayable
 |---|---|---|
 | executorAddress_ | address | undefined |
 
+### changeReinvestLibrary
+
+```solidity
+function changeReinvestLibrary(address newLibraryAddress_) external nonpayable
+```
+
+
+
+*Updates the contract holding the reinvest logic*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newLibraryAddress_ | address | address of the library contract to use |
+
 ### getAttachedReinvestLibraryAddress
 
 ```solidity
@@ -241,14 +223,14 @@ function getAttachedReinvestLibraryAddress() external view returns (address)
 
 
 
-
+*Returns the address of the attached reinvest library*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
+| _0 | address | The address of the attached reinvest library |
 
 ### getAttachedReinvestLibraryVersion
 
@@ -258,14 +240,14 @@ function getAttachedReinvestLibraryVersion() external view returns (string)
 
 
 
-
+*Returns the version of the attached reinvest library*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | undefined |
+| _0 | string | The version of the attached reinvest library |
 
 ### getBaseBalance
 
@@ -289,35 +271,13 @@ function getBaseBalance(address token_) external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | {uint256} account balance of Base token |
 
-### getBaseTokenCostPerBlock
-
-```solidity
-function getBaseTokenCostPerBlock(address token_) external view returns (uint256)
-```
-
-
-
-*get the total cost per-block for all strategies using the base token*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token_ | address | {address} Base token address |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | {uint256} amount of the base token strategies use per block |
-
 ### getExecutorAddress
 
 ```solidity
 function getExecutorAddress() external view returns (address)
 ```
 
-
+Returns the executor address
 
 
 
@@ -326,7 +286,7 @@ function getExecutorAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
+| _0 | address | The executor address |
 
 ### getStrategyData
 
@@ -419,7 +379,7 @@ function owner() external view returns (address)
 function removeExecutor() external nonpayable
 ```
 
-
+Removes the executor address
 
 
 
@@ -488,45 +448,13 @@ function updateSwapAddress(address swapRouter_) external nonpayable
 
 ## Events
 
-### DCAReinvestLibraryChanged
-
-```solidity
-event DCAReinvestLibraryChanged(address indexed newLibraryAddress)
-```
-
-Emits when the reinvest address has been changed
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newLibraryAddress `indexed` | address | ne address for the Library contract |
-
 ### ExecutorAddressChange
 
 ```solidity
 event ExecutorAddressChange(address indexed newAddress_)
 ```
 
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newAddress_ `indexed` | address | undefined |
-
-### NewStrategyCreated
-
-```solidity
-event NewStrategyCreated(uint256 indexed strategyId_)
-```
-
-Emitted when a new strategy has been created
+Emitted when the executor address is changed
 
 
 
@@ -534,7 +462,7 @@ Emitted when a new strategy has been created
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_ `indexed` | uint256 | {uint256} Id of the newly created strategy |
+| newAddress_ `indexed` | address | The new executor address |
 
 ### OwnershipTransferred
 
@@ -553,6 +481,74 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 | previousOwner `indexed` | address | undefined |
 | newOwner `indexed` | address | undefined |
 
+### ReinvestExecuted
+
+```solidity
+event ReinvestExecuted(uint256 indexed strategyId_, bool indexed success, uint256 amountReturned)
+```
+
+Emits when a Reinvest modula has been executed
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ `indexed` | uint256 | the ID of the strategy executed |
+| success `indexed` | bool | Wether the reinvest was successful |
+| amountReturned  | uint256 | The amount returned by the Reinvest |
+
+### ReinvestLibraryChanged
+
+```solidity
+event ReinvestLibraryChanged(address indexed newLibraryAddress)
+```
+
+Emits when the reinvest address has been changed
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newLibraryAddress `indexed` | address | The address for the Library contract |
+
+### ReinvestUnwound
+
+```solidity
+event ReinvestUnwound(uint256 indexed strategyId, uint256 amount, bool indexed success)
+```
+
+Emited when a Reinvest is unwound
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId `indexed` | uint256 | The ID of the strategy |
+| amount  | uint256 | The amount unwond and returned to the account |
+| success `indexed` | bool | If the unwind was successful |
+
+### StrategyCreated
+
+```solidity
+event StrategyCreated(uint256 indexed strategyId_)
+```
+
+Emitted when a new strategy has been created
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ `indexed` | uint256 | Id of the newly created strategy |
+
 ### StrategyExecuted
 
 ```solidity
@@ -567,45 +563,9 @@ Emitted when a strategy has been executed
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_ `indexed` | uint256 | {uint256} the id for the executed strategy |
-| amountIn_ `indexed` | uint256 | {uint256} amount received from the swap |
-| reInvested_  | bool | {bool} wether the strategy reinvested or not |
-
-### StrategyReinvestExecuted
-
-```solidity
-event StrategyReinvestExecuted(uint256 indexed strategyId_, bool indexed success, uint256 amountReturned)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId_ `indexed` | uint256 | undefined |
-| success `indexed` | bool | undefined |
-| amountReturned  | uint256 | undefined |
-
-### StrategyReinvestUnwound
-
-```solidity
-event StrategyReinvestUnwound(uint256 indexed strategyId, uint256 amount, bool indexed success)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId `indexed` | uint256 | undefined |
-| amount  | uint256 | undefined |
-| success `indexed` | bool | undefined |
+| strategyId_ `indexed` | uint256 | the id for the executed strategy |
+| amountIn_ `indexed` | uint256 | amount received from the swap |
+| reInvested_  | bool | wether the strategy reinvested or not |
 
 ### StrategySubscribed
 
@@ -621,8 +581,8 @@ Emitted when the Strategy is confirmed to be subscribed to an Executor
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_ `indexed` | uint256 | {uint256} ID of the strategy that has been subscribed |
-| executor_ `indexed` | address | {address} Address of the Executor contract subscribed to |
+| strategyId_ `indexed` | uint256 | ID of the strategy that has been subscribed |
+| executor_ `indexed` | address | Address of the Executor contract subscribed to |
 
 ### StrategyUnsubscribed
 
@@ -638,7 +598,7 @@ Emitted when a strategy has been unsubscribed from an Executor
 
 | Name | Type | Description |
 |---|---|---|
-| strategyId_ `indexed` | uint256 | {uint256} Id of the strategy being unsubscribed |
+| strategyId_ `indexed` | uint256 | Id of the strategy being unsubscribed |
 
 
 

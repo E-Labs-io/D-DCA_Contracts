@@ -157,10 +157,10 @@ export interface DCAReinvestInterface extends Interface {
 }
 
 export namespace ContractActiveStateChangeEvent {
-  export type InputTuple = [newState_: boolean];
-  export type OutputTuple = [newState_: boolean];
+  export type InputTuple = [active_: boolean];
+  export type OutputTuple = [active_: boolean];
   export interface OutputObject {
-    newState_: boolean;
+    active_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;

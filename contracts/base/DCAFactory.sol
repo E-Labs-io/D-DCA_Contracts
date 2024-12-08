@@ -2,8 +2,11 @@
 pragma solidity ^0.8.20;
 
 import "./DCAAccount.sol";
+import "../interfaces/IDCAFactory.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../security/onlyActive.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 /**
  *
  ************************************************
@@ -22,12 +25,7 @@ import "../security/onlyActive.sol";
  *  e-labs.co.uk
  *
  */
-contract DCAFactory is OnlyActive {
-    // Event to emit when a new DCAAccount is created.
-    event DCAAccountCreated(address indexed owner, address indexed dcaAccount);
-    event DCAExecutorAddressChanged(address indexed newAddress);
-    event DCAReinvestContractAddressChanged(address indexed newLibraryAddress);
-
+contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
     // Mapping to keep track of accounts created by each user.
     mapping(address => address[]) public userDCAAccounts;
 
@@ -57,7 +55,7 @@ contract DCAFactory is OnlyActive {
     }
 
     // Function to create a new DCAAccount.
-    function createDCAAccount() public is_active {
+    function CreateAccount() public is_active {
         // Create a new DCAAccount with the sender as the initial owner.
         address sender = _msgSender();
         DCAAccount newAccount = new DCAAccount(
@@ -71,15 +69,15 @@ contract DCAFactory is OnlyActive {
         userDCAAccounts[sender].push(address(newAccount));
 
         // Emit an event for the frontend to listen to.
-        emit DCAAccountCreated(sender, address(newAccount));
+        emit AccountCreated(sender, address(newAccount));
         accountsCreated++;
     }
 
     // Function to get all DCAAccounts created by a user.
     function getDCAAccountsOfUser(
-        address user
-    ) public view returns (address[] memory) {
-        return userDCAAccounts[user];
+        address _user
+    ) external view returns (address[] memory) {
+        return userDCAAccounts[_user];
     }
 
     function updateExecutorAddress(
@@ -91,14 +89,14 @@ contract DCAFactory is OnlyActive {
         );
 
         _executorAddress = _newExecutorAddress;
-        emit DCAExecutorAddressChanged(_newExecutorAddress);
+        emit ExecutorChanged(_newExecutorAddress);
     }
 
     function updateReinvestLibraryAddress(
         address newAddress_
     ) public onlyOwner {
         reInvestLogicContract = newAddress_;
-        emit DCAReinvestContractAddressChanged(newAddress_);
+        emit ReinvestLibraryChanged(newAddress_);
     }
 
     function getFactoryActiveState() public view returns (bool) {

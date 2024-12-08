@@ -3,3 +3,4 @@
 /* eslint-disable */
 export { IDCAAccount__factory } from "./IDCAAccount__factory";
 export { IDCAExecutor__factory } from "./IDCAExecutor__factory";
+export { IDCAFactory__factory } from "./IDCAFactory__factory";

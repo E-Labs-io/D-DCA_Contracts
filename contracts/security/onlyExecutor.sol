@@ -20,10 +20,20 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  *
  */
 abstract contract OnlyExecutor is Ownable {
+    /**
+     * @notice The address of the executor
+     */
     address private _executorAddress;
 
+    /**
+     * @notice Emitted when the executor address is changed
+     * @param newAddress_ The new executor address
+     */
     event ExecutorAddressChange(address indexed newAddress_);
 
+    /**
+     * @notice Modifier to check if the caller is the executor
+     */
     modifier onlyExecutor() {
         require(
             _executorAddress == msg.sender,
@@ -32,19 +42,35 @@ abstract contract OnlyExecutor is Ownable {
         _;
     }
 
+    /**
+     * @notice Constructor for the OnlyExecutor contract
+     * @param owner_ The owner of the contract
+     * @param executorAddress_ The address of the executor
+     */
     constructor(address owner_, address executorAddress_) Ownable(owner_) {
         _changeExecutorAddress(executorAddress_);
     }
 
+    /**
+     * @notice Returns the executor address
+     * @return The executor address
+     */
     function _executor() internal view returns (address) {
         return _executorAddress;
     }
 
+    /**
+     * @notice Changes the executor address
+     * @param executorAddress_ The new executor address
+     */
     function _changeExecutorAddress(address executorAddress_) internal {
         _executorAddress = executorAddress_;
         emit ExecutorAddressChange(executorAddress_);
     }
 
+    /**
+     * @notice Removes the executor address
+     */
     function removeExecutor() public onlyOwner {
         _changeExecutorAddress(address(0x0));
     }
@@ -52,6 +78,11 @@ abstract contract OnlyExecutor is Ownable {
     function changeExecutor(address executorAddress_) public onlyOwner {
         _changeExecutorAddress(executorAddress_);
     }
+
+    /**
+     * @notice Returns the executor address
+     * @return The executor address
+     */
     function getExecutorAddress() public view returns (address) {
         return _executorAddress;
     }

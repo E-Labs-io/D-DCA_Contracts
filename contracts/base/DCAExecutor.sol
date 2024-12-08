@@ -51,6 +51,11 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     uint256 private _totalActiveStrategies;
     uint256 private _totalIntervalsExecuted;
 
+    /**
+     * @dev Constructor for the DCAExecutor contract
+     * @param feeDistrobution_ The fee distribution data
+     * @param executionEOA_ The address of the execution EOA
+     */
     constructor(
         FeeDistribution memory feeDistrobution_,
         address executionEOA_
@@ -58,6 +63,9 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         setFeeData(feeDistrobution_);
     }
 
+    /**
+     * @dev Fallback function for the DCAExecutor contract
+     */
     fallback() external payable {
         revert("DCAExecutor : [fallback]");
     }
@@ -66,6 +74,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         revert("DCAExecutor : [receive]");
     }
 
+    /**
+     * @dev Subscribes a strategy to the DCAExecutor
+     * @param strategy_ The strategy data
+     */
     function Subscribe(
         Strategy calldata strategy_
     ) external override is_active {
@@ -86,6 +98,11 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         _totalActiveStrategiesByIntervals[strategy_.interval]++;
     }
 
+    /**
+     * @dev Unsubscribes a strategy from the DCAExecutor
+     * @param DCAAccountAddress_ The address of the DCAAccount
+     * @param strategyId_ The id of the strategy to unsubscribe
+     */
     function Unsubscribe(
         address DCAAccountAddress_,
         uint256 strategyId_
@@ -98,42 +115,26 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         _totalActiveStrategies--;
     }
 
+    /**
+     * @dev Executes a single strategy
+     * @param DCAAccount_ The address of the DCAAccount
+     * @param strategyId_ The id of the strategy to execute
+     */
     function Execute(
         address DCAAccount_,
         uint256 strategyId_
     ) external override onlyExecutor is_active {
         bool success = _singleExecution(DCAAccount_, strategyId_);
         if (success) {
-            emit ExecutedDCA(DCAAccount_, strategyId_);
+            emit ExecutedStrategy(DCAAccount_, strategyId_);
             _totalIntervalsExecuted++;
         }
     }
 
-    function ExecuteBatch(
-        address[] memory DCAAccount_,
-        uint256[] memory strategyId_
-    ) external override onlyExecutor is_active {
-        require(
-            DCAAccount_.length <= 10,
-            "DCAExecutor: [ExecuteBatch] Maximum 10 executions allowed"
-        );
-        require(
-            DCAAccount_.length == strategyId_.length,
-            "DCAExecutor: [ExecuteBatch] Accounts & Strategy count don't match"
-        );
-        for (uint256 i = 0; i < DCAAccount_.length; i++) {
-            if (
-                _strategies[DCAAccount_[i]][strategyId_[i]].interval.isInWindow(
-                    _lastExecution[DCAAccount_[i]][strategyId_[i]]
-                )
-            ) {
-                if (_singleExecution(DCAAccount_[i], strategyId_[i])) {
-                    emit ExecutedDCA(DCAAccount_[i], strategyId_[i]);
-                }
-            }
-        }
-    }
-
+    /**
+     * @dev Distributes the fees for the given token
+     * @param tokenAddress_ The address of the token to distribute fees for
+     */
     function DistributeFees(
         address tokenAddress_
     ) external override onlyAdmins {
@@ -152,6 +153,11 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         }
     }
 
+    /**
+     * @dev Forces the unsubscription of a strategy
+     * @param DCAAccount_ The address of the DCAAccount
+     * @param strategyId_ The id of the strategy to unsubscribe
+     */
     function ForceUnsubscribe(
         address DCAAccount_,
         uint256 strategyId_
@@ -161,9 +167,9 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
             "DCAExecutor: [ForceUnsubscribe] Account already unsubscribed"
         );
         _strategies[DCAAccount_][strategyId_].active = false;
-        IDCAAccount(DCAAccount_).ExecutorDeactivateStrategy(strategyId_);
+        IDCAAccount(DCAAccount_).ExecutorDeactivate(strategyId_);
         _totalActiveStrategies--;
-        emit DCAAccountSubscription(
+        emit StrategySubscription(
             DCAAccount_,
             strategyId_,
             _strategies[DCAAccount_][strategyId_].interval,
@@ -171,6 +177,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         );
     }
 
+    /**
+     * @dev Sets the fee data for the DCAExecutor
+     * @param fee_ The fee distribution data
+     */
     function setFeeData(
         IDCADataStructures.FeeDistribution memory fee_
     ) public onlyOwner {
@@ -182,10 +192,20 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         emit FeeDataChanged();
     }
 
+    /**
+     * @dev Sets the active state of the DCAExecutor
+     * @param newFlag_ The new active state
+     */
     function setActiveState(bool newFlag_) public onlyAdmins {
         _setActiveState(newFlag_);
     }
 
+    /**
+     * @dev Returns the specific strategy for the given DCAAccount and strategy id
+     * @param dcaAccountAddress_ The address of the DCAAccount
+     * @param accountStrategyId_ The id of the strategy
+     * @return The strategy data
+     */
     function getSpecificStrategy(
         address dcaAccountAddress_,
         uint256 accountStrategyId_
@@ -193,18 +213,38 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         return _strategies[dcaAccountAddress_][accountStrategyId_];
     }
 
+    /**
+     * @dev Returns the total number of executions
+     * @return The total number of executions
+     */
     function getTotalExecutions() public view returns (uint256) {
         return _totalIntervalsExecuted;
     }
 
+    /**
+     * @dev Returns the active executor address
+     * @return The active executor address
+     */
     function getActiveExecutorAddress() public view returns (address) {
         return _executor();
     }
 
+    /**
+     * @dev Returns the fee data for the DCAExecutor
+     * @return The fee data
+     */
     function getFeeData() public view returns (FeeDistribution memory) {
         return _feeData;
     }
 
+    /**
+     * @dev Returns the time till window for the given DCAAccount and strategy id
+     * @param account_ The address of the DCAAccount
+     * @param strategyId_ The id of the strategy
+     * @return lastEx The last execution block number
+     * @return secondsLeft The seconds left till window
+     * @return checkReturn The check return
+     */
     function getTimeTillWindow(
         address account_,
         uint256 strategyId_
@@ -218,12 +258,23 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
                 .getTimeTillWindow(strategyId_);
     }
 
+    /**
+     * @dev Sets the active state of the given interval
+     * @param interval_ The interval to set the active state for
+     * @param status_ The new active state
+     */
     function setIntervalActive(
         Interval interval_,
         bool status_
     ) external onlyAdmins {
         _activeIntervals[interval_] = status_;
     }
+
+    /**
+     * @dev Returns the active state of the given interval
+     * @param interval_ The interval to get the active state for
+     * @return The active state of the given interval
+     */
     function isIntervalActive(Interval interval_) public view returns (bool) {
         return _activeIntervals[interval_];
     }
@@ -238,7 +289,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     ) internal {
         strategy_.active = true;
         _strategies[strategy_.accountAddress][strategy_.strategyId] = strategy_;
-        emit DCAAccountSubscription(
+        emit StrategySubscription(
             strategy_.accountAddress,
             strategy_.strategyId,
             strategy_.interval,
@@ -246,6 +297,11 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         );
     }
 
+    /**
+     * @dev Unsubscribes a strategy from the DCAExecutor
+     * @param DCAAccountAddress_ The address of the DCAAccount
+     * @param strategyId_ The id of the strategy to unsubscribe
+     */
     function _unSubscribeAccount(
         address DCAAccountAddress_,
         uint256 strategyId_
@@ -254,7 +310,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         _strategies[DCAAccountAddress_][strategyId_].active = false;
         _totalActiveStrategiesByIntervals[strategy.interval]--;
 
-        emit DCAAccountSubscription(
+        emit StrategySubscription(
             DCAAccountAddress_,
             strategyId_,
             strategy.interval,
@@ -262,6 +318,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         );
     }
 
+    /**
+     * @dev Sets the execution address for the DCAExecutor
+     * @param newExecutionEOA_ The new execution EOA address
+     */
     function _setExecutionAddress(address newExecutionEOA_) internal {
         _changeExecutorAddress(newExecutionEOA_);
     }
@@ -280,6 +340,12 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         return success;
     }
 
+    /**
+     * @dev Transfers the fee to the given address
+     * @param to_ The address to transfer the fee to
+     * @param amount_ The amount of the fee to transfer
+     * @param token_ The token to transfer the fee in
+     */
     function _transferFee(
         address to_,
         uint256 amount_,
@@ -289,43 +355,23 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     }
 
     /** Stats Getters */
+
+    /**
+     * @dev Returns the total number of active strategies
+     * @return The total number of active strategies
+     */
     function getTotalActiveStrategys() public view returns (uint256) {
         return _totalActiveStrategies;
     }
+
+    /**
+     * @dev Returns the total number of active strategies for the given interval
+     * @param interval_ The interval to get the total number of active strategies for
+     * @return The total number of active strategies for the given interval
+     */
     function getIntervalTotalActiveStrategys(
         Interval interval_
     ) public view returns (uint256) {
         return _totalActiveStrategiesByIntervals[interval_];
-    }
-
-    /** @notice DEV TESTING FUNCTIONS */
-
-    //  Test getFees
-    function DEVgetFeesOfAmount(
-        uint256 amount_
-    )
-        public
-        view
-        returns (uint256 executorFee, uint256 computingFee, uint256 adminFee)
-    {
-        return _feeData.getFeeSplit(amount_);
-    }
-    //   Test getFee to given amount
-    function DEVcalculateFeeOfAmount(
-        uint16 feeAmount_,
-        uint256 amount_
-    ) public pure returns (uint256) {
-        return feeAmount_.getFee(amount_);
-    }
-    // Test calculatePercentage
-    function DEVcalculateSplitFee(
-        uint16 feeAmount_,
-        uint256 amount_
-    ) public pure returns (uint256) {
-        return feeAmount_.calculatePercentage(amount_);
-    }
-    // test getFee of set fee data
-    function DEVgetFeeQuote(uint256 amount_) public view returns (uint256) {
-        return _feeData.feeAmount.getFee(amount_);
     }
 }

@@ -39,9 +39,7 @@ contract DCAAccount is DCAAccountLogic {
         _setReinvestAddress(reinvestLibraryContract_);
     }
 
-    fallback() external payable {
-        // Consider removing if not needed
-    }
+    fallback() external payable {}
 
     // Receive is a variant of fallback that is triggered when msg.data is empty
     receive() external payable {}
@@ -133,14 +131,10 @@ contract DCAAccount is DCAAccountLogic {
      * @notice used by the Executor to remove failing strategies/out of funds strategies.
      * @param strategyId_ Strategy Id of the strategy to unsubscribe
      */
-    function ExecutorDeactivateStrategy(
+    function ExecutorDeactivate(
         uint256 strategyId_
     ) external override onlyExecutor {
-        Strategy memory oldStrategy = _strategies[strategyId_];
-        _costPerBlock[
-            oldStrategy.baseToken.tokenAddress
-        ] -= _calculateCostPerBlock(oldStrategy.amount, oldStrategy.interval);
-        _strategies[oldStrategy.strategyId].active = false;
+        _strategies[strategyId_].active = false;
         _totalActiveStrategies -= 1;
 
         emit StrategyUnsubscribed(strategyId_);
@@ -199,6 +193,10 @@ contract DCAAccount is DCAAccountLogic {
         require(success, "DCAAccount : [WithdrawSavings] Transfer failed");
     }
 
+    /**
+     * @dev Unwinds the reinvestment for the given strategy
+     * @param strategyId_ The id of the strategy to unwind
+     */
     function UnWindReinvest(uint256 strategyId_) public onlyOwner {
         uint256 balance = _reinvestLiquidityTokenBalance[strategyId_];
         require(
@@ -211,7 +209,7 @@ contract DCAAccount is DCAAccountLogic {
             _strategies[strategyId_].reinvest,
             balance
         );
-        emit StrategyReinvestUnwound(strategyId_, amount, success);
+        emit ReinvestUnwound(strategyId_, amount, success);
     }
 
     /**
@@ -266,17 +264,6 @@ contract DCAAccount is DCAAccountLogic {
     }
 
     /**
-     * @dev get the total cost per-block for all strategies using the base token
-     * @param token_ {address} Base token address
-     * @return {uint256} amount of the base token strategies use per block
-     */
-    function getBaseTokenCostPerBlock(
-        address token_
-    ) external view returns (uint256) {
-        return _costPerBlock[token_];
-    }
-
-    /**
      * @dev Get the full data for the given strategy
      * @param strategyId_ Strategy Id of the strategy data to get
      * @return {Strategy} the given strategy's full data struct
@@ -291,7 +278,7 @@ contract DCAAccount is DCAAccountLogic {
      * @dev update the onChain executor address
      * @param newAddress_ address of the new default executor contract
      */
-    function _changeDefaultExecutor(address newAddress_) internal {
+    function _changeExecutor(address newAddress_) internal {
         require(_executor() != newAddress_, "Already using this DCA executor");
 
         _changeExecutorAddress(newAddress_);
@@ -305,12 +292,16 @@ contract DCAAccount is DCAAccountLogic {
      * @dev Updates the contract holding the reinvest logic
      * @param newLibraryAddress_ address of the library contract to use
      */
-    function changeDCAReinvestLibrary(
+    function changeReinvestLibrary(
         address newLibraryAddress_
     ) public onlyOwner {
         _setReinvestAddress(newLibraryAddress_);
     }
 
+    /**
+     * @dev Returns the version of the attached reinvest library
+     * @return The version of the attached reinvest library
+     */
     function getAttachedReinvestLibraryVersion()
         public
         view
@@ -319,22 +310,11 @@ contract DCAAccount is DCAAccountLogic {
         return _getReinvestContract().getLibraryVersion();
     }
 
+    /**
+     * @dev Returns the address of the attached reinvest library
+     * @return The address of the attached reinvest library
+     */
     function getAttachedReinvestLibraryAddress() public view returns (address) {
         return address(_getReinvestContract());
-    }
-
-    /**
-     * @notice ONLY IN CONTRACT FOR DEVELOPMENT, WILL REMOVE ON PUBLIC DEPLOY
-     * @param baseToken_ address of the basetoken
-     * @param targetToken_ address of the target token
-     * @param amount_ amount of the base token to swap into the target token
-     */
-    function SWAP(
-        address baseToken_,
-        address targetToken_,
-        uint256 amount_
-    ) public onlyOwner {
-        _approveSwapSpend(baseToken_, amount_);
-        _swap(baseToken_, targetToken_, amount_);
     }
 }

@@ -1,9 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-import "hardhat/console.sol";
-
-//import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-//import "@uniswap/v3-periphery/contracts/interfaces/external/IWETH9.sol";
 
 import {ISwapRouter, IWETH9} from "../protocols/uniswap/ISwapRouterv3.sol";
 
@@ -116,6 +112,10 @@ abstract contract Swap {
             neededAllowance_;
     }
 
+    /**
+     * @dev Updates the swap router address
+     * @param newSwapRouter_ The new swap router address
+     */
     function _updateSwapAddress(address newSwapRouter_) internal {
         SWAP_ROUTER = ISwapRouter(newSwapRouter_);
     }

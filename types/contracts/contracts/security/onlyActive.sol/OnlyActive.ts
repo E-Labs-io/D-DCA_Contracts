@@ -8,7 +8,6 @@ import type {
   Result,
   Interface,
   EventFragment,
-  AddressLike,
   ContractRunner,
   ContractMethod,
   Listener,
@@ -23,59 +22,20 @@ import type {
 } from "../../../common";
 
 export interface OnlyActiveInterface extends Interface {
-  getFunction(
-    nameOrSignature:
-      | "isActive"
-      | "owner"
-      | "renounceOwnership"
-      | "transferOwnership"
-  ): FunctionFragment;
+  getFunction(nameOrSignature: "isActive"): FunctionFragment;
 
-  getEvent(
-    nameOrSignatureOrTopic: "ContractActiveStateChange" | "OwnershipTransferred"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ContractActiveStateChange"): EventFragment;
 
   encodeFunctionData(functionFragment: "isActive", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
-  ): string;
 
   decodeFunctionResult(functionFragment: "isActive", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
 }
 
 export namespace ContractActiveStateChangeEvent {
-  export type InputTuple = [newState_: boolean];
-  export type OutputTuple = [newState_: boolean];
+  export type InputTuple = [active_: boolean];
+  export type OutputTuple = [active_: boolean];
   export interface OutputObject {
-    newState_: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
+    active_: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -128,16 +88,6 @@ export interface OnlyActive extends BaseContract {
 
   isActive: TypedContractMethod<[], [boolean], "view">;
 
-  owner: TypedContractMethod<[], [string], "view">;
-
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
-
-  transferOwnership: TypedContractMethod<
-    [newOwner: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -145,15 +95,6 @@ export interface OnlyActive extends BaseContract {
   getFunction(
     nameOrSignature: "isActive"
   ): TypedContractMethod<[], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "owner"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   getEvent(
     key: "ContractActiveStateChange"
@@ -161,13 +102,6 @@ export interface OnlyActive extends BaseContract {
     ContractActiveStateChangeEvent.InputTuple,
     ContractActiveStateChangeEvent.OutputTuple,
     ContractActiveStateChangeEvent.OutputObject
-  >;
-  getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
   >;
 
   filters: {
@@ -180,17 +114,6 @@ export interface OnlyActive extends BaseContract {
       ContractActiveStateChangeEvent.InputTuple,
       ContractActiveStateChangeEvent.OutputTuple,
       ContractActiveStateChangeEvent.OutputObject
-    >;
-
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
     >;
   };
 }

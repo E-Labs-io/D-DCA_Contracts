@@ -32,7 +32,7 @@ function changeExecutor(address executorAddress_) external nonpayable
 function getExecutorAddress() external view returns (address)
 ```
 
-
+Returns the executor address
 
 
 
@@ -41,7 +41,7 @@ function getExecutorAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
+| _0 | address | The executor address |
 
 ### owner
 
@@ -66,7 +66,7 @@ function owner() external view returns (address)
 function removeExecutor() external nonpayable
 ```
 
-
+Removes the executor address
 
 
 
@@ -108,7 +108,7 @@ function transferOwnership(address newOwner) external nonpayable
 event ExecutorAddressChange(address indexed newAddress_)
 ```
 
-
+Emitted when the executor address is changed
 
 
 
@@ -116,7 +116,7 @@ event ExecutorAddressChange(address indexed newAddress_)
 
 | Name | Type | Description |
 |---|---|---|
-| newAddress_ `indexed` | address | undefined |
+| newAddress_ `indexed` | address | The new executor address |
 
 ### OwnershipTransferred
 

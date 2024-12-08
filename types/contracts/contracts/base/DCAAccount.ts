@@ -24,13 +24,13 @@ import type {
 } from "../../common";
 
 export declare namespace IDCADataStructures {
-  export type TokeDataStruct = {
+  export type TokenDataStruct = {
     tokenAddress: AddressLike;
     decimals: BigNumberish;
     ticker: string;
   };
 
-  export type TokeDataStructOutput = [
+  export type TokenDataStructOutput = [
     tokenAddress: string,
     decimals: bigint,
     ticker: string
@@ -57,8 +57,8 @@ export declare namespace IDCADataStructures {
 
   export type StrategyStruct = {
     accountAddress: AddressLike;
-    baseToken: IDCADataStructures.TokeDataStruct;
-    targetToken: IDCADataStructures.TokeDataStruct;
+    baseToken: IDCADataStructures.TokenDataStruct;
+    targetToken: IDCADataStructures.TokenDataStruct;
     interval: BigNumberish;
     amount: BigNumberish;
     strategyId: BigNumberish;
@@ -68,8 +68,8 @@ export declare namespace IDCADataStructures {
 
   export type StrategyStructOutput = [
     accountAddress: string,
-    baseToken: IDCADataStructures.TokeDataStructOutput,
-    targetToken: IDCADataStructures.TokeDataStructOutput,
+    baseToken: IDCADataStructures.TokenDataStructOutput,
+    targetToken: IDCADataStructures.TokenDataStructOutput,
     interval: bigint,
     amount: bigint,
     strategyId: bigint,
@@ -77,8 +77,8 @@ export declare namespace IDCADataStructures {
     reinvest: IDCADataStructures.ReinvestStructOutput
   ] & {
     accountAddress: string;
-    baseToken: IDCADataStructures.TokeDataStructOutput;
-    targetToken: IDCADataStructures.TokeDataStructOutput;
+    baseToken: IDCADataStructures.TokenDataStructOutput;
+    targetToken: IDCADataStructures.TokenDataStructOutput;
     interval: bigint;
     amount: bigint;
     strategyId: bigint;
@@ -91,9 +91,8 @@ export interface DCAAccountInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "Execute"
-      | "ExecutorDeactivateStrategy"
+      | "ExecutorDeactivate"
       | "FundAccount"
-      | "SWAP"
       | "SWAP_ROUTER"
       | "SetupStrategy"
       | "SubscribeStrategy"
@@ -101,12 +100,11 @@ export interface DCAAccountInterface extends Interface {
       | "UnWindReinvest"
       | "UnsubscribeStrategy"
       | "WithdrawSavings"
-      | "changeDCAReinvestLibrary"
       | "changeExecutor"
+      | "changeReinvestLibrary"
       | "getAttachedReinvestLibraryAddress"
       | "getAttachedReinvestLibraryVersion"
       | "getBaseBalance"
-      | "getBaseTokenCostPerBlock"
       | "getExecutorAddress"
       | "getStrategyData"
       | "getTargetBalance"
@@ -121,13 +119,13 @@ export interface DCAAccountInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "DCAReinvestLibraryChanged"
       | "ExecutorAddressChange"
-      | "NewStrategyCreated"
       | "OwnershipTransferred"
+      | "ReinvestExecuted"
+      | "ReinvestLibraryChanged"
+      | "ReinvestUnwound"
+      | "StrategyCreated"
       | "StrategyExecuted"
-      | "StrategyReinvestExecuted"
-      | "StrategyReinvestUnwound"
       | "StrategySubscribed"
       | "StrategyUnsubscribed"
   ): EventFragment;
@@ -137,16 +135,12 @@ export interface DCAAccountInterface extends Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "ExecutorDeactivateStrategy",
+    functionFragment: "ExecutorDeactivate",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "FundAccount",
     values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "SWAP",
-    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "SWAP_ROUTER",
@@ -177,11 +171,11 @@ export interface DCAAccountInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "changeDCAReinvestLibrary",
+    functionFragment: "changeExecutor",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "changeExecutor",
+    functionFragment: "changeReinvestLibrary",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -194,10 +188,6 @@ export interface DCAAccountInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBaseBalance",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBaseTokenCostPerBlock",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -240,14 +230,13 @@ export interface DCAAccountInterface extends Interface {
 
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "ExecutorDeactivateStrategy",
+    functionFragment: "ExecutorDeactivate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "FundAccount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "SWAP", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "SWAP_ROUTER",
     data: BytesLike
@@ -277,11 +266,11 @@ export interface DCAAccountInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeDCAReinvestLibrary",
+    functionFragment: "changeExecutor",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeExecutor",
+    functionFragment: "changeReinvestLibrary",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -294,10 +283,6 @@ export interface DCAAccountInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBaseBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getBaseTokenCostPerBlock",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -339,35 +324,11 @@ export interface DCAAccountInterface extends Interface {
   ): Result;
 }
 
-export namespace DCAReinvestLibraryChangedEvent {
-  export type InputTuple = [newLibraryAddress: AddressLike];
-  export type OutputTuple = [newLibraryAddress: string];
-  export interface OutputObject {
-    newLibraryAddress: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace ExecutorAddressChangeEvent {
   export type InputTuple = [newAddress_: AddressLike];
   export type OutputTuple = [newAddress_: string];
   export interface OutputObject {
     newAddress_: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace NewStrategyCreatedEvent {
-  export type InputTuple = [strategyId_: BigNumberish];
-  export type OutputTuple = [strategyId_: bigint];
-  export interface OutputObject {
-    strategyId_: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -381,6 +342,74 @@ export namespace OwnershipTransferredEvent {
   export interface OutputObject {
     previousOwner: string;
     newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace ReinvestExecutedEvent {
+  export type InputTuple = [
+    strategyId_: BigNumberish,
+    success: boolean,
+    amountReturned: BigNumberish
+  ];
+  export type OutputTuple = [
+    strategyId_: bigint,
+    success: boolean,
+    amountReturned: bigint
+  ];
+  export interface OutputObject {
+    strategyId_: bigint;
+    success: boolean;
+    amountReturned: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace ReinvestLibraryChangedEvent {
+  export type InputTuple = [newLibraryAddress: AddressLike];
+  export type OutputTuple = [newLibraryAddress: string];
+  export interface OutputObject {
+    newLibraryAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace ReinvestUnwoundEvent {
+  export type InputTuple = [
+    strategyId: BigNumberish,
+    amount: BigNumberish,
+    success: boolean
+  ];
+  export type OutputTuple = [
+    strategyId: bigint,
+    amount: bigint,
+    success: boolean
+  ];
+  export interface OutputObject {
+    strategyId: bigint;
+    amount: bigint;
+    success: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace StrategyCreatedEvent {
+  export type InputTuple = [strategyId_: BigNumberish];
+  export type OutputTuple = [strategyId_: bigint];
+  export interface OutputObject {
+    strategyId_: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -403,50 +432,6 @@ export namespace StrategyExecutedEvent {
     strategyId_: bigint;
     amountIn_: bigint;
     reInvested_: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace StrategyReinvestExecutedEvent {
-  export type InputTuple = [
-    strategyId_: BigNumberish,
-    success: boolean,
-    amountReturned: BigNumberish
-  ];
-  export type OutputTuple = [
-    strategyId_: bigint,
-    success: boolean,
-    amountReturned: bigint
-  ];
-  export interface OutputObject {
-    strategyId_: bigint;
-    success: boolean;
-    amountReturned: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace StrategyReinvestUnwoundEvent {
-  export type InputTuple = [
-    strategyId: BigNumberish,
-    amount: BigNumberish,
-    success: boolean
-  ];
-  export type OutputTuple = [
-    strategyId: bigint,
-    amount: bigint,
-    success: boolean
-  ];
-  export interface OutputObject {
-    strategyId: bigint;
-    amount: bigint;
-    success: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -528,7 +513,7 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
-  ExecutorDeactivateStrategy: TypedContractMethod<
+  ExecutorDeactivate: TypedContractMethod<
     [strategyId_: BigNumberish],
     [void],
     "nonpayable"
@@ -536,12 +521,6 @@ export interface DCAAccount extends BaseContract {
 
   FundAccount: TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
-  SWAP: TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -588,14 +567,14 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
-  changeDCAReinvestLibrary: TypedContractMethod<
-    [newLibraryAddress_: AddressLike],
+  changeExecutor: TypedContractMethod<
+    [executorAddress_: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  changeExecutor: TypedContractMethod<
-    [executorAddress_: AddressLike],
+  changeReinvestLibrary: TypedContractMethod<
+    [newLibraryAddress_: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -605,12 +584,6 @@ export interface DCAAccount extends BaseContract {
   getAttachedReinvestLibraryVersion: TypedContractMethod<[], [string], "view">;
 
   getBaseBalance: TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-
-  getBaseTokenCostPerBlock: TypedContractMethod<
-    [token_: AddressLike],
-    [bigint],
-    "view"
-  >;
 
   getExecutorAddress: TypedContractMethod<[], [string], "view">;
 
@@ -674,19 +647,12 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "ExecutorDeactivateStrategy"
+    nameOrSignature: "ExecutorDeactivate"
   ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "FundAccount"
   ): TypedContractMethod<
     [token_: AddressLike, amount_: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "SWAP"
-  ): TypedContractMethod<
-    [baseToken_: AddressLike, targetToken_: AddressLike, amount_: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -728,15 +694,15 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "changeDCAReinvestLibrary"
+    nameOrSignature: "changeExecutor"
+  ): TypedContractMethod<[executorAddress_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "changeReinvestLibrary"
   ): TypedContractMethod<
     [newLibraryAddress_: AddressLike],
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "changeExecutor"
-  ): TypedContractMethod<[executorAddress_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "getAttachedReinvestLibraryAddress"
   ): TypedContractMethod<[], [string], "view">;
@@ -745,9 +711,6 @@ export interface DCAAccount extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getBaseBalance"
-  ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getBaseTokenCostPerBlock"
   ): TypedContractMethod<[token_: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "getExecutorAddress"
@@ -799,25 +762,11 @@ export interface DCAAccount extends BaseContract {
   ): TypedContractMethod<[swapRouter_: AddressLike], [void], "nonpayable">;
 
   getEvent(
-    key: "DCAReinvestLibraryChanged"
-  ): TypedContractEvent<
-    DCAReinvestLibraryChangedEvent.InputTuple,
-    DCAReinvestLibraryChangedEvent.OutputTuple,
-    DCAReinvestLibraryChangedEvent.OutputObject
-  >;
-  getEvent(
     key: "ExecutorAddressChange"
   ): TypedContractEvent<
     ExecutorAddressChangeEvent.InputTuple,
     ExecutorAddressChangeEvent.OutputTuple,
     ExecutorAddressChangeEvent.OutputObject
-  >;
-  getEvent(
-    key: "NewStrategyCreated"
-  ): TypedContractEvent<
-    NewStrategyCreatedEvent.InputTuple,
-    NewStrategyCreatedEvent.OutputTuple,
-    NewStrategyCreatedEvent.OutputObject
   >;
   getEvent(
     key: "OwnershipTransferred"
@@ -827,25 +776,39 @@ export interface DCAAccount extends BaseContract {
     OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
+    key: "ReinvestExecuted"
+  ): TypedContractEvent<
+    ReinvestExecutedEvent.InputTuple,
+    ReinvestExecutedEvent.OutputTuple,
+    ReinvestExecutedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ReinvestLibraryChanged"
+  ): TypedContractEvent<
+    ReinvestLibraryChangedEvent.InputTuple,
+    ReinvestLibraryChangedEvent.OutputTuple,
+    ReinvestLibraryChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ReinvestUnwound"
+  ): TypedContractEvent<
+    ReinvestUnwoundEvent.InputTuple,
+    ReinvestUnwoundEvent.OutputTuple,
+    ReinvestUnwoundEvent.OutputObject
+  >;
+  getEvent(
+    key: "StrategyCreated"
+  ): TypedContractEvent<
+    StrategyCreatedEvent.InputTuple,
+    StrategyCreatedEvent.OutputTuple,
+    StrategyCreatedEvent.OutputObject
+  >;
+  getEvent(
     key: "StrategyExecuted"
   ): TypedContractEvent<
     StrategyExecutedEvent.InputTuple,
     StrategyExecutedEvent.OutputTuple,
     StrategyExecutedEvent.OutputObject
-  >;
-  getEvent(
-    key: "StrategyReinvestExecuted"
-  ): TypedContractEvent<
-    StrategyReinvestExecutedEvent.InputTuple,
-    StrategyReinvestExecutedEvent.OutputTuple,
-    StrategyReinvestExecutedEvent.OutputObject
-  >;
-  getEvent(
-    key: "StrategyReinvestUnwound"
-  ): TypedContractEvent<
-    StrategyReinvestUnwoundEvent.InputTuple,
-    StrategyReinvestUnwoundEvent.OutputTuple,
-    StrategyReinvestUnwoundEvent.OutputObject
   >;
   getEvent(
     key: "StrategySubscribed"
@@ -863,17 +826,6 @@ export interface DCAAccount extends BaseContract {
   >;
 
   filters: {
-    "DCAReinvestLibraryChanged(address)": TypedContractEvent<
-      DCAReinvestLibraryChangedEvent.InputTuple,
-      DCAReinvestLibraryChangedEvent.OutputTuple,
-      DCAReinvestLibraryChangedEvent.OutputObject
-    >;
-    DCAReinvestLibraryChanged: TypedContractEvent<
-      DCAReinvestLibraryChangedEvent.InputTuple,
-      DCAReinvestLibraryChangedEvent.OutputTuple,
-      DCAReinvestLibraryChangedEvent.OutputObject
-    >;
-
     "ExecutorAddressChange(address)": TypedContractEvent<
       ExecutorAddressChangeEvent.InputTuple,
       ExecutorAddressChangeEvent.OutputTuple,
@@ -883,17 +835,6 @@ export interface DCAAccount extends BaseContract {
       ExecutorAddressChangeEvent.InputTuple,
       ExecutorAddressChangeEvent.OutputTuple,
       ExecutorAddressChangeEvent.OutputObject
-    >;
-
-    "NewStrategyCreated(uint256)": TypedContractEvent<
-      NewStrategyCreatedEvent.InputTuple,
-      NewStrategyCreatedEvent.OutputTuple,
-      NewStrategyCreatedEvent.OutputObject
-    >;
-    NewStrategyCreated: TypedContractEvent<
-      NewStrategyCreatedEvent.InputTuple,
-      NewStrategyCreatedEvent.OutputTuple,
-      NewStrategyCreatedEvent.OutputObject
     >;
 
     "OwnershipTransferred(address,address)": TypedContractEvent<
@@ -907,6 +848,50 @@ export interface DCAAccount extends BaseContract {
       OwnershipTransferredEvent.OutputObject
     >;
 
+    "ReinvestExecuted(uint256,bool,uint256)": TypedContractEvent<
+      ReinvestExecutedEvent.InputTuple,
+      ReinvestExecutedEvent.OutputTuple,
+      ReinvestExecutedEvent.OutputObject
+    >;
+    ReinvestExecuted: TypedContractEvent<
+      ReinvestExecutedEvent.InputTuple,
+      ReinvestExecutedEvent.OutputTuple,
+      ReinvestExecutedEvent.OutputObject
+    >;
+
+    "ReinvestLibraryChanged(address)": TypedContractEvent<
+      ReinvestLibraryChangedEvent.InputTuple,
+      ReinvestLibraryChangedEvent.OutputTuple,
+      ReinvestLibraryChangedEvent.OutputObject
+    >;
+    ReinvestLibraryChanged: TypedContractEvent<
+      ReinvestLibraryChangedEvent.InputTuple,
+      ReinvestLibraryChangedEvent.OutputTuple,
+      ReinvestLibraryChangedEvent.OutputObject
+    >;
+
+    "ReinvestUnwound(uint256,uint256,bool)": TypedContractEvent<
+      ReinvestUnwoundEvent.InputTuple,
+      ReinvestUnwoundEvent.OutputTuple,
+      ReinvestUnwoundEvent.OutputObject
+    >;
+    ReinvestUnwound: TypedContractEvent<
+      ReinvestUnwoundEvent.InputTuple,
+      ReinvestUnwoundEvent.OutputTuple,
+      ReinvestUnwoundEvent.OutputObject
+    >;
+
+    "StrategyCreated(uint256)": TypedContractEvent<
+      StrategyCreatedEvent.InputTuple,
+      StrategyCreatedEvent.OutputTuple,
+      StrategyCreatedEvent.OutputObject
+    >;
+    StrategyCreated: TypedContractEvent<
+      StrategyCreatedEvent.InputTuple,
+      StrategyCreatedEvent.OutputTuple,
+      StrategyCreatedEvent.OutputObject
+    >;
+
     "StrategyExecuted(uint256,uint256,bool)": TypedContractEvent<
       StrategyExecutedEvent.InputTuple,
       StrategyExecutedEvent.OutputTuple,
@@ -916,28 +901,6 @@ export interface DCAAccount extends BaseContract {
       StrategyExecutedEvent.InputTuple,
       StrategyExecutedEvent.OutputTuple,
       StrategyExecutedEvent.OutputObject
-    >;
-
-    "StrategyReinvestExecuted(uint256,bool,uint256)": TypedContractEvent<
-      StrategyReinvestExecutedEvent.InputTuple,
-      StrategyReinvestExecutedEvent.OutputTuple,
-      StrategyReinvestExecutedEvent.OutputObject
-    >;
-    StrategyReinvestExecuted: TypedContractEvent<
-      StrategyReinvestExecutedEvent.InputTuple,
-      StrategyReinvestExecutedEvent.OutputTuple,
-      StrategyReinvestExecutedEvent.OutputObject
-    >;
-
-    "StrategyReinvestUnwound(uint256,uint256,bool)": TypedContractEvent<
-      StrategyReinvestUnwoundEvent.InputTuple,
-      StrategyReinvestUnwoundEvent.OutputTuple,
-      StrategyReinvestUnwoundEvent.OutputObject
-    >;
-    StrategyReinvestUnwound: TypedContractEvent<
-      StrategyReinvestUnwoundEvent.InputTuple,
-      StrategyReinvestUnwoundEvent.OutputTuple,
-      StrategyReinvestUnwoundEvent.OutputObject
     >;
 
     "StrategySubscribed(uint256,address)": TypedContractEvent<
