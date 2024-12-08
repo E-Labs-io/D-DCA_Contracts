@@ -15,30 +15,38 @@ export default async function deploy({
   network,
   constructorArguments,
   prevDeployments,
+  logDeployment,
 }: DeploymentProps): Promise<string | Addressable | false> {
   try {
     const deployedContract = await hre.ethers.deployContract(
       contractName,
       constructorArguments,
-      deployer
+      deployer,
     );
     console.log(
-      `🟠 Deployment confirming : ${contractName} to ${deployedContract.target}`
+      `🟠 Deployment confirming : ${contractName} to ${deployedContract.target}`,
     );
 
     await deployedContract.waitForDeployment();
 
-    console.log(`🟠 Deployment Confirmed : ${contractName}`);
+    console.log(`🟠 Deployment Confirmed CHECK: ${contractName}`);
+    if (logDeployment) {
+      console.log(">>>>>>>> Calling logDeployment function");
+      logDeployment({
+        deployment: deployedContract.target,
+        contractName,
+      });
+    }
 
     if (network.name !== "localhost" && network.name !== "hardhat")
       await waitForConfirmations(
         hre,
         deployedContract.deploymentTransaction()?.hash!,
-        2
+        2,
       );
 
     console.log(
-      `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`
+      `🟢 Contract Deployed : ${contractName} to ${deployedContract.target}`,
     );
 
     if (network.name !== "hardhat") {
@@ -46,7 +54,7 @@ export default async function deploy({
       await verifyContractOnScan(
         hre.run,
         deployedContract.target,
-        constructorArguments
+        constructorArguments,
       );
     } else {
       await hre.ethernal.push({

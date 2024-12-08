@@ -147,10 +147,10 @@ Checks if an address is an admin
 |---|---|---|
 | _0 | bool | True if the address is an admin, false otherwise |
 
-### getActiveExecutorAddress
+### getExecutorAddress
 
 ```solidity
-function getActiveExecutorAddress() external view returns (address)
+function getExecutorAddress() external view returns (address)
 ```
 
 
@@ -163,23 +163,6 @@ function getActiveExecutorAddress() external view returns (address)
 | Name | Type | Description |
 |---|---|---|
 | _0 | address | The active executor address |
-
-### getExecutorAddress
-
-```solidity
-function getExecutorAddress() external view returns (address)
-```
-
-Returns the executor address
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | The executor address |
 
 ### getFeeData
 

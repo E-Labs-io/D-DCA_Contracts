@@ -5,14 +5,14 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 export interface Deployment {
   [key: string]: (
-    props: DeploymentProps
+    props: DeploymentProps,
   ) => Promise<string | Addressable | false>;
 }
 
 export interface ArgumentStore {
   [key: string]: (
     deployerAddress: string | Addressable,
-    network: string
+    network: string,
   ) => any;
 }
 
@@ -24,6 +24,7 @@ export interface DeploymentProps {
   network: Network;
   constructorArguments: any[];
   prevDeployments: DeploymentStore[];
+  logDeployment?: (deployment: DeploymentStore) => void;
 }
 
 export type DeploymentStore = {

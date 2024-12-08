@@ -83,7 +83,7 @@ abstract contract OnlyExecutor is Ownable {
      * @notice Returns the executor address
      * @return The executor address
      */
-    function getExecutorAddress() public view returns (address) {
+    function getExecutorAddress() external view virtual returns (address) {
         return _executorAddress;
     }
 }

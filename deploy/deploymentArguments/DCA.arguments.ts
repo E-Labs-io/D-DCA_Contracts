@@ -103,8 +103,8 @@ export const buildStrat = (
   network: string,
 
   options?: {
-    baseToken?: IDCADataStructures.TokeDataStruct;
-    targetToken?: IDCADataStructures.TokeDataStruct;
+    baseToken?: IDCADataStructures.TokenDataStruct;
+    targetToken?: IDCADataStructures.TokenDataStruct;
     reinvest?: IDCADataStructures.ReinvestStruct;
     amount?: number;
     interval?: number;

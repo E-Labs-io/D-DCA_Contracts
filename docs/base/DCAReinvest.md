@@ -71,7 +71,7 @@ function executeReinvest(IDCADataStructures.Reinvest reinvestData_, uint256 amou
 ### getActiveModuals
 
 ```solidity
-function getActiveModuals() external view returns (uint8[])
+function getActiveModuals() external pure returns (uint8[])
 ```
 
 

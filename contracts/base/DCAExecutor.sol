@@ -225,7 +225,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
      * @dev Returns the active executor address
      * @return The active executor address
      */
-    function getActiveExecutorAddress() public view returns (address) {
+    function getExecutorAddress() public view override returns (address) {
         return _executor();
     }
 

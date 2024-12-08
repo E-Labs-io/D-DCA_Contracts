@@ -33,6 +33,13 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     "DCAFactory",
   ];
 
+  const logDeploy = (deployment: DeploymentStore) => {
+    console.log("Saving deployment:", deployment);
+    deploymentAddresses.push(deployment);
+    if (deployment.contractName === "DCAReinvest")
+      reinvestAddress = deployment.deployment;
+  };
+
   console.log("🟠 DCA Deployer: Mounted");
   console.log(`🟠 DCA Deployer: ${deployer.address}`);
   console.log(
@@ -70,14 +77,10 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
         network: network,
         constructorArguments: args,
         prevDeployments: deploymentAddresses,
+        logDeployment: logDeploy,
       }).then(async (address: DeploymentReturn) => {
         if (address !== false) {
           logDeployment(deployment, address, deployer.address, network);
-          if (deployment == "DCAReinvest") reinvestAddress = address;
-          deploymentAddresses.push({
-            deployment: address,
-            contractName: deployment,
-          });
         }
       });
     }

@@ -126,7 +126,6 @@ export interface DCAExecutorInterface extends Interface {
       | "addAdmin"
       | "changeExecutor"
       | "checkIfAdmin"
-      | "getActiveExecutorAddress"
       | "getExecutorAddress"
       | "getFeeData"
       | "getIntervalTotalActiveStrategys"
@@ -188,10 +187,6 @@ export interface DCAExecutorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "checkIfAdmin",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getActiveExecutorAddress",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getExecutorAddress",
@@ -277,10 +272,6 @@ export interface DCAExecutorInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "checkIfAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getActiveExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -526,8 +517,6 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
-  getActiveExecutorAddress: TypedContractMethod<[], [string], "view">;
-
   getExecutorAddress: TypedContractMethod<[], [string], "view">;
 
   getFeeData: TypedContractMethod<
@@ -652,9 +641,6 @@ export interface DCAExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "checkIfAdmin"
   ): TypedContractMethod<[addressToCheck_: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "getActiveExecutorAddress"
-  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getExecutorAddress"
   ): TypedContractMethod<[], [string], "view">;

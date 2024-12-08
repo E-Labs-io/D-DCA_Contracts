@@ -88,7 +88,7 @@ contract DCAReinvest is DCAReinvestLogic, OnlyActive, Ownable {
      */
     function getActiveModuals()
         external
-        view
+        pure
         override
         returns (uint8[] memory)
     {
