@@ -50,7 +50,7 @@ interface IDCAFactory {
      * @param _user Address of the account creator.
      * @return An array of DCAAccount addresses.
      */
-    function getDCAAccountsOfUser(
+    function getAccountsOfUser(
         address _user
     ) external view returns (address[] memory);
 

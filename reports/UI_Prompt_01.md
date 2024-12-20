@@ -1,4 +1,9 @@
-# Distrubuted Cost Average - Website AI Promt
+# ATION
+
+
+---
+
+# Distrubuted Cost Average 
 
 ## Project Overview
 
@@ -6,14 +11,14 @@ Develop a **Decentralized Cost Average (DCA) Platform** website that interacts s
 
 ## Technology Stack
 
-- **Frontend Framework:** Next.js (App Router)
-- **Language:** TypeScript
-- **UI Library:** NextUI with Tailwind CSS
-- **Web3 Integration:** Ethers.js with Alchemy API
-- **Wallet Integration:** Web3Modal or WalletConnect ecosystem
-- **Backend Services:** Next.js API Routes
-- **State Management:** React Context or Zustand
-- **Analytics & Tracking:** Google Analytics or similar
+* **Frontend Framework:** Next.js (App Router)
+* **Language:** TypeScript
+* **UI Library:** NextUI with Tailwind CSS
+* **Web3 Integration:** Ethers.js with Alchemy API
+* **Wallet Integration:** Web3Modal or WalletConnect ecosystem
+* **Backend Services:** Next.js API Routes
+* **State Management:** React Context or Zustand
+* **Analytics & Tracking:** Google Analytics or similar
 
 ## Project Structure
 
@@ -46,53 +51,34 @@ project-root/
 
 ## Pages to Build
 
-### 1. Home Page
+### 
 
-**Path**: `/`
+### 1. App Page
 
-**Features**:
-
-- Overview of the platform
-- Navigation to all major sections
-- User authentication (Connect Wallet)
-- Display user's DCA accounts if authenticated
-
-### 2. About Page
-
-**Path**: `/about`
+**Path**: `/`
 
 **Features**:
 
-- Information about the platform
-- Team details
-- Links to documentation and resources
-- Contact information
-
-### 3. App Page
-
-**Path**: `/app`
-
-**Features**:
-
-- **Single-Page Application (SPA):**
-  - Consolidate all functionalities into one page for a seamless user experience.
-- **Account Management:**
-  - Create a DCA Account
-  - Manage existing accounts
-  - Update account reinvest library address
-  - Change Executor
-- **Strategy Management:**
-  - Create & Fund Strategy
-  - Subscribe to Executor
-  - Monitor Analytics of Strategies
-  - Manage Reinvestments
-- **UI Enhancements:**
-  - Option to view strategies by Account or by Trading Pairs (switchable)
-  - Real-time feedback and transaction status updates
+* **Single-Page Application (SPA):**
+  * Consolidate all functionalities into one page for a seamless user experience.
+* **Account Management:**
+  * Create a DCA Account
+  * Manage existing accounts
+  * Update account reinvest library address
+  * Change Executor
+* **Strategy Management:**
+  * Create & Fund Strategy
+  * Subscribe to Executor
+  * Monitor Analytics of Strategies
+  * Manage Reinvestments
+* **UI Enhancements:**
+  * Option to view strategies by Account or by Trading Pairs (switchable)
+  * Real-time feedback and transaction status updates
 
 ## User Interaction Flows
 
 ### Creating a DCA Account
+
 
 1. **User Action:** Click on the "Create DCA Account" button.
 2. **Connect Wallet:** Prompt the user to connect their Web3 wallet using Web3Modal or WalletConnect.
@@ -101,6 +87,7 @@ project-root/
 5. **Confirmation:** Show the new DCA Account address and update the UI to reflect the new account.
 
 ### Managing Strategies
+
 
 1. **User Action:** Select an existing DCA Account from the dashboard.
 2. **View Strategies:** Display a list of active and inactive strategies associated with the account.
@@ -112,30 +99,30 @@ project-root/
 
 ## On-Chain Analytics
 
-- **Account Discovery:** Use event filtering to identify accounts created by the user's wallet.
-- **Strategy Discovery:** Filter events to list strategies associated with a DCA account.
-- **Execution Data:** Track strategy execution events to gather data on performance, last execution, and amounts executed.
+* **Account Discovery:** Use event filtering to identify accounts created by the user's wallet.
+* **Strategy Discovery:** Filter events to list strategies associated with a DCA account.
+* **Execution Data:** Track strategy execution events to gather data on performance, last execution, and amounts executed.
 
 ## UI/UX Design Guidelines
 
-- Theme:
-  - Utilise NextUI Theam and Component library
-  - Color Palette: Utilize dark shades with vibrant accent colors (e.g., neon blues and greens) to reflect the crypto aesthetic.
-  - Typography: Use modern, sans-serif fonts with clear readability. Highlight important elements with bold fonts.
-  - Spacing: Maintain consistent padding and margins for a clean layout.
-- Component States:
-  - Buttons:
-  - Default: Solid color with clear labeling.
-  - Hover: Slight brightness increase or underline.
-  - Loading: Display a spinner within the button.
-  - Disabled: Gray out with no hover effects.
-- Forms:
-  - Input Fields: Clear labels, validation messages, and error highlighting.
-  - Submission: Real-time validation feedback before allowing submission.
-- Notifications:
-  - Success: Green banners or toasts.
-  - Error: Red banners or toasts.
-  - Info: Blue banners or toasts.
+* Theme:
+  * Utilise NextUI Theam and Component library
+  * Color Palette: Utilize dark shades with vibrant accent colors (e.g., neon blues and greens) to reflect the crypto aesthetic.
+  * Typography: Use modern, sans-serif fonts with clear readability. Highlight important elements with bold fonts.
+  * Spacing: Maintain consistent padding and margins for a clean layout.
+* Component States:
+  * Buttons:
+  * Default: Solid color with clear labeling.
+  * Hover: Slight brightness increase or underline.
+  * Loading: Display a spinner within the button.
+  * Disabled: Gray out with no hover effects.
+* Forms:
+  * Input Fields: Clear labels, validation messages, and error highlighting.
+  * Submission: Real-time validation feedback before allowing submission.
+* Notifications:
+  * Success: Green banners or toasts.
+  * Error: Red banners or toasts.
+  * Info: Blue banners or toasts.
 
 ## Backend Services
 
@@ -143,25 +130,25 @@ project-root/
 
 Utilize Next.js API routes to handle interactions with smart contracts securely. Remember that on-chain actions (getters and setters) will be handled through a Web3 provider.
 
-\n **Examples**:
+ \n **Examples**:
 
-- POST /api/create-account
-- POST /api/create-strategy
-- POST /api/subscribe-executor
-- GET /api/strategy-analytics
-- POST /api/manage-reinvest
+* POST /api/create-account
+* POST /api/create-strategy
+* POST /api/subscribe-executor
+* GET /api/strategy-analytics
+* POST /api/manage-reinvest
 
 ### 2. Smart Contract Interaction
 
-- Use **Ethers.js** to interact with the smart contracts.
-- Integrate **Alchemy** as the Web3 provider for reliable and scalable blockchain interactions.
-- Handle read and write operations securely, ensuring proper error handling and user feedback.
+* Use **Ethers.js** to interact with the smart contracts.
+* Integrate **Alchemy** as the Web3 provider for reliable and scalable blockchain interactions.
+* Handle read and write operations securely, ensuring proper error handling and user feedback.
 
 ### 3. Authentication & Authorization
 
-- Implement wallet-based authentication using a Web3 provider library such as **Web3Modal** or the **WalletConnect** ecosystem.
-- Support multiple network connections and ensure the app detects the active network to load the correct provider and accounts.
-- Protect API routes to ensure only authorized users can perform certain actions.
+* Implement wallet-based authentication using a Web3 provider library such as **Web3Modal** or the **WalletConnect** ecosystem.
+* Support multiple network connections and ensure the app detects the active network to load the correct provider and accounts.
+* Protect API routes to ensure only authorized users can perform certain actions.
 
 ## State Management
 
@@ -173,6 +160,7 @@ To interect with the DCA smartcontract system the app will need to know the cont
 
 ### Contracts
 
+
 1. **DCAFactory**: Responsible for creating new DCA accounts.
 2. **DCAAccount**: Manages individual DCA accounts and strategies.
 
@@ -180,21 +168,21 @@ To interect with the DCA smartcontract system the app will need to know the cont
 
 #### DCAFactory
 
-- **createDCAAccount**:
-  - **Description:** Creates a new DCA Account.
-  - **Parameters:** User's wallet address, initial configuration parameters.
-  - **Returns:** Address of the newly created DCA Account.
+* **createDCAAccount**:
+  * **Description:** Creates a new DCA Account.
+  * **Parameters:** User's wallet address, initial configuration parameters.
+  * **Returns:** Address of the newly created DCA Account.
 
 #### DCAAccount
 
-- **createStrategy**:
-  - **Description:** Creates a new investment strategy.
-  - **Parameters:** Strategy details including tokens, amounts, intervals.
-  - **Returns:** Strategy ID.
-- **setStrategyReinvest**:
-  - **Description:** Sets reinvestment parameters for a strategy.
-  - **Parameters:** Strategy ID, reinvestment details.
-  - **Returns:** None.
+* **createStrategy**:
+  * **Description:** Creates a new investment strategy.
+  * **Parameters:** Strategy details including tokens, amounts, intervals.
+  * **Returns:** Strategy ID.
+* **setStrategyReinvest**:
+  * **Description:** Sets reinvestment parameters for a strategy.
+  * **Parameters:** Strategy ID, reinvestment details.
+  * **Returns:** None.
 
 # Analytics & Tracking
 
@@ -202,43 +190,47 @@ Integrate **Google Analytics** or a similar service to track user interactions a
 
 Monitor key metrics such as:
 
-- Number of DCA accounts created
-- Active strategies
-- Transaction volumes
-- User retention rates
+* Number of DCA accounts created
+* Active strategies
+* Transaction volumes
+* User retention rates
 
 ## Deployment
 
-- Deployment the Next.js application wil be on **Vercel**.
-- Ensure environment variables are securely managed in the deployment platform.
-- Set up continuous integration and deployment pipelines for seamless updates.
+* Deployment the Next.js application wil be on **Vercel**.
+* Ensure environment variables are securely managed in the deployment platform.
+* Set up continuous integration and deployment pipelines for seamless updates.
 
 ## Additional Features
 
-- **User Profiles:** Allow users to view and edit their profile information.
-- **Notifications:** Implement in-app notifications for important events (e.g., transaction confirmations).
-- **Help & Support:** Provide a help section or FAQ to assist users.
-- **Dark Mode Toggle:** Allow users to switch between light and dark themes.
+* **User Profiles:** Allow users to view and edit their profile information.
+* **Notifications:** Implement in-app notifications for important events (e.g., transaction confirmations).
+* **Help & Support:** Provide a help section or FAQ to assist users.
+* **Dark Mode Toggle:** Allow users to switch between light and dark themes.
 
 ## Best Practices
 
-- **Responsive Design:** Ensure all components are mobile-friendly.
-- **Performance Optimization:** Optimize images and assets for faster load times.
-- **Accessibility:** Follow accessibility standards to make the website usable for everyone.
-- **Code Quality:** Maintain clean and well-documented code for easy maintenance.
+* **Responsive Design:** Ensure all components are mobile-friendly.
+* **Performance Optimization:** Optimize images and assets for faster load times.
+* **Accessibility:** Follow accessibility standards to make the website usable for everyone.
+* **Code Quality:** Maintain clean and well-documented code for easy maintenance.
 
 ## Resources
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Ethers.js Documentation](https://docs.ethers.io/)
-- [NextUI Documentation](https://nextui.org/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Alchemy Documentation](https://docs.alchemy.com/)
-- [Google Analytics](https://analytics.google.com/)
+* [Next.js Documentation](https://nextjs.org/docs)
+* [Ethers.js Documentation](https://docs.ethers.io/)
+* [NextUI Documentation](https://nextui.org/docs)
+* [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+* [Alchemy Documentation](https://docs.alchemy.com/)
+* [Google Analytics](https://analytics.google.com/)
+* Web3Modal & Wagmi
+* \
 
 # NOTES:
 
-- There should NOT be sub pages for the App. The App should be a 1-page app with everything that you need to do within it. It should be a beautiful UI that easily allows users to view, manage, and create DCA Accounts and Strategies. These should be shown by Account or by trading pairs (switchable).
-- We should use a Web3 provider library to integrate a wallet connection/management system. This could be the Web3Modal or the WalletConnect ecosystem. It needs to allow the user to connect to multiple networks and the App needs to know which one they are on to load the correct provider/accounts.
-- The Next.js project should be set up in an App Router format.
-- \
+* There should NOT be sub pages for the App. The App should be a 1-page app with everything that you need to do within it. It should be a beautiful UI that easily allows users to view, manage, and create DCA Accounts and Strategies. These should be shown by Account or by trading pairs (switchable).
+* We should use a Web3 provider library to integrate a wallet connection/management system. This could be the Web3Modal or the WalletConnect ecosystem. It needs to allow the user to connect to multiple networks and the App needs to know which one they are on to load the correct provider/accounts.
+* The Next.js project should be set up in an App Router format.
+* \
+
+

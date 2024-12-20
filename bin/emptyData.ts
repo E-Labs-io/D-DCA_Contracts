@@ -16,7 +16,7 @@ export const EMPTY_STRATEGY = [
   EMPTY_REINVEST,
 ];
 
-export const EMPTY_TOKEN_DATA_OBJECT: IDCADataStructures.TokeDataStruct = {
+export const EMPTY_TOKEN_DATA_OBJECT: IDCADataStructures.TokenDataStruct = {
   tokenAddress: EMPTY_TOKEN_DATA[0] as string,
   decimals: 0n,
   ticker: "0x00",

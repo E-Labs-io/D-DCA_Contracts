@@ -111,7 +111,7 @@ contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
      * @param _user The address of the user
      * @return The addresses of the DCAAccounts created by the user
      */
-    function getDCAAccountsOfUser(
+    function getAccountsOfUser(
         address _user
     ) external view returns (address[] memory) {
         return userDCAAccounts[_user];
