@@ -14,9 +14,9 @@ import "../logic/AccountLogic.sol";
  *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
  *_oo_____oo____oo____oooo____oooo____oo____ooo_*
  *______________________________________________*
- *       Dollar Cost Average Contracts
+ *      Distributed Cost Average Contracts
  ************************************************
- *                  V0.6
+ *                  V0.7
  *  x.com/0xAtion
  *  x.com/e_labs_
  *  e-labs.co.uk
@@ -134,7 +134,7 @@ contract DCAAccount is DCAAccountLogic {
         _strategies[strategyId_].active = false;
         _totalActiveStrategies -= 1;
 
-        emit StrategyUnsubscribed(strategyId_);
+        emit StrategySubscription(strategyId_, _executor(), false);
     }
 
     /**

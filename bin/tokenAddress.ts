@@ -114,6 +114,7 @@ export const tokenAddress: TokenAddressList = {
     ethSepolia: "0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E",
     arbGoerli: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     opGoerli: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+    baseSepolia: "0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4",
     maticMumbai: "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     hardhat: productionChainAddresses[forkedNetwork].swapRouter,
     optimism: productionChainAddresses.optimism.swapRouter,
@@ -217,7 +218,7 @@ export const tokenAddress: TokenAddressList = {
     opGoerli: "0x52dCE39f4A3823b335732178364f5590bDacb25D",
     hardhat: productionChainAddresses[forkedNetwork].aaveV3Pool,
     base: productionChainAddresses.base.aaveV3Pool,
-
+    baseSepolia: "0xbE781D7Bdf469f3d94a62Cdcc407aCe106AEcA74",
     optimism: productionChainAddresses.optimism.aaveV3Pool,
   },
   gho: {

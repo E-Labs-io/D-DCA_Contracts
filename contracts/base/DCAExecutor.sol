@@ -24,10 +24,9 @@ import {Intervals} from "../library/Intervals.sol";
  *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
  *_oo_____oo____oo____oooo____oooo____oo____ooo_*
  *______________________________________________*
- *       Dollar Cost Average Contracts
+ *      Distributed Cost Average Contracts
  ************************************************
  *                  V0.7
- *  ation.capital
  *  x.com/0xAtion
  *  x.com/e_labs_
  *  e-labs.co.uk
@@ -42,7 +41,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
 
     mapping(Interval => bool) private _activeIntervals;
 
-    mapping(address => mapping(uint256 => Strategy)) internal _strategies;
+    mapping(address => mapping(uint256 => Strategy)) internal _strategies; // WHY STORE THE STRAT?
     mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
     FeeDistribution internal _feeData;
 
@@ -113,6 +112,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         );
         _unSubscribeAccount(DCAAccountAddress_, strategyId_);
         _totalActiveStrategies--;
+        _totalActiveStrategiesByIntervals[strategy_.interval]--;
     }
 
     /**

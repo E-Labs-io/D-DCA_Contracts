@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "hardhat/console.sol";
-
 import "../utils/swap.sol";
 import {Strategies, Intervals} from "../library/Strategys.sol";
 import {Fee} from "../library/Fees.sol";
@@ -21,9 +19,9 @@ import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
  *_oo_____oo____oo_____oo___oo____oo__oo___oooo_*
  *_oo_____oo____oo____oooo____oooo____oo____ooo_*
  *______________________________________________*
- *       Dollar Cost Average Contracts
+ *      Distributed Cost Average Contracts
  ************************************************
- *                  V0.6
+ *                  V0.7
  *  x.com/0xAtion
  *  x.com/e_labs_
  *  e-labs.co.uk
@@ -92,7 +90,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param strategyId_ Strategy Id of the strategy data to execute
      * @param feePercent_ Amount to charge as fee in percent
      * @notice percent breakdown where 10000 = 100%, 100 = 1%, etc.
-     * @return {bool} if the execution was successful
+     * @return  if the execution was successful
      */
     function _executeDCATrade(
         uint256 strategyId_,
@@ -144,7 +142,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         IDCAExecutor(_executor()).Subscribe(strategyData_);
         _strategies[strategyData_.strategyId].active = true;
         _totalActiveStrategies += 1;
-        emit StrategySubscribed(strategyData_.strategyId, _executor());
+        emit StrategySubscription(strategyData_.strategyId, _executor(), true);
     }
 
     /**
@@ -155,7 +153,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         IDCAExecutor(_executor()).Unsubscribe(address(this), strategyId_);
         _strategies[strategyId_].active = false;
         _totalActiveStrategies--;
-        emit StrategyUnsubscribed(strategyId_);
+        emit StrategySubscription(strategyId_, _executor(), false);
     }
 
     /**
