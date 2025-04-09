@@ -27,9 +27,13 @@ import {IDCAReinvest, IDCADataStructures} from "../interfaces/IDCAReinvest.sol";
 
 abstract contract DCAReinvestLogic is IDCAReinvest {
     using ReinvestCodes for uint8;
-    string public constant REINVEST_VERSION = "TEST V0.5";
+    string public constant REINVEST_VERSION = "TEST V0.6";
     bytes public constant ACTIVE_REINVESTS =
-        abi.encodePacked(ReinvestCodes.FORWARD, ReinvestCodes.AAVE);
+        abi.encodePacked(
+            ReinvestCodes.FORWARD,
+            ReinvestCodes.AAVE,
+            ReinvestCodes.COMPOUND
+        );
 
     /**
      * @dev Executes the reinvestment
@@ -48,9 +52,14 @@ abstract contract DCAReinvestLogic is IDCAReinvest {
         else if (code.checkCode(ReinvestCodes.FORWARD))
             return
                 ForwardReinvest._execute(amount_, reinvestData_.reinvestData);
-        else if (code.checkCode(ReinvestCodes.COMPOUND)) {} else if (
-            code == ReinvestCodes.AAVE
-        ) return AaveV3Reinvest._execute(amount_, reinvestData_.reinvestData);
+        else if (code.checkCode(ReinvestCodes.COMPOUND))
+            return
+                CompoundV3Reinvest._execute(
+                    amount_,
+                    reinvestData_.reinvestData
+                );
+        else if (code == ReinvestCodes.AAVE)
+            return AaveV3Reinvest._execute(amount_, reinvestData_.reinvestData);
     }
 
     /**
@@ -64,8 +73,10 @@ abstract contract DCAReinvestLogic is IDCAReinvest {
         IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-        if (reinvestData_.investCode <= ReinvestCodes.COMPOUND) {} else if (
-            reinvestData_.investCode == ReinvestCodes.AAVE
-        ) return AaveV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
+        if (reinvestData_.investCode <= ReinvestCodes.COMPOUND) {
+            return
+                CompoundV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
+        } else if (reinvestData_.investCode == ReinvestCodes.AAVE)
+            return AaveV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
     }
 }

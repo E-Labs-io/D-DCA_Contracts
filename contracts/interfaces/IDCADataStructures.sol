@@ -29,6 +29,7 @@ interface IDCADataStructures {
         TestIntervalFiveMins, //Only for development
         OneDay,
         TwoDays,
+        ThreeDays,
         OneWeek,
         TwoWeeks,
         OneMonth

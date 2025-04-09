@@ -43,6 +43,13 @@ library Strategies {
             isValidInterval);
     }
 
+    function isAccountAddress(
+        IDCADataStructures.Strategy memory strategy_,
+        address accountAddress_
+    ) internal pure returns (bool) {
+        return strategy_.accountAddress == accountAddress_;
+    }
+
     function isActive(
         IDCADataStructures.Strategy memory strategy_
     ) internal pure returns (bool) {

@@ -1,6 +1,6 @@
 import { expect, assert } from "chai";
 import hre, { ethers, upgrades } from "hardhat";
-import { AbiCoder, ZeroAddress } from "ethers";
+import { AbiCoder, AddressLike, ZeroAddress } from "ethers";
 import {
   DCAAccount,
   DCAExecutor,
@@ -133,7 +133,7 @@ describe("> DCA Executor Tests", () => {
 
     it("🧪 Should revert trying to execute - not Executor EOA", async () => {
       await expect(
-        executorContract.Execute(ZERO_ADDRESS, 1),
+        executorContract.Execute(ZERO_ADDRESS as AddressLike, 1n, 0n),
       ).to.be.revertedWith(
         "OnlyExecutor : [onlyExecutor] Address is not an executor",
       );
@@ -245,7 +245,9 @@ describe("> DCA Executor Tests", () => {
     it("🧪 Should revert on Execution Try, Not Executor", async () => {
       const connected = executorContract.connect(addressStore.user.signer);
 
-      await expect(connected.Execute(ZERO_ADDRESS, 0)).to.be.revertedWith(
+      await expect(
+        connected.Execute(ZERO_ADDRESS as AddressLike, 0n, 0n),
+      ).to.be.revertedWith(
         "OnlyExecutor : [onlyExecutor] Address is not an executor",
       );
     });
@@ -253,10 +255,10 @@ describe("> DCA Executor Tests", () => {
     it("🧪 Should change the active stage to false", async () => {
       await expect(executorContract.setActiveState(false)).to.be.fulfilled;
     });
-    it("🧪 Should revert on Ececute, Not active ", async () => {
+    it("🧪 Should revert on Execute, Not active ", async () => {
       await expect(
         executorContract.Subscribe(EMPTY_STRATEGY_OBJECT),
-      ).to.be.revertedWith("OnlyActive : [isActive] Contract is paused");
+      ).to.be.revertedWithCustomError(executorContract, "ContractIsPaused");
     });
   });
 });

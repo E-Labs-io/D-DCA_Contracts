@@ -4,7 +4,7 @@
 
 
 
-************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*       Dollar Cost Average Contracts************************************************                  V0.7  ation.capital  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
+************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*      Distributed Cost Average Contracts************************************************                  V0.7  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
 
 
 
@@ -29,7 +29,7 @@ function DistributeFees(address tokenAddress_) external nonpayable
 ### Execute
 
 ```solidity
-function Execute(address DCAAccount_, uint256 strategyId_) external nonpayable
+function Execute(address DCAAccount_, uint256 strategyId_, enum IDCADataStructures.Interval interval_) external nonpayable
 ```
 
 
@@ -42,11 +42,12 @@ function Execute(address DCAAccount_, uint256 strategyId_) external nonpayable
 |---|---|---|
 | DCAAccount_ | address | The address of the DCAAccount |
 | strategyId_ | uint256 | The id of the strategy to execute |
+| interval_ | enum IDCADataStructures.Interval | The interval of the strategy to execute |
 
 ### ForceUnsubscribe
 
 ```solidity
-function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external nonpayable
+function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_, enum IDCADataStructures.Interval interval_) external nonpayable
 ```
 
 
@@ -59,6 +60,7 @@ function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external non
 |---|---|---|
 | DCAAccount_ | address | The address of the DCAAccount |
 | strategyId_ | uint256 | The id of the strategy to unsubscribe |
+| interval_ | enum IDCADataStructures.Interval | The interval of the strategy to unsubscribe |
 
 ### Subscribe
 
@@ -79,7 +81,7 @@ function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable
 ### Unsubscribe
 
 ```solidity
-function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable
+function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_, enum IDCADataStructures.Interval interval_) external nonpayable
 ```
 
 
@@ -92,6 +94,7 @@ function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external n
 |---|---|---|
 | DCAAccountAddress_ | address | The address of the DCAAccount |
 | strategyId_ | uint256 | The id of the strategy to unsubscribe |
+| interval_ | enum IDCADataStructures.Interval | The interval of the strategy to unsubscribe |
 
 ### addAdmin
 
@@ -202,29 +205,6 @@ function getIntervalTotalActiveStrategys(enum IDCADataStructures.Interval interv
 | Name | Type | Description |
 |---|---|---|
 | _0 | uint256 | The total number of active strategies for the given interval |
-
-### getSpecificStrategy
-
-```solidity
-function getSpecificStrategy(address dcaAccountAddress_, uint256 accountStrategyId_) external view returns (struct IDCADataStructures.Strategy)
-```
-
-
-
-*Returns the specific strategy for the given DCAAccount and strategy id*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| dcaAccountAddress_ | address | The address of the DCAAccount |
-| accountStrategyId_ | uint256 | The id of the strategy |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | IDCADataStructures.Strategy | The strategy data |
 
 ### getTimeTillWindow
 

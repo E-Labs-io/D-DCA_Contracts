@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
+import "hardhat/console.sol";
 
 // PRODUCTION
 import "../logic/AccountLogic.sol";
@@ -77,7 +78,7 @@ contract DCAAccount is DCAAccountLogic {
     ) external override onlyOwner {
         _newStrategy(newStrategy_);
         if (seedFunds_ > 0) {
-            FundAccount(newStrategy_.baseAddress(), seedFunds_);
+            AddFunds(newStrategy_.baseAddress(), seedFunds_);
         }
         if (subscribeToExecutor_) {
             _subscribeToExecutor(newStrategy_);
@@ -142,7 +143,7 @@ contract DCAAccount is DCAAccountLogic {
      * @param token_ {address} The ERC20 token address
      * @param amount_ {uint256} Amount of the token to deposit
      */
-    function FundAccount(
+    function AddFunds(
         address token_,
         uint256 amount_
     ) public override onlyOwner {
@@ -156,7 +157,7 @@ contract DCAAccount is DCAAccountLogic {
      * @param token_ {address} The ERC20 token address
      * @param amount_ {uint256} Amount of the token to withdraw
      */
-    function UnFundAccount(address token_, uint256 amount_) public onlyOwner {
+    function WithdrawFunds(address token_, uint256 amount_) public onlyOwner {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
         require(
             _baseBalances[token_] >= amount_,
@@ -187,18 +188,19 @@ contract DCAAccount is DCAAccountLogic {
             success = true;
         } else success = IERC20(token_).transfer(msg.sender, amount_);
 
-        require(success, "DCAAccount : [WithdrawSavings] Transfer failed");
+        require(success, "[DCAAccount] : [WithdrawSavings] Transfer failed");
     }
 
     /**
      * @dev Unwinds the reinvestment for the given strategy
+     * @notice repays the underlining token and return the target token
      * @param strategyId_ The id of the strategy to unwind
      */
-    function UnWindReinvest(uint256 strategyId_) public onlyOwner {
+    function UnwindReinvest(uint256 strategyId_) public onlyOwner {
         uint256 balance = _reinvestLiquidityTokenBalance[strategyId_];
         require(
             balance > 0,
-            "[DCAAccount] : UnWindReinvest -  No investment to unwind"
+            "[DCAAccount] : [UnWindReinvest] -  No investment to unwind"
         );
 
         (uint256 amount, bool success) = _withdrawReinvest(
@@ -258,6 +260,21 @@ contract DCAAccount is DCAAccountLogic {
         address token_
     ) external view override returns (uint256) {
         return _targetBalances[token_];
+    }
+
+    /**
+     * @dev Get the reinvest token balance for a strategy
+     * @param strategyId_ Strategy Id of the strategy to get the balance for
+     * @return {uint256} The reinvest token balance for the strategy
+     */
+    function getReinvestTokenBalance(
+        uint256 strategyId_
+    ) external view returns (uint256) {
+        console.log(
+            "Got Reinvest Balance",
+            _reinvestLiquidityTokenBalance[strategyId_]
+        );
+        return _reinvestLiquidityTokenBalance[strategyId_];
     }
 
     /**

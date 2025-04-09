@@ -29,8 +29,8 @@ export interface DCAFactoryInterface extends Interface {
       | "CreateAccount"
       | "SWAP_ROUTER"
       | "accountsCreated"
+      | "getAccountsOfUser"
       | "getActiveExecutorAddress"
-      | "getDCAAccountsOfUser"
       | "getFactoryActiveState"
       | "getTotalDeployedAccounts"
       | "isActive"
@@ -65,12 +65,12 @@ export interface DCAFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getActiveExecutorAddress",
-    values?: undefined
+    functionFragment: "getAccountsOfUser",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getDCAAccountsOfUser",
-    values: [AddressLike]
+    functionFragment: "getActiveExecutorAddress",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getFactoryActiveState",
@@ -120,11 +120,11 @@ export interface DCAFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getActiveExecutorAddress",
+    functionFragment: "getAccountsOfUser",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getDCAAccountsOfUser",
+    functionFragment: "getActiveExecutorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -274,13 +274,13 @@ export interface DCAFactory extends BaseContract {
 
   accountsCreated: TypedContractMethod<[], [bigint], "view">;
 
-  getActiveExecutorAddress: TypedContractMethod<[], [string], "view">;
-
-  getDCAAccountsOfUser: TypedContractMethod<
+  getAccountsOfUser: TypedContractMethod<
     [_user: AddressLike],
     [string[]],
     "view"
   >;
+
+  getActiveExecutorAddress: TypedContractMethod<[], [string], "view">;
 
   getFactoryActiveState: TypedContractMethod<[], [boolean], "view">;
 
@@ -332,11 +332,11 @@ export interface DCAFactory extends BaseContract {
     nameOrSignature: "accountsCreated"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "getAccountsOfUser"
+  ): TypedContractMethod<[_user: AddressLike], [string[]], "view">;
+  getFunction(
     nameOrSignature: "getActiveExecutorAddress"
   ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "getDCAAccountsOfUser"
-  ): TypedContractMethod<[_user: AddressLike], [string[]], "view">;
   getFunction(
     nameOrSignature: "getFactoryActiveState"
   ): TypedContractMethod<[], [boolean], "view">;

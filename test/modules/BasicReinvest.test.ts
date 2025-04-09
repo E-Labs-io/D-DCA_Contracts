@@ -221,7 +221,7 @@ describe("> Basic Reinvest Test", () => {
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
-        .Execute(createdAccount.target, 1);
+        .Execute(createdAccount.target, 1, 0);
 
       await expect(tx.wait()).to.be.fulfilled;
     });

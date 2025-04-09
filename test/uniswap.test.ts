@@ -82,7 +82,6 @@ describe("> Uniswap Tests Tests", () => {
       amountIn: ethers.parseUnits("1000", 6),
       amountOutMinimum: 0,
       sqrtPriceLimitX96: 0,
-      deadline: 0,
     };
   }
 

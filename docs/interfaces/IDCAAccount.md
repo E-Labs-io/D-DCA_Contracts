@@ -4,11 +4,28 @@
 
 
 
-
+************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*      Distributed Cost Average Contracts************************************************                  V0.7  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
 
 
 
 ## Methods
+
+### AddFunds
+
+```solidity
+function AddFunds(address token_, uint256 amount_) external nonpayable
+```
+
+Allows the account owner to fund the account for strategy&#39;s
+
+*the funds are not strategy specificMust approve the spend before calling this function*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | Address for the base token being funded |
+| amount_ | uint256 | Amount of the token to be deposited |
 
 ### Execute
 
@@ -49,23 +66,6 @@ Ony callable by the DCAExecutor contract to remove the strategy from the executo
 |---|---|---|
 | strategyId_ | uint256 | Id of the strategy to remove |
 
-### FundAccount
-
-```solidity
-function FundAccount(address token_, uint256 amount_) external nonpayable
-```
-
-Allows the account owner to fund the account for strategy&#39;s
-
-*the funds are not strategy specificMust approve the spend before calling this function*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token_ | address | Address for the base token being funded |
-| amount_ | uint256 | Amount of the token to be deposited |
-
 ### SetupStrategy
 
 ```solidity
@@ -100,23 +100,6 @@ Used by the account owner to subscribe the strategy to the executor
 |---|---|---|
 | strategyId_ | uint256 | The Id of the strategy to subscribe to the executor |
 
-### UnFundAccount
-
-```solidity
-function UnFundAccount(address token_, uint256 amount_) external nonpayable
-```
-
-Removes a given amount from the Address of the given base token
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token_ | address | Address of the base token to remove from the contract |
-| amount_ | uint256 | Amount of the base token to remove from the address |
-
 ### UnsubscribeStrategy
 
 ```solidity
@@ -132,6 +115,23 @@ Used by the account owner to unsubscribe the strategy to the executor
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | ID of the strategy to unsubscribe |
+
+### WithdrawFunds
+
+```solidity
+function WithdrawFunds(address token_, uint256 amount_) external nonpayable
+```
+
+Removes a given amount from the Address of the given base token
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | Address of the base token to remove from the contract |
+| amount_ | uint256 | Amount of the base token to remove from the address |
 
 ### WithdrawSavings
 
@@ -325,10 +325,10 @@ Emitted when a strategy has been executed
 | amountIn_ `indexed` | uint256 | amount received from the swap |
 | reInvested_  | bool | wether the strategy reinvested or not |
 
-### StrategySubscribed
+### StrategySubscription
 
 ```solidity
-event StrategySubscribed(uint256 indexed strategyId_, address indexed executor_)
+event StrategySubscription(uint256 indexed strategyId_, address indexed executor_, bool indexed subscribed_)
 ```
 
 Emitted when the Strategy is confirmed to be subscribed to an Executor
@@ -341,22 +341,7 @@ Emitted when the Strategy is confirmed to be subscribed to an Executor
 |---|---|---|
 | strategyId_ `indexed` | uint256 | ID of the strategy that has been subscribed |
 | executor_ `indexed` | address | Address of the Executor contract subscribed to |
-
-### StrategyUnsubscribed
-
-```solidity
-event StrategyUnsubscribed(uint256 indexed strategyId_)
-```
-
-Emitted when a strategy has been unsubscribed from an Executor
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId_ `indexed` | uint256 | Id of the strategy being unsubscribed |
+| subscribed_ `indexed` | bool | Wether the strategy is subscribed/unsubscribed to the executor |
 
 
 

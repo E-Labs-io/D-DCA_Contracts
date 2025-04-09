@@ -4,7 +4,7 @@
 
 
 
-
+************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*      Distributed Cost Average Contracts************************************************                  V0.7  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
 
 
 
@@ -29,7 +29,7 @@ Distributes the acuminated fee&#39;s from the DCAExecutor
 ### Execute
 
 ```solidity
-function Execute(address DCAAccount_, uint256 strategyId_) external nonpayable
+function Execute(address DCAAccount_, uint256 strategyId_, enum IDCADataStructures.Interval interval_) external nonpayable
 ```
 
 Called by the external Executor service wallet only, triggers the specified strategy
@@ -42,11 +42,12 @@ Called by the external Executor service wallet only, triggers the specified stra
 |---|---|---|
 | DCAAccount_ | address | {address} Address of the DCAAccount holding the strategy to execute |
 | strategyId_ | uint256 | {uint256} ID of the strategy to execute |
+| interval_ | enum IDCADataStructures.Interval | {Interval} Interval of the strategy to execute |
 
 ### ForceUnsubscribe
 
 ```solidity
-function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_) external nonpayable
+function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_, enum IDCADataStructures.Interval interval_) external nonpayable
 ```
 
 Used by the Executor service to remove a strategy from the DCAExecutor Used mostly for unfunded and failing accounts.
@@ -59,6 +60,7 @@ Used by the Executor service to remove a strategy from the DCAExecutor Used most
 |---|---|---|
 | DCAAccount_ | address | {address} Address of the DCAAccount to be unsubscribed |
 | strategyId_ | uint256 | {uint256} ID of the strategy to be unsubscribed |
+| interval_ | enum IDCADataStructures.Interval | undefined |
 
 ### Subscribe
 
@@ -79,7 +81,7 @@ function Subscribe(IDCADataStructures.Strategy strategy_) external nonpayable
 ### Unsubscribe
 
 ```solidity
-function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_) external nonpayable
+function Unsubscribe(address DCAAccountAddress_, uint256 strategyId_, enum IDCADataStructures.Interval interval_) external nonpayable
 ```
 
 Called by the DCAAccount to remove itself from the executor
@@ -92,6 +94,7 @@ Called by the DCAAccount to remove itself from the executor
 |---|---|---|
 | DCAAccountAddress_ | address | Address of the unsubscribing DCAAccount |
 | strategyId_ | uint256 | ID of the strategy being unsubscribed |
+| interval_ | enum IDCADataStructures.Interval | undefined |
 
 ### getTimeTillWindow
 
@@ -133,7 +136,7 @@ Allows the admin to turn Strategy timings on &amp; off
 | Name | Type | Description |
 |---|---|---|
 | interval_ | enum IDCADataStructures.Interval | The strategy interval |
-| status_ | bool | if teh interval is active or not |
+| status_ | bool | if the interval is active or not |
 
 
 

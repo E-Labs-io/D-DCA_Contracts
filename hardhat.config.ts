@@ -12,6 +12,8 @@ import "hardhat-ethernal";
 import "@openzeppelin/hardhat-upgrades";
 import "@nomicfoundation/hardhat-chai-matchers";
 
+import "@tenderly/hardhat-tenderly";
+
 import "./tasks";
 
 import { HardhatUserConfig } from "hardhat/config";
@@ -321,6 +323,12 @@ const config: HardhatUserConfig = {
     debugMode: false,
     include: [],
     outputDir: "./docs",
+  },
+
+  tenderly: {
+    project: "dca",
+    username: "E-Labs",
+    privateVerification: true,
   },
 };
 

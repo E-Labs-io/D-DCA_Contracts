@@ -67,15 +67,21 @@ interface IDCAExecutor is IDCADataStructures {
      */
     function Unsubscribe(
         address DCAAccountAddress_,
-        uint256 strategyId_
+        uint256 strategyId_,
+        Interval interval_
     ) external;
 
     /**
      * @notice Called by the external Executor service wallet only, triggers the specified strategy
      * @param DCAAccount_ {address} Address of the DCAAccount holding the strategy to execute
      * @param strategyId_ {uint256} ID of the strategy to execute
+     * @param interval_ {Interval} Interval of the strategy to execute
      */
-    function Execute(address DCAAccount_, uint256 strategyId_) external;
+    function Execute(
+        address DCAAccount_,
+        uint256 strategyId_,
+        Interval interval_
+    ) external;
 
     /**
      * @notice Distributes the acuminated fee's from the DCAExecutor
@@ -92,7 +98,8 @@ interface IDCAExecutor is IDCADataStructures {
      */
     function ForceUnsubscribe(
         address DCAAccount_,
-        uint256 strategyId_
+        uint256 strategyId_,
+        Interval interval_
     ) external;
 
     function getTimeTillWindow(
@@ -106,7 +113,7 @@ interface IDCAExecutor is IDCADataStructures {
     /**
      * @notice Allows the admin to turn Strategy timings on & off
      * @param interval_ The strategy interval
-     * @param status_ if teh interval is active or not
+     * @param status_ if the interval is active or not
      */
     function setIntervalActive(Interval interval_, bool status_) external;
 }

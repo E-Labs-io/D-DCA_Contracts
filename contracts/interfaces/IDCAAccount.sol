@@ -123,14 +123,14 @@ interface IDCAAccount is IDCADataStructures {
      * @dev Must approve the spend before calling this function
      */
 
-    function FundAccount(address token_, uint256 amount_) external;
+    function AddFunds(address token_, uint256 amount_) external;
 
     /**
      * @notice Removes a given amount from the Address of the given base token
      * @param token_ Address of the base token to remove from the contract
      * @param amount_ Amount of the base token to remove from the address
      */
-    function UnFundAccount(address token_, uint256 amount_) external;
+    function WithdrawFunds(address token_, uint256 amount_) external;
 
     /**
      * @notice Removes a given amount from the Address of the given target token

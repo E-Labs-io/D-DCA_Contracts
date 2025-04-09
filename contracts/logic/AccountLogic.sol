@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "hardhat/console.sol";
+
 import "../utils/swap.sol";
 import {Strategies, Intervals} from "../library/Strategys.sol";
 import {Fee} from "../library/Fees.sol";
@@ -150,7 +152,11 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param strategyId_ Id of the strategy to unsubscribe
      */
     function _unsubscribeToExecutor(uint256 strategyId_) internal {
-        IDCAExecutor(_executor()).Unsubscribe(address(this), strategyId_);
+        IDCAExecutor(_executor()).Unsubscribe(
+            address(this),
+            strategyId_,
+            _strategies[strategyId_].interval
+        );
         _strategies[strategyId_].active = false;
         _totalActiveStrategies--;
         emit StrategySubscription(strategyId_, _executor(), false);
@@ -193,7 +199,6 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
                 return (amount, success);
             }
         }
-
         return (0, false);
     }
 

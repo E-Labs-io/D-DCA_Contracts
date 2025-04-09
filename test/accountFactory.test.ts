@@ -146,7 +146,7 @@ describe("> DCA Account Factory Tests", () => {
 
   describe("💡 Create new account & check store", function () {
     it("🧪 Should return the user doesn't have an account", async function () {
-      const userAccounts = await factoryContract.getDCAAccountsOfUser(
+      const userAccounts = await factoryContract.getAccountsOfUser(
         addressStore.user.address,
       );
       expect(userAccounts.length).to.equal(0);
@@ -160,7 +160,7 @@ describe("> DCA Account Factory Tests", () => {
     });
 
     it("🧪 Should return the user has 1 account", async function () {
-      const userAccounts = await factoryContract.getDCAAccountsOfUser(
+      const userAccounts = await factoryContract.getAccountsOfUser(
         addressStore.user.address,
       );
       expect(userAccounts.length).to.equal(1);

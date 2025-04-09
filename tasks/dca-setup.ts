@@ -28,7 +28,7 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
       deployer,
     );
 
-    const tx = await DCAFactory.createDCAAccount();
+    const tx = await DCAFactory.CreateAccount();
     // Wait for the transaction to be mined
     const receipt = await tx.wait();
 

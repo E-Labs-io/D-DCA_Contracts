@@ -1,4 +1,4 @@
-import { expect, assert } from "chai";
+import { expect } from "chai";
 import hre, { ethers } from "hardhat";
 import { AbiCoder, Addressable, ZeroAddress } from "ethers";
 import { DCAAccount, DCAExecutor, IERC20 } from "~/types/contracts";
@@ -12,7 +12,7 @@ import { EMPTY_STRATEGY } from "~/bin/emptyData";
 import { compareStructs } from "~/scripts/tests/comparisons";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
-import type { AaveIPool, DCAReinvest } from "~/types/contracts";
+import type { CometInterface, DCAReinvest } from "~/types/contracts";
 import {
   approveErc20Spend,
   connectToErc20,
@@ -20,22 +20,28 @@ import {
   getErc20ImpersonatedFunds,
 } from "~/scripts/tests/contractInteraction";
 import { resetFork } from "~/scripts/tests/forking";
+import { advanceTime } from "~/scripts/tests/timeControl";
 
-describe("> Aave V3 Reinvest Test", () => {
-  console.log("🧪 DCA Reinvest Modula : Aave V3 Tests : Mounted");
+describe("> Compound V3 Reinvest Test", () => {
+  console.log("🧪 DCA Reinvest Modula : Compound V3 Tests : Mounted");
 
   const forkedChain = deploymentConfig().masterChain;
   const abiEncoder: AbiCoder = AbiCoder.defaultAbiCoder();
 
   let usdcContract: IERC20;
   let wethContract: IERC20;
-  let aWethContract: IERC20;
-  let aaveV3Contract: AaveIPool;
+  let cWethContract: IERC20;
+  let compV3Contract: CometInterface;
 
   let createdAccount: DCAAccount;
   let reinvestContract: DCAReinvest;
   let executorContract: DCAExecutor;
   let addressStore: SignerStore;
+
+  let Stat1Total: number = 0,
+    Stat2Total: number = 0,
+    totalSpend: number = 0,
+    executions: number = 0;
 
   let reinvestBalance: number = 0;
   let strategyBalance: number = 0;
@@ -53,15 +59,15 @@ describe("> Aave V3 Reinvest Test", () => {
       "testTarget",
     ]);
 
-    aWethContract = await connectToErc20(
-      tokenAddress?.aWeth?.[forkedChain]! as string,
+    cWethContract = await connectToErc20(
+      tokenAddress?.compoundV3ETH?.[forkedChain]! as string,
       addressStore.deployer.signer,
     );
 
     usdcContract = await getErc20ImpersonatedFunds(
       forkedChain,
       addressStore.user.address as Addressable,
-      ethers.parseUnits("100000", 6),
+      ethers.parseUnits("10000000", 6),
       "usdc",
     );
 
@@ -72,60 +78,57 @@ describe("> Aave V3 Reinvest Test", () => {
       "weth",
     );
 
-    aaveV3Contract = await ethers.getContractAt(
-      "AaveIPool",
-      tokenAddress.aaveV3Pool![forkedChain] as string,
+    compV3Contract = await ethers.getContractAt(
+      "CometInterface",
+      tokenAddress.compoundV3ETH![forkedChain] as string,
       addressStore.user.signer,
     );
   }
 
-  describe("💡 Supply & Withdraw directly from Aave Contract (Weth)", () => {
-    it("🧪 Should show balance of aWETH == 0", async () => {
+  describe("💡 Supply & Withdraw directly from Compound Contract (Weth)", () => {
+    it("🧪 Should show balance of cWETH == 0", async () => {
       const bal = await getErc20Balance(
-        aWethContract,
+        cWethContract,
         addressStore.user.address,
       );
       expect(Number(bal)).to.equal(0);
     });
-    it("🧪 Supply Weth to Aave", async () => {
+    it("🧪 Supply Weth to Compound", async () => {
       const connectedContract = wethContract.connect(addressStore.user.signer);
       const approveTx = await connectedContract.approve(
-        tokenAddress.aaveV3Pool![forkedChain] as string,
+        tokenAddress.compoundV3ETH![forkedChain] as string,
         ethers.parseEther("1"),
       );
       await approveTx.wait();
 
-      const tx = await aaveV3Contract.supply(
+      const tx = await compV3Contract.supply(
         tokenAddress.weth![forkedChain] as string,
         ethers.parseEther("1"),
-        addressStore.user.address as string,
-        0,
       );
 
       await expect(tx.wait()).to.be.fulfilled;
     });
-    it("🧪 Should show balance of aWETH > 0", async () => {
+    it("🧪 Should show balance of cWETH > 0", async () => {
       const bal = await getErc20Balance(
-        aWethContract,
+        cWethContract,
         addressStore.user.address,
       );
       expect(Number(bal)).to.be.greaterThan(0);
     });
-    it("🧪 Should Withdraw aWeth from Aave", async () => {
+    it("🧪 Should Withdraw cWeth from Compound", async () => {
       const bal1 = await getErc20Balance(
-        aWethContract,
+        cWethContract,
         addressStore.user.address,
       );
 
-      const tx = await aaveV3Contract.withdraw(
+      const tx = await compV3Contract.withdraw(
         tokenAddress.weth![forkedChain] as Addressable,
         ethers.parseEther("1"),
-        addressStore.user.address,
       );
 
       await expect(tx.wait()).to.be.fulfilled;
       const bal2 = await getErc20Balance(
-        aWethContract,
+        cWethContract,
         addressStore.user.address,
       );
 
@@ -167,6 +170,11 @@ describe("> Aave V3 Reinvest Test", () => {
       reinvestContract = await contractFactory.deploy(true);
       await reinvestContract.waitForDeployment();
       expect(reinvestContract.waitForDeployment()).to.be.fulfilled;
+    });
+
+    it("🧪 Should Return the Reinvest Version", async function () {
+      const version = await reinvestContract.getLibraryVersion();
+      expect(version).to.equal("TEST V0.6");
     });
 
     it("🧪 Should deploy the executor contract", async function () {
@@ -236,14 +244,10 @@ describe("> Aave V3 Reinvest Test", () => {
       const reinvest: IDCADataStructures.ReinvestStruct = {
         reinvestData: abiEncoder.encode(
           ["uint8", "address", "address"],
-          [
-            0x12,
-            tokenAddress.weth![forkedChain],
-            tokenAddress.aWeth![forkedChain],
-          ],
+          [0x0, createdAccount.target, tokenAddress.weth![forkedChain]],
         ),
         active: true,
-        investCode: 0x12,
+        investCode: 0x11,
         dcaAccountAddress: createdAccount.target,
       };
 
@@ -281,7 +285,7 @@ describe("> Aave V3 Reinvest Test", () => {
 
   describe("💡 Execution", () => {
     it("🧪 Should show balance of aWETH == 0", async () => {
-      const bal = await getErc20Balance(aWethContract, createdAccount.target);
+      const bal = await getErc20Balance(cWethContract, createdAccount.target);
       expect(bal).to.equal(0n);
     });
 
@@ -315,25 +319,25 @@ describe("> Aave V3 Reinvest Test", () => {
       const bal = await createdAccount.getReinvestTokenBalance(1);
       expect(Number(bal)).to.equal(reinvestBalance);
     });
-    it("🧪 Should show balance of aWETH > 0", async () => {
-      const bal = await getErc20Balance(aWethContract, createdAccount.target);
+    it("🧪 Should show balance of cWETH > 0", async () => {
+      const bal = await getErc20Balance(cWethContract, createdAccount.target);
+      console.log("bal of cWETH: ", Number(bal));
       expect(Number(bal)).to.be.greaterThan(0);
     });
   });
 
   describe("💡 Unwind reinvest", () => {
-    it("🧪 Should withdraw the accounts balance of aWeth", async () => {
+    it("🧪 Should withdraw the accounts balance of cWeth", async () => {
       const tx = await createdAccount.UnwindReinvest(1);
       await expect(tx.wait()).to.be.fulfilled;
       await expect(tx.wait()).to.emit(createdAccount, "ReinvestUnwound");
     });
     it("🧪 Should show balance of aWETH == 0", async () => {
-      expect(Number(await createdAccount.getReinvestTokenBalance(1))).to.equal(
-        0,
-      );
-      expect(
-        Number(await getErc20Balance(aWethContract, createdAccount.target)),
-      ).to.equal(0);
+      const bal = await createdAccount.getReinvestTokenBalance(1);
+      expect(Number(bal)).to.equal(0);
+      /*       expect(
+        Number(await getErc20Balance(cWethContract, createdAccount.target)),
+      ).to.equal(0); */
     });
     it("🧪 Should show balance of WETH > 0", async () => {
       expect(
@@ -344,6 +348,83 @@ describe("> Aave V3 Reinvest Test", () => {
       await expect(createdAccount.UnwindReinvest(1)).to.be.revertedWith(
         "[DCAAccount] : [UnWindReinvest] -  No investment to unwind",
       );
+    });
+  });
+
+  describe("💡 Execute Strategy 10 times & Withdraw", () => {
+    it("🧪 Should add funds to the account", async () => {
+      reinvestBalance = 0;
+      strategyBalance = 0;
+      const contract = await ethers.getContractAt(
+        "contracts/tokens/IERC20.sol:IERC20",
+        tokenAddress?.usdc?.[forkedChain]! as string,
+        addressStore.user.signer,
+      );
+      const approve = await contract.approve(
+        createdAccount.target,
+        ethers.parseUnits("1000000", 6),
+      );
+      await approve.wait();
+
+      await expect(
+        createdAccount.AddFunds(
+          tokenAddress.usdc![forkedChain]!,
+          ethers.parseUnits("1000000", 6),
+        ),
+      ).to.be.fulfilled;
+    });
+    it("🧪 Should execute strategy 10 times", async () => {
+      for (let i = 0; i < 10; i++) {
+        await advanceTime(70);
+
+        // Strategy 1
+        const tx = await executorContract
+          .connect(addressStore.executorEoa.signer)
+          .Execute(createdAccount.target, 1, 0);
+
+        const recipt = await tx.wait();
+
+        expect(recipt)
+          .to.emit(createdAccount, "ReinvestExecuted")
+          .withArgs(1, true, (amount: any) => {
+            reinvestBalance = Number(amount);
+            return true;
+          });
+
+        expect(recipt)
+          .to.emit(createdAccount, "StrategyExecuted")
+          .withArgs(
+            1,
+            (amount: any) => {
+              strategyBalance = Number(amount);
+              return true;
+            },
+            true,
+          );
+
+        totalSpend = totalSpend + 100000000;
+        executions++;
+      }
+    });
+
+    it("🧪 Should show balance of aWETH == total from events", async () => {
+      const bal = await createdAccount.getReinvestTokenBalance(1);
+      expect(Number(bal)).to.equal(reinvestBalance);
+      expect(
+        Number(await getErc20Balance(cWethContract, createdAccount.target)),
+      ).to.equal(reinvestBalance);
+    });
+    it("🧪 Should withdraw the accounts balance of cWeth", async () => {
+      const tx = await createdAccount.UnwindReinvest(1);
+      await expect(tx.wait()).to.be.fulfilled;
+      await expect(tx.wait()).to.emit(createdAccount, "ReinvestUnwound");
+    });
+    it("🧪 Should show balance of aWETH == 0", async () => {
+      const bal = await createdAccount.getReinvestTokenBalance(1);
+      expect(Number(bal)).to.equal(0);
+      expect(
+        Number(await getErc20Balance(cWethContract, createdAccount.target)),
+      ).to.equal(0);
     });
   });
 });

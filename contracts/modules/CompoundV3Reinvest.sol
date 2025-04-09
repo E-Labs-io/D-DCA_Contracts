@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -26,14 +27,48 @@ library CompoundV3Reinvest {
     uint8 public constant MODULE_ID = 0x11;
 
     address internal constant COMPOUND_ETH_CONTRACT =
-        0x1d573274E19174260c5aCE3f2251598959d24456;
+        0x46e6b214b524310239732D51387075E0e70970bf; // BASE
 
     uint8 constant WETH = 0x0;
-    uint8 constant WBTC = 0x1;
+    uint8 constant USDC = 0x1;
     struct ReinvestDataStruct {
         uint8 moduleCode;
         address receiver;
         address token;
+    }
+
+    function _execute(
+        uint256 amount_,
+        bytes memory data_
+    ) internal returns (uint256 amount, bool success) {
+        ReinvestDataStruct memory investData = _decodeData(data_);
+
+        amount = _supplyCompound(
+            investData.moduleCode,
+            amount_,
+            investData.token
+        );
+
+        if (amount > 0) success = true;
+
+        return (amount, success);
+    }
+
+    function _unwind(
+        uint256 amount_,
+        bytes memory data_
+    ) internal returns (uint256 amount, bool success) {
+        ReinvestDataStruct memory investData = _decodeData(data_);
+
+        amount = _withdrawCompound(
+            investData.moduleCode,
+            amount_,
+            investData.token
+        );
+
+        if (amount > 0) success = true;
+
+        return (amount, success);
     }
 
     function _supplyCompound(
@@ -70,7 +105,7 @@ library CompoundV3Reinvest {
     }
 
     function _getContractAddress(uint8 code_) internal pure returns (address) {
-        if (code_ == ReinvestCodes.COMPOUND) return COMPOUND_ETH_CONTRACT;
+        if (code_ == WETH) return COMPOUND_ETH_CONTRACT;
     }
 
     function _getBalance(
@@ -78,5 +113,17 @@ library CompoundV3Reinvest {
         address pool_
     ) internal returns (uint256 amount) {
         amount = CometMainInterface(pool_).balanceOf(address(this));
+    }
+
+    function _withdrawReward(
+        uint8 code_,
+        uint256 amount_,
+        address tokenAddress_
+    ) internal returns (uint256 amount) {}
+
+    function _decodeData(
+        bytes memory data_
+    ) private pure returns (ReinvestDataStruct memory) {
+        return abi.decode(data_, (ReinvestDataStruct));
     }
 }

@@ -70,6 +70,7 @@ const productionChainAddresses: {
     aaveV3Pool: "0xA238Dd80C259a72e81d7e4664a9801593F98d1c5",
     aWeth: "0xD4a0e0b9149BCee3C920d2E00b5dE09138fd8bb7",
     aWbtc: "0xBdb9300b7CDE636d9cD4AFF00f6F009fFBBc8EE6",
+    cWeth: "0x46e6b214b524310239732D51387075E0e70970bf",
   },
 };
 
@@ -209,6 +210,9 @@ export const tokenAddress: TokenAddressList = {
     hardhat: productionChainAddresses[forkedNetwork].compoundV3Usdc,
     optimism: productionChainAddresses.optimism.compoundV3Usdc,
   },
+  compoundV3ETH: {
+    base: productionChainAddresses.base.cWeth,
+  },
   aaveV3Pool: {
     eth: productionChainAddresses.eth.aaveV3Pool,
     ethGoerli: "",
@@ -263,7 +267,8 @@ export type AcceptedTokens =
   | "gho"
   | "link"
   | "aWeth"
-  | "aWbtc";
+  | "aWbtc"
+  | "cWeth";
 
 export type AcceptedProtocolsAndContracts =
   | "aaveFaucet"

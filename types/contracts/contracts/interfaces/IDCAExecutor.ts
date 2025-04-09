@@ -113,11 +113,11 @@ export interface IDCAExecutorInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "Execute",
-    values: [AddressLike, BigNumberish]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ForceUnsubscribe",
-    values: [AddressLike, BigNumberish]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "Subscribe",
@@ -125,7 +125,7 @@ export interface IDCAExecutorInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "Unsubscribe",
-    values: [AddressLike, BigNumberish]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getTimeTillWindow",
@@ -271,13 +271,21 @@ export interface IDCAExecutor extends BaseContract {
   >;
 
   Execute: TypedContractMethod<
-    [DCAAccount_: AddressLike, strategyId_: BigNumberish],
+    [
+      DCAAccount_: AddressLike,
+      strategyId_: BigNumberish,
+      interval_: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
 
   ForceUnsubscribe: TypedContractMethod<
-    [DCAAccount_: AddressLike, strategyId_: BigNumberish],
+    [
+      DCAAccount_: AddressLike,
+      strategyId_: BigNumberish,
+      interval_: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
@@ -289,7 +297,11 @@ export interface IDCAExecutor extends BaseContract {
   >;
 
   Unsubscribe: TypedContractMethod<
-    [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
+    [
+      DCAAccountAddress_: AddressLike,
+      strategyId_: BigNumberish,
+      interval_: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
@@ -322,14 +334,22 @@ export interface IDCAExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "Execute"
   ): TypedContractMethod<
-    [DCAAccount_: AddressLike, strategyId_: BigNumberish],
+    [
+      DCAAccount_: AddressLike,
+      strategyId_: BigNumberish,
+      interval_: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
   getFunction(
     nameOrSignature: "ForceUnsubscribe"
   ): TypedContractMethod<
-    [DCAAccount_: AddressLike, strategyId_: BigNumberish],
+    [
+      DCAAccount_: AddressLike,
+      strategyId_: BigNumberish,
+      interval_: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
@@ -343,7 +363,11 @@ export interface IDCAExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "Unsubscribe"
   ): TypedContractMethod<
-    [DCAAccountAddress_: AddressLike, strategyId_: BigNumberish],
+    [
+      DCAAccountAddress_: AddressLike,
+      strategyId_: BigNumberish,
+      interval_: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;

@@ -272,7 +272,7 @@ describe("> DCA Strategy Executions Tests", () => {
         await approve.wait();
 
         await expect(
-          createdAccount.FundAccount(
+          createdAccount.AddFunds(
             tokenAddress.usdc![forkedChain]!,
             ethers.parseUnits("1000", 6),
           ),
@@ -288,7 +288,7 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1),
+            .Execute(createdAccount.target, 1, 0),
         )
           .to.emit(executorContract, "ExecutedDCA")
           .withArgs(createdAccount.target, 1);
@@ -299,7 +299,7 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1),
+            .Execute(createdAccount.target, 1, 0),
         ).to.be.revertedWith(
           "DCAAccount : [inWindow] Strategy Interval not met",
         );
@@ -344,7 +344,7 @@ describe("> DCA Strategy Executions Tests", () => {
           await advanceTime(75);
           const tx = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1);
+            .Execute(createdAccount.target, 1, 0);
           await expect(tx.wait())
             .to.emit(executorContract, "ExecutedDCA")
             .withArgs(createdAccount.target, 1);
@@ -441,7 +441,7 @@ describe("> DCA Strategy Executions Tests", () => {
       it("🧪 Should execute strategy 2", async () => {
         const tx = await executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 2);
+          .Execute(createdAccount.target, 2, 0);
         // Wait for the transaction to be mined
 
         // Check for the ExecutedDCA event from the executorContract
@@ -467,7 +467,7 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2),
+            .Execute(createdAccount.target, 2, 0),
         ).to.be.revertedWith(
           "DCAAccount : [inWindow] Strategy Interval not met",
         );
@@ -481,7 +481,7 @@ describe("> DCA Strategy Executions Tests", () => {
           // Strategy 1
           const tx1 = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1);
+            .Execute(createdAccount.target, 1, 0);
           // Wait for the transaction to be mined
 
           // Check for the ExecutedDCA event from the executorContract
@@ -500,7 +500,7 @@ describe("> DCA Strategy Executions Tests", () => {
           // Strategy 2
           const tx2 = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2);
+            .Execute(createdAccount.target, 2, 0);
           // Wait for the transaction to be mined
 
           // Check for the ExecutedDCA event from the executorContract
@@ -533,14 +533,14 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1),
+            .Execute(createdAccount.target, 1, 0),
         ).to.be.revertedWith(
           "DCAAccount : [inWindow] Strategy Interval not met",
         );
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2),
+            .Execute(createdAccount.target, 2, 0),
         ).to.be.revertedWith(
           "DCAAccount : [inWindow] Strategy Interval not met",
         );
@@ -558,7 +558,7 @@ describe("> DCA Strategy Executions Tests", () => {
           // Strategy 1
           const tx1 = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1);
+            .Execute(createdAccount.target, 1, 0);
           // Wait for the transaction to be mined
 
           // Check for the ExecutedDCA event from the executorContract
@@ -578,7 +578,7 @@ describe("> DCA Strategy Executions Tests", () => {
           // Strategy 2
           const tx2 = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2);
+            .Execute(createdAccount.target, 2, 0);
           // Wait for the transaction to be mined
 
           // Check for the ExecutedDCA event from the executorContract
@@ -611,14 +611,14 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1),
+            .Execute(createdAccount.target, 1, 0),
         ).to.be.revertedWith(
           "DCAAccount : [inWindow] Strategy Interval not met",
         );
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2),
+            .Execute(createdAccount.target, 2, 0),
         ).to.be.revertedWith(
           "DCAAccount : [inWindow] Strategy Interval not met",
         );

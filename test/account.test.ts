@@ -271,7 +271,7 @@ describe("> DCA Account Tests", () => {
       await approve.wait();
 
       await expect(
-        createdAccount.FundAccount(
+        createdAccount.AddFunds(
           tokenAddress.usdc![forkedChain]!,
           ethers.parseUnits("100", 6),
         ),
@@ -285,7 +285,7 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should unfund the account with USDC", async function () {
       await expect(
-        createdAccount.UnFundAccount(
+        createdAccount.WithdrawFunds(
           tokenAddress.usdc![forkedChain]!,
           ethers.parseUnits("100", 6),
         ),
@@ -338,7 +338,7 @@ describe("> DCA Account Tests", () => {
       await approve.wait();
 
       await expect(
-        createdAccount.FundAccount(
+        createdAccount.AddFunds(
           tokenAddress.usdc![forkedChain]!,
           ethers.parseUnits("10000", 6),
         ),
@@ -347,7 +347,7 @@ describe("> DCA Account Tests", () => {
     it("🧪 Should  subscribe to the executor", async () => {
       await expect(createdAccount.SubscribeStrategy(1n)).to.emit(
         createdAccount,
-        "StrategySubscribed",
+        "StrategySubscription",
       );
     });
     it("🧪 Should revert on subscribe", async () => {
@@ -360,6 +360,8 @@ describe("> DCA Account Tests", () => {
         createdAccount.target as string,
         forkedChain,
       );
+
+      strat.strategyId = 2;
       const contract = await ethers.getContractAt(
         "contracts/tokens/IERC20.sol:IERC20",
         tokenAddress?.usdc?.[forkedChain]! as string,
@@ -378,25 +380,26 @@ describe("> DCA Account Tests", () => {
       await expect(createStratTx.wait()).to.be.fulfilled;
     });
     it("🧪 Should unsubscribe strategy 1", async () => {
-      const tx = await createdAccount.UnsubscribeStrategy(1n);
-      expect(await tx).to.be.fulfilled;
-      expect(await tx).to.emit(createdAccount, "StrategyUnsubscribed");
+      await expect(createdAccount.UnsubscribeStrategy(1n)).to.emit(
+        createdAccount,
+        "StrategySubscription",
+      );
     });
   });
 
   describe("💡 Execute strategy", () => {
-    it("🧪 Should revert on as strategy is not active", async () => {
+    it("🧪 Should revert on as strategy (1) is not subscribed", async () => {
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 1),
-      ).to.be.revertedWith("DCAAccount : [Execute] Strategy is not active");
+          .Execute(createdAccount.target, 1, 0),
+      ).to.be.revertedWith("DCAexecutor : [Execute] Strategy not subscribed");
     });
     it("🧪 Should execute strategy 2", async () => {
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 2),
+          .Execute(createdAccount.target, 2, 0),
       )
         .to.emit(executorContract, "ExecutedStrategy")
         .withArgs(createdAccount.target, 2);
@@ -405,14 +408,23 @@ describe("> DCA Account Tests", () => {
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 2),
-      ).to.be.revertedWith("DCAAccount : [inWindow] Strategy Interval not met");
+          .Execute(createdAccount.target, 2, 0),
+      ).to.be.revertedWith("DCAexecutor : [Execute] Not in execution window");
     });
     it("🧪 Should show target WETH balance above 0", async () => {
       const balance = await createdAccount.getTargetBalance(
         tokenAddress.weth![forkedChain]!,
       );
       expect(balance > 0).to.be.true;
+    });
+    it("🧪 Should ForceUnsubscribe strategy 2", async () => {
+      await expect(
+        executorContract
+          .connect(addressStore.executorEoa.signer)
+          .ForceUnsubscribe(createdAccount.target, 2n, 0),
+      )
+        .to.emit(createdAccount, "StrategySubscription")
+        .withArgs(2n, executorContract.target, false);
     });
   });
 
@@ -449,16 +461,13 @@ describe("> DCA Account Tests", () => {
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
-        .Execute(createdAccount.target, 1);
+        .Execute(createdAccount.target, 1, 0);
       await expect(tx.wait())
         .to.emit(executorContract, "ExecutedStrategy")
         .withArgs(createdAccount.target, 1);
 
       await expect(tx.wait()).to.emit(createdAccount, "StrategyExecuted");
-      await expect(tx.wait()).to.emit(
-        createdAccount,
-        "StrategyReinvestExecuted",
-      );
+      await expect(tx.wait()).to.emit(createdAccount, "ReinvestExecuted");
     });
     it("🧪 Should return target3 weth balance of more than zero", async () => {
       const bal = await getErc20Balance(

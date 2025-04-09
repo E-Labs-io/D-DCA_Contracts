@@ -40,12 +40,12 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     using Fee for FeeDistribution;
 
     mapping(Interval => bool) private _activeIntervals;
-
-    mapping(address => mapping(uint256 => Strategy)) internal _strategies; // WHY STORE THE STRAT?
-    mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
-    FeeDistribution internal _feeData;
-
     mapping(Interval => uint256) internal _totalActiveStrategiesByIntervals;
+
+    mapping(address => mapping(uint256 => bool)) internal _strategies; // WHY STORE THE STRAT?
+    mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
+
+    FeeDistribution internal _feeData;
 
     uint256 private _totalActiveStrategies;
     uint256 private _totalIntervalsExecuted;
@@ -81,7 +81,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         Strategy calldata strategy_
     ) external override is_active {
         require(
-            _msgSender() == strategy_.accountAddress,
+            Strategies.isAccountAddress(strategy_, _msgSender()),
             "DCAexecutor : [Subscribe] Only Account Contract can unsubscribe"
         );
         require(
@@ -92,43 +92,67 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
             isIntervalActive(strategy_.interval),
             "DCAexecutor : [Subscribe] Interval Not Active"
         );
+
+        require(
+            !_strategies[strategy_.accountAddress][strategy_.strategyId],
+            "DCAexecutor : [Subscribe] Strategy already subscribed"
+        );
         _subscribeAccount(strategy_);
-        _totalActiveStrategies++;
-        _totalActiveStrategiesByIntervals[strategy_.interval]++;
     }
 
     /**
      * @dev Unsubscribes a strategy from the DCAExecutor
      * @param DCAAccountAddress_ The address of the DCAAccount
      * @param strategyId_ The id of the strategy to unsubscribe
+     * @param interval_ The interval of the strategy to unsubscribe
      */
     function Unsubscribe(
         address DCAAccountAddress_,
-        uint256 strategyId_
+        uint256 strategyId_,
+        Interval interval_
     ) external override {
         require(
             _msgSender() == DCAAccountAddress_,
             "DCAexecutor : [Unsubscribe] Only Account Contract can unsubscribe"
         );
-        _unSubscribeAccount(DCAAccountAddress_, strategyId_);
-        _totalActiveStrategies--;
-        _totalActiveStrategiesByIntervals[strategy_.interval]--;
+        require(
+            _strategies[DCAAccountAddress_][strategyId_],
+            "DCAexecutor : [Subscribe] Strategy already unsubscribed"
+        );
+
+        _unSubscribeAccount(DCAAccountAddress_, strategyId_, interval_);
     }
 
     /**
      * @dev Executes a single strategy
      * @param DCAAccount_ The address of the DCAAccount
      * @param strategyId_ The id of the strategy to execute
+     * @param interval_ The interval of the strategy to execute
      */
     function Execute(
         address DCAAccount_,
-        uint256 strategyId_
+        uint256 strategyId_,
+        Interval interval_
     ) external override onlyExecutor is_active {
-        bool success = _singleExecution(DCAAccount_, strategyId_);
-        if (success) {
-            emit ExecutedStrategy(DCAAccount_, strategyId_);
-            _totalIntervalsExecuted++;
-        }
+        require(
+            _strategies[DCAAccount_][strategyId_],
+            "DCAexecutor : [Execute] Strategy not subscribed"
+        );
+
+        require(
+            isIntervalActive(interval_),
+            "DCAexecutor : [Execute] Interval Not Active"
+        );
+
+        require(
+            Intervals.isInWindow(
+                interval_,
+                _lastExecution[DCAAccount_][strategyId_]
+            ),
+            "DCAexecutor : [Execute] Not in execution window"
+        );
+
+        _executeStrategy(DCAAccount_, strategyId_);
     }
 
     /**
@@ -157,24 +181,22 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
      * @dev Forces the unsubscription of a strategy
      * @param DCAAccount_ The address of the DCAAccount
      * @param strategyId_ The id of the strategy to unsubscribe
+     * @param interval_ The interval of the strategy to unsubscribe
      */
     function ForceUnsubscribe(
         address DCAAccount_,
-        uint256 strategyId_
+        uint256 strategyId_,
+        Interval interval_
     ) external onlyExecutor {
         require(
-            _strategies[DCAAccount_][strategyId_].active,
+            _strategies[DCAAccount_][strategyId_],
             "DCAExecutor: [ForceUnsubscribe] Account already unsubscribed"
         );
-        _strategies[DCAAccount_][strategyId_].active = false;
+
+        _strategies[DCAAccount_][strategyId_] = false;
         IDCAAccount(DCAAccount_).ExecutorDeactivate(strategyId_);
         _totalActiveStrategies--;
-        emit StrategySubscription(
-            DCAAccount_,
-            strategyId_,
-            _strategies[DCAAccount_][strategyId_].interval,
-            false
-        );
+        emit StrategySubscription(DCAAccount_, strategyId_, interval_, false);
     }
 
     /**
@@ -198,19 +220,6 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
      */
     function setActiveState(bool newFlag_) public onlyAdmins {
         _setActiveState(newFlag_);
-    }
-
-    /**
-     * @dev Returns the specific strategy for the given DCAAccount and strategy id
-     * @param dcaAccountAddress_ The address of the DCAAccount
-     * @param accountStrategyId_ The id of the strategy
-     * @return The strategy data
-     */
-    function getSpecificStrategy(
-        address dcaAccountAddress_,
-        uint256 accountStrategyId_
-    ) public view returns (IDCADataStructures.Strategy memory) {
-        return _strategies[dcaAccountAddress_][accountStrategyId_];
     }
 
     /**
@@ -253,9 +262,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         view
         returns (uint256 lastEx, uint256 secondsLeft, bool checkReturn)
     {
-        return
-            IDCAAccount(_strategies[account_][strategyId_].accountAddress)
-                .getTimeTillWindow(strategyId_);
+        return IDCAAccount(account_).getTimeTillWindow(strategyId_);
     }
 
     /**
@@ -287,8 +294,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     function _subscribeAccount(
         IDCADataStructures.Strategy memory strategy_
     ) internal {
-        strategy_.active = true;
-        _strategies[strategy_.accountAddress][strategy_.strategyId] = strategy_;
+        _strategies[strategy_.accountAddress][strategy_.strategyId] = true;
+        _totalActiveStrategies++;
+        _totalActiveStrategiesByIntervals[strategy_.interval]++;
+
         emit StrategySubscription(
             strategy_.accountAddress,
             strategy_.strategyId,
@@ -304,16 +313,17 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
      */
     function _unSubscribeAccount(
         address DCAAccountAddress_,
-        uint256 strategyId_
+        uint256 strategyId_,
+        Interval interval_
     ) private {
-        Strategy memory strategy = _strategies[DCAAccountAddress_][strategyId_];
-        _strategies[DCAAccountAddress_][strategyId_].active = false;
-        _totalActiveStrategiesByIntervals[strategy.interval]--;
+        _totalActiveStrategies--;
+        _strategies[DCAAccountAddress_][strategyId_] = false;
+        _totalActiveStrategiesByIntervals[interval_]--;
 
         emit StrategySubscription(
             DCAAccountAddress_,
             strategyId_,
-            strategy.interval,
+            interval_,
             false
         );
     }
@@ -326,7 +336,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
         _changeExecutorAddress(newExecutionEOA_);
     }
 
-    function _singleExecution(
+    function _executeStrategy(
         address accountAddress_,
         uint256 strategyId_
     ) internal returns (bool) {
@@ -335,7 +345,9 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
             _feeData.feeAmount
         );
         if (success) {
-            _lastExecution[accountAddress_][strategyId_] = block.number;
+            _lastExecution[accountAddress_][strategyId_] = block.timestamp;
+            _totalIntervalsExecuted++;
+            emit ExecutedStrategy(accountAddress_, strategyId_);
         }
         return success;
     }

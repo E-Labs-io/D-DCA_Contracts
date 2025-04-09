@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "hardhat/console.sol";
+
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 //import {Pool} from "@aave/core-v3/contracts/protocol/pool/Pool.sol";
@@ -30,7 +32,7 @@ library AaveV3Reinvest {
     string public constant MODULE_NAME = "Aave V3 Reinvest";
     uint8 public constant MODULE_ID = 0x12;
 
-    address constant AAVE_CONTRACT = 0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951; //ETH SEPOLIA
+    address constant AAVE_CONTRACT = 0xA238Dd80C259a72e81d7e4664a9801593F98d1c5; //ETH SEPOLIA
     AaveIPool constant AAVE_POOL = AaveIPool(AAVE_CONTRACT);
 
     /**

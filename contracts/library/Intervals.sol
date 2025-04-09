@@ -24,7 +24,8 @@ library Intervals {
     uint256 constant ONEMINUTE = 1 minutes; // ONLY FOR TESTING
     uint256 constant ONEHOUR = 1 hours;
     uint256 constant ONEDAY = 1 days;
-    uint256 constant TWODAYS = 2 days;
+    uint256 constant TWODAYS = 2 * ONEDAY;
+    uint256 constant THREEDAYS = 3 * ONEDAY;
     uint256 constant ONEWEEK = 1 weeks;
     uint256 constant ONEMONTH = 4 weeks;
 
@@ -55,6 +56,8 @@ library Intervals {
             return ONEMINUTE * 5;
         if (interval_ == IDCADataStructures.Interval.OneDay) return ONEDAY;
         if (interval_ == IDCADataStructures.Interval.TwoDays) return TWODAYS;
+        if (interval_ == IDCADataStructures.Interval.ThreeDays)
+            return THREEDAYS;
         if (interval_ == IDCADataStructures.Interval.OneWeek) return ONEWEEK;
         if (interval_ == IDCADataStructures.Interval.TwoWeeks)
             return ONEWEEK * 2;

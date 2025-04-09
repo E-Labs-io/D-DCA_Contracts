@@ -4,11 +4,28 @@
 
 
 
-************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*       Dollar Cost Average Contracts************************************************                  V0.6  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
+************************************************ ____ooo____oooooooo_oooo____oooo____ooo____oo_* __oo___oo_____oo_____oo___oo____oo__oooo___oo_* _oo_____oo____oo_____oo__oo______oo_oo_oo__oo_* _ooooooooo____oo_____oo__oo______oo_oo__oo_oo_* _oo_____oo____oo_____oo___oo____oo__oo___oooo_* _oo_____oo____oo____oooo____oooo____oo____ooo_* ______________________________________________*      Distributed Cost Average Contracts************************************************                  V0.7  x.com/0xAtion  x.com/e_labs_  e-labs.co.uk
 
 
 
 ## Methods
+
+### AddFunds
+
+```solidity
+function AddFunds(address token_, uint256 amount_) external nonpayable
+```
+
+
+
+*Fund the account with a base currency*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | {address} The ERC20 token address |
+| amount_ | uint256 | {uint256} Amount of the token to deposit |
 
 ### Execute
 
@@ -48,23 +65,6 @@ used by the Executor to remove failing strategies/out of funds strategies.
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | Strategy Id of the strategy to unsubscribe |
-
-### FundAccount
-
-```solidity
-function FundAccount(address token_, uint256 amount_) external nonpayable
-```
-
-
-
-*Fund the account with a base currency*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token_ | address | {address} The ERC20 token address |
-| amount_ | uint256 | {uint256} Amount of the token to deposit |
 
 ### SWAP_ROUTER
 
@@ -117,39 +117,6 @@ function SubscribeStrategy(uint256 strategyId_) external nonpayable
 |---|---|---|
 | strategyId_ | uint256 | {uint256} Id of the strategy to subscribe to an executor |
 
-### UnFundAccount
-
-```solidity
-function UnFundAccount(address token_, uint256 amount_) external nonpayable
-```
-
-
-
-*Unfund account of a base token*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token_ | address | {address} The ERC20 token address |
-| amount_ | uint256 | {uint256} Amount of the token to withdraw |
-
-### UnWindReinvest
-
-```solidity
-function UnWindReinvest(uint256 strategyId_) external nonpayable
-```
-
-
-
-*Unwinds the reinvestment for the given strategy*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId_ | uint256 | The id of the strategy to unwind |
-
 ### UnsubscribeStrategy
 
 ```solidity
@@ -165,6 +132,39 @@ function UnsubscribeStrategy(uint256 strategyId_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | Strategy Id of the strategy to unsubscribe |
+
+### UnwindReinvest
+
+```solidity
+function UnwindReinvest(uint256 strategyId_) external nonpayable
+```
+
+repays the underlining token and return the target token
+
+*Unwinds the reinvestment for the given strategy*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | The id of the strategy to unwind |
+
+### WithdrawFunds
+
+```solidity
+function WithdrawFunds(address token_, uint256 amount_) external nonpayable
+```
+
+
+
+*Unfund account of a base token*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | {address} The ERC20 token address |
+| amount_ | uint256 | {uint256} Amount of the token to withdraw |
 
 ### WithdrawSavings
 
@@ -287,6 +287,28 @@ Returns the executor address
 | Name | Type | Description |
 |---|---|---|
 | _0 | address | The executor address |
+
+### getReinvestTokenBalance
+
+```solidity
+function getReinvestTokenBalance(uint256 strategyId_) external view returns (uint256)
+```
+
+
+
+*Get the reinvest token balance for a strategy*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | Strategy Id of the strategy to get the balance for |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | {uint256} The reinvest token balance for the strategy |
 
 ### getStrategyData
 
@@ -567,10 +589,10 @@ Emitted when a strategy has been executed
 | amountIn_ `indexed` | uint256 | amount received from the swap |
 | reInvested_  | bool | wether the strategy reinvested or not |
 
-### StrategySubscribed
+### StrategySubscription
 
 ```solidity
-event StrategySubscribed(uint256 indexed strategyId_, address indexed executor_)
+event StrategySubscription(uint256 indexed strategyId_, address indexed executor_, bool indexed subscribed_)
 ```
 
 Emitted when the Strategy is confirmed to be subscribed to an Executor
@@ -583,22 +605,7 @@ Emitted when the Strategy is confirmed to be subscribed to an Executor
 |---|---|---|
 | strategyId_ `indexed` | uint256 | ID of the strategy that has been subscribed |
 | executor_ `indexed` | address | Address of the Executor contract subscribed to |
-
-### StrategyUnsubscribed
-
-```solidity
-event StrategyUnsubscribed(uint256 indexed strategyId_)
-```
-
-Emitted when a strategy has been unsubscribed from an Executor
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| strategyId_ `indexed` | uint256 | Id of the strategy being unsubscribed |
+| subscribed_ `indexed` | bool | Wether the strategy is subscribed/unsubscribed to the executor |
 
 
 
