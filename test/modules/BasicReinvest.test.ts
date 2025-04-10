@@ -199,7 +199,7 @@ describe("> Basic Reinvest Test", () => {
         .catch((error) => console.log("Create Strat wait() Error:", error));
 
       await expect(success)
-        .to.emit(createdAccount, "NewStrategyCreated")
+        .to.emit(createdAccount, "StrategyCreated")
         .withArgs(1);
     });
     it("🧪 Should return there is strategy 1 on the account", async function () {

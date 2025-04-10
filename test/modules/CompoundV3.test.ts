@@ -21,8 +21,9 @@ import {
 } from "~/scripts/tests/contractInteraction";
 import { resetFork } from "~/scripts/tests/forking";
 import { advanceTime } from "~/scripts/tests/timeControl";
+import { decodePackedBytes } from "~/scripts/tests/comparisons";
 
-describe("> Compound V3 Reinvest Test", () => {
+describe("> Compound V3 ETH Reinvest Test", () => {
   console.log("🧪 DCA Reinvest Modula : Compound V3 Tests : Mounted");
 
   const forkedChain = deploymentConfig().masterChain;
@@ -58,6 +59,13 @@ describe("> Compound V3 Reinvest Test", () => {
       "user",
       "testTarget",
     ]);
+
+    usdcContract = await getErc20ImpersonatedFunds(
+      forkedChain,
+      addressStore.user.address as Addressable,
+      ethers.parseUnits("100000", 6),
+      "usdc",
+    );
 
     cWethContract = await connectToErc20(
       tokenAddress?.compoundV3ETH?.[forkedChain]! as string,
@@ -177,6 +185,22 @@ describe("> Compound V3 Reinvest Test", () => {
       expect(version).to.equal("TEST V0.6");
     });
 
+    it("🧪 Return Compound being active in array (0x11)", async function () {
+      const encodedData = await reinvestContract.ACTIVE_REINVESTS();
+      const decodedData = decodePackedBytes(encodedData);
+
+      let active = false;
+      for (let i = 0; i < decodedData.length; i++) {
+        if (decodedData[i] === 0x11) active = true;
+      }
+      expect(active).to.be.true;
+    });
+
+    it("🧪 Should return the module name for the given code", async function () {
+      const modualName = await reinvestContract.getModuleName(0x11);
+      expect(modualName).to.equal("Compound V3 Reinvest");
+    });
+
     it("🧪 Should deploy the executor contract", async function () {
       // Deploy the reinvest proxy contract
       const proxyFactory = await ethers.getContractFactory(
@@ -284,7 +308,7 @@ describe("> Compound V3 Reinvest Test", () => {
   });
 
   describe("💡 Execution", () => {
-    it("🧪 Should show balance of aWETH == 0", async () => {
+    it("🧪 Should show balance of cWETH == 0", async () => {
       const bal = await getErc20Balance(cWethContract, createdAccount.target);
       expect(bal).to.equal(0n);
     });
@@ -322,7 +346,7 @@ describe("> Compound V3 Reinvest Test", () => {
     it("🧪 Should show balance of cWETH > 0", async () => {
       const bal = await getErc20Balance(cWethContract, createdAccount.target);
       console.log("bal of cWETH: ", Number(bal));
-      expect(Number(bal)).to.be.greaterThan(0);
+      expect(Number(bal)).to.be.greaterThan(0n);
     });
   });
 

@@ -456,7 +456,7 @@ function transferOwnership(address newOwner) external nonpayable
 function updateSwapAddress(address swapRouter_) external nonpayable
 ```
 
-
+current swap functionality only allowing for Uniswap
 
 *Updates the Uniswap SwapRouter Address*
 

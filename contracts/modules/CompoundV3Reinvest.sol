@@ -4,6 +4,8 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../protocols/compoundV3/CometMainInterface.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
+
+import "hardhat/console.sol";
 /**
  *
  ************************************************
@@ -49,7 +51,11 @@ library CompoundV3Reinvest {
             investData.token
         );
 
+        console.log("Compound V3 Reinvest amount: ", amount);
+
         if (amount > 0) success = true;
+
+        console.log("Compound V3 Reinvest amount: ", amount);
 
         return (amount, success);
     }
@@ -112,7 +118,7 @@ library CompoundV3Reinvest {
         address tokenAddress_,
         address pool_
     ) internal returns (uint256 amount) {
-        amount = CometMainInterface(pool_).balanceOf(address(this));
+        amount = CometMainInterface(pool_).balanceOf(address(msg.sender));
     }
 
     function _withdrawReward(

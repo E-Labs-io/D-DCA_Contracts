@@ -161,7 +161,7 @@ contract DCAAccount is DCAAccountLogic {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
         require(
             _baseBalances[token_] >= amount_,
-            "DCAAccount : [UnFundAccount] Balance of token to low"
+            "[DCAAccount] : [UnFundAccount] - Balance of token to low"
         );
         _baseBalances[token_] -= amount_;
         IERC20(token_).transfer(msg.sender, amount_);
@@ -179,7 +179,7 @@ contract DCAAccount is DCAAccountLogic {
     ) external override onlyOwner {
         require(
             _targetBalances[token_] >= amount_,
-            "DCAAccount : [WithdrawSavings] Balance of token too low"
+            "[DCAAccount] : [WithdrawSavings] - Balance of token too low"
         );
         _targetBalances[token_] -= amount_;
         bool success;
@@ -188,7 +188,7 @@ contract DCAAccount is DCAAccountLogic {
             success = true;
         } else success = IERC20(token_).transfer(msg.sender, amount_);
 
-        require(success, "[DCAAccount] : [WithdrawSavings] Transfer failed");
+        require(success, "[DCAAccount] : [WithdrawSavings] - Transfer failed");
     }
 
     /**
@@ -221,6 +221,11 @@ contract DCAAccount is DCAAccountLogic {
         uint256 strategyId_,
         Reinvest memory reinvest_ //bool migrateOrWithdrawCurrentReinvest_
     ) external override onlyOwner {
+        /**
+         * @dev
+         * Need to add check for already active reinvest
+         * Will need to remove or transfer to new reinvest
+         */
         if (reinvest_.active) {
             _strategies[strategyId_].reinvest = reinvest_;
         } else
@@ -234,6 +239,7 @@ contract DCAAccount is DCAAccountLogic {
 
     /**
      * @dev Updates the Uniswap SwapRouter Address
+     * @notice current swap functionality only allowing for Uniswap
      * @param swapRouter_  New address for the Uniswap router
      */
     function updateSwapAddress(address swapRouter_) public onlyOwner {
@@ -271,7 +277,7 @@ contract DCAAccount is DCAAccountLogic {
         uint256 strategyId_
     ) external view returns (uint256) {
         console.log(
-            "Got Reinvest Balance",
+            "@@ Got Reinvest Balance",
             _reinvestLiquidityTokenBalance[strategyId_]
         );
         return _reinvestLiquidityTokenBalance[strategyId_];
@@ -293,7 +299,10 @@ contract DCAAccount is DCAAccountLogic {
      * @param newAddress_ address of the new default executor contract
      */
     function _changeExecutor(address newAddress_) internal {
-        require(_executor() != newAddress_, "Already using this DCA executor");
+        require(
+            _executor() != newAddress_,
+            "[DCA Account] : [changeExecutor] - Already using this DCA executor"
+        );
 
         _changeExecutorAddress(newAddress_);
     }

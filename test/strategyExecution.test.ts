@@ -235,7 +235,7 @@ describe("> DCA Strategy Executions Tests", () => {
     });
     it("🧪 Should Return the Reinvest Version", async function () {
       const version = await createdAccount.getAttachedReinvestLibraryVersion();
-      expect(version).to.equal("TEST V0.5");
+      expect(version).to.equal("TEST V0.6");
     });
   });
 

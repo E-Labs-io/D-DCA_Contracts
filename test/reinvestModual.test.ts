@@ -101,7 +101,11 @@ describe("> DCA Reinvest Modula Test", () => {
       const encodedData = await reinvestDeployment.ACTIVE_REINVESTS();
       const decodedData = decodePackedBytes(encodedData);
 
-      expect(decodedData.length === 2).to.be.true;
+      expect(decodedData.length === 3).to.be.true;
+    });
+    it("🧪 Reinvest Active Strat element 2 should be Aave (0x12)", async function () {
+      const modualName = await reinvestDeployment.getModuleName(0x12);
+      expect(modualName).to.equal("Aave V3 Reinvest");
     });
     it("🧪 Reinvest Active Strat element 2 should be Aave (0x12)", async function () {
       const encodedData = await reinvestDeployment.ACTIVE_REINVESTS();

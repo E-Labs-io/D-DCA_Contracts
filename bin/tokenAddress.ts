@@ -15,7 +15,8 @@ const productionChainAddresses: {
     dai: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
     usdc: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     usdt: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-    compoundV3Usdc: "",
+    cWeth: "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
+    cUsdc: "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
     aaveV3Pool: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
     universalRouter: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
     gho: "0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2f",
@@ -57,6 +58,8 @@ const productionChainAddresses: {
     aaveV3Pool: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
     universalRouter: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
     permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    cWeth: "0xE36A30D249f7761327fd973001A32010b521b6Fd",
+    cUsdc: "0x2e44e174f7D53F0212823acC11C01A11d58c5bCB",
   },
   base: {
     permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
@@ -71,6 +74,7 @@ const productionChainAddresses: {
     aWeth: "0xD4a0e0b9149BCee3C920d2E00b5dE09138fd8bb7",
     aWbtc: "0xBdb9300b7CDE636d9cD4AFF00f6F009fFBBc8EE6",
     cWeth: "0x46e6b214b524310239732D51387075E0e70970bf",
+    cUsdc: "0xb125E6687d4313864e53df431d5425969c15Eb2F",
   },
 };
 
@@ -201,17 +205,20 @@ export const tokenAddress: TokenAddressList = {
     hardhat: "",
   },
   compoundV3Usdc: {
-    eth: productionChainAddresses.eth.compoundV3Usdc,
+    eth: productionChainAddresses.eth.cUsdc,
     ethGoerli: "",
     ethSepolia: "",
     arbGoerli: "0x1d573274E19174260c5aCE3f2251598959d24456",
     arbitrum: productionChainAddresses.arbitrum.compoundV3Usdc,
     opGoerli: "",
     hardhat: productionChainAddresses[forkedNetwork].compoundV3Usdc,
-    optimism: productionChainAddresses.optimism.compoundV3Usdc,
+    optimism: productionChainAddresses.optimism.cUsdc,
+    base: productionChainAddresses.optimism.cWeth,
   },
   compoundV3ETH: {
     base: productionChainAddresses.base.cWeth,
+    eth: productionChainAddresses.eth.cWeth,
+    optimism: productionChainAddresses.optimism.cWeth,
   },
   aaveV3Pool: {
     eth: productionChainAddresses.eth.aaveV3Pool,
@@ -268,7 +275,8 @@ export type AcceptedTokens =
   | "link"
   | "aWeth"
   | "aWbtc"
-  | "cWeth";
+  | "cWeth"
+  | "cUsdc";
 
 export type AcceptedProtocolsAndContracts =
   | "aaveFaucet"

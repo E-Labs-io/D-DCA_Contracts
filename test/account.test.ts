@@ -202,7 +202,7 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should Return the Reinvest Version", async function () {
       const version = await createdAccount.getAttachedReinvestLibraryVersion();
-      expect(version).to.equal("TEST V0.5");
+      expect(version).to.equal("TEST V0.6");
     });
   });
 
@@ -304,7 +304,7 @@ describe("> DCA Account Tests", () => {
           ethers.parseUnits("100", 6),
         ),
       ).to.be.revertedWith(
-        "DCAAccount : [WithdrawSavings] Balance of token too low",
+        "[DCAAccount] : [WithdrawSavings] - Balance of token too low",
       );
     });
   });
