@@ -108,7 +108,7 @@ library CompoundV3Reinvest {
         return (amount);
     }
 
-    function _getContractAddress(uint8 code_) internal pure returns (address) {
+    function _getContractAddress(uint8 code_) internal pure returns (address compoundPool) {
         if (code_ == WETH) return COMPOUND_ETH_CONTRACT;
         if (code_ == USDC) return COMPOUND_USDC_CONTRACT;
     }

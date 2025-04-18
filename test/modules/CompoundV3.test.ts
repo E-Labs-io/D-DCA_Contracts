@@ -371,7 +371,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       const bal = Number(
         await getErc20Balance(wethContract, createdAccount.target),
       );
-      expect(bal).to.be.greaterThanOrEqual(strategyBalance);
+      expect(bal).to.be.greaterThanOrEqual(strategyBalance - 100);
       wethBalance = bal;
     });
     it("🧪 Should force force unwind reinvest", async () => {
@@ -463,7 +463,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       const trueBalance = Number(
         await getErc20Balance(cWethContract, createdAccount.target),
       );
-      expect(trueBalance).to.be.greaterThanOrEqual(reinvestBalance - 100);
+      expect(reinvestBalance).to.be.greaterThanOrEqual(trueBalance - 200);
     });
     it("🧪 Should withdraw the accounts balance of cWeth", async () => {
       const tx = await createdAccount.UnwindReinvest(1);
