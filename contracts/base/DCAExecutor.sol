@@ -194,9 +194,12 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
             console.log("Executor: Executor Amount", executorFee);
             console.log("Executor: compute Amount", computingFee);
 
-            _transferFee(_feeData.executionAddress, executorFee, token);
-            _transferFee(_feeData.computingAddress, computingFee, token);
-            _transferFee(_feeData.adminAddress, adminFee, token);
+            if (executorFee > 0)
+                _transferFee(_feeData.executionAddress, executorFee, token);
+            if (computingFee > 0)
+                _transferFee(_feeData.computingAddress, computingFee, token);
+            if (adminFee > 0)
+                _transferFee(_feeData.adminAddress, adminFee, token);
 
             console.log(
                 "Executor: Remaining Balance",
@@ -209,6 +212,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
             console.log(
                 "Executor: New Executor Balance",
                 token.balanceOf(_feeData.executionAddress)
+            );
+            console.log(
+                "Executor: New Compute Balance",
+                token.balanceOf(_feeData.computingAddress)
             );
             emit FeesDistributed(tokenAddress_, balance);
         }

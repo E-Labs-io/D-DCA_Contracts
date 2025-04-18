@@ -60,14 +60,14 @@ describe("> Basic Reinvest Test", () => {
     usdcContract = await getErc20ImpersonatedFunds(
       forkedChain,
       addressStore.user.address as Addressable,
-      ethers.parseUnits("10000000", 6),
+      ethers.parseUnits("1000", 6),
       "usdc",
     );
 
     wethContract = await getErc20ImpersonatedFunds(
       forkedChain,
       addressStore.user.address as Addressable,
-      ethers.parseEther("100"),
+      ethers.parseEther("10"),
       "weth",
     );
   }
@@ -174,7 +174,7 @@ describe("> Basic Reinvest Test", () => {
       await approveErc20Spend(
         uscUsercontract,
         createdAccount.target as Addressable,
-        ethers.parseUnits("100000", 6),
+        ethers.parseUnits("1000", 6),
       ).catch((error) => console.log("approve error: ", error));
 
       const reinvest: IDCADataStructures.ReinvestStruct = {
@@ -195,7 +195,7 @@ describe("> Basic Reinvest Test", () => {
 
       const createStratTx = await createdAccount.SetupStrategy(
         strat,
-        ethers.parseUnits("10000", 6),
+        ethers.parseUnits("1000", 6),
         true,
       );
 

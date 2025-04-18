@@ -42,7 +42,6 @@ describe("> DCA Account Tests", () => {
 
   before(async function () {
     await resetFork(hre);
-    console.log("Fork Reset");
     await preTest();
   });
 
@@ -142,7 +141,6 @@ describe("> DCA Account Tests", () => {
       ).to.revertedWithoutReason();
     });
   });
-
   describe("💡 Update Library & Executor", () => {
     it("🧪 Should deploy the library contract", async function () {
       // Deploy the reinvest proxy contract
@@ -206,7 +204,6 @@ describe("> DCA Account Tests", () => {
       expect(version).to.equal("TEST V0.6");
     });
   });
-
   describe("💡 Create Strategy and check States", () => {
     it("🧪 Should return there are no strategy's on the account", async function () {
       const strats = await createdAccount.getStrategyData(1);
@@ -245,7 +242,6 @@ describe("> DCA Account Tests", () => {
       expect(checker).to.equal(createdAccount.target);
     });
   });
-
   describe("💡 Check Fund, Withdraw & Balances", () => {
     it("🧪 Should return 0 base balance of USDC", async function () {
       const balance = await createdAccount.getBaseBalance(
@@ -401,7 +397,7 @@ describe("> DCA Account Tests", () => {
         executorContract
           .connect(addressStore.executorEoa.signer)
           .Execute(createdAccount.target, 1, 0),
-      ).to.be.revertedWith("DCAexecutor : [Execute] Strategy not subscribed");
+      ).to.be.revertedWith("DCAExecutor : [Execute] Strategy not subscribed");
     });
     it("🧪 Should execute strategy 2", async () => {
       await expect(
@@ -417,7 +413,7 @@ describe("> DCA Account Tests", () => {
         executorContract
           .connect(addressStore.executorEoa.signer)
           .Execute(createdAccount.target, 2, 0),
-      ).to.be.revertedWith("DCAexecutor : [Execute] Not in execution window");
+      ).to.be.revertedWith("DCAExecutor : [Execute] Not in execution window");
     });
     it("🧪 Should show target WETH balance above 0", async () => {
       const balance = await createdAccount.getTargetBalance(
@@ -555,8 +551,9 @@ describe("> DCA Account Tests", () => {
     it("🧪 Should revert on UnwindReinvest, Not Executor", async () => {
       await expect(
         createdAccount.connect(addressStore.deployer.signer).UnwindReinvest(1n),
-      ).to.be.revertedWith(
-        "OnlyExecutor : [onlyExecutor] Address is not an executor",
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
       );
     });
     it("🧪 Should revert on ExecutorDeactivate, Not Executor", async () => {

@@ -97,10 +97,10 @@ export const productionChainImpersonators: ImpersonatorList = {
     dai: "0x2d070ed1321871841245d8ee5b84bd2712644322", // Random EOA 2
   },
   optimism: {
-    usdc: "0x133FA49A01801264fC05A12EF5ef9Db6a302e93D",
-    weth: "0x86bb63148d17d445ed5398ef26aa05bf76dd5b59",
+    usdc: "0xf89d7b9c864f589bbF53a82105107622B35EaA40",
+    weth: "0x86Bb63148d17d445Ed5398ef26Aa05Bf76dD5b59",
     wbtc: "0xa79a356b01ef805b3089b4fe67447b96c7e6dd4c",
-    usdt: "0xf491d040110384DBcf7F241fFE2A546513fD873d",
+    usdt: "0xf89d7b9c864f589bbF53a82105107622B35EaA40",
     dai: "0xd28843e10c3795e51a6e574378f8698afe803029",
   },
   base: {
@@ -215,7 +215,7 @@ export const tokenAddress: TokenAddressList = {
     opGoerli: "",
     hardhat: productionChainAddresses[forkedNetwork].compoundV3Usdc,
     optimism: productionChainAddresses.optimism.cUsdc,
-    base: productionChainAddresses.optimism.cWeth,
+    base: productionChainAddresses.base.cWeth,
   },
   compoundV3ETH: {
     base: productionChainAddresses.base.cWeth,

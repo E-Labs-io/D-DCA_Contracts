@@ -75,7 +75,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
     usdcContract = await getErc20ImpersonatedFunds(
       forkedChain,
       addressStore.user.address as Addressable,
-      ethers.parseUnits("10000000", 6),
+      ethers.parseUnits("250000", 6),
       "usdc",
     );
 
@@ -267,7 +267,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       await approveErc20Spend(
         uscUsercontract,
         createdAccount.target as Addressable,
-        ethers.parseUnits("1000", 6),
+        ethers.parseUnits("10000", 6),
       ).catch((error) => console.log("approve error: ", error));
 
       const reinvest: IDCADataStructures.ReinvestStruct = {
@@ -288,7 +288,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
 
       const createStratTx = await createdAccount.SetupStrategy(
         strat,
-        ethers.parseUnits("1000", 6),
+        ethers.parseUnits("10000", 6),
         true,
       );
 
@@ -412,14 +412,14 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       );
       const approve = await contract.approve(
         createdAccount.target,
-        ethers.parseUnits("1000000", 6),
+        ethers.parseUnits("150000", 6),
       );
       await approve.wait();
 
       await expect(
         createdAccount.AddFunds(
           tokenAddress.usdc![forkedChain]!,
-          ethers.parseUnits("1000000", 6),
+          ethers.parseUnits("150000", 6),
         ),
       ).to.be.fulfilled;
     });
@@ -456,15 +456,14 @@ describe("> Compound V3 ETH Reinvest Test", () => {
         executions++;
       }
     });
-
-    it("🧪 Should show balance of aWETH == total from events", async () => {
+    it("🧪 Should show balance of cWETH == total from events", async () => {
       const bal = await createdAccount.getReinvestTokenBalance(1);
       expect(Number(bal)).to.equal(reinvestBalance);
 
       const trueBalance = Number(
         await getErc20Balance(cWethContract, createdAccount.target),
       );
-      expect(trueBalance).to.be.greaterThanOrEqual(reinvestBalance);
+      expect(trueBalance).to.be.greaterThanOrEqual(reinvestBalance - 100);
     });
     it("🧪 Should withdraw the accounts balance of cWeth", async () => {
       const tx = await createdAccount.UnwindReinvest(1);

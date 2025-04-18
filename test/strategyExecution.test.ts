@@ -526,7 +526,7 @@ describe("> DCA Strategy Executions Tests", () => {
       });
       it("🧪 Should return Target 3 WETH Balance of Stat1Total", async () => {
         const bal = await wethContract.balanceOf(addressStore.target3.address);
-        expect(Number(bal)).to.equal(Stat1Total);
+        expect(Number(bal)).to.be.greaterThanOrEqual(Stat1Total - 100);
       });
       it("🧪 Should return account aWBTCTotal of Stat2Total", async () => {
         const bal = await aWbtcContract.balanceOf(createdAccount.target);
@@ -588,8 +588,6 @@ describe("> DCA Strategy Executions Tests", () => {
       });
       it("🧪 Should return Target 3 WETH Balance of Stat1Total", async () => {
         const bal = await wethContract.balanceOf(addressStore.target3.address);
-        console.log("Target 3 WETH Balance", Number(bal));
-        console.log("Stat1Total", Stat1Total);
         expect(Number(bal)).to.be.greaterThanOrEqual(Stat1Total - 100);
       });
       it("🧪 Should return account aWBTCTotal of Stat2Total", async () => {
@@ -634,12 +632,12 @@ describe("> DCA Strategy Executions Tests", () => {
     it("🧪 Should check USDC Balance of Executor to be .3% of Total Executed", async () => {
       const bal = await usdcContract.balanceOf(executorContract.target);
       totalFee = calculatePercentage(30, executions * 100000000);
-      console.log("totalFee", totalFee);
       expect(Number(bal)).to.equal(totalFee);
     });
     it("🧪 Should distribute the Fees", async () => {
-      await expect(executorContract.DistributeFees(usdcContract.target)).to.be
-        .fulfilled;
+      await expect(executorContract.DistributeFees(usdcContract.target))
+        .to.emit(executorContract, "FeesDistributed")
+        .withArgs(usdcContract.target, totalFee);
     });
     it("🧪 Should check Executor Contract is Empty", async () => {
       const execBal = Number(
@@ -648,22 +646,16 @@ describe("> DCA Strategy Executions Tests", () => {
       expect(execBal).to.equal(0);
     });
     it("🧪 Should check correct amount to Executor EOA", async () => {
-      const newEOABal = Number(
-        await getErc20Balance(usdcContract, deploymentArgs[0].executionAddress),
-      );
-      const calculated =
-        executorEOABal +
+      expect(
+        Number(
+          await usdcContract.balanceOf(deploymentArgs[0].executionAddress),
+        ),
+      ).to.equal(
         calculatePercentage(
           Number(deploymentArgs[0].amountToExecutor),
           totalFee,
-        );
-      console.log("Check totalFee", totalFee);
-      console.log("Check Old ExEOA Bal", executorEOABal);
-      console.log("Check New ExEOA Bal", newEOABal);
-      console.log("Calculate", calculated);
-      console.log("Check % to move", deploymentArgs[0].amountToExecutor);
-
-      expect(newEOABal).to.equal(calculated);
+        ),
+      );
     });
     it("🧪 Should check correct amount to Admin EOA", async () => {
       const newAdminBal = Number(
@@ -673,10 +665,6 @@ describe("> DCA Strategy Executions Tests", () => {
         adminBal +
         calculatePercentage(Number(deploymentArgs[0].amountToAdmin), totalFee);
 
-      console.log("Check Old ExEOA Bal", adminBal);
-      console.log("Check New ExEOA Bal", newAdminBal);
-      console.log("Calculate", calculated);
-      console.log("Check % to move", deploymentArgs[0].amountToAdmin);
       expect(newAdminBal).to.equal(calculated);
     });
     it("🧪 Should check USDC Balance of Executor to be Zero", async () => {

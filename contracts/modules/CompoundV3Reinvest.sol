@@ -29,7 +29,9 @@ library CompoundV3Reinvest {
     uint8 public constant MODULE_ID = 0x11;
 
     address internal constant COMPOUND_ETH_CONTRACT =
-        0xA17581A9E3356d9A858b789D68B4d866e593aE94; // ETH MAIN
+        0x46e6b214b524310239732D51387075E0e70970bf; //ETH Base
+    address internal constant COMPOUND_USDC_CONTRACT =
+        0xb125E6687d4313864e53df431d5425969c15Eb2F; //USDC Base
 
     uint8 constant WETH = 0x0;
     uint8 constant USDC = 0x1;
@@ -79,14 +81,14 @@ library CompoundV3Reinvest {
         address tokenAddress_
     ) internal returns (uint256 amount) {
         address compoundContract = _getContractAddress(code_);
-        uint256 oldBalance = _getBalance(tokenAddress_, compoundContract);
+        uint256 oldBalance = _getBalance(compoundContract);
 
         bool allowed = IERC20(tokenAddress_).approve(compoundContract, amount_);
         require(allowed, "DCAAccount : [Compound Reinvest] - Approval failed");
 
         CometMainInterface(compoundContract).supply(tokenAddress_, amount_);
 
-        uint256 newBalance = _getBalance(tokenAddress_, compoundContract);
+        uint256 newBalance = _getBalance(compoundContract);
 
         amount = newBalance - oldBalance;
 
@@ -99,21 +101,19 @@ library CompoundV3Reinvest {
         address tokenAddress_
     ) internal returns (uint256 amount) {
         address compoundContract = _getContractAddress(code_);
-        uint256 oldBalance = _getBalance(tokenAddress_, compoundContract);
+        uint256 oldBalance = _getBalance(compoundContract);
 
         CometMainInterface(compoundContract).withdraw(tokenAddress_, amount_);
-        amount = oldBalance - (_getBalance(tokenAddress_, compoundContract));
+        amount = oldBalance - (_getBalance(compoundContract));
         return (amount);
     }
 
     function _getContractAddress(uint8 code_) internal pure returns (address) {
         if (code_ == WETH) return COMPOUND_ETH_CONTRACT;
+        if (code_ == USDC) return COMPOUND_USDC_CONTRACT;
     }
 
-    function _getBalance(
-        address tokenAddress_,
-        address pool_
-    ) internal returns (uint256 amount) {
+    function _getBalance(address pool_) internal view returns (uint256 amount) {
         amount = CometMainInterface(pool_).balanceOf(address(this));
     }
 
