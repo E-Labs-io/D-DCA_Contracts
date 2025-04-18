@@ -94,7 +94,6 @@ describe("> DCA Account Factory Tests", () => {
       await reinvestContract.waitForDeployment();
       expect(reinvestContract.waitForDeployment()).to.be.fulfilled;
     });
-
     it("🧪 Should deploy the executor contract", async function () {
       // Deploy the reinvest proxy contract
       const proxyFactory = await ethers.getContractFactory(
@@ -117,13 +116,11 @@ describe("> DCA Account Factory Tests", () => {
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);
     });
-
     it("🧪 Should activate the interval", async () => {
       expect(await executorContract.isIntervalActive(0)).to.be.false;
       await executorContract.setIntervalActive(0, true);
       expect(await executorContract.isIntervalActive(0)).to.be.true;
     });
-
     it("🧪 Should update the Executor Address", async function () {
       const updateAddressTx = await factoryContract.updateExecutorAddress(
         executorContract.target,
@@ -132,7 +129,6 @@ describe("> DCA Account Factory Tests", () => {
       const address = await factoryContract.getActiveExecutorAddress();
       expect(address).to.equal(executorContract.target);
     });
-
     it("🧪 Should update the Reinvest Address", async function () {
       const updateAddressTx =
         await factoryContract.updateReinvestLibraryAddress(
@@ -151,14 +147,12 @@ describe("> DCA Account Factory Tests", () => {
       );
       expect(userAccounts.length).to.equal(0);
     });
-
     it("🧪 Should deploy a new Account", async function () {
       const createTx = await factoryContract
         .connect(addressStore.user.signer)
         .CreateAccount();
       await expect(createTx.wait()).to.be.fulfilled;
     });
-
     it("🧪 Should return the user has 1 account", async function () {
       const userAccounts = await factoryContract.getAccountsOfUser(
         addressStore.user.address,
@@ -175,6 +169,45 @@ describe("> DCA Account Factory Tests", () => {
           value: ethers.parseEther("0.1"),
         }),
       ).to.be.revertedWith("DCAFactory : [receive]");
+    });
+  });
+
+  describe("💡 Security Checks", function () {
+    it("🧪 Should revert on updateExecutorAddress, Not Owner", async () => {
+      await expect(
+        factoryContract
+          .connect(addressStore.user.signer)
+          .updateExecutorAddress(executorContract.target),
+      ).to.be.revertedWithCustomError(
+        factoryContract,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on updateReinvestLibraryAddress, Not Owner", async () => {
+      await expect(
+        factoryContract
+          .connect(addressStore.user.signer)
+          .updateReinvestLibraryAddress(reinvestContract.target),
+      ).to.be.revertedWithCustomError(
+        factoryContract,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on pauseFactory, Not Owner", async () => {
+      await expect(
+        factoryContract.connect(addressStore.user.signer).pauseFactory(),
+      ).to.be.revertedWithCustomError(
+        factoryContract,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on unpauseFactory, Not Owner", async () => {
+      await expect(
+        factoryContract.connect(addressStore.user.signer).unpauseFactory(),
+      ).to.be.revertedWithCustomError(
+        factoryContract,
+        "OwnableUnauthorizedAccount",
+      );
     });
   });
 });

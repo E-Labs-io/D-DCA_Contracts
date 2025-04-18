@@ -167,4 +167,18 @@ contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
     function getTotalDeployedAccounts() public view returns (uint256) {
         return accountsCreated;
     }
+
+    /**
+     * @dev Pauses the factory
+     */
+    function pauseFactory() public onlyOwner {
+        _setActiveState(false);
+    }
+
+    /**
+     * @dev Unpauses the factory
+     */
+    function unpauseFactory() public onlyOwner {
+        _setActiveState(true);
+    }
 }

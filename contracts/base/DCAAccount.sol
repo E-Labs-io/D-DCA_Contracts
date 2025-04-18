@@ -196,19 +196,61 @@ contract DCAAccount is DCAAccountLogic {
      * @notice repays the underlining token and return the target token
      * @param strategyId_ The id of the strategy to unwind
      */
-    function UnwindReinvest(uint256 strategyId_) public onlyOwner {
+    function UnwindReinvest(
+        uint256 strategyId_
+    ) public onlyOwner returns (uint256 amountOfTargetReturned) {
+        Strategy memory strategy = _strategies[strategyId_];
+        require(
+            strategy.active,
+            "[DCAAccount] : [UnWindReinvest] - Strategy does not exist"
+        );
+
         uint256 balance = _reinvestLiquidityTokenBalance[strategyId_];
+
         require(
             balance > 0,
             "[DCAAccount] : [UnWindReinvest] -  No investment to unwind"
         );
 
-        (uint256 amount, bool success) = _withdrawReinvest(
+        bool success;
+        (amountOfTargetReturned, success) = _withdrawReinvest(
             strategyId_,
-            _strategies[strategyId_].reinvest,
+            strategy.reinvest,
             balance
         );
-        emit ReinvestUnwound(strategyId_, amount, success);
+        require(
+            success,
+            "[DCAAccount] : [UnWindReinvest] -  Failed to unwind reinvest"
+        );
+
+        emit ReinvestUnwound(strategyId_, amountOfTargetReturned);
+    }
+
+    function ForceUnwindReinvestPosition(
+        uint256 strategyId_,
+        address liquidityToken_
+    ) public onlyOwner returns (uint256 amountOfTargetReturned) {
+        Strategy memory strategy = _strategies[strategyId_];
+        require(
+            strategy.active,
+            "[DCAAccount] : [ForceUnwindReinvest] - Strategy does not exist"
+        );
+        bool success;
+        (amountOfTargetReturned, success) = _forceWithdrawReinvest(
+            strategy.reinvest,
+            liquidityToken_
+        );
+
+        // Update target balance
+        _targetBalances[
+            strategy.targetToken.tokenAddress
+        ] += amountOfTargetReturned;
+
+        require(
+            success,
+            "[DCAAccount] : [ForceUnwindReinvest] - Failed to unwind reinvest"
+        );
+        emit ReinvestUnwound(strategyId_, amountOfTargetReturned);
     }
 
     /**
@@ -266,21 +308,6 @@ contract DCAAccount is DCAAccountLogic {
         address token_
     ) external view override returns (uint256) {
         return _targetBalances[token_];
-    }
-
-    /**
-     * @dev Get the reinvest token balance for a strategy
-     * @param strategyId_ Strategy Id of the strategy to get the balance for
-     * @return {uint256} The reinvest token balance for the strategy
-     */
-    function getReinvestTokenBalance(
-        uint256 strategyId_
-    ) external view returns (uint256) {
-        console.log(
-            "@@ Got Reinvest Balance",
-            _reinvestLiquidityTokenBalance[strategyId_]
-        );
-        return _reinvestLiquidityTokenBalance[strategyId_];
     }
 
     /**

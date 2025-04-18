@@ -11,7 +11,6 @@ import "tsconfig-paths/register";
 import "hardhat-ethernal";
 import "@openzeppelin/hardhat-upgrades";
 import "@nomicfoundation/hardhat-chai-matchers";
-//import "@tenderly/hardhat-tenderly";
 
 import "./tasks";
 
@@ -19,6 +18,8 @@ import { HardhatUserConfig } from "hardhat/config";
 import dotenv from "dotenv";
 import checkPrivateKeys from "./scripts/checkKeys";
 import deploymentConfig from "./bin/deployments.config";
+
+//import "@tenderly/hardhat-tenderly";
 
 dotenv.config();
 
@@ -31,10 +32,11 @@ export const {
   devAccounts,
   chainIds,
 } = checkPrivateKeys();
-export const { masterChain, forkBlockNumber, tenderly } = deploymentConfig();
+export const { masterChain, forkBlockNumber } = deploymentConfig();
 
 const gasPrice = 25000000000;
 console.log("❗️Gas Price Set: ", gasPrice / 10 ** 9, "gwei");
+console.log("❗️Forked Chain: ", masterChain);
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -199,7 +201,7 @@ const config: HardhatUserConfig = {
     ],
   },
   networks: {
-    tenderlyBaseVTN: {
+    tenderlyBase: {
       url: "https://virtual.base.rpc.tenderly.co/120c0003-2c5c-4f50-a746-5d1c783c8148",
       chainId: 8453, // use the chain ID Tenderly gives you
     },
@@ -328,7 +330,7 @@ const config: HardhatUserConfig = {
     outputDir: "./docs",
   },
 
-  /*  tenderly: {
+  /*   tenderly: {
     project: "dca",
     username: "E-Labs",
     privateVerification: true,

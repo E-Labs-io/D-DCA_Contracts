@@ -128,17 +128,19 @@ export interface DCAExecutorInterface extends Interface {
       | "checkIfAdmin"
       | "getExecutorAddress"
       | "getFeeData"
-      | "getIntervalTotalActiveStrategys"
+      | "getIntervalTotalActiveStrategies"
       | "getTimeTillWindow"
       | "getTotalActiveStrategys"
       | "getTotalExecutions"
       | "isActive"
       | "isIntervalActive"
+      | "isTokenAllowedAsBase"
       | "owner"
       | "removeAdmin"
       | "removeExecutor"
       | "renounceOwnership"
       | "setActiveState"
+      | "setBaseTokenAllowance"
       | "setFeeData"
       | "setIntervalActive"
       | "transferOwnership"
@@ -146,6 +148,7 @@ export interface DCAExecutorInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "BaseTokenAllowanceChanged"
       | "ContractActiveStateChange"
       | "ExecutedStrategy"
       | "ExecutorAddressChange"
@@ -196,7 +199,7 @@ export interface DCAExecutorInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getIntervalTotalActiveStrategys",
+    functionFragment: "getIntervalTotalActiveStrategies",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -216,6 +219,10 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "isIntervalActive",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "isTokenAllowedAsBase",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeAdmin",
@@ -232,6 +239,10 @@ export interface DCAExecutorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "setActiveState",
     values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setBaseTokenAllowance",
+    values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setFeeData",
@@ -275,7 +286,7 @@ export interface DCAExecutorInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getFeeData", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getIntervalTotalActiveStrategys",
+    functionFragment: "getIntervalTotalActiveStrategies",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -295,6 +306,10 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "isIntervalActive",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "isTokenAllowedAsBase",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeAdmin",
@@ -312,6 +327,10 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "setActiveState",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setBaseTokenAllowance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setFeeData", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setIntervalActive",
@@ -321,6 +340,19 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+}
+
+export namespace BaseTokenAllowanceChangedEvent {
+  export type InputTuple = [token_: AddressLike, allowed_: boolean];
+  export type OutputTuple = [token_: string, allowed_: boolean];
+  export interface OutputObject {
+    token_: string;
+    allowed_: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace ContractActiveStateChangeEvent {
@@ -528,7 +560,7 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
-  getIntervalTotalActiveStrategys: TypedContractMethod<
+  getIntervalTotalActiveStrategies: TypedContractMethod<
     [interval_: BigNumberish],
     [bigint],
     "view"
@@ -558,6 +590,12 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
 
+  isTokenAllowedAsBase: TypedContractMethod<
+    [token_: AddressLike],
+    [boolean],
+    "view"
+  >;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   removeAdmin: TypedContractMethod<
@@ -572,6 +610,12 @@ export interface DCAExecutor extends BaseContract {
 
   setActiveState: TypedContractMethod<
     [newFlag_: boolean],
+    [void],
+    "nonpayable"
+  >;
+
+  setBaseTokenAllowance: TypedContractMethod<
+    [token_: AddressLike, allowed_: boolean],
     [void],
     "nonpayable"
   >;
@@ -661,7 +705,7 @@ export interface DCAExecutor extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "getIntervalTotalActiveStrategys"
+    nameOrSignature: "getIntervalTotalActiveStrategies"
   ): TypedContractMethod<[interval_: BigNumberish], [bigint], "view">;
   getFunction(
     nameOrSignature: "getTimeTillWindow"
@@ -689,6 +733,9 @@ export interface DCAExecutor extends BaseContract {
     nameOrSignature: "isIntervalActive"
   ): TypedContractMethod<[interval_: BigNumberish], [boolean], "view">;
   getFunction(
+    nameOrSignature: "isTokenAllowedAsBase"
+  ): TypedContractMethod<[token_: AddressLike], [boolean], "view">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -703,6 +750,13 @@ export interface DCAExecutor extends BaseContract {
   getFunction(
     nameOrSignature: "setActiveState"
   ): TypedContractMethod<[newFlag_: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setBaseTokenAllowance"
+  ): TypedContractMethod<
+    [token_: AddressLike, allowed_: boolean],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "setFeeData"
   ): TypedContractMethod<
@@ -721,6 +775,13 @@ export interface DCAExecutor extends BaseContract {
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
+  getEvent(
+    key: "BaseTokenAllowanceChanged"
+  ): TypedContractEvent<
+    BaseTokenAllowanceChangedEvent.InputTuple,
+    BaseTokenAllowanceChangedEvent.OutputTuple,
+    BaseTokenAllowanceChangedEvent.OutputObject
+  >;
   getEvent(
     key: "ContractActiveStateChange"
   ): TypedContractEvent<
@@ -772,6 +833,17 @@ export interface DCAExecutor extends BaseContract {
   >;
 
   filters: {
+    "BaseTokenAllowanceChanged(address,bool)": TypedContractEvent<
+      BaseTokenAllowanceChangedEvent.InputTuple,
+      BaseTokenAllowanceChangedEvent.OutputTuple,
+      BaseTokenAllowanceChangedEvent.OutputObject
+    >;
+    BaseTokenAllowanceChanged: TypedContractEvent<
+      BaseTokenAllowanceChangedEvent.InputTuple,
+      BaseTokenAllowanceChangedEvent.OutputTuple,
+      BaseTokenAllowanceChangedEvent.OutputObject
+    >;
+
     "ContractActiveStateChange(bool)": TypedContractEvent<
       ContractActiveStateChangeEvent.InputTuple,
       ContractActiveStateChangeEvent.OutputTuple,

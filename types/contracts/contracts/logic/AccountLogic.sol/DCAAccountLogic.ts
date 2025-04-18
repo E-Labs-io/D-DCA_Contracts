@@ -102,6 +102,7 @@ export interface DCAAccountLogicInterface extends Interface {
       | "changeExecutor"
       | "getBaseBalance"
       | "getExecutorAddress"
+      | "getReinvestTokenBalance"
       | "getTargetBalance"
       | "getTimeTillWindow"
       | "owner"
@@ -172,6 +173,10 @@ export interface DCAAccountLogicInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getReinvestTokenBalance",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTargetBalance",
     values: [AddressLike]
   ): string;
@@ -237,6 +242,10 @@ export interface DCAAccountLogicInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getExecutorAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getReinvestTokenBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -326,20 +335,11 @@ export namespace ReinvestLibraryChangedEvent {
 }
 
 export namespace ReinvestUnwoundEvent {
-  export type InputTuple = [
-    strategyId: BigNumberish,
-    amount: BigNumberish,
-    success: boolean
-  ];
-  export type OutputTuple = [
-    strategyId: bigint,
-    amount: bigint,
-    success: boolean
-  ];
+  export type InputTuple = [strategyId: BigNumberish, amount: BigNumberish];
+  export type OutputTuple = [strategyId: bigint, amount: bigint];
   export interface OutputObject {
     strategyId: bigint;
     amount: bigint;
-    success: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -514,6 +514,12 @@ export interface DCAAccountLogic extends BaseContract {
 
   getExecutorAddress: TypedContractMethod<[], [string], "view">;
 
+  getReinvestTokenBalance: TypedContractMethod<
+    [strategyId_: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
   getTargetBalance: TypedContractMethod<
     [token_: AddressLike],
     [bigint],
@@ -614,6 +620,9 @@ export interface DCAAccountLogic extends BaseContract {
   getFunction(
     nameOrSignature: "getExecutorAddress"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getReinvestTokenBalance"
+  ): TypedContractMethod<[strategyId_: BigNumberish], [bigint], "view">;
   getFunction(
     nameOrSignature: "getTargetBalance"
   ): TypedContractMethod<[token_: AddressLike], [bigint], "nonpayable">;
@@ -752,7 +761,7 @@ export interface DCAAccountLogic extends BaseContract {
       ReinvestLibraryChangedEvent.OutputObject
     >;
 
-    "ReinvestUnwound(uint256,uint256,bool)": TypedContractEvent<
+    "ReinvestUnwound(uint256,uint256)": TypedContractEvent<
       ReinvestUnwoundEvent.InputTuple,
       ReinvestUnwoundEvent.OutputTuple,
       ReinvestUnwoundEvent.OutputObject

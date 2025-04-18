@@ -54,6 +54,9 @@ interface IDCAExecutor is IDCADataStructures {
 
     event FeeDataChanged();
 
+    event BaseTokenAllowanceChanged(address token_, bool allowed_);
+    error NotAllowedBaseToken(address token_);
+
     /**
      * @notice Called by a DCAAccount to subscribe a strategy to the DCAExecutor
      * @param strategy_ The full strategy data of the subscribing strategy
@@ -116,4 +119,6 @@ interface IDCAExecutor is IDCADataStructures {
      * @param status_ if the interval is active or not
      */
     function setIntervalActive(Interval interval_, bool status_) external;
+
+    function setBaseTokenAllowance(address token_, bool allowed_) external;
 }

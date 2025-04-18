@@ -21,6 +21,7 @@ import {
   transferErc20Token,
 } from "~/scripts/tests/contractInteraction";
 import { resetFork } from "~/scripts/tests/forking";
+import { EMPTY_REINVEST_OBJECT } from "~/bin/emptyData";
 
 describe("> DCA Reinvest Modula Test", () => {
   console.log("🧪 DCA Reinvest Modula Test : Mounted");
@@ -76,13 +77,11 @@ describe("> DCA Reinvest Modula Test", () => {
       await reinvestDeployment.waitForDeployment();
       expect(reinvestDeployment.waitForDeployment()).to.be.fulfilled;
     });
-
     it("🧪 Should return the deployer address as owner", async function () {
       const owner = await reinvestDeployment.owner();
       expect(owner).to.equal(addressStore.deployer.address);
     });
   });
-
   describe("💡 Contract State", function () {
     it("🧪 Should Return the Reinvest Version", async function () {
       const version = await reinvestDeployment.getLibraryVersion();
@@ -162,6 +161,34 @@ describe("> DCA Reinvest Modula Test", () => {
       );
 
       expect(preTxBal + ethers.parseEther("0.5") === postTxBal).to.be.true;
+    });
+  });
+
+  describe("💡 Security Checks", function () {
+    it("🧪 Should revert executeReinvest, Not Active", async function () {
+      await reinvestDeployment.setActiveState();
+      const active = await reinvestDeployment.isActive();
+      expect(active).to.be.false;
+
+      const reinvestData: IDCADataStructures.ReinvestStruct =
+        EMPTY_REINVEST_OBJECT;
+
+      await expect(
+        reinvestDeployment.executeReinvest(
+          reinvestData,
+          ethers.parseEther("0.5"),
+        ),
+      ).to.be.revertedWithCustomError(reinvestDeployment, "ContractIsPaused");
+    });
+    it("🧪 Should revert setActiveState, Not Owner", async function () {
+      await expect(
+        reinvestDeployment
+          .connect(addressStore.target4.signer)
+          .setActiveState(),
+      ).to.be.revertedWithCustomError(
+        reinvestDeployment,
+        "OwnableUnauthorizedAccount",
+      );
     });
   });
 });

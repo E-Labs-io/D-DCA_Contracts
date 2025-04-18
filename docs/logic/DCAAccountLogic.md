@@ -222,6 +222,28 @@ Returns the executor address
 |---|---|---|
 | _0 | address | The executor address |
 
+### getReinvestTokenBalance
+
+```solidity
+function getReinvestTokenBalance(uint256 strategyId_) external view returns (uint256)
+```
+
+
+
+*Get the reinvest token balance for a strategy*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | Strategy Id of the strategy to get the balance for |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | {uint256} The reinvest token balance for the strategy |
+
 ### getTargetBalance
 
 ```solidity
@@ -414,7 +436,7 @@ Emits when the reinvest address has been changed
 ### ReinvestUnwound
 
 ```solidity
-event ReinvestUnwound(uint256 indexed strategyId, uint256 amount, bool indexed success)
+event ReinvestUnwound(uint256 indexed strategyId, uint256 amount)
 ```
 
 Emited when a Reinvest is unwound
@@ -427,7 +449,6 @@ Emited when a Reinvest is unwound
 |---|---|---|
 | strategyId `indexed` | uint256 | The ID of the strategy |
 | amount  | uint256 | The amount unwond and returned to the account |
-| success `indexed` | bool | If the unwind was successful |
 
 ### StrategyCreated
 

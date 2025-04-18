@@ -14,7 +14,7 @@ import {
   newStrat,
 } from "~/deploy/deploymentArguments/DCA.arguments";
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
-import { EMPTY_STRATEGY } from "~/bin/emptyData";
+import { EMPTY_REINVEST, EMPTY_STRATEGY } from "~/bin/emptyData";
 import { compareStructs } from "~/scripts/tests/comparisons";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
 import deploymentConfig from "~/bin/deployments.config";
@@ -42,6 +42,7 @@ describe("> DCA Account Tests", () => {
 
   before(async function () {
     await resetFork(hre);
+    console.log("Fork Reset");
     await preTest();
   });
 
@@ -111,7 +112,7 @@ describe("> DCA Account Tests", () => {
         addressStore.user.address,
         ZeroAddress,
       );
-      await createdAccount.waitForDeployment();
+      await expect(createdAccount.waitForDeployment()).to.be.fulfilled;
       createdAccount = createdAccount.connect(addressStore.user.signer);
       expect(createdAccount.target).to.not.equal(ZeroAddress);
     });
@@ -308,7 +309,6 @@ describe("> DCA Account Tests", () => {
       );
     });
   });
-
   describe("💡 Subscribe strategy tests", () => {
     it("🧪 Should prove strategy 1 exists", async function () {
       const strats = await createdAccount.getStrategyData(1);
@@ -320,7 +320,7 @@ describe("> DCA Account Tests", () => {
         "DCAAccount : [UnsubscribeStrategy] Strategy is already Unsubscribed",
       );
     });
-    it("🧪 Should revert on subscribe", async () => {
+    it("🧪 Should revert on SubscribeStrategy not enough funds, ", async () => {
       await expect(createdAccount.SubscribeStrategy(1n)).to.be.revertedWith(
         "DCAAccount : [SubscribeStrategy] Need to have 5 executions funded to subscribe",
       );
@@ -344,7 +344,16 @@ describe("> DCA Account Tests", () => {
         ),
       ).to.be.fulfilled;
     });
+    it("🧪 Should revert subscribe to the executor, NotAllowedBaseToken", async () => {
+      await expect(
+        createdAccount.SubscribeStrategy(1n),
+      ).to.be.revertedWithCustomError(executorContract, "NotAllowedBaseToken");
+    });
     it("🧪 Should  subscribe to the executor", async () => {
+      await executorContract.setBaseTokenAllowance(usdcContract.target, true);
+      expect(await executorContract.isTokenAllowedAsBase(usdcContract.target))
+        .to.be.true;
+
       await expect(createdAccount.SubscribeStrategy(1n)).to.emit(
         createdAccount,
         "StrategySubscription",
@@ -386,7 +395,6 @@ describe("> DCA Account Tests", () => {
       );
     });
   });
-
   describe("💡 Execute strategy", () => {
     it("🧪 Should revert on as strategy (1) is not subscribed", async () => {
       await expect(
@@ -427,7 +435,6 @@ describe("> DCA Account Tests", () => {
         .withArgs(2n, executorContract.target, false);
     });
   });
-
   describe("💡 Reinvest Logic Test", () => {
     it("🧪 Should return false on active reinvest strategy 1", async () => {
       const stratData = await createdAccount.getStrategyData(1);
@@ -475,6 +482,117 @@ describe("> DCA Account Tests", () => {
         addressStore.target3.address,
       );
       expect(Number(bal)).to.be.above(0);
+    });
+  });
+  describe("💡 Security checks", () => {
+    it("🧪 Should revert on changeExecutor, Not owner", async () => {
+      await expect(
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .changeExecutor(addressStore.user.address),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on changeReinvestLibrary, Not owner", async () => {
+      await expect(
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .changeReinvestLibrary(addressStore.user.address),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on Execute, Not Executor", async () => {
+      await expect(
+        createdAccount.connect(addressStore.deployer.signer).Execute(1, 0),
+      ).to.be.revertedWith(
+        "OnlyExecutor : [onlyExecutor] Address is not an executor",
+      );
+    });
+    it("🧪 Should revert on SetupStrategy, Not Account owner", async () => {
+      await expect(
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .SetupStrategy(
+            newStrat(createdAccount.target as string, forkedChain),
+            0,
+            false,
+          ),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on UnsubscribeStrategy, Not Account owner", async () => {
+      await expect(
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .UnsubscribeStrategy(1n),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on SubscribeStrategy, Not Account owner", async () => {
+      await expect(
+        createdAccount
+          .connect(addressStore.user.signer)
+          .UnsubscribeStrategy(1n),
+      ).to.be.fulfilled;
+
+      await expect(
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .SubscribeStrategy(1n),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on UnwindReinvest, Not Executor", async () => {
+      await expect(
+        createdAccount.connect(addressStore.deployer.signer).UnwindReinvest(1n),
+      ).to.be.revertedWith(
+        "OnlyExecutor : [onlyExecutor] Address is not an executor",
+      );
+    });
+    it("🧪 Should revert on ExecutorDeactivate, Not Executor", async () => {
+      await expect(
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .ExecutorDeactivate(1n),
+      ).to.be.revertedWith(
+        "OnlyExecutor : [onlyExecutor] Address is not an executor",
+      );
+    });
+    it("🧪 Should revert on setStrategyReinvest, Not Owner", async () => {
+      let reinvest: IDCADataStructures.ReinvestStruct = {
+        reinvestData: "0x",
+        active: false,
+        investCode: 0,
+        dcaAccountAddress: ZeroAddress,
+      };
+      await expect(
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .setStrategyReinvest(1n, reinvest),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+    it("🧪 Should revert on updateSwapAddress, Not Owner", async () => {
+      await expect(
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .updateSwapAddress(addressStore.user.address),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
+      );
     });
   });
 });

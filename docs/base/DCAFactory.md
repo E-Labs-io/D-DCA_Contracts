@@ -162,6 +162,17 @@ function owner() external view returns (address)
 |---|---|---|
 | _0 | address | undefined |
 
+### pauseFactory
+
+```solidity
+function pauseFactory() external nonpayable
+```
+
+
+
+*Pauses the factory*
+
+
 ### reInvestLogicContract
 
 ```solidity
@@ -205,6 +216,17 @@ function transferOwnership(address newOwner) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | newOwner | address | undefined |
+
+### unpauseFactory
+
+```solidity
+function unpauseFactory() external nonpayable
+```
+
+
+
+*Unpauses the factory*
+
 
 ### updateExecutorAddress
 

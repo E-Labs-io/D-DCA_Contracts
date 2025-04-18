@@ -62,12 +62,6 @@ const _abi = [
         name: "amount",
         type: "uint256",
       },
-      {
-        indexed: true,
-        internalType: "bool",
-        name: "success",
-        type: "bool",
-      },
     ],
     name: "ReinvestUnwound",
     type: "event",

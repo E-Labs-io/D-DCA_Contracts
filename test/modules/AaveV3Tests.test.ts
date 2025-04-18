@@ -151,7 +151,6 @@ describe("> Aave V3 Reinvest Test", () => {
       createdAccount = createdAccount.connect(addressStore.user.signer);
       expect(createdAccount.target).to.not.equal(ZeroAddress);
     });
-
     it("🧪 Should have the correct owner", async () => {
       const owner = await createdAccount.owner();
       expect(owner).to.equal(addressStore.user.address);
@@ -168,7 +167,6 @@ describe("> Aave V3 Reinvest Test", () => {
       await reinvestContract.waitForDeployment();
       expect(reinvestContract.waitForDeployment()).to.be.fulfilled;
     });
-
     it("🧪 Should deploy the executor contract", async function () {
       // Deploy the reinvest proxy contract
       const proxyFactory = await ethers.getContractFactory(
@@ -191,13 +189,11 @@ describe("> Aave V3 Reinvest Test", () => {
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);
     });
-
     it("🧪 Should activate the interval", async () => {
       expect(await executorContract.isIntervalActive(0)).to.be.false;
       await executorContract.setIntervalActive(0, true);
       expect(await executorContract.isIntervalActive(0)).to.be.true;
     });
-
     it("🧪 Should update the Executor Address", async function () {
       const updateAddressTx = await createdAccount
         .connect(addressStore.user.signer)
@@ -206,7 +202,6 @@ describe("> Aave V3 Reinvest Test", () => {
       const address = await createdAccount.getExecutorAddress();
       expect(address).to.equal(executorContract.target);
     });
-
     it("🧪 Should update the Reinvest Address", async function () {
       const updateAddressTx = await createdAccount
         .connect(addressStore.user.signer)
@@ -214,6 +209,11 @@ describe("> Aave V3 Reinvest Test", () => {
       await updateAddressTx.wait();
       const address = await createdAccount.getAttachedReinvestLibraryAddress();
       expect(address).to.equal(reinvestContract.target);
+    });
+    it("🧪 Should set USDC as allowed base token", async function () {
+      await executorContract.setBaseTokenAllowance(usdcContract.target, true);
+      expect(await executorContract.isTokenAllowedAsBase(usdcContract.target))
+        .to.be.true;
     });
   });
 
@@ -267,7 +267,6 @@ describe("> Aave V3 Reinvest Test", () => {
         .to.emit(createdAccount, "StrategyCreated")
         .withArgs(1);
     });
-
     it("🧪 Should return there is strategy 1 on the account", async function () {
       const strats = await createdAccount.getStrategyData(1);
       const checker = strats[0];
@@ -284,7 +283,6 @@ describe("> Aave V3 Reinvest Test", () => {
       const bal = await getErc20Balance(aWethContract, createdAccount.target);
       expect(bal).to.equal(0n);
     });
-
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
@@ -292,14 +290,14 @@ describe("> Aave V3 Reinvest Test", () => {
 
       const recipt = await tx.wait();
 
-      expect(recipt)
+      await expect(recipt)
         .to.emit(createdAccount, "ReinvestExecuted")
         .withArgs(1, true, (amount: any) => {
           reinvestBalance = Number(amount);
           return true;
         });
 
-      expect(recipt)
+      await expect(recipt)
         .to.emit(createdAccount, "StrategyExecuted")
         .withArgs(
           1,
@@ -310,10 +308,9 @@ describe("> Aave V3 Reinvest Test", () => {
           true,
         );
     });
-
     it("🧪 Should get the Reinvest Balance of Strat", async () => {
-      const bal = await createdAccount.getReinvestTokenBalance(1);
-      expect(Number(bal)).to.equal(reinvestBalance);
+      const bal = await createdAccount.getReinvestTokenBalance(1n);
+      expect(Number(bal)).to.equal(strategyBalance);
     });
     it("🧪 Should show balance of aWETH > 0", async () => {
       const bal = await getErc20Balance(aWethContract, createdAccount.target);
@@ -322,18 +319,25 @@ describe("> Aave V3 Reinvest Test", () => {
   });
 
   describe("💡 Unwind reinvest", () => {
+    it("🧪 Should show balance of aWETH to = Contract tracking", async () => {
+      const bal = await getErc20Balance(aWethContract, createdAccount.target);
+      const track = await createdAccount.getReinvestTokenBalance(1n);
+      expect(Number(bal)).to.equal(Number(track));
+    });
     it("🧪 Should withdraw the accounts balance of aWeth", async () => {
       const tx = await createdAccount.UnwindReinvest(1);
       await expect(tx.wait()).to.be.fulfilled;
       await expect(tx.wait()).to.emit(createdAccount, "ReinvestUnwound");
     });
-    it("🧪 Should show balance of aWETH == 0", async () => {
-      expect(Number(await createdAccount.getReinvestTokenBalance(1))).to.equal(
-        0,
+    it("🧪 Should show balance of aWETH less than strategy balance", async () => {
+      const track = await createdAccount.getReinvestTokenBalance(1n);
+      expect(Number(track)).to.equal(0);
+
+      const actualBal = await getErc20Balance(
+        aWethContract,
+        createdAccount.target,
       );
-      expect(
-        Number(await getErc20Balance(aWethContract, createdAccount.target)),
-      ).to.equal(0);
+      expect(Number(actualBal)).to.lessThan(strategyBalance);
     });
     it("🧪 Should show balance of WETH > 0", async () => {
       expect(
@@ -344,6 +348,21 @@ describe("> Aave V3 Reinvest Test", () => {
       await expect(createdAccount.UnwindReinvest(1)).to.be.revertedWith(
         "[DCAAccount] : [UnWindReinvest] -  No investment to unwind",
       );
+    });
+    it("🧪 Should force unwind reinvest", async () => {
+      const tx = await createdAccount.ForceUnwindReinvestPosition(
+        1,
+        aWethContract.target,
+      );
+      await expect(tx.wait()).to.be.fulfilled;
+      await expect(tx.wait()).to.emit(createdAccount, "ReinvestUnwound");
+    });
+    it("🧪 Should show balance of aWETH == 0", async () => {
+      const actualBal = await getErc20Balance(
+        aWethContract,
+        createdAccount.target,
+      );
+      expect(Number(actualBal)).to.equal(0);
     });
   });
 });

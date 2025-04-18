@@ -32,7 +32,7 @@ library AaveV3Reinvest {
     string public constant MODULE_NAME = "Aave V3 Reinvest";
     uint8 public constant MODULE_ID = 0x12;
 
-    address constant AAVE_CONTRACT = 0xA238Dd80C259a72e81d7e4664a9801593F98d1c5; //ETH SEPOLIA
+    address constant AAVE_CONTRACT = 0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2; //ETH MAINNET
     AaveIPool constant AAVE_POOL = AaveIPool(AAVE_CONTRACT);
 
     /**

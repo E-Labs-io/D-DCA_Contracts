@@ -121,6 +121,23 @@ function getTimeTillWindow(address account_, uint256 strategyId_) external view 
 | secondsLeft | uint256 | undefined |
 | checkReturn | bool | undefined |
 
+### setBaseTokenAllowance
+
+```solidity
+function setBaseTokenAllowance(address token_, bool allowed_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | undefined |
+| allowed_ | bool | undefined |
+
 ### setIntervalActive
 
 ```solidity
@@ -141,6 +158,23 @@ Allows the admin to turn Strategy timings on &amp; off
 
 
 ## Events
+
+### BaseTokenAllowanceChanged
+
+```solidity
+event BaseTokenAllowanceChanged(address token_, bool allowed_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_  | address | undefined |
+| allowed_  | bool | undefined |
 
 ### ExecutedStrategy
 
@@ -206,5 +240,24 @@ Emitted when a new strategy subscribes or unsubscribes to the executor
 | strategyInterval_  | enum IDCADataStructures.Interval | Interval state of how ofter to be executed |
 | active_ `indexed` | bool | wether the strategy is being subscribed (true) or unsubscribed (false) |
 
+
+
+## Errors
+
+### NotAllowedBaseToken
+
+```solidity
+error NotAllowedBaseToken(address token_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | undefined |
 
 

@@ -29,7 +29,7 @@ library CompoundV3Reinvest {
     uint8 public constant MODULE_ID = 0x11;
 
     address internal constant COMPOUND_ETH_CONTRACT =
-        0x46e6b214b524310239732D51387075E0e70970bf; // BASE
+        0xA17581A9E3356d9A858b789D68B4d866e593aE94; // ETH MAIN
 
     uint8 constant WETH = 0x0;
     uint8 constant USDC = 0x1;
@@ -51,11 +51,7 @@ library CompoundV3Reinvest {
             investData.token
         );
 
-        console.log("Compound V3 Reinvest amount: ", amount);
-
         if (amount > 0) success = true;
-
-        console.log("Compound V3 Reinvest amount: ", amount);
 
         return (amount, success);
     }
@@ -85,15 +81,15 @@ library CompoundV3Reinvest {
         address compoundContract = _getContractAddress(code_);
         uint256 oldBalance = _getBalance(tokenAddress_, compoundContract);
 
-        // Approve the reinvest contract to spend the given token.
-        // Check that the approval worked
         bool allowed = IERC20(tokenAddress_).approve(compoundContract, amount_);
         require(allowed, "DCAAccount : [Compound Reinvest] - Approval failed");
 
-        // If it worked, then supply that token
-        // Check that we have recieved some tokens.
         CometMainInterface(compoundContract).supply(tokenAddress_, amount_);
-        amount = _getBalance(tokenAddress_, compoundContract) - (oldBalance);
+
+        uint256 newBalance = _getBalance(tokenAddress_, compoundContract);
+
+        amount = newBalance - oldBalance;
+
         return amount;
     }
 
@@ -118,7 +114,7 @@ library CompoundV3Reinvest {
         address tokenAddress_,
         address pool_
     ) internal returns (uint256 amount) {
-        amount = CometMainInterface(pool_).balanceOf(address(msg.sender));
+        amount = CometMainInterface(pool_).balanceOf(address(this));
     }
 
     function _withdrawReward(

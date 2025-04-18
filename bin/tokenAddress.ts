@@ -21,6 +21,8 @@ const productionChainAddresses: {
     universalRouter: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
     gho: "0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2f",
     permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    aWbtc: "0x5Ee5bf7ae06D1Be5997A1A72006FE6C607eC6DE8",
+    aWeth: "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8",
   },
   arbitrum: {
     swapRouter: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
@@ -253,11 +255,12 @@ export const tokenAddress: TokenAddressList = {
     maticMumbai: "0x2c95d10bA4BBEc79e562e8B3f48687751808C925",
   },
   aWeth: {
-    eth: "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8",
+    eth: productionChainAddresses.eth.aWeth,
     optimism: "0xe50fA9b3c56FfB159cB0FCA61F5c9D750e8128c8",
     base: productionChainAddresses.base.aWeth,
   },
   aWbtc: {
+    eth: productionChainAddresses.eth.aWbtc,
     optimism: "0x078f358208685046a11C85e8ad32895DED33A249",
     base: productionChainAddresses.base.aWbtc,
   },
@@ -317,4 +320,5 @@ export type TestNetNames =
   | "baseSepolia"
   | "baseGoerli"
   | "hardhat"
-  | "localhost";
+  | "localhost"
+  | "tenderlyBase";

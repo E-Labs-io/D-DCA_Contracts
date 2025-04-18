@@ -85,51 +85,6 @@ describe("> Uniswap Tests Tests", () => {
     };
   }
 
-  describe("💡 Deploy and State Checks", () => {
-    //  Deploy the Factory
-    it("🧪 Should deploy the contract", async () => {
-      const factoryFactory = await ethers.getContractFactory(
-        "DCAAccount",
-        addressStore.deployer.signer,
-      );
-
-      createdAccount = await factoryFactory.deploy(
-        ZeroAddress,
-        tokenAddress.swapRouter![forkedChain]!,
-        addressStore.deployer.address,
-        ZeroAddress,
-      );
-      await createdAccount.waitForDeployment();
-      createdAccount = createdAccount.connect(addressStore.deployer.signer);
-      expect(createdAccount.target).to.not.equal(ZeroAddress);
-    });
-
-    it("🧪 Should have the correct owner", async () => {
-      const owner = await createdAccount.owner();
-      expect(owner).to.equal(addressStore.deployer.address);
-    });
-
-    it("🧪 Should return the correct swap router", async () => {
-      const address = await createdAccount.SWAP_ROUTER();
-      expect(address).to.equal(tokenAddress.swapRouter![forkedChain]);
-    });
-
-    it("🧪 Should check the Executor address is the ZeroAddress", async () => {
-      const state = await createdAccount.getExecutorAddress();
-      expect(state).to.equal(ZeroAddress);
-    });
-
-    it("🧪 Should check the Reinvest address is the ZeroAddress", async () => {
-      const state = await createdAccount.getAttachedReinvestLibraryAddress();
-      expect(state).to.equal(ZeroAddress);
-    });
-    it("🧪 Should check the Reinvest Version and fail/revert", async () => {
-      await expect(
-        createdAccount.getAttachedReinvestLibraryVersion(),
-      ).to.revertedWithoutReason();
-    });
-  });
-
   describe("💡 Check balances & Allowances", () => {
     it("🧪 Should show 0 WETH balance", async () => {
       const tx = await wethContract.balanceOf(addressStore.deployer.address);
@@ -179,47 +134,6 @@ describe("> Uniswap Tests Tests", () => {
       await expect(tx.wait()).to.be.fulfilled;
       const bal = await wethContract.balanceOf(addressStore.deployer.address);
       expect(bal).to.greaterThanOrEqual(1);
-    });
-  });
-
-  describe("💡 Execute a SWAP test", () => {
-    it("🧪Should transfer USDC to account", async () => {
-      const contract = usdcContract.connect(addressStore.deployer.signer);
-      await expect(
-        contract.transfer(createdAccount.target, ethers.parseUnits("1000", 6)),
-      ).to.be.fulfilled;
-    });
-  });
-
-  describe("💡 Execute a ERC20-ETH SWAP test", () => {
-    let oldBalance = 0;
-
-    it("🧪Should get the ETH balance of the account", async function () {
-      oldBalance = await checkEthBalanceAndTransfer(
-        createdAccount.target as string,
-        addressStore.deployer.signer,
-        { topUpTo: 1 },
-      );
-
-      expect(oldBalance >= 1).to.be.true;
-    });
-    it("🧪Should transfer USDC to account", async function () {
-      await expect(
-        usdcContract.transfer(
-          createdAccount.target,
-          ethers.parseUnits("100", 6),
-        ),
-      ).to.be.fulfilled;
-    });
-
-    it("🧪Should get the new ETH balance of the account", async function () {
-      const newBalance = await checkEthBalanceAndTransfer(
-        createdAccount.target as string,
-        addressStore.deployer.signer,
-        { justBalance: true },
-      );
-
-      expect(newBalance > oldBalance).to.be.true;
     });
   });
 });

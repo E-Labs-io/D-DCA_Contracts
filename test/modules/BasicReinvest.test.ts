@@ -154,6 +154,11 @@ describe("> Basic Reinvest Test", () => {
       const address = await createdAccount.getAttachedReinvestLibraryAddress();
       expect(address).to.equal(reinvestContract.target);
     });
+    it("🧪 Should set USDC as allowed base token", async function () {
+      await executorContract.setBaseTokenAllowance(usdcContract.target, true);
+      expect(await executorContract.isTokenAllowedAsBase(usdcContract.target))
+        .to.be.true;
+    });
   });
 
   describe("💡 Create Strategy", () => {

@@ -30,6 +30,8 @@ export default function checkPrivateKeys() {
       arbSepolia: `https://arb-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_ARBSEPOLIA_KEY}`,
       arbitrum: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       ethGoerli: `https:/eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      tenderlyBase:
+        "https://virtual.base.rpc.tenderly.co/120c0003-2c5c-4f50-a746-5d1c783c8148",
     };
 
     //       optimism: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_OP_KEY}`,
@@ -70,6 +72,7 @@ export default function checkPrivateKeys() {
     baseSepolia: 84532,
     matic: 137,
     maticMumbai: 80001,
+    tenderlyBase: 8453,
   };
 
   const devAccounts = [

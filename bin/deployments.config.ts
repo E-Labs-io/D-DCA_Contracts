@@ -7,10 +7,10 @@ export default function deploymentConfig() {
   const deployCue: ContractNames[] = [];
   const masterChain: MainnetNames = "eth";
   const forkBlockNumber = () => {
-    const list: { [chain in MainnetNames]?: number } = {
+    const list: { [chain in MainnetNames]?: number | undefined } = {
       eth: 19493637,
       optimism: 117776650,
-      base: 28709051,
+      base: 0,
     };
 
     return list[masterChain];

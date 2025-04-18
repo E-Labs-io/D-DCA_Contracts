@@ -276,7 +276,7 @@ Emits when the reinvest address has been changed
 ### ReinvestUnwound
 
 ```solidity
-event ReinvestUnwound(uint256 indexed strategyId, uint256 amount, bool indexed success)
+event ReinvestUnwound(uint256 indexed strategyId, uint256 amount)
 ```
 
 Emited when a Reinvest is unwound
@@ -289,7 +289,6 @@ Emited when a Reinvest is unwound
 |---|---|---|
 | strategyId `indexed` | uint256 | The ID of the strategy |
 | amount  | uint256 | The amount unwond and returned to the account |
-| success `indexed` | bool | If the unwind was successful |
 
 ### StrategyCreated
 

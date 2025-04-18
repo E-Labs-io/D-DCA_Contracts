@@ -18,6 +18,7 @@ import {
   connectToErc20,
 } from "~/scripts/tests/contractInteraction";
 import { resetFork } from "~/scripts/tests/forking";
+import { newStrat } from "~/deploy/deploymentArguments/DCA.arguments";
 
 describe("> DCA Executor Tests", () => {
   console.log("🧪 DCA Executor Tests : Mounted");
@@ -124,6 +125,15 @@ describe("> DCA Executor Tests", () => {
       expect(await executorContract.isIntervalActive(0)).to.be.false;
       await executorContract.setIntervalActive(0, true);
       expect(await executorContract.isIntervalActive(0)).to.be.true;
+    });
+
+    it("🧪 Should set the base token allowance", async () => {
+      expect(await executorContract.isTokenAllowedAsBase(usdcContract.target))
+        .to.be.false;
+
+      await executorContract.setBaseTokenAllowance(usdcContract.target, true);
+      expect(await executorContract.isTokenAllowedAsBase(usdcContract.target))
+        .to.be.true;
     });
 
     it("🧪 Should have the correct owner", async () => {
@@ -252,6 +262,14 @@ describe("> DCA Executor Tests", () => {
       );
     });
 
+    it("🧪 Should revert on Subscription, Not Account Contract", async () => {
+      const strat = EMPTY_STRATEGY_OBJECT;
+
+      await expect(executorContract.Subscribe(strat)).to.be.revertedWith(
+        "DCAexecutor : [Subscribe] Only Account Contract can unsubscribe",
+      );
+    });
+
     it("🧪 Should change the active stage to false", async () => {
       await expect(executorContract.setActiveState(false)).to.be.fulfilled;
     });
@@ -259,6 +277,62 @@ describe("> DCA Executor Tests", () => {
       await expect(
         executorContract.Subscribe(EMPTY_STRATEGY_OBJECT),
       ).to.be.revertedWithCustomError(executorContract, "ContractIsPaused");
+    });
+
+    it("🧪 Should revert on setBaseTokenAllowance, Not admin", async () => {
+      await expect(
+        executorContract
+          .connect(addressStore.user.signer)
+          .setBaseTokenAllowance(usdcContract.target, true),
+      ).to.be.revertedWith("OnlyAdmin : [onlyAdmins] Address is not an admin");
+    });
+
+    it("🧪 Should revert on Subscription, Not allowed Base Token", async () => {
+      // Set the executor contract to active
+      await expect(executorContract.setActiveState(true)).to.be.fulfilled;
+
+      // Deploy the account contract
+      let accountBase = await ethers.getContractFactory(
+        "DCAAccount",
+        addressStore.deployer.signer,
+      );
+      createdAccount = await accountBase.deploy(
+        executorContract.target,
+        tokenAddress.swapRouter![forkedChain]!,
+        addressStore.user.address,
+        ZeroAddress,
+      );
+      await expect(createdAccount.waitForDeployment()).to.be.fulfilled;
+      createdAccount = createdAccount.connect(addressStore.user.signer);
+
+      // Create the strategy object
+      let strat: IDCADataStructures.StrategyStruct = newStrat(
+        createdAccount.target as string,
+        forkedChain,
+      );
+      // Amend the base token to the weth token
+      strat.baseToken.tokenAddress = wethContract.target;
+
+      // Expect the strategy to be reverted with the error
+      await expect(
+        createdAccount.SetupStrategy(strat, 0, true),
+      ).to.be.revertedWithCustomError(executorContract, "NotAllowedBaseToken");
+    });
+
+    it("🧪 Should revert on setIntervalActive, Not admin", async () => {
+      await expect(
+        executorContract
+          .connect(addressStore.user.signer)
+          .setIntervalActive(0, true),
+      ).to.be.revertedWith("OnlyAdmin : [onlyAdmins] Address is not an admin");
+    });
+
+    it("🧪 Should revert on setActiveState, Not admin", async () => {
+      await expect(
+        executorContract
+          .connect(addressStore.user.signer)
+          .setActiveState(false),
+      ).to.be.revertedWith("OnlyAdmin : [onlyAdmins] Address is not an admin");
     });
   });
 });

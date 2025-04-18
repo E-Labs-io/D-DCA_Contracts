@@ -10,6 +10,36 @@ import type {
 
 const _abi = [
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token_",
+        type: "address",
+      },
+    ],
+    name: "NotAllowedBaseToken",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "token_",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "allowed_",
+        type: "bool",
+      },
+    ],
+    name: "BaseTokenAllowanceChanged",
+    type: "event",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -309,6 +339,24 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token_",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "allowed_",
+        type: "bool",
+      },
+    ],
+    name: "setBaseTokenAllowance",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

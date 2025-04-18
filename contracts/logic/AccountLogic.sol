@@ -224,14 +224,34 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
             );
         if (txSuccess) {
             (amount, success) = abi.decode(returnData, (uint256, bool));
+
             _reinvestLiquidityTokenBalance[strategyId_] -= amount_;
             _targetBalances[
                 _strategies[strategyId_].targetToken.tokenAddress
-            ] += amount_;
+            ] += amount;
 
             return (amount, success);
         }
 
+        return (amount, success);
+    }
+
+    function _forceWithdrawReinvest(
+        Reinvest memory reinvest_,
+        address liquidityToken_
+    ) internal returns (uint256 amount, bool success) {
+        uint256 amount_ = IERC20(liquidityToken_).balanceOf(address(this));
+        (bool txSuccess, bytes memory returnData) = address(DCAREINVEST_LIBRARY)
+            .delegatecall(
+                abi.encodeWithSelector(
+                    DCAREINVEST_LIBRARY.unwindReinvest.selector,
+                    reinvest_,
+                    amount_
+                )
+            );
+        if (txSuccess) {
+            (amount, success) = abi.decode(returnData, (uint256, bool));
+        }
         return (amount, success);
     }
 
@@ -256,6 +276,17 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     /**
      * @notice Helpers Logic
      */
+
+    /**
+     * @dev Get the reinvest token balance for a strategy
+     * @param strategyId_ Strategy Id of the strategy to get the balance for
+     * @return {uint256} The reinvest token balance for the strategy
+     */
+    function getReinvestTokenBalance(
+        uint256 strategyId_
+    ) public view returns (uint256) {
+        return _reinvestLiquidityTokenBalance[strategyId_];
+    }
 
     /**
      * @dev returns UI data for strategy interval timing

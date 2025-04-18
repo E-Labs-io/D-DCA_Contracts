@@ -242,20 +242,11 @@ export namespace ReinvestLibraryChangedEvent {
 }
 
 export namespace ReinvestUnwoundEvent {
-  export type InputTuple = [
-    strategyId: BigNumberish,
-    amount: BigNumberish,
-    success: boolean
-  ];
-  export type OutputTuple = [
-    strategyId: bigint,
-    amount: bigint,
-    success: boolean
-  ];
+  export type InputTuple = [strategyId: BigNumberish, amount: BigNumberish];
+  export type OutputTuple = [strategyId: bigint, amount: bigint];
   export interface OutputObject {
     strategyId: bigint;
     amount: bigint;
-    success: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -589,7 +580,7 @@ export interface IDCAAccount extends BaseContract {
       ReinvestLibraryChangedEvent.OutputObject
     >;
 
-    "ReinvestUnwound(uint256,uint256,bool)": TypedContractEvent<
+    "ReinvestUnwound(uint256,uint256)": TypedContractEvent<
       ReinvestUnwoundEvent.InputTuple,
       ReinvestUnwoundEvent.OutputTuple,
       ReinvestUnwoundEvent.OutputObject

@@ -116,12 +116,6 @@ const _abi = [
         name: "amount",
         type: "uint256",
       },
-      {
-        indexed: true,
-        internalType: "bool",
-        name: "success",
-        type: "bool",
-      },
     ],
     name: "ReinvestUnwound",
     type: "event",
@@ -480,6 +474,25 @@ const _abi = [
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "strategyId_",
+        type: "uint256",
+      },
+    ],
+    name: "getReinvestTokenBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",

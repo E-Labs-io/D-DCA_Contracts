@@ -247,6 +247,11 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       const address = await createdAccount.getAttachedReinvestLibraryAddress();
       expect(address).to.equal(reinvestContract.target);
     });
+    it("🧪 Should set USDC as allowed base token", async function () {
+      await executorContract.setBaseTokenAllowance(usdcContract.target, true);
+      expect(await executorContract.isTokenAllowedAsBase(usdcContract.target))
+        .to.be.true;
+    });
   });
 
   describe("💡 Create Strategy", () => {
@@ -312,7 +317,6 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       const bal = await getErc20Balance(cWethContract, createdAccount.target);
       expect(bal).to.equal(0n);
     });
-
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
@@ -320,14 +324,14 @@ describe("> Compound V3 ETH Reinvest Test", () => {
 
       const recipt = await tx.wait();
 
-      expect(recipt)
+      await expect(recipt)
         .to.emit(createdAccount, "ReinvestExecuted")
         .withArgs(1, true, (amount: any) => {
-          reinvestBalance = Number(amount);
+          reinvestBalance += Number(amount);
           return true;
         });
 
-      expect(recipt)
+      await expect(recipt)
         .to.emit(createdAccount, "StrategyExecuted")
         .withArgs(
           1,
@@ -338,19 +342,18 @@ describe("> Compound V3 ETH Reinvest Test", () => {
           true,
         );
     });
-
     it("🧪 Should get the Reinvest Balance of Strat", async () => {
       const bal = await createdAccount.getReinvestTokenBalance(1);
       expect(Number(bal)).to.equal(reinvestBalance);
     });
     it("🧪 Should show balance of cWETH > 0", async () => {
       const bal = await getErc20Balance(cWethContract, createdAccount.target);
-      console.log("bal of cWETH: ", Number(bal));
-      expect(Number(bal)).to.be.greaterThan(0n);
+      expect(Number(bal)).to.be.greaterThan(0);
     });
   });
 
   describe("💡 Unwind reinvest", () => {
+    let wethBalance: number = 0;
     it("🧪 Should withdraw the accounts balance of cWeth", async () => {
       const tx = await createdAccount.UnwindReinvest(1);
       await expect(tx.wait()).to.be.fulfilled;
@@ -359,14 +362,37 @@ describe("> Compound V3 ETH Reinvest Test", () => {
     it("🧪 Should show balance of aWETH == 0", async () => {
       const bal = await createdAccount.getReinvestTokenBalance(1);
       expect(Number(bal)).to.equal(0);
-      /*       expect(
-        Number(await getErc20Balance(cWethContract, createdAccount.target)),
-      ).to.equal(0); */
+    });
+    it("🧪 Should show true balance of cWETH > 0", async () => {
+      const bal = await getErc20Balance(cWethContract, createdAccount.target);
+      expect(Number(bal)).to.be.greaterThan(0);
     });
     it("🧪 Should show balance of WETH > 0", async () => {
-      expect(
-        Number(await getErc20Balance(wethContract, createdAccount.target)),
-      ).to.be.greaterThanOrEqual(strategyBalance);
+      const bal = Number(
+        await getErc20Balance(wethContract, createdAccount.target),
+      );
+      expect(bal).to.be.greaterThanOrEqual(strategyBalance);
+      wethBalance = bal;
+    });
+    it("🧪 Should force force unwind reinvest", async () => {
+      const tx = await createdAccount.ForceUnwindReinvestPosition(
+        1,
+        cWethContract.target,
+      );
+      await expect(tx.wait()).to.be.fulfilled;
+      await expect(tx.wait()).to.emit(createdAccount, "ReinvestUnwound");
+    });
+    it("🧪 Should show true balance of cWETH == 0", async () => {
+      const bal = Number(
+        await getErc20Balance(cWethContract, createdAccount.target),
+      );
+      expect(bal).to.equal(0);
+    });
+    it("🧪 Should show balance of WETH > last check", async () => {
+      const bal = Number(
+        await getErc20Balance(wethContract, createdAccount.target),
+      );
+      expect(bal).to.be.greaterThan(wethBalance);
     });
     it("🧪 Should revert withdrawal, No Investment to unwind", async () => {
       await expect(createdAccount.UnwindReinvest(1)).to.be.revertedWith(
@@ -408,25 +434,25 @@ describe("> Compound V3 ETH Reinvest Test", () => {
 
         const recipt = await tx.wait();
 
-        expect(recipt)
+        await expect(recipt)
           .to.emit(createdAccount, "ReinvestExecuted")
           .withArgs(1, true, (amount: any) => {
-            reinvestBalance = Number(amount);
+            reinvestBalance += Number(amount);
             return true;
           });
 
-        expect(recipt)
+        await expect(recipt)
           .to.emit(createdAccount, "StrategyExecuted")
           .withArgs(
             1,
             (amount: any) => {
-              strategyBalance = Number(amount);
+              strategyBalance += Number(amount);
               return true;
             },
             true,
           );
 
-        totalSpend = totalSpend + 100000000;
+        totalSpend = totalSpend + 1000000;
         executions++;
       }
     });
@@ -434,9 +460,11 @@ describe("> Compound V3 ETH Reinvest Test", () => {
     it("🧪 Should show balance of aWETH == total from events", async () => {
       const bal = await createdAccount.getReinvestTokenBalance(1);
       expect(Number(bal)).to.equal(reinvestBalance);
-      expect(
-        Number(await getErc20Balance(cWethContract, createdAccount.target)),
-      ).to.equal(reinvestBalance);
+
+      const trueBalance = Number(
+        await getErc20Balance(cWethContract, createdAccount.target),
+      );
+      expect(trueBalance).to.be.greaterThanOrEqual(reinvestBalance);
     });
     it("🧪 Should withdraw the accounts balance of cWeth", async () => {
       const tx = await createdAccount.UnwindReinvest(1);
@@ -446,9 +474,6 @@ describe("> Compound V3 ETH Reinvest Test", () => {
     it("🧪 Should show balance of aWETH == 0", async () => {
       const bal = await createdAccount.getReinvestTokenBalance(1);
       expect(Number(bal)).to.equal(0);
-      expect(
-        Number(await getErc20Balance(cWethContract, createdAccount.target)),
-      ).to.equal(0);
     });
   });
 });

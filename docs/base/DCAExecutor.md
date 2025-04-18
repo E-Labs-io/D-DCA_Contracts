@@ -184,10 +184,10 @@ function getFeeData() external view returns (struct IDCADataStructures.FeeDistri
 |---|---|---|
 | _0 | IDCADataStructures.FeeDistribution | The fee data |
 
-### getIntervalTotalActiveStrategys
+### getIntervalTotalActiveStrategies
 
 ```solidity
-function getIntervalTotalActiveStrategys(enum IDCADataStructures.Interval interval_) external view returns (uint256)
+function getIntervalTotalActiveStrategies(enum IDCADataStructures.Interval interval_) external view returns (uint256)
 ```
 
 
@@ -304,6 +304,28 @@ function isIntervalActive(enum IDCADataStructures.Interval interval_) external v
 |---|---|---|
 | _0 | bool | The active state of the given interval |
 
+### isTokenAllowedAsBase
+
+```solidity
+function isTokenAllowedAsBase(address token_) external view returns (bool)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### owner
 
 ```solidity
@@ -375,6 +397,23 @@ function setActiveState(bool newFlag_) external nonpayable
 |---|---|---|
 | newFlag_ | bool | The new active state |
 
+### setBaseTokenAllowance
+
+```solidity
+function setBaseTokenAllowance(address token_, bool allowed_) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | undefined |
+| allowed_ | bool | undefined |
+
 ### setFeeData
 
 ```solidity
@@ -427,6 +466,23 @@ function transferOwnership(address newOwner) external nonpayable
 
 
 ## Events
+
+### BaseTokenAllowanceChanged
+
+```solidity
+event BaseTokenAllowanceChanged(address token_, bool allowed_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_  | address | undefined |
+| allowed_  | bool | undefined |
 
 ### ContractActiveStateChange
 
@@ -555,6 +611,22 @@ Error thrown when the contract is paused
 
 
 
+
+### NotAllowedBaseToken
+
+```solidity
+error NotAllowedBaseToken(address token_)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token_ | address | undefined |
 
 ### OwnableInvalidOwner
 

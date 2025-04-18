@@ -96,11 +96,13 @@ export interface IDCAExecutorInterface extends Interface {
       | "Subscribe"
       | "Unsubscribe"
       | "getTimeTillWindow"
+      | "setBaseTokenAllowance"
       | "setIntervalActive"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "BaseTokenAllowanceChanged"
       | "ExecutedStrategy"
       | "FeeDataChanged"
       | "FeesDistributed"
@@ -132,6 +134,10 @@ export interface IDCAExecutorInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBaseTokenAllowance",
+    values: [AddressLike, boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setIntervalActive",
     values: [BigNumberish, boolean]
   ): string;
@@ -155,9 +161,26 @@ export interface IDCAExecutorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setBaseTokenAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setIntervalActive",
     data: BytesLike
   ): Result;
+}
+
+export namespace BaseTokenAllowanceChangedEvent {
+  export type InputTuple = [token_: AddressLike, allowed_: boolean];
+  export type OutputTuple = [token_: string, allowed_: boolean];
+  export interface OutputObject {
+    token_: string;
+    allowed_: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace ExecutedStrategyEvent {
@@ -318,6 +341,12 @@ export interface IDCAExecutor extends BaseContract {
     "view"
   >;
 
+  setBaseTokenAllowance: TypedContractMethod<
+    [token_: AddressLike, allowed_: boolean],
+    [void],
+    "nonpayable"
+  >;
+
   setIntervalActive: TypedContractMethod<
     [interval_: BigNumberish, status_: boolean],
     [void],
@@ -385,6 +414,13 @@ export interface IDCAExecutor extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "setBaseTokenAllowance"
+  ): TypedContractMethod<
+    [token_: AddressLike, allowed_: boolean],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "setIntervalActive"
   ): TypedContractMethod<
     [interval_: BigNumberish, status_: boolean],
@@ -392,6 +428,13 @@ export interface IDCAExecutor extends BaseContract {
     "nonpayable"
   >;
 
+  getEvent(
+    key: "BaseTokenAllowanceChanged"
+  ): TypedContractEvent<
+    BaseTokenAllowanceChangedEvent.InputTuple,
+    BaseTokenAllowanceChangedEvent.OutputTuple,
+    BaseTokenAllowanceChangedEvent.OutputObject
+  >;
   getEvent(
     key: "ExecutedStrategy"
   ): TypedContractEvent<
@@ -422,6 +465,17 @@ export interface IDCAExecutor extends BaseContract {
   >;
 
   filters: {
+    "BaseTokenAllowanceChanged(address,bool)": TypedContractEvent<
+      BaseTokenAllowanceChangedEvent.InputTuple,
+      BaseTokenAllowanceChangedEvent.OutputTuple,
+      BaseTokenAllowanceChangedEvent.OutputObject
+    >;
+    BaseTokenAllowanceChanged: TypedContractEvent<
+      BaseTokenAllowanceChangedEvent.InputTuple,
+      BaseTokenAllowanceChangedEvent.OutputTuple,
+      BaseTokenAllowanceChangedEvent.OutputObject
+    >;
+
     "ExecutedStrategy(address,uint256)": TypedContractEvent<
       ExecutedStrategyEvent.InputTuple,
       ExecutedStrategyEvent.OutputTuple,

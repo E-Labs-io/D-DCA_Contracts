@@ -45,6 +45,8 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     mapping(address => mapping(uint256 => bool)) internal _strategies; // WHY STORE THE STRAT?
     mapping(address => mapping(uint256 => uint256)) internal _lastExecution;
 
+    mapping(address => bool) internal _allowedBaseTokens;
+
     FeeDistribution internal _feeData;
 
     uint256 private _totalActiveStrategies;
@@ -97,6 +99,10 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
             !_strategies[strategy_.accountAddress][strategy_.strategyId],
             "DCAexecutor : [Subscribe] Strategy already subscribed"
         );
+
+        if (!_allowedBaseTokens[strategy_.baseToken.tokenAddress])
+            revert NotAllowedBaseToken(strategy_.baseToken.tokenAddress);
+
         _subscribeAccount(strategy_);
     }
 
@@ -113,11 +119,11 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     ) external override {
         require(
             _msgSender() == DCAAccountAddress_,
-            "DCAexecutor : [Unsubscribe] Only Account Contract can unsubscribe"
+            "DCAExecutor : [Unsubscribe] Only Account Contract can unsubscribe"
         );
         require(
             _strategies[DCAAccountAddress_][strategyId_],
-            "DCAexecutor : [Subscribe] Strategy already unsubscribed"
+            "DCAExecutor : [Unsubscribe] Strategy already unsubscribed"
         );
 
         _unSubscribeAccount(DCAAccountAddress_, strategyId_, interval_);
@@ -136,12 +142,12 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     ) external override onlyExecutor is_active {
         require(
             _strategies[DCAAccount_][strategyId_],
-            "DCAexecutor : [Execute] Strategy not subscribed"
+            "DCAExecutor : [Execute] Strategy not subscribed"
         );
 
         require(
             isIntervalActive(interval_),
-            "DCAexecutor : [Execute] Interval Not Active"
+            "DCAExecutor : [Execute] Interval Not Active"
         );
 
         require(
@@ -149,7 +155,7 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
                 interval_,
                 _lastExecution[DCAAccount_][strategyId_]
             ),
-            "DCAexecutor : [Execute] Not in execution window"
+            "DCAExecutor : [Execute] Not in execution window"
         );
 
         _executeStrategy(DCAAccount_, strategyId_);
@@ -164,15 +170,46 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     ) external override onlyAdmins {
         IERC20 token = IERC20(tokenAddress_);
         uint256 balance = token.balanceOf(address(this));
+        console.log("Executor: Balance", balance);
+        console.log(
+            "Executor: Inital Admin Balance",
+            token.balanceOf(_feeData.adminAddress)
+        );
+        console.log(
+            "Executor: Inital Execution Balance",
+            token.balanceOf(_feeData.executionAddress)
+        );
+        console.log("Executor: Admin Fees", _feeData.amountToAdmin);
+        console.log("Executor: Executor Fees", _feeData.amountToExecutor);
+        console.log("Executor: compute Fees", _feeData.amountToComputing);
+
         if (balance > 0) {
             (
                 uint256 executorFee,
                 uint256 computingFee,
                 uint256 adminFee
             ) = _feeData.getFeeSplit(balance);
+
+            console.log("Executor: Admin Amount", adminFee);
+            console.log("Executor: Executor Amount", executorFee);
+            console.log("Executor: compute Amount", computingFee);
+
             _transferFee(_feeData.executionAddress, executorFee, token);
             _transferFee(_feeData.computingAddress, computingFee, token);
             _transferFee(_feeData.adminAddress, adminFee, token);
+
+            console.log(
+                "Executor: Remaining Balance",
+                token.balanceOf(address(this))
+            );
+            console.log(
+                "Executor: New Admin Balance",
+                token.balanceOf(_feeData.adminAddress)
+            );
+            console.log(
+                "Executor: New Executor Balance",
+                token.balanceOf(_feeData.executionAddress)
+            );
             emit FeesDistributed(tokenAddress_, balance);
         }
     }
@@ -381,9 +418,21 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
      * @param interval_ The interval to get the total number of active strategies for
      * @return The total number of active strategies for the given interval
      */
-    function getIntervalTotalActiveStrategys(
+    function getIntervalTotalActiveStrategies(
         Interval interval_
     ) public view returns (uint256) {
         return _totalActiveStrategiesByIntervals[interval_];
+    }
+
+    function setBaseTokenAllowance(
+        address token_,
+        bool allowed_
+    ) external onlyAdmins {
+        _allowedBaseTokens[token_] = allowed_;
+        emit BaseTokenAllowanceChanged(token_, allowed_);
+    }
+
+    function isTokenAllowedAsBase(address token_) public view returns (bool) {
+        return _allowedBaseTokens[token_];
     }
 }

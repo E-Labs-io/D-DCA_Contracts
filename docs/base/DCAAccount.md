@@ -66,6 +66,29 @@ used by the Executor to remove failing strategies/out of funds strategies.
 |---|---|---|
 | strategyId_ | uint256 | Strategy Id of the strategy to unsubscribe |
 
+### ForceUnwindReinvestPosition
+
+```solidity
+function ForceUnwindReinvestPosition(uint256 strategyId_, address liquidityToken_) external nonpayable returns (uint256 amountOfTargetReturned)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyId_ | uint256 | undefined |
+| liquidityToken_ | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amountOfTargetReturned | uint256 | undefined |
+
 ### SWAP_ROUTER
 
 ```solidity
@@ -136,7 +159,7 @@ function UnsubscribeStrategy(uint256 strategyId_) external nonpayable
 ### UnwindReinvest
 
 ```solidity
-function UnwindReinvest(uint256 strategyId_) external nonpayable
+function UnwindReinvest(uint256 strategyId_) external nonpayable returns (uint256 amountOfTargetReturned)
 ```
 
 repays the underlining token and return the target token
@@ -148,6 +171,12 @@ repays the underlining token and return the target token
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | The id of the strategy to unwind |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| amountOfTargetReturned | uint256 | undefined |
 
 ### WithdrawFunds
 
@@ -540,7 +569,7 @@ Emits when the reinvest address has been changed
 ### ReinvestUnwound
 
 ```solidity
-event ReinvestUnwound(uint256 indexed strategyId, uint256 amount, bool indexed success)
+event ReinvestUnwound(uint256 indexed strategyId, uint256 amount)
 ```
 
 Emited when a Reinvest is unwound
@@ -553,7 +582,6 @@ Emited when a Reinvest is unwound
 |---|---|---|
 | strategyId `indexed` | uint256 | The ID of the strategy |
 | amount  | uint256 | The amount unwond and returned to the account |
-| success `indexed` | bool | If the unwind was successful |
 
 ### StrategyCreated
 

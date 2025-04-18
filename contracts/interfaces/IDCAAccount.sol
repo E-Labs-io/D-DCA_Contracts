@@ -69,13 +69,8 @@ interface IDCAAccount is IDCADataStructures {
      * @notice Emited when a Reinvest is unwound
      * @param strategyId The ID of the strategy
      * @param amount The amount unwond and returned to the account
-     * @param success If the unwind was successful
      */
-    event ReinvestUnwound(
-        uint256 indexed strategyId,
-        uint256 amount,
-        bool indexed success
-    );
+    event ReinvestUnwound(uint256 indexed strategyId, uint256 amount);
 
     /**
      * @notice Triggered by the assigned executor to execute the given strategy

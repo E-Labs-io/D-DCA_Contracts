@@ -6,7 +6,7 @@
   "scripts": {
     "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
     "prettier": "prettier --write 'contracts/**/*.sol'",
-    "test": "TENDERLY_VERIFY=false hardhat test",
+    "test": "hardhat test",
     "compile": "npx hardhat compile",
     "hardhat": "npx hardhat node",
     "dev": "npx hardhat deployContracts --network hardhat",
@@ -16,8 +16,7 @@
     "deploy-arbGoerli": "npx hardhat deployContracts --network arbGoerli",
     "deploy-sepolia": "npx hardhat deployContracts --network ethSepolia",
     "deploy-ethGoerli": "npx hardhat deployContracts --network ethGoerli",
-    "deploy-local": "npx hardhat deployContracts --network localhost",
-    "tenderly:verify": "hardhat tenderly:verify --network tenderlyBaseVTN"
+    "deploy-local": "npx hardhat deployContracts --network localhost"
   },
   "repository": {
     "type": "git",

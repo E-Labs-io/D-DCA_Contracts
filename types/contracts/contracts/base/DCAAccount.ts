@@ -93,6 +93,7 @@ export interface DCAAccountInterface extends Interface {
       | "AddFunds"
       | "Execute"
       | "ExecutorDeactivate"
+      | "ForceUnwindReinvestPosition"
       | "SWAP_ROUTER"
       | "SetupStrategy"
       | "SubscribeStrategy"
@@ -141,6 +142,10 @@ export interface DCAAccountInterface extends Interface {
   encodeFunctionData(
     functionFragment: "ExecutorDeactivate",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ForceUnwindReinvestPosition",
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "SWAP_ROUTER",
@@ -236,6 +241,10 @@ export interface DCAAccountInterface extends Interface {
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ExecutorDeactivate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ForceUnwindReinvestPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -389,20 +398,11 @@ export namespace ReinvestLibraryChangedEvent {
 }
 
 export namespace ReinvestUnwoundEvent {
-  export type InputTuple = [
-    strategyId: BigNumberish,
-    amount: BigNumberish,
-    success: boolean
-  ];
-  export type OutputTuple = [
-    strategyId: bigint,
-    amount: bigint,
-    success: boolean
-  ];
+  export type InputTuple = [strategyId: BigNumberish, amount: BigNumberish];
+  export type OutputTuple = [strategyId: bigint, amount: bigint];
   export interface OutputObject {
     strategyId: bigint;
     amount: bigint;
-    success: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -527,6 +527,12 @@ export interface DCAAccount extends BaseContract {
     "nonpayable"
   >;
 
+  ForceUnwindReinvestPosition: TypedContractMethod<
+    [strategyId_: BigNumberish, liquidityToken_: AddressLike],
+    [bigint],
+    "nonpayable"
+  >;
+
   SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
 
   SetupStrategy: TypedContractMethod<
@@ -553,7 +559,7 @@ export interface DCAAccount extends BaseContract {
 
   UnwindReinvest: TypedContractMethod<
     [strategyId_: BigNumberish],
-    [void],
+    [bigint],
     "nonpayable"
   >;
 
@@ -665,6 +671,13 @@ export interface DCAAccount extends BaseContract {
     nameOrSignature: "ExecutorDeactivate"
   ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "ForceUnwindReinvestPosition"
+  ): TypedContractMethod<
+    [strategyId_: BigNumberish, liquidityToken_: AddressLike],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "SWAP_ROUTER"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -686,7 +699,7 @@ export interface DCAAccount extends BaseContract {
   ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "UnwindReinvest"
-  ): TypedContractMethod<[strategyId_: BigNumberish], [void], "nonpayable">;
+  ): TypedContractMethod<[strategyId_: BigNumberish], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "WithdrawFunds"
   ): TypedContractMethod<
@@ -874,7 +887,7 @@ export interface DCAAccount extends BaseContract {
       ReinvestLibraryChangedEvent.OutputObject
     >;
 
-    "ReinvestUnwound(uint256,uint256,bool)": TypedContractEvent<
+    "ReinvestUnwound(uint256,uint256)": TypedContractEvent<
       ReinvestUnwoundEvent.InputTuple,
       ReinvestUnwoundEvent.OutputTuple,
       ReinvestUnwoundEvent.OutputObject

@@ -11,16 +11,26 @@ export async function resetFork(hre: HardhatRuntimeEnvironment) {
     );
     return;
   }
-
-  await hre.network.provider.request({
-    method: "hardhat_reset",
-    params: [
-      {
-        forking: {
-          jsonRpcUrl: rcpEndPoints(masterChain)!,
-          blockNumber: block,
-        },
-      },
-    ],
-  });
+  block && block > 0
+    ? await hre.network.provider.request({
+        method: "hardhat_reset",
+        params: [
+          {
+            forking: {
+              jsonRpcUrl: rcpEndPoints(masterChain)!,
+              blockNumber: block,
+            },
+          },
+        ],
+      })
+    : await hre.network.provider.request({
+        method: "hardhat_reset",
+        params: [
+          {
+            forking: {
+              jsonRpcUrl: rcpEndPoints(masterChain)!,
+            },
+          },
+        ],
+      });
 }
