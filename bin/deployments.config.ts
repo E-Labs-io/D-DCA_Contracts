@@ -13,7 +13,7 @@ export default function deploymentConfig() {
       base: 0,
     };
 
-    return list[masterChain];
+    return list[masterChain] ?? 0;
   };
   const ethernalDisabled: boolean = true;
 

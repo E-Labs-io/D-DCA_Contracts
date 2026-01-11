@@ -121,6 +121,7 @@ export interface DCAExecutorInterface extends Interface {
       | "DistributeFees"
       | "Execute"
       | "ForceUnsubscribe"
+      | "SWAP_ROUTER"
       | "Subscribe"
       | "Unsubscribe"
       | "addAdmin"
@@ -169,6 +170,10 @@ export interface DCAExecutorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "ForceUnsubscribe",
     values: [AddressLike, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "SWAP_ROUTER",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "Subscribe",
@@ -264,6 +269,10 @@ export interface DCAExecutorInterface extends Interface {
   decodeFunctionResult(functionFragment: "Execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ForceUnsubscribe",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "SWAP_ROUTER",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "Subscribe", data: BytesLike): Result;
@@ -522,6 +531,8 @@ export interface DCAExecutor extends BaseContract {
     "nonpayable"
   >;
 
+  SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
+
   Subscribe: TypedContractMethod<
     [strategy_: IDCADataStructures.StrategyStruct],
     [void],
@@ -667,6 +678,9 @@ export interface DCAExecutor extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "SWAP_ROUTER"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "Subscribe"
   ): TypedContractMethod<

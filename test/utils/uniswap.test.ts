@@ -1,12 +1,11 @@
 import { expect } from "chai";
 import hre, { ethers } from "hardhat";
 import { AbiCoder, AddressLike, ZeroAddress } from "ethers";
-import { DCAAccount, IERC20 } from "~/types/contracts";
+import { DCAAccount, IERC20, ISwapRouter__factory } from "~/types/contracts";
 import signerStore, { SignerStore } from "~/scripts/tests/signerStore";
 
 import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 
-import { ISwapRouter__factory } from "../types/contracts/factories/contracts/protocols/uniswap/ISwapRouterv3.sol";
 import { ISwapRouter } from "~/types/contracts";
 import deploymentConfig from "~/bin/deployments.config";
 import {

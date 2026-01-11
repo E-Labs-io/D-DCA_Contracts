@@ -104,6 +104,7 @@ describe("> DCA Executor Tests", () => {
         executorFactory.deploy(
           { ...FeeData, amountToComputing: 0 },
           addressStore.executorEoa.address,
+          tokenAddress.swapRouter![forkedChain]!,
         ),
       ).to.be.revertedWith(
         "DCAExecutor : [setFeeData] Total split percents don't equal 100%",
@@ -117,6 +118,7 @@ describe("> DCA Executor Tests", () => {
       executorContract = await executorFactory.deploy(
         FeeData,
         addressStore.executorEoa.address,
+        tokenAddress.swapRouter![forkedChain]!,
       );
       await expect(executorContract.waitForDeployment()).to.be.fulfilled;
     });
@@ -175,15 +177,16 @@ describe("> DCA Executor Tests", () => {
   });
 
   describe("💡 Test fee receiving and distribution", () => {
+    let bankEthBalance: number = 0;
     it("🧪 Should check USDC Balance of Executor to be Zero", async () => {
       expect(await usdcContract.balanceOf(executorContract.target)).to.equal(
         0n,
       );
     });
-    it("🧪 Should check USDC Balance of all fee receiving EAO to be zero", async () => {
-      expect(
-        await usdcContract.balanceOf(addressStore.executorBank.address),
-      ).to.equal(0n);
+    it("🧪 Should check USDC/Eth Balance of all fee receiving EAO to be zero", async () => {
+      bankEthBalance = Number(
+        await ethers.provider.getBalance(addressStore.executorBank.address),
+      );
       expect(
         await usdcContract.balanceOf(addressStore.comptBank.address),
       ).to.equal(0n);
@@ -211,10 +214,8 @@ describe("> DCA Executor Tests", () => {
     it("🧪 Should check USDC Balance of all fee receiving EAO to have there split", async () => {
       const totalFee = Number(ethers.parseUnits("100", 6));
       expect(
-        await usdcContract.balanceOf(addressStore.executorBank.address),
-      ).to.equal(
-        calculatePercentage(Number(FeeData.amountToExecutor), totalFee),
-      );
+        await ethers.provider.getBalance(addressStore.executorBank.address),
+      ).to.be.greaterThan(bankEthBalance);
       expect(
         await usdcContract.balanceOf(addressStore.comptBank.address),
       ).to.equal(

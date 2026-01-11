@@ -63,10 +63,14 @@
   },
   "dependencies": {
     "@aave/core-v3": "^1.18.0",
+    "@ledgerhq/hw-app-eth": "^6.45.8",
+    "@ledgerhq/hw-transport-node-hid": "^6.29.8",
     "@nomicfoundation/hardhat-web3-v4": "^1.0.0",
     "@openzeppelin/contracts-upgradeable": "^5.0.1",
     "@openzeppelin/hardhat-upgrades": "^3.0.0",
     "@tenderly/actions-test": "^0.2.117",
-    "hardhat-ethernal": "^3.3.0"
+    "@walletconnect/ethereum-provider": "^2.21.3",
+    "hardhat-ethernal": "^3.3.0",
+    "viem": "^2.31.4"
   }
 }

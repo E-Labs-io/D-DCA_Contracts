@@ -8,3 +8,4 @@ export * from "./deployProxy";
 export * from "./dca-test-funds";
 export * from "./dca-deploy";
 export * from "./dcs-runTestSuite";
+export * from "./testLedgerProvider";

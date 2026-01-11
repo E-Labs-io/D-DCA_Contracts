@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "hardhat/console.sol";
+
 import {ISwapRouter, IWETH9} from "../protocols/uniswap/ISwapRouterv3.sol";
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -57,9 +59,8 @@ abstract contract Swap {
                     sqrtPriceLimitX96: 0
                 })
             );
-
-            IWETH9(SWAP_ROUTER.WETH9()).withdraw(amount);
-
+            console.log("Withdrawing WETH");
+            _withdrawWETH(amount);
             return amount;
         } else
             return
@@ -120,5 +121,13 @@ abstract contract Swap {
      */
     function _updateSwapAddress(address newSwapRouter_) internal {
         SWAP_ROUTER = ISwapRouter(newSwapRouter_);
+    }
+
+    /**
+     * @dev Withdraws ETH from the swap router
+     * @param amount_ The amount of ETH to withdraw
+     */
+    function _withdrawWETH(uint256 amount_) internal {
+        IWETH9(SWAP_ROUTER.WETH9()).withdraw(amount_);
     }
 }

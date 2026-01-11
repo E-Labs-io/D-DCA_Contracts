@@ -202,6 +202,7 @@ describe("> DCA Strategy Executions Tests", () => {
       executorContract = await proxyFactory.deploy(
         deploymentArgs[0],
         addressStore.executorEoa.address,
+        deploymentArgs[2],
       );
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);

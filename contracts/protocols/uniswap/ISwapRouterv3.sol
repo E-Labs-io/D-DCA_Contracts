@@ -78,9 +78,11 @@ interface ISwapRouter {
 
 /// @title Interface for WETH9
 interface IWETH9 is IERC20 {
+    event Withdrawal(address indexed src, uint wad);
+
     /// @notice Deposit ether to get wrapped ether
     function deposit() external payable;
 
     /// @notice Withdraw wrapped ether to get ether
-    function withdraw(uint256) external;
+    function withdraw(uint wad) external;
 }

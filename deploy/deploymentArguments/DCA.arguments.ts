@@ -24,25 +24,29 @@ export function DCAExecutorArguments(
   };
   const executionEOA_: AddressLike =
     "0xe272653f2FF11D1F7bd24cdE149a29f4110d03B1";
+  const swapRouter_: AddressLike =
+    tokenAddress.swapRouter![networkName as ChainName]!;
 
-  return [feeDistrobution_, executionEOA_];
+  return [feeDistrobution_, executionEOA_, swapRouter_];
 }
 
 export function DCAAccountArguments(
   deployer: string | Addressable,
   networkName: string,
 ): any[] {
-  const executorAddress_: AddressLike = deployedAddresses(
-    networkName as ChainName,
-  ).DCAExecutor as AddressLike;
+  // Try to get from deployed addresses, fallback to placeholder if not found
+  const deployedContracts = deployedDCAContracts[networkName as ChainName];
+  const executorAddress_: AddressLike =
+    deployedContracts?.DCAExecutor ||
+    "0x0000000000000000000000000000000000000000";
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter![networkName as ChainName]!;
 
   const owner_: AddressLike = deployer;
 
-  const reinvestLibraryContract_ = deployedAddresses(
-    networkName as ChainName,
-  ).DCAReinvest;
+  const reinvestLibraryContract_ =
+    deployedContracts?.DCAReinvest ||
+    "0x0000000000000000000000000000000000000000";
 
   return [executorAddress_, swapRouter_, owner_, reinvestLibraryContract_];
 }
@@ -51,15 +55,17 @@ export function DCAAccountFactoryArguments(
   deployer: string | Addressable,
   networkName: string,
 ): any[] {
-  const executorAddress_: AddressLike = deployedAddresses(
-    networkName as ChainName,
-  ).DCAExecutor as AddressLike;
+  // Try to get from deployed addresses, fallback to placeholder if not found
+  const deployedContracts = deployedDCAContracts[networkName as ChainName];
+  const executorAddress_: AddressLike =
+    deployedContracts?.DCAExecutor ||
+    "0x0000000000000000000000000000000000000000";
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter![networkName as ChainName]!;
 
-  const reinvestLibraryContract_ = deployedAddresses(
-    networkName as ChainName,
-  ).DCAReinvest;
+  const reinvestLibraryContract_ =
+    deployedContracts?.DCAReinvest ||
+    "0x0000000000000000000000000000000000000000";
 
   return [executorAddress_, swapRouter_, reinvestLibraryContract_];
 }

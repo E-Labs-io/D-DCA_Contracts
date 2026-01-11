@@ -96,5 +96,7 @@ export type { OnlyAdmin } from "./contracts/security/onlyAdmin.sol/OnlyAdmin";
 export { OnlyAdmin__factory } from "./factories/contracts/security/onlyAdmin.sol/OnlyAdmin__factory";
 export type { OnlyExecutor } from "./contracts/security/onlyExecutor.sol/OnlyExecutor";
 export { OnlyExecutor__factory } from "./factories/contracts/security/onlyExecutor.sol/OnlyExecutor__factory";
+export type { SwapTest } from "./contracts/tests/swapTest.sol/SwapTest";
+export { SwapTest__factory } from "./factories/contracts/tests/swapTest.sol/SwapTest__factory";
 export type { Swap } from "./contracts/utils/swap.sol/Swap";
 export { Swap__factory } from "./factories/contracts/utils/swap.sol/Swap__factory";

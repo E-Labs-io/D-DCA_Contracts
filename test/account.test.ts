@@ -13,7 +13,12 @@ import {
   DCAExecutorArguments,
   newStrat,
 } from "~/deploy/deploymentArguments/DCA.arguments";
-import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
+import {
+  ChainName,
+  productionChainImpersonators,
+  tokenAddress,
+  TokenChainList,
+} from "~/bin/tokenAddress";
 import { EMPTY_REINVEST, EMPTY_STRATEGY } from "~/bin/emptyData";
 import { compareStructs } from "~/scripts/tests/comparisons";
 import { IDCADataStructures } from "~/types/contracts/contracts/base/DCAExecutor";
@@ -171,6 +176,7 @@ describe("> DCA Account Tests", () => {
       executorContract = await proxyFactory.deploy(
         deploymentArgs[0],
         addressStore.executorEoa.address,
+        deploymentArgs[2],
       );
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);

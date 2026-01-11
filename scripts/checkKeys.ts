@@ -17,17 +17,17 @@ export default function checkPrivateKeys() {
   const masterDeployer = `0x${process.env.MASTER_DEPLOYER_KEY}`;
   const rcpEndPoints = (net?: ChainName): string => {
     const rpc: { [chain in ChainName]?: string } = {
-      baseGoerli: `https://base-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_KEY}`,
-      baseSepolia: `https://base-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_KEY}`,
-      base: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_KEY}`,
-      maticMumbai: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MATICMUMBAI_KEY}`,
-      matic: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MATICMUMBAI_KEY}`,
+      baseGoerli: `https://base-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      baseSepolia: `https://base-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      base: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      maticMumbai: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      matic: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       eth: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
-      ethSepolia: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_KEY}`,
-      optimism: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_OP_KEY}`,
-      opGoerli: `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_OP_KEY}`,
+      ethSepolia: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      optimism: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      opGoerli: `https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       arbGoerli: `https://arb-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
-      arbSepolia: `https://arb-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_ARBSEPOLIA_KEY}`,
+      arbSepolia: `https://arb-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       arbitrum: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       ethGoerli: `https:/eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       tenderlyBase:

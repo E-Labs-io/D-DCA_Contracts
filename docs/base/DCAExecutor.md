@@ -62,6 +62,23 @@ function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_, enum IDCADat
 | strategyId_ | uint256 | The id of the strategy to unsubscribe |
 | interval_ | enum IDCADataStructures.Interval | The interval of the strategy to unsubscribe |
 
+### SWAP_ROUTER
+
+```solidity
+function SWAP_ROUTER() external view returns (contract ISwapRouter)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | contract ISwapRouter | undefined |
+
 ### Subscribe
 
 ```solidity

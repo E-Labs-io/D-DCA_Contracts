@@ -4,7 +4,7 @@ import { AddressLike, Addressable } from "ethers";
 import deploymentConfig from "./deployments.config";
 
 const forkedNetwork: MainnetNames = deploymentConfig().masterChain;
-
+ 
 const productionChainAddresses: {
   [chain in MainnetNames]: { [Item in TokenListKeys]?: string };
 } = {
@@ -184,6 +184,7 @@ export const tokenAddress: TokenAddressList = {
     hardhat: productionChainAddresses[forkedNetwork].weth,
     optimism: productionChainAddresses.optimism.weth,
     base: productionChainAddresses.base.weth,
+    baseSepolia: "0x4200000000000000000000000000000000000006",
   },
   wbtc: {
     eth: productionChainAddresses.eth.wbtc,
@@ -196,6 +197,7 @@ export const tokenAddress: TokenAddressList = {
     hardhat: productionChainAddresses[forkedNetwork].wbtc,
     optimism: productionChainAddresses.optimism.wbtc,
     base: productionChainAddresses.base.wbtc,
+    baseSepolia: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
   },
   link: {
     eth: "",
@@ -215,12 +217,14 @@ export const tokenAddress: TokenAddressList = {
     opGoerli: "",
     hardhat: productionChainAddresses[forkedNetwork].compoundV3Usdc,
     optimism: productionChainAddresses.optimism.cUsdc,
-    base: productionChainAddresses.base.cWeth,
+    base: productionChainAddresses.base.cUsdc,
+    baseSepolia: "0x571621Ce60Cebb0c1D442B5afb38B1663C6Bf017",
   },
   compoundV3ETH: {
     base: productionChainAddresses.base.cWeth,
     eth: productionChainAddresses.eth.cWeth,
     optimism: productionChainAddresses.optimism.cWeth,
+    baseSepolia: "0x61490650AbaA31393464C3f34E8B29cd1C44118E",
   },
   aaveV3Pool: {
     eth: productionChainAddresses.eth.aaveV3Pool,
@@ -258,11 +262,13 @@ export const tokenAddress: TokenAddressList = {
     eth: productionChainAddresses.eth.aWeth,
     optimism: "0xe50fA9b3c56FfB159cB0FCA61F5c9D750e8128c8",
     base: productionChainAddresses.base.aWeth,
+    baseSepolia: "0x96e32dE4B1d1617B8c2AE13a88B9cC287239b13f",
   },
   aWbtc: {
     eth: productionChainAddresses.eth.aWbtc,
     optimism: "0x078f358208685046a11C85e8ad32895DED33A249",
     base: productionChainAddresses.base.aWbtc,
+    baseSepolia: "0x5Ee5bf7ae06D1Be5997A1A72006FE6C607eC6DE8",
   },
 };
 

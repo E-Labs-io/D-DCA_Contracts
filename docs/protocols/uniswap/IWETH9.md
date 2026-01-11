@@ -156,7 +156,7 @@ function transferFrom(address from, address to, uint256 value) external nonpayab
 ### withdraw
 
 ```solidity
-function withdraw(uint256) external nonpayable
+function withdraw(uint256 wad) external nonpayable
 ```
 
 Withdraw wrapped ether to get ether
@@ -167,7 +167,7 @@ Withdraw wrapped ether to get ether
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | undefined |
+| wad | uint256 | undefined |
 
 
 
@@ -208,6 +208,23 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 | from `indexed` | address | undefined |
 | to `indexed` | address | undefined |
 | value  | uint256 | undefined |
+
+### Withdrawal
+
+```solidity
+event Withdrawal(address indexed src, uint256 wad)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| src `indexed` | address | undefined |
+| wad  | uint256 | undefined |
 
 
 

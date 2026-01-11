@@ -1,5 +1,3 @@
-/** @format */
-
 import { task } from "hardhat/config";
 import deploymentFiles, {
   deploymentArgumentStore,
@@ -11,15 +9,26 @@ import {
   DeploymentReturn,
 } from "~/types/deployment/deploymentArguments";
 import logDeployment from "~/scripts/saveDeployLog";
+import { getLedgerSigner } from "~/scripts/ledgerProvider";
 
 const taskId = "deploydca";
 const taskDescription = "Deploy the full DCA suite";
 
 task(taskId, taskDescription).setAction(async (_args, hre) => {
   console.log(`🟢 [TASK] ${taskId} : Mounted`);
-  const [deployer, a, b, executor] = await hre.ethers.getSigners();
-  const network = hre.network;
+
+  // Get Hardhat network info
+  const network = await hre.ethers.provider.getNetwork();
+  const networkUrl = (hre.network.config as any).url;
+  console.log("🟠 Network Config:", networkUrl);
   const netName = network.name as ChainName;
+
+  // Get Ledger deployer — use the provider from HRE config
+  const { signer: deployer } = await getLedgerSigner(
+    networkUrl,
+    2, // wallet index
+    "ledgerlive", // derivation mode
+  );
 
   const deploymentAddresses: DeploymentStore[] = [];
   const delayTime = 20000;
@@ -36,57 +45,70 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   const logDeploy = (deployment: DeploymentStore) => {
     console.log("Saving deployment:", deployment);
     deploymentAddresses.push(deployment);
-    if (deployment.contractName === "DCAReinvest")
+    if (deployment.contractName === "DCAReinvest") {
       reinvestAddress = deployment.deployment;
+    }
   };
 
   console.log("🟠 DCA Deployer: Mounted");
-  console.log(`🟠 DCA Deployer: ${deployer.address}`);
+  console.log(`🟠 DCA Deployer: ${await deployer.getAddress()}`);
   console.log(
     `🟠 DCA Deployer: Deploying ${contractsToDeploy.length} Contracts`,
   );
   console.log("🟠 DCA Deployer: Deploying to", netName);
 
-  //  Deploy Contracts
   try {
     for (let i = 0; i < contractsToDeploy.length; i++) {
       const deployment = contractsToDeploy[i];
       console.log("🟠 Deploying Contract:", deployment);
 
       const args = deploymentArgumentStore[deployment](
-        deployer.address,
+        await deployer.getAddress(),
         network.name,
       );
 
-      if (contractsToDeploy[0] === "DCAReinvest")
-        if (deployment === "DCAAccount") args[3] = reinvestAddress;
-        else if (deployment === "DCAFactory") args[2] = reinvestAddress;
+      if (deployment === "DCAAccount" || deployment === "DCAFactory") {
+        // Find DCAExecutor address from current deployment session
+        const executorDeployment = deploymentAddresses.find(
+          (d) => d.contractName === "DCAExecutor",
+        );
+        if (executorDeployment) {
+          args[0] = executorDeployment.deployment;
+        }
 
-      if (contractsToDeploy[0] === "DCAExecutor")
-        if (deployment === "DCAAccount" || deployment === "DCAFactory")
-          args[0] = deploymentAddresses[0].deployment;
-      if (contractsToDeploy[1] === "DCAExecutor")
-        if (deployment === "DCAAccount" || deployment === "DCAFactory")
-          args[0] = deploymentAddresses[1].deployment;
+        // Set reinvest address if available
+        if (reinvestAddress) {
+          if (deployment === "DCAAccount") {
+            args[3] = reinvestAddress;
+          } else if (deployment === "DCAFactory") {
+            args[2] = reinvestAddress;
+          }
+        }
+      }
 
       await deploymentFiles[deployment]({
         hre,
-        deployer,
+        deployer: deployer as any,
         delayTime,
         contractName: deployment,
-        network: network,
+        network: network as any,
         constructorArguments: args,
         prevDeployments: deploymentAddresses,
         logDeployment: logDeploy,
       }).then(async (address: DeploymentReturn) => {
         if (address !== false) {
-          logDeployment(deployment, address, deployer.address, network);
+          logDeployment(
+            deployment,
+            address,
+            await deployer.getAddress(),
+            network as any,
+          );
         }
       });
     }
 
     console.log("🟢 Finished Deploying Contracts", deploymentAddresses);
   } catch (error) {
-    console.log("Error in task deployment", error);
+    console.log("❌ Error in task deployment", error);
   }
 });

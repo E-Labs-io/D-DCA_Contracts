@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 pragma experimental ABIEncoderV2;
-import "hardhat/console.sol";
+//import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -13,7 +13,7 @@ import "../security/onlyActive.sol";
 import {Strategies} from "../library/Strategys.sol";
 import {Fee} from "../library/Fees.sol";
 import {Intervals} from "../library/Intervals.sol";
-
+import "../utils/swap.sol";
 /**
  *
  ************************************************
@@ -33,7 +33,13 @@ import {Intervals} from "../library/Intervals.sol";
  *
  */
 
-contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
+contract DCAExecutor is
+    Swap,
+    OnlyAdmin,
+    OnlyExecutor,
+    OnlyActive,
+    IDCAExecutor
+{
     using Intervals for Interval;
     using Strategies for Strategy;
     using Fee for uint16;
@@ -59,21 +65,18 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
      */
     constructor(
         FeeDistribution memory feeDistrobution_,
-        address executionEOA_
-    ) OnlyExecutor(msg.sender, executionEOA_) {
+        address executionEOA_,
+        address swapRouter_
+    ) Swap(swapRouter_) OnlyExecutor(msg.sender, executionEOA_) {
         setFeeData(feeDistrobution_);
     }
 
     /**
      * @dev Fallback function for the DCAExecutor contract
      */
-    fallback() external payable {
-        revert("DCAExecutor : [fallback]");
-    }
+    fallback() external payable {}
 
-    receive() external payable {
-        revert("DCAExecutor : [receive]");
-    }
+    receive() external payable {}
 
     /**
      * @dev Subscribes a strategy to the DCAExecutor
@@ -170,18 +173,6 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
     ) external override onlyAdmins {
         IERC20 token = IERC20(tokenAddress_);
         uint256 balance = token.balanceOf(address(this));
-        console.log("Executor: Balance", balance);
-        console.log(
-            "Executor: Inital Admin Balance",
-            token.balanceOf(_feeData.adminAddress)
-        );
-        console.log(
-            "Executor: Inital Execution Balance",
-            token.balanceOf(_feeData.executionAddress)
-        );
-        console.log("Executor: Admin Fees", _feeData.amountToAdmin);
-        console.log("Executor: Executor Fees", _feeData.amountToExecutor);
-        console.log("Executor: compute Fees", _feeData.amountToComputing);
 
         if (balance > 0) {
             (
@@ -190,33 +181,20 @@ contract DCAExecutor is OnlyAdmin, OnlyExecutor, OnlyActive, IDCAExecutor {
                 uint256 adminFee
             ) = _feeData.getFeeSplit(balance);
 
-            console.log("Executor: Admin Amount", adminFee);
-            console.log("Executor: Executor Amount", executorFee);
-            console.log("Executor: compute Amount", computingFee);
-
-            if (executorFee > 0)
-                _transferFee(_feeData.executionAddress, executorFee, token);
+            if (executorFee > 0) {
+                // Convert the UDS to native token
+                uint256 execAmunt = _swap(
+                    tokenAddress_,
+                    address(0),
+                    executorFee
+                );
+                payable(_feeData.executionAddress).transfer(execAmunt);
+            }
             if (computingFee > 0)
                 _transferFee(_feeData.computingAddress, computingFee, token);
             if (adminFee > 0)
                 _transferFee(_feeData.adminAddress, adminFee, token);
 
-            console.log(
-                "Executor: Remaining Balance",
-                token.balanceOf(address(this))
-            );
-            console.log(
-                "Executor: New Admin Balance",
-                token.balanceOf(_feeData.adminAddress)
-            );
-            console.log(
-                "Executor: New Executor Balance",
-                token.balanceOf(_feeData.executionAddress)
-            );
-            console.log(
-                "Executor: New Compute Balance",
-                token.balanceOf(_feeData.computingAddress)
-            );
             emit FeesDistributed(tokenAddress_, balance);
         }
     }

@@ -29,7 +29,7 @@ library CompoundV3Reinvest {
     uint8 public constant MODULE_ID = 0x11;
 
     address internal constant COMPOUND_ETH_CONTRACT =
-        0x46e6b214b524310239732D51387075E0e70970bf; //ETH Base
+        0x46e6b214b524310239732D51387075E0e70970bf; //ETH Base Sepolia
     address internal constant COMPOUND_USDC_CONTRACT =
         0xb125E6687d4313864e53df431d5425969c15Eb2F; //USDC Base
 
