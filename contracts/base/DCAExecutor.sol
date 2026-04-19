@@ -5,6 +5,8 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interfaces/IDCAExecutor.sol";
 import "../interfaces/IDCAAccount.sol";
 import "../security/onlyAdmin.sol";
@@ -38,12 +40,22 @@ contract DCAExecutor is
     OnlyAdmin,
     OnlyExecutor,
     OnlyActive,
-    IDCAExecutor
+    IDCAExecutor,
+    ReentrancyGuard
 {
     using Intervals for Interval;
     using Strategies for Strategy;
     using Fee for uint16;
     using Fee for FeeDistribution;
+    using SafeERC20 for IERC20;
+
+    // Custom errors for gas optimization
+    error StrategyNotSubscribed();
+    error IntervalNotActive();
+    error NotInExecutionWindow();
+    error StrategyAlreadySubscribed();
+    error NotAllowedBaseToken(address token);
+    error FeeSplitTotalNot100();
 
     mapping(Interval => bool) private _activeIntervals;
     mapping(Interval => uint256) internal _totalActiveStrategiesByIntervals;
@@ -66,8 +78,9 @@ contract DCAExecutor is
     constructor(
         FeeDistribution memory feeDistrobution_,
         address executionEOA_,
-        address swapRouter_
-    ) Swap(swapRouter_) OnlyExecutor(msg.sender, executionEOA_) {
+        address swapRouter_,
+        address quoter_
+    ) Swap(swapRouter_, quoter_) OnlyExecutor(msg.sender, executionEOA_) {
         setFeeData(feeDistrobution_);
     }
 
@@ -89,22 +102,20 @@ contract DCAExecutor is
             Strategies.isAccountAddress(strategy_, _msgSender()),
             "DCAexecutor : [Subscribe] Only Account Contract can unsubscribe"
         );
-        require(
-            strategy_.isValid(),
-            "DCAexecutor : [Subscribe] Invalid strategy"
-        );
-        require(
-            isIntervalActive(strategy_.interval),
-            "DCAexecutor : [Subscribe] Interval Not Active"
-        );
+        if (!strategy_.isValid()) {
+            revert("DCAexecutor : [Subscribe] Invalid strategy");
+        }
+        if (!isIntervalActive(strategy_.interval)) {
+            revert IntervalNotActive();
+        }
 
-        require(
-            !_strategies[strategy_.accountAddress][strategy_.strategyId],
-            "DCAexecutor : [Subscribe] Strategy already subscribed"
-        );
+        if (_strategies[strategy_.accountAddress][strategy_.strategyId]) {
+            revert StrategyAlreadySubscribed();
+        }
 
-        if (!_allowedBaseTokens[strategy_.baseToken.tokenAddress])
+        if (!_allowedBaseTokens[strategy_.baseToken.tokenAddress]) {
             revert NotAllowedBaseToken(strategy_.baseToken.tokenAddress);
+        }
 
         _subscribeAccount(strategy_);
     }
@@ -142,24 +153,23 @@ contract DCAExecutor is
         address DCAAccount_,
         uint256 strategyId_,
         Interval interval_
-    ) external override onlyExecutor is_active {
-        require(
-            _strategies[DCAAccount_][strategyId_],
-            "DCAExecutor : [Execute] Strategy not subscribed"
-        );
+    ) external override onlyExecutor is_active nonReentrant {
+        if (!_strategies[DCAAccount_][strategyId_]) {
+            revert StrategyNotSubscribed();
+        }
 
-        require(
-            isIntervalActive(interval_),
-            "DCAExecutor : [Execute] Interval Not Active"
-        );
+        if (!isIntervalActive(interval_)) {
+            revert IntervalNotActive();
+        }
 
-        require(
-            Intervals.isInWindow(
+        if (
+            !Intervals.isInWindow(
                 interval_,
                 _lastExecution[DCAAccount_][strategyId_]
-            ),
-            "DCAExecutor : [Execute] Not in execution window"
-        );
+            )
+        ) {
+            revert NotInExecutionWindow();
+        }
 
         _executeStrategy(DCAAccount_, strategyId_);
     }
@@ -170,7 +180,7 @@ contract DCAExecutor is
      */
     function DistributeFees(
         address tokenAddress_
-    ) external override onlyAdmins {
+    ) external override onlyAdmins nonReentrant {
         IERC20 token = IERC20(tokenAddress_);
         uint256 balance = token.balanceOf(address(this));
 
@@ -186,7 +196,8 @@ contract DCAExecutor is
                 uint256 execAmunt = _swap(
                     tokenAddress_,
                     address(0),
-                    executorFee
+                    executorFee,
+                    50 // 0.5% slippage tolerance
                 );
                 payable(_feeData.executionAddress).transfer(execAmunt);
             }
@@ -385,7 +396,7 @@ contract DCAExecutor is
         uint256 amount_,
         IERC20 token_
     ) internal {
-        token_.transfer(to_, amount_);
+        token_.safeTransfer(to_, amount_);
     }
 
     /** Stats Getters */

@@ -53,7 +53,7 @@ describe("> Basic Reinvest Test", () => {
     ]);
 
     aWethContract = (await connectToErc20(
-      tokenAddress?.aWeth?.[forkedChain]! as string,
+      tokenAddress.aWeth![forkedChain]! as string,
       addressStore.deployer.signer,
     )) as IAToken;
 
@@ -82,7 +82,7 @@ describe("> Basic Reinvest Test", () => {
 
       createdAccount = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
         addressStore.user.address,
         ZeroAddress,
       );

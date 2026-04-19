@@ -3,8 +3,8 @@ pragma solidity ^0.8.20;
 
 import {ForwardReinvest} from "../modules/ForwardReinvest.sol";
 import {AaveV3Reinvest} from "../modules/AaveV3Reinvest.sol";
-
 import {CompoundV3Reinvest} from "../modules/CompoundV3Reinvest.sol";
+import {LidoStaking} from "../modules/LidoStaking.sol";
 /**
  *
  ************************************************
@@ -59,5 +59,7 @@ library ReinvestCodes {
             moduleName = AaveV3Reinvest.MODULE_NAME;
         else if (checkCode(code_, ReinvestCodes.COMPOUND))
             moduleName = CompoundV3Reinvest.MODULE_NAME;
+        else if (checkCode(code_, ReinvestCodes.LIDO_STETH))
+            moduleName = LidoStaking.MODULE_NAME;
     }
 }

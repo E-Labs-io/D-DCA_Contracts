@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "hardhat/console.sol";
-
 import "../utils/swap.sol";
 import {Strategies, Intervals} from "../library/Strategys.sol";
 import {Fee} from "../library/Fees.sol";
@@ -35,6 +33,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     using Strategies for Strategy;
     using Intervals for Interval;
     using SafeERC20 for IERC20; // Added using statement for SafeERC20
+
 
     mapping(uint256 => Strategy) internal _strategies;
 
@@ -110,7 +109,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         }
 
         _approveSwapSpend(baseAddress, tradeAmount);
-        uint256 amountIn = _swap(baseAddress, targetAddress, tradeAmount);
+        uint256 amountIn = _swap(baseAddress, targetAddress, tradeAmount, 50); // 0.5% slippage tolerance
         bool success;
 
         if (amountIn > 0) {

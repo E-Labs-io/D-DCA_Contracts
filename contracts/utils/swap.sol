@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "hardhat/console.sol";
-
 import {ISwapRouter, IWETH9} from "../protocols/uniswap/ISwapRouterv3.sol";
+import {IQuoterV2} from "../protocols/uniswap/IQuoterV2.sol";
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -27,10 +26,14 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
  */
 abstract contract Swap {
     ISwapRouter public SWAP_ROUTER;
-    uint24 private _poolFee = 3000;
+    IQuoterV2 public QUOTER;
 
-    constructor(address swapAddress) {
-        SWAP_ROUTER = ISwapRouter(swapAddress);
+    // Default pool fee - can be overridden by getPoolFee function
+    uint24 public constant DEFAULT_POOL_FEE = 3000;
+
+    constructor(address swapRouterAddress, address quoterAddress) {
+        SWAP_ROUTER = ISwapRouter(swapRouterAddress);
+        QUOTER = IQuoterV2(quoterAddress);
     }
 
     /**
@@ -38,28 +41,37 @@ abstract contract Swap {
      * @param baseToken_  token address of the token to swap from
      * @param targetToken_  token address of the token to receive
      * @param amount_  amount to swap
+     * @param slippageToleranceBps_  slippage tolerance in basis points (1 = 0.01%)
      * @return amount  amount returned by the swap
      */
     function _swap(
         address baseToken_,
         address targetToken_,
-        uint256 amount_
+        uint256 amount_,
+        uint256 slippageToleranceBps_
     ) internal returns (uint256 amount) {
-        //  The call to `exactInputSingle` executes the swap.
+        // Get the appropriate pool fee for this token pair
+        uint24 poolFee = _getPoolFee(baseToken_, targetToken_);
+
+        // Calculate minimum amount out based on slippage tolerance
+        // First get a quote for the swap to calculate minimum output
+        uint256 estimatedAmountOut = _getQuote(baseToken_, targetToken_, amount_, poolFee);
+        uint256 amountOutMinimum = (estimatedAmountOut * (10000 - slippageToleranceBps_)) / 10000;
+
+        // The call to `exactInputSingle` executes the swap.
         if (targetToken_ == address(0)) {
             // Swap tokens for WETH then convert to ETH
             amount = SWAP_ROUTER.exactInputSingle(
                 ISwapRouter.ExactInputSingleParams({
                     tokenIn: baseToken_,
                     tokenOut: SWAP_ROUTER.WETH9(),
-                    fee: _poolFee,
+                    fee: poolFee,
                     recipient: address(this),
                     amountIn: amount_,
-                    amountOutMinimum: 0,
+                    amountOutMinimum: amountOutMinimum,
                     sqrtPriceLimitX96: 0
                 })
             );
-            console.log("Withdrawing WETH");
             _withdrawWETH(amount);
             return amount;
         } else
@@ -68,10 +80,10 @@ abstract contract Swap {
                     ISwapRouter.ExactInputSingleParams({
                         tokenIn: baseToken_,
                         tokenOut: targetToken_,
-                        fee: _poolFee,
+                        fee: poolFee,
                         recipient: address(this),
                         amountIn: amount_,
-                        amountOutMinimum: 0,
+                        amountOutMinimum: amountOutMinimum,
                         sqrtPriceLimitX96: 0
                     })
                 );
@@ -129,5 +141,53 @@ abstract contract Swap {
      */
     function _withdrawWETH(uint256 amount_) internal {
         IWETH9(SWAP_ROUTER.WETH9()).withdraw(amount_);
+    }
+
+    /**
+     * @dev Gets the optimal pool fee for a token pair
+     * @param tokenIn_ Input token address
+     * @param tokenOut_ Output token address
+     * @return fee The pool fee to use (500, 3000, or 10000)
+     */
+    function _getPoolFee(
+        address tokenIn_,
+        address tokenOut_
+    ) internal pure returns (uint24) {
+        // For now, use default fee. In production, this could be enhanced to:
+        // - Check pool liquidity for each fee tier
+        // - Use historical data to determine optimal fee
+        // - Consider token volatility
+        return DEFAULT_POOL_FEE;
+    }
+
+    /**
+     * @dev Gets a quote for the swap amount
+     * @param tokenIn_ Input token address
+     * @param tokenOut_ Output token address
+     * @param amountIn_ Input amount
+     * @param fee_ Pool fee
+     * @return amountOut Estimated output amount
+     */
+    function _getQuote(
+        address tokenIn_,
+        address tokenOut_,
+        uint256 amountIn_,
+        uint24 fee_
+    ) internal returns (uint256 amountOut) {
+        // Build the path for single-hop swap
+        bytes memory path = abi.encodePacked(tokenIn_, fee_, tokenOut_);
+
+        try QUOTER.quoteExactInput(path, amountIn_) returns (
+            uint256 amountOut_,
+            uint160[] memory,
+            uint32[] memory,
+            uint256
+        ) {
+            return amountOut_;
+        } catch {
+            // If quoting fails, return 0 - the swap will still work with amountOutMinimum = 0
+            // This is a fallback to maintain functionality
+            return 0;
+        }
     }
 }

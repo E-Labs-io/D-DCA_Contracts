@@ -72,7 +72,7 @@ describe("> DCA Executor Tests", () => {
     );
 
     usdcContract = await connectToErc20(
-      tokenAddress?.usdc?.[forkedChain]! as string,
+      tokenAddress.usdc![forkedChain]! as string,
       usedImpersonater,
     );
 
@@ -87,7 +87,7 @@ describe("> DCA Executor Tests", () => {
     );
 
     wethContract = await connectToErc20(
-      tokenAddress?.weth?.[forkedChain]! as string,
+      tokenAddress.weth![forkedChain]! as string,
       wethImpersonator,
     );
   }
@@ -104,7 +104,8 @@ describe("> DCA Executor Tests", () => {
         executorFactory.deploy(
           { ...FeeData, amountToComputing: 0 },
           addressStore.executorEoa.address,
-          tokenAddress.swapRouter![forkedChain]!,
+          tokenAddress.swapRouter![forkedChain]! as string,
+          tokenAddress.quoter![forkedChain]! as string,
         ),
       ).to.be.revertedWith(
         "DCAExecutor : [setFeeData] Total split percents don't equal 100%",
@@ -118,7 +119,8 @@ describe("> DCA Executor Tests", () => {
       executorContract = await executorFactory.deploy(
         FeeData,
         addressStore.executorEoa.address,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
+        tokenAddress.quoter![forkedChain]! as string,
       );
       await expect(executorContract.waitForDeployment()).to.be.fulfilled;
     });
@@ -299,7 +301,7 @@ describe("> DCA Executor Tests", () => {
       );
       createdAccount = await accountBase.deploy(
         executorContract.target,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
         addressStore.user.address,
         ZeroAddress,
       );

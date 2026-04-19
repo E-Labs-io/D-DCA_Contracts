@@ -32,8 +32,23 @@ library AaveV3Reinvest {
     string public constant MODULE_NAME = "Aave V3 Reinvest";
     uint8 public constant MODULE_ID = 0x12;
 
-    address constant AAVE_CONTRACT = 0xA238Dd80C259a72e81d7e4664a9801593F98d1c5; //Base
-    AaveIPool constant AAVE_POOL = AaveIPool(AAVE_CONTRACT);
+    // Aave pool addresses by chain - should be configurable per deployment
+    address constant AAVE_POOL_BASE = 0xA238Dd80C259a72e81d7e4664a9801593F98d1c5;
+    address constant AAVE_POOL_ETH = 0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2;
+    address constant AAVE_POOL_ARB = 0x794a61358D6845594F94dc1DB02A252b5b4814aD;
+
+    /**
+     * @dev Gets the Aave pool contract for the current network
+     * @param networkId The chain ID
+     * @return The Aave pool contract
+     */
+    function _getAavePool(uint256 networkId) internal pure returns (AaveIPool) {
+        if (networkId == 8453) return AaveIPool(AAVE_POOL_BASE); // Base
+        if (networkId == 1) return AaveIPool(AAVE_POOL_ETH); // Ethereum
+        if (networkId == 42161) return AaveIPool(AAVE_POOL_ARB); // Arbitrum
+        // Default to Base for now
+        return AaveIPool(AAVE_POOL_BASE);
+    }
 
     /**
      * @dev The reinvest data structure
@@ -41,8 +56,9 @@ library AaveV3Reinvest {
      */
     struct ReinvestDataStruct {
         uint8 moduleCode; // Module code
-        address token;
-        address aToken;
+        address token; // Underlying token
+        address aToken; // aToken address
+        address pool; // Aave pool address for the network
     }
 
     /**
@@ -57,16 +73,17 @@ library AaveV3Reinvest {
         bytes memory data_
     ) internal returns (uint256 amount, bool success) {
         ReinvestDataStruct memory investData = _decodeData(data_);
+        AaveIPool pool = AaveIPool(investData.pool);
 
         uint256 oldBalance = IERC20(investData.aToken).balanceOf(address(this));
 
         bool approvalSuccess = IERC20(investData.token).approve(
-            address(AAVE_POOL),
+            address(pool),
             amount_
         );
 
         if (approvalSuccess) {
-            AAVE_POOL.supply(investData.token, amount_, address(this), 0);
+            pool.supply(investData.token, amount_, address(this), 0);
 
             uint256 newBalance = IERC20(investData.aToken).balanceOf(
                 address(this)
@@ -91,7 +108,8 @@ library AaveV3Reinvest {
         bytes memory data_
     ) internal returns (uint256 amount, bool success) {
         ReinvestDataStruct memory investData = _decodeData(data_);
-        amount = AAVE_POOL.withdraw(investData.token, amount_, address(this));
+        AaveIPool pool = AaveIPool(investData.pool);
+        amount = pool.withdraw(investData.token, amount_, address(this));
 
         success = amount > 0;
         return (amount, success);

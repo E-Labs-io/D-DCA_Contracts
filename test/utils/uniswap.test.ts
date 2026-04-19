@@ -50,7 +50,7 @@ describe("> Uniswap Tests Tests", () => {
       productionChainImpersonators[forkedChain]?.usdc as string,
     );
     usdcContract = await connectToErc20(
-      tokenAddress?.usdc?.[forkedChain]! as string,
+      tokenAddress.usdc![forkedChain]! as string,
       usedImpersonater,
     );
 
@@ -68,14 +68,14 @@ describe("> Uniswap Tests Tests", () => {
 
     //  WETH
     wethContract = await connectToErc20(
-      tokenAddress?.weth?.[forkedChain]! as string,
+      tokenAddress.weth![forkedChain]! as string,
       addressStore.deployer.signer,
     );
 
     const block = await hre.ethers.provider.getBlock("latest");
     swapParams = {
-      tokenIn: tokenAddress.usdc![forkedChain]!,
-      tokenOut: tokenAddress.weth![forkedChain]!,
+      tokenIn: tokenAddress.usdc![forkedChain]! as string,
+      tokenOut: tokenAddress.weth![forkedChain]! as string,
       fee: 10000,
       recipient: addressStore.deployer.address,
       amountIn: ethers.parseUnits("1000", 6),

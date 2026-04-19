@@ -57,7 +57,7 @@ describe("> DCA Reinvest Modula Test", () => {
       productionChainImpersonators[forkedChain]!.weth as string,
     );
     wethContract = await connectToErc20(
-      tokenAddress?.weth?.[forkedChain]! as string,
+      tokenAddress.weth![forkedChain]! as string,
       wethImpersonator,
     );
     const wethTx2 = await wethContract.transfer(

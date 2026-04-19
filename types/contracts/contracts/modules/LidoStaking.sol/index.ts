@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { LidoReinvest } from "./LidoReinvest";
+export type { LidoStaking } from "./LidoStaking";

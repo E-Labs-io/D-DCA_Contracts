@@ -18,8 +18,41 @@ function CreateAccount() external nonpayable
 
 Will create a new DCAAccount with the sender as the initial owner.
 
-*Creates a new DCAAccount*
+*Creates a new DCAAccount using CREATE2 for deterministic addresses*
 
+
+### CreateAccountWithSalt
+
+```solidity
+function CreateAccountWithSalt(bytes32 salt_) external nonpayable
+```
+
+
+
+*Creates a new DCAAccount with a custom salt for CREATE2*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| salt_ | bytes32 | The salt for CREATE2 deployment |
+
+### QUOTER
+
+```solidity
+function QUOTER() external view returns (address)
+```
+
+
+
+*The quoter address*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | The quoter address |
 
 ### SWAP_ROUTER
 
@@ -172,6 +205,29 @@ function pauseFactory() external nonpayable
 
 *Pauses the factory*
 
+
+### predictAccountAddress
+
+```solidity
+function predictAccountAddress(bytes32 salt_, address owner_) external view returns (address)
+```
+
+
+
+*Predicts the address of an account that would be created with the given salt*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| salt_ | bytes32 | The salt for CREATE2 |
+| owner_ | address | The owner of the account |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | The predicted address |
 
 ### reInvestLogicContract
 

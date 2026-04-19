@@ -7,7 +7,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
 
 contract SwapTest is Swap {
-    constructor(address swapAddress) Swap(swapAddress) {}
+    constructor(address swapRouterAddress, address quoterAddress) Swap(swapRouterAddress, quoterAddress) {}
 
     /**
      * @dev Fallback function for the DCAExecutor contract
@@ -25,14 +25,14 @@ contract SwapTest is Swap {
         address targetTokenAddress,
         uint256 amount
     ) external returns (uint256) {
-        return _swap(baseTokenAddress, targetTokenAddress, amount);
+        return _swap(baseTokenAddress, targetTokenAddress, amount, 50);
     }
 
     function swapToEthInContract(
         address baseTokenAddress,
         uint256 amount
     ) external returns (uint256) {
-        return _swap(baseTokenAddress, address(0), amount);
+        return _swap(baseTokenAddress, address(0), amount, 50);
     }
 
     function swapTokensToTarget(
@@ -41,7 +41,7 @@ contract SwapTest is Swap {
         uint256 amount,
         address recipient
     ) external returns (uint256 amountReturned) {
-        amountReturned = _swap(baseTokenAddress, targetTokenAddress, amount);
+        amountReturned = _swap(baseTokenAddress, targetTokenAddress, amount, 50);
         IERC20(targetTokenAddress).transfer(recipient, amountReturned);
         return amountReturned;
     }
@@ -51,7 +51,7 @@ contract SwapTest is Swap {
         uint256 amount,
         address recipient
     ) external returns (uint256 amountReturned) {
-        amountReturned = _swap(baseTokenAddress, address(0), amount);
+        amountReturned = _swap(baseTokenAddress, address(0), amount, 50);
         payable(recipient).transfer(amountReturned);
         return amountReturned;
     }

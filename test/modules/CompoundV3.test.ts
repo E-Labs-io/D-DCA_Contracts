@@ -68,7 +68,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
     );
 
     cWethContract = await connectToErc20(
-      tokenAddress?.compoundV3ETH?.[forkedChain]! as string,
+      tokenAddress.compoundV3ETH![forkedChain]! as string,
       addressStore.deployer.signer,
     );
 
@@ -154,7 +154,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
 
       createdAccount = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
         addressStore.user.address,
         ZeroAddress,
       );
@@ -419,7 +419,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
 
       await expect(
         createdAccount.AddFunds(
-          tokenAddress.usdc![forkedChain]!,
+          tokenAddress.usdc![forkedChain]! as string,
           ethers.parseUnits("150000", 6),
         ),
       ).to.be.fulfilled;
