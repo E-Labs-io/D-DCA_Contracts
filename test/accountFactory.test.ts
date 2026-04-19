@@ -46,13 +46,13 @@ describe("> DCA Account Factory Tests", () => {
       );
       factoryContract = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
         ZeroAddress,
       );
       await expect(
         factoryFactory.deploy(
           ZeroAddress,
-          tokenAddress.swapRouter![forkedChain]!,
+          tokenAddress.swapRouter![forkedChain]! as string,
           ZeroAddress,
         ),
       ).to.be.fulfilled;
@@ -113,6 +113,7 @@ describe("> DCA Account Factory Tests", () => {
         deploymentArgs[0],
         addressStore.executorEoa.address,
         deploymentArgs[2],
+        deploymentArgs[3],
       );
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);

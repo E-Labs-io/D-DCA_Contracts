@@ -3,3 +3,4 @@
 /* eslint-disable */
 import type * as swapTestSol from "./swapTest.sol";
 export type { swapTestSol };
+export type { ReentrancyAttacker } from "./ReentrancyAttacker";

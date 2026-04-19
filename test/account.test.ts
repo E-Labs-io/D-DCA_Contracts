@@ -76,7 +76,7 @@ describe("> DCA Account Tests", () => {
     );
 
     usdcContract = await connectToErc20(
-      tokenAddress?.usdc?.[forkedChain]! as string,
+      tokenAddress.usdc![forkedChain]! as string as string,
       usedImpersonater,
     );
 
@@ -91,7 +91,7 @@ describe("> DCA Account Tests", () => {
     );
 
     wethContract = await connectToErc20(
-      tokenAddress?.weth?.[forkedChain]! as string,
+      tokenAddress.weth![forkedChain]! as string as string,
       wethImpersonator,
     );
 
@@ -112,7 +112,8 @@ describe("> DCA Account Tests", () => {
 
       createdAccount = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
+        tokenAddress.quoter![forkedChain]! as string,
         addressStore.user.address,
         ZeroAddress,
       );
@@ -251,13 +252,13 @@ describe("> DCA Account Tests", () => {
   describe("💡 Check Fund, Withdraw & Balances", () => {
     it("🧪 Should return 0 base balance of USDC", async function () {
       const balance = await createdAccount.getBaseBalance(
-        tokenAddress.usdc![forkedChain]!,
+        tokenAddress.usdc![forkedChain]! as string,
       );
       expect(balance).to.equal(0);
     });
     it("🧪 Should return 0 target balance of WETH", async function () {
       const balance = await createdAccount.getBaseBalance(
-        tokenAddress.weth![forkedChain]!,
+        tokenAddress.weth![forkedChain]! as string,
       );
       expect(balance).to.equal(0);
     });
@@ -275,35 +276,35 @@ describe("> DCA Account Tests", () => {
 
       await expect(
         createdAccount.AddFunds(
-          tokenAddress.usdc![forkedChain]!,
+          tokenAddress.usdc![forkedChain]! as string,
           ethers.parseUnits("100", 6),
         ),
       ).to.be.fulfilled;
     });
     it("🧪 Should return the balance of 100 USDC", async function () {
       const balance = await createdAccount.getBaseBalance(
-        tokenAddress.usdc![forkedChain]!,
+        tokenAddress.usdc![forkedChain]! as string,
       );
       expect(balance).to.equal(ethers.parseUnits("100", 6));
     });
     it("🧪 Should unfund the account with USDC", async function () {
       await expect(
         createdAccount.WithdrawFunds(
-          tokenAddress.usdc![forkedChain]!,
+          tokenAddress.usdc![forkedChain]! as string,
           ethers.parseUnits("100", 6),
         ),
       ).to.be.fulfilled;
     });
     it("🧪 Should return 0 base balance of USDC", async function () {
       const balance = await createdAccount.getBaseBalance(
-        tokenAddress.usdc![forkedChain]!,
+        tokenAddress.usdc![forkedChain]! as string,
       );
       expect(balance).to.equal(0);
     });
     it("🧪 Should revert to withdraw WETH Target balance", async function () {
       await expect(
         createdAccount.WithdrawSavings(
-          tokenAddress.weth![forkedChain]!,
+          tokenAddress.weth![forkedChain]! as string,
           ethers.parseUnits("100", 6),
         ),
       ).to.be.revertedWith(
@@ -341,7 +342,7 @@ describe("> DCA Account Tests", () => {
 
       await expect(
         createdAccount.AddFunds(
-          tokenAddress.usdc![forkedChain]!,
+          tokenAddress.usdc![forkedChain]! as string,
           ethers.parseUnits("10000", 6),
         ),
       ).to.be.fulfilled;
@@ -423,7 +424,7 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should show target WETH balance above 0", async () => {
       const balance = await createdAccount.getTargetBalance(
-        tokenAddress.weth![forkedChain]!,
+        tokenAddress.weth![forkedChain]! as string,
       );
       expect(balance > 0).to.be.true;
     });

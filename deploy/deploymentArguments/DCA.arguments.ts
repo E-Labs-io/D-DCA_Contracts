@@ -26,8 +26,10 @@ export function DCAExecutorArguments(
     "0xe272653f2FF11D1F7bd24cdE149a29f4110d03B1";
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter![networkName as ChainName]!;
+  const quoter_: AddressLike =
+    tokenAddress.quoter![networkName as ChainName]!;
 
-  return [feeDistrobution_, executionEOA_, swapRouter_];
+  return [feeDistrobution_, executionEOA_, swapRouter_, quoter_];
 }
 
 export function DCAAccountArguments(
@@ -41,6 +43,8 @@ export function DCAAccountArguments(
     "0x0000000000000000000000000000000000000000";
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter![networkName as ChainName]!;
+  const quoter_: AddressLike =
+    tokenAddress.quoter![networkName as ChainName]!;
 
   const owner_: AddressLike = deployer;
 
@@ -48,7 +52,7 @@ export function DCAAccountArguments(
     deployedContracts?.DCAReinvest ||
     "0x0000000000000000000000000000000000000000";
 
-  return [executorAddress_, swapRouter_, owner_, reinvestLibraryContract_];
+  return [executorAddress_, swapRouter_, quoter_, owner_, reinvestLibraryContract_];
 }
 
 export function DCAAccountFactoryArguments(
@@ -62,12 +66,14 @@ export function DCAAccountFactoryArguments(
     "0x0000000000000000000000000000000000000000";
   const swapRouter_: AddressLike =
     tokenAddress.swapRouter![networkName as ChainName]!;
+  const quoter_: AddressLike =
+    tokenAddress.quoter![networkName as ChainName]!;
 
   const reinvestLibraryContract_ =
     deployedContracts?.DCAReinvest ||
     "0x0000000000000000000000000000000000000000";
 
-  return [executorAddress_, swapRouter_, reinvestLibraryContract_];
+  return [executorAddress_, swapRouter_, quoter_, reinvestLibraryContract_];
 }
 
 export function DCAReinvestLibraryArguments(

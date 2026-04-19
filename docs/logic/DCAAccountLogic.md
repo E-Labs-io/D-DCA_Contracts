@@ -27,6 +27,23 @@ Allows the account owner to fund the account for strategy&#39;s
 | token_ | address | Address for the base token being funded |
 | amount_ | uint256 | Amount of the token to be deposited |
 
+### DEFAULT_POOL_FEE
+
+```solidity
+function DEFAULT_POOL_FEE() external view returns (uint24)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint24 | undefined |
+
 ### Execute
 
 ```solidity
@@ -65,6 +82,23 @@ Ony callable by the DCAExecutor contract to remove the strategy from the executo
 | Name | Type | Description |
 |---|---|---|
 | strategyId_ | uint256 | Id of the strategy to remove |
+
+### QUOTER
+
+```solidity
+function QUOTER() external view returns (contract IQuoterV2)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | contract IQuoterV2 | undefined |
 
 ### SWAP_ROUTER
 

@@ -27,6 +27,23 @@ function AddFunds(address token_, uint256 amount_) external nonpayable
 | token_ | address | {address} The ERC20 token address |
 | amount_ | uint256 | {uint256} Amount of the token to deposit |
 
+### DEFAULT_POOL_FEE
+
+```solidity
+function DEFAULT_POOL_FEE() external view returns (uint24)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint24 | undefined |
+
 ### Execute
 
 ```solidity
@@ -88,6 +105,23 @@ function ForceUnwindReinvestPosition(uint256 strategyId_, address liquidityToken
 | Name | Type | Description |
 |---|---|---|
 | amountOfTargetReturned | uint256 | undefined |
+
+### QUOTER
+
+```solidity
+function QUOTER() external view returns (contract IQuoterV2)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | contract IQuoterV2 | undefined |
 
 ### SWAP_ROUTER
 
@@ -211,6 +245,38 @@ function WithdrawSavings(address token_, uint256 amount_) external nonpayable
 |---|---|---|
 | token_ | address | {address} The ERC20 token address |
 | amount_ | uint256 | {uint256} Amount of the target token to withdraw |
+
+### batchSubscribeStrategies
+
+```solidity
+function batchSubscribeStrategies(uint256[] strategyIds_) external nonpayable
+```
+
+
+
+*Batch subscribe multiple strategies to the executor*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyIds_ | uint256[] | Array of strategy IDs to subscribe |
+
+### batchUnsubscribeStrategies
+
+```solidity
+function batchUnsubscribeStrategies(uint256[] strategyIds_) external nonpayable
+```
+
+
+
+*Batch unsubscribe multiple strategies from the executor*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| strategyIds_ | uint256[] | Array of strategy IDs to unsubscribe |
 
 ### changeExecutor
 
@@ -682,6 +748,40 @@ error FailedInnerCall()
 *A call to an address target failed. The target may have reverted.*
 
 
+### InsufficientBalance
+
+```solidity
+error InsufficientBalance(uint256 available, uint256 required)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| available | uint256 | undefined |
+| required | uint256 | undefined |
+
+### InsufficientFundsForSubscription
+
+```solidity
+error InsufficientFundsForSubscription(uint256 required, uint256 available)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| required | uint256 | undefined |
+| available | uint256 | undefined |
+
 ### OwnableInvalidOwner
 
 ```solidity
@@ -714,6 +814,17 @@ error OwnableUnauthorizedAccount(address account)
 |---|---|---|
 | account | address | undefined |
 
+### ReentrancyGuardReentrantCall
+
+```solidity
+error ReentrancyGuardReentrantCall()
+```
+
+
+
+*Unauthorized reentrant call.*
+
+
 ### SafeERC20FailedOperation
 
 ```solidity
@@ -729,5 +840,49 @@ error SafeERC20FailedOperation(address token)
 | Name | Type | Description |
 |---|---|---|
 | token | address | undefined |
+
+### StrategyAlreadySubscribed
+
+```solidity
+error StrategyAlreadySubscribed()
+```
+
+
+
+
+
+
+### StrategyAlreadyUnsubscribed
+
+```solidity
+error StrategyAlreadyUnsubscribed()
+```
+
+
+
+
+
+
+### StrategyNotActive
+
+```solidity
+error StrategyNotActive()
+```
+
+
+
+
+
+
+### TransferFailed
+
+```solidity
+error TransferFailed()
+```
+
+
+
+
+
 
 

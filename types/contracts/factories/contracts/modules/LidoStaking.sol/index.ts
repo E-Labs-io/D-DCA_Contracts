@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { LidoReinvest__factory } from "./LidoReinvest__factory";
+export { LidoStaking__factory } from "./LidoStaking__factory";

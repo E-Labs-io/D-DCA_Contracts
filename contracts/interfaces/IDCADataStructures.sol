@@ -72,13 +72,14 @@ interface IDCADataStructures {
      *
      */
     struct Strategy {
-        address accountAddress;
-        TokenData baseToken;
-        TokenData targetToken; //use 0x0 for ETH
+        // Packed for optimal storage (smaller types first)
+        bool active;
         Interval interval;
+        address accountAddress;
         uint256 amount;
         uint256 strategyId;
-        bool active;
+        TokenData baseToken;
+        TokenData targetToken; //use 0x0 for ETH
         Reinvest reinvest;
     }
 

@@ -70,12 +70,12 @@ describe("> DCA Strategy Executions Tests", () => {
     ]);
 
     aWethContract = (await connectToErc20(
-      tokenAddress?.aWeth?.[forkedChain]! as string,
+      tokenAddress.aWeth![forkedChain]! as string,
       addressStore.deployer.signer,
     )) as IAToken;
 
     aWbtcContract = (await connectToErc20(
-      tokenAddress?.aWbtc?.[forkedChain]! as string,
+      tokenAddress.aWbtc![forkedChain]! as string,
       addressStore.deployer.signer,
     )) as IAToken;
 
@@ -90,7 +90,7 @@ describe("> DCA Strategy Executions Tests", () => {
     );
 
     usdcContract = await connectToErc20(
-      tokenAddress?.usdc?.[forkedChain]! as string,
+      tokenAddress.usdc![forkedChain]! as string,
       usedImpersonater,
     );
     const tx = await usdcContract.transfer(
@@ -110,7 +110,7 @@ describe("> DCA Strategy Executions Tests", () => {
     );
 
     wethContract = await connectToErc20(
-      tokenAddress?.weth?.[forkedChain]! as string,
+      tokenAddress.weth![forkedChain]! as string,
       wethImpersonator,
     );
 
@@ -119,7 +119,7 @@ describe("> DCA Strategy Executions Tests", () => {
     );
 
     wbtcContract = await connectToErc20(
-      tokenAddress?.usdc?.[forkedChain]! as string,
+      tokenAddress.usdc![forkedChain]! as string,
       wbtcImpersonator,
     );
   }
@@ -134,7 +134,8 @@ describe("> DCA Strategy Executions Tests", () => {
 
       const tx = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
+        tokenAddress.quoter![forkedChain]! as string,
         addressStore.user.address,
         ZeroAddress,
       );
@@ -203,6 +204,7 @@ describe("> DCA Strategy Executions Tests", () => {
         deploymentArgs[0],
         addressStore.executorEoa.address,
         deploymentArgs[2],
+        deploymentArgs[3],
       );
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);
@@ -280,7 +282,7 @@ describe("> DCA Strategy Executions Tests", () => {
 
         await expect(
           createdAccount.AddFunds(
-            tokenAddress.usdc![forkedChain]!,
+            tokenAddress.usdc![forkedChain]! as string,
             ethers.parseUnits("1000", 6),
           ),
         ).to.be.fulfilled;
@@ -311,7 +313,7 @@ describe("> DCA Strategy Executions Tests", () => {
       });
       it("🧪 Should show target WETH balance above 0", async () => {
         const balance = await createdAccount.getTargetBalance(
-          tokenAddress.weth![forkedChain]!,
+          tokenAddress.weth![forkedChain]! as string,
         );
         expect(balance > 0).to.be.true;
       });
@@ -403,7 +405,7 @@ describe("> DCA Strategy Executions Tests", () => {
             strategyId: 2,
             amount: Number(ethers.parseUnits("100", 6)),
             targetToken: {
-              tokenAddress: tokenAddress.wbtc![forkedChain]!,
+              tokenAddress: tokenAddress.wbtc![forkedChain]! as string,
               decimals: 8,
               ticker: "WBTC",
             },

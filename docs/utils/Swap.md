@@ -10,6 +10,40 @@
 
 ## Methods
 
+### DEFAULT_POOL_FEE
+
+```solidity
+function DEFAULT_POOL_FEE() external view returns (uint24)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint24 | undefined |
+
+### QUOTER
+
+```solidity
+function QUOTER() external view returns (contract IQuoterV2)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | contract IQuoterV2 | undefined |
+
 ### SWAP_ROUTER
 
 ```solidity

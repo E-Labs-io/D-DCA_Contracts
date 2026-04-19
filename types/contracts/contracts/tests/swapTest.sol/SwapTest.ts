@@ -24,6 +24,8 @@ import type {
 export interface SwapTestInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "DEFAULT_POOL_FEE"
+      | "QUOTER"
       | "SWAP_ROUTER"
       | "setAllowance"
       | "swapToEthInContract"
@@ -33,6 +35,11 @@ export interface SwapTestInterface extends Interface {
       | "withdrawETH"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "DEFAULT_POOL_FEE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "QUOTER", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "SWAP_ROUTER",
     values?: undefined
@@ -62,6 +69,11 @@ export interface SwapTestInterface extends Interface {
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_POOL_FEE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "QUOTER", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "SWAP_ROUTER",
     data: BytesLike
@@ -135,6 +147,10 @@ export interface SwapTest extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  DEFAULT_POOL_FEE: TypedContractMethod<[], [bigint], "view">;
+
+  QUOTER: TypedContractMethod<[], [string], "view">;
+
   SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
 
   setAllowance: TypedContractMethod<
@@ -190,6 +206,12 @@ export interface SwapTest extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "DEFAULT_POOL_FEE"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "QUOTER"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "SWAP_ROUTER"
   ): TypedContractMethod<[], [string], "view">;

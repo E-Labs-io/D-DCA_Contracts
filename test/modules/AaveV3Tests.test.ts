@@ -54,7 +54,7 @@ describe("> Aave V3 Reinvest Test", () => {
     ]);
 
     aWethContract = await connectToErc20(
-      tokenAddress?.aWeth?.[forkedChain]! as string,
+      tokenAddress.aWeth![forkedChain]! as string,
       addressStore.deployer.signer,
     );
 
@@ -143,7 +143,8 @@ describe("> Aave V3 Reinvest Test", () => {
 
       createdAccount = await factoryFactory.deploy(
         ZeroAddress,
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
+        tokenAddress.quoter![forkedChain]! as string,
         addressStore.user.address,
         ZeroAddress,
       );
@@ -186,6 +187,7 @@ describe("> Aave V3 Reinvest Test", () => {
         deploymentArgs[0],
         addressStore.executorEoa.address,
         deploymentArgs[2],
+        deploymentArgs[3],
       );
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);

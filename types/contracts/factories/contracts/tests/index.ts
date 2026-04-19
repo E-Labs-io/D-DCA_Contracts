@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as swapTestSol from "./swapTest.sol";
+export { ReentrancyAttacker__factory } from "./ReentrancyAttacker__factory";

@@ -46,7 +46,7 @@ describe("> Uniswap Tests Tests", () => {
       productionChainImpersonators[forkedChain]?.usdc as string,
     );
     usdcContract = await connectToErc20(
-      tokenAddress?.usdc?.[forkedChain]! as string,
+      tokenAddress.usdc![forkedChain]! as string,
       usedImpersonater,
     );
 
@@ -77,7 +77,8 @@ describe("> Uniswap Tests Tests", () => {
         addressStore.deployer.signer,
       );
       swapTest = await swapTestFactory.deploy(
-        tokenAddress.swapRouter![forkedChain]!,
+        tokenAddress.swapRouter![forkedChain]! as string,
+        tokenAddress.quoter![forkedChain]! as string,
       );
       await expect(swapTest.waitForDeployment()).to.be.fulfilled;
     });
@@ -215,7 +216,7 @@ describe("> Uniswap Tests Tests", () => {
         productionChainImpersonators[forkedChain]?.weth as string,
       );
       const impersonatedWeth = await connectToErc20(
-        tokenAddress?.weth?.[forkedChain]! as string,
+        tokenAddress.weth![forkedChain]! as string,
         wethImpersonater,
       );
 

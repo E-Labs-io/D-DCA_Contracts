@@ -55,7 +55,6 @@ interface IDCAExecutor is IDCADataStructures {
     event FeeDataChanged();
 
     event BaseTokenAllowanceChanged(address token_, bool allowed_);
-    error NotAllowedBaseToken(address token_);
 
     /**
      * @notice Called by a DCAAccount to subscribe a strategy to the DCAExecutor

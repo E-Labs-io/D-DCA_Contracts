@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-import "hardhat/console.sol";
 
 // PRODUCTION
 import "../logic/AccountLogic.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  *
@@ -24,16 +25,26 @@ import "../logic/AccountLogic.sol";
  *
  */
 
-contract DCAAccount is DCAAccountLogic {
+contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
     using Strategies for uint256;
     using Strategies for Strategy;
+    using SafeERC20 for IERC20;
+
+    // Custom errors for gas optimization
+    error StrategyNotActive();
+    error InsufficientBalance(uint256 available, uint256 required);
+    error StrategyAlreadySubscribed();
+    error StrategyAlreadyUnsubscribed();
+    error InsufficientFundsForSubscription(uint256 required, uint256 available);
+    error TransferFailed();
 
     constructor(
         address executorAddress_,
         address swapRouter_,
+        address quoter_,
         address owner_,
         address reinvestLibraryContract_
-    ) Swap(swapRouter_) OnlyExecutor(owner_, executorAddress_) {
+    ) Swap(swapRouter_, quoter_) OnlyExecutor(owner_, executorAddress_) {
         _setReinvestAddress(reinvestLibraryContract_);
     }
 
@@ -51,16 +62,16 @@ contract DCAAccount is DCAAccountLogic {
     function Execute(
         uint256 strategyId_,
         uint16 feeAmount_
-    ) external override onlyExecutor inWindow(strategyId_) returns (bool) {
-        require(
-            _strategies[strategyId_].isActive(),
-            "DCAAccount : [Execute] Strategy is not active"
-        );
-        require(
-            _baseBalances[_strategies[strategyId_].baseAddress()] >=
-                _strategies[strategyId_].amount,
-            "DCAAccount : [Execute] Base Balance too low"
-        );
+    ) external override onlyExecutor inWindow(strategyId_) nonReentrant returns (bool) {
+        if (!_strategies[strategyId_].isActive()) {
+            revert StrategyNotActive();
+        }
+        if (_baseBalances[_strategies[strategyId_].baseAddress()] < _strategies[strategyId_].amount) {
+            revert InsufficientBalance(
+                _baseBalances[_strategies[strategyId_].baseAddress()],
+                _strategies[strategyId_].amount
+            );
+        }
         return _executeDCATrade(strategyId_, feeAmount_);
     }
 
@@ -96,16 +107,16 @@ contract DCAAccount is DCAAccountLogic {
         // to the default DCAExecutor
 
         Strategy memory givenStrategy = _strategies[strategyId_];
-        require(
-            !givenStrategy.active,
-            "DCAAccount : [SubscribeStrategy] Strategy is already Subscribed"
-        );
+        if (givenStrategy.active) {
+            revert StrategyAlreadySubscribed();
+        }
 
-        require(
-            _baseBalances[givenStrategy.baseToken.tokenAddress] >=
-                (givenStrategy.amount * 5),
-            "DCAAccount : [SubscribeStrategy] Need to have 5 executions funded to subscribe"
-        );
+        if (_baseBalances[givenStrategy.baseToken.tokenAddress] < (givenStrategy.amount * 5)) {
+            revert InsufficientFundsForSubscription(
+                givenStrategy.amount * 5,
+                _baseBalances[givenStrategy.baseToken.tokenAddress]
+            );
+        }
         _subscribeToExecutor(_strategies[strategyId_]);
     }
 
@@ -117,10 +128,9 @@ contract DCAAccount is DCAAccountLogic {
         uint256 strategyId_
     ) external override onlyOwner {
         // Remove the given strategy from its active executor
-        require(
-            _strategies[strategyId_].isActive(),
-            "DCAAccount : [UnsubscribeStrategy] Strategy is already Unsubscribed"
-        );
+        if (!_strategies[strategyId_].isActive()) {
+            revert StrategyAlreadyUnsubscribed();
+        }
         _unsubscribeToExecutor(strategyId_);
     }
 
@@ -146,9 +156,9 @@ contract DCAAccount is DCAAccountLogic {
     function AddFunds(
         address token_,
         uint256 amount_
-    ) public override onlyOwner {
+    ) public override onlyOwner nonReentrant {
         //Transfer the given amount of the given ERC20 token to the DCAAccount
-        IERC20(token_).transferFrom(msg.sender, address(this), amount_);
+        IERC20(token_).safeTransferFrom(msg.sender, address(this), amount_);
         _baseBalances[token_] += amount_;
     }
 
@@ -157,14 +167,13 @@ contract DCAAccount is DCAAccountLogic {
      * @param token_ {address} The ERC20 token address
      * @param amount_ {uint256} Amount of the token to withdraw
      */
-    function WithdrawFunds(address token_, uint256 amount_) public onlyOwner {
+    function WithdrawFunds(address token_, uint256 amount_) public onlyOwner nonReentrant {
         //Transfer the given amount of the given ERC20 token out of the DCAAccount
-        require(
-            _baseBalances[token_] >= amount_,
-            "[DCAAccount] : [UnFundAccount] - Balance of token to low"
-        );
+        if (_baseBalances[token_] < amount_) {
+            revert InsufficientBalance(_baseBalances[token_], amount_);
+        }
         _baseBalances[token_] -= amount_;
-        IERC20(token_).transfer(msg.sender, amount_);
+        IERC20(token_).safeTransfer(msg.sender, amount_);
     }
 
     /**
@@ -176,19 +185,16 @@ contract DCAAccount is DCAAccountLogic {
     function WithdrawSavings(
         address token_,
         uint256 amount_
-    ) external override onlyOwner {
-        require(
-            _targetBalances[token_] >= amount_,
-            "[DCAAccount] : [WithdrawSavings] - Balance of token too low"
-        );
+    ) external override onlyOwner nonReentrant {
+        if (_targetBalances[token_] < amount_) {
+            revert InsufficientBalance(_targetBalances[token_], amount_);
+        }
         _targetBalances[token_] -= amount_;
-        bool success;
         if (token_ == address(0)) {
             payable(msg.sender).transfer(amount_);
-            success = true;
-        } else success = IERC20(token_).transfer(msg.sender, amount_);
-
-        require(success, "[DCAAccount] : [WithdrawSavings] - Transfer failed");
+        } else {
+            IERC20(token_).safeTransfer(msg.sender, amount_);
+        }
     }
 
     /**
@@ -346,6 +352,39 @@ contract DCAAccount is DCAAccountLogic {
         address newLibraryAddress_
     ) public onlyOwner {
         _setReinvestAddress(newLibraryAddress_);
+    }
+
+    /**
+     * @dev Batch subscribe multiple strategies to the executor
+     * @param strategyIds_ Array of strategy IDs to subscribe
+     */
+    function batchSubscribeStrategies(
+        uint256[] calldata strategyIds_
+    ) external onlyOwner {
+        for (uint256 i = 0; i < strategyIds_.length; i++) {
+            uint256 strategyId = strategyIds_[i];
+            Strategy memory givenStrategy = _strategies[strategyId];
+
+            if (!givenStrategy.active &&
+                _baseBalances[givenStrategy.baseToken.tokenAddress] >= (givenStrategy.amount * 5)) {
+                _subscribeToExecutor(_strategies[strategyId]);
+            }
+        }
+    }
+
+    /**
+     * @dev Batch unsubscribe multiple strategies from the executor
+     * @param strategyIds_ Array of strategy IDs to unsubscribe
+     */
+    function batchUnsubscribeStrategies(
+        uint256[] calldata strategyIds_
+    ) external onlyOwner {
+        for (uint256 i = 0; i < strategyIds_.length; i++) {
+            uint256 strategyId = strategyIds_[i];
+            if (_strategies[strategyId].isActive()) {
+                _unsubscribeToExecutor(strategyId);
+            }
+        }
     }
 
     /**

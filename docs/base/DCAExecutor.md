@@ -10,6 +10,23 @@
 
 ## Methods
 
+### DEFAULT_POOL_FEE
+
+```solidity
+function DEFAULT_POOL_FEE() external view returns (uint24)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint24 | undefined |
+
 ### DistributeFees
 
 ```solidity
@@ -61,6 +78,23 @@ function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_, enum IDCADat
 | DCAAccount_ | address | The address of the DCAAccount |
 | strategyId_ | uint256 | The id of the strategy to unsubscribe |
 | interval_ | enum IDCADataStructures.Interval | The interval of the strategy to unsubscribe |
+
+### QUOTER
+
+```solidity
+function QUOTER() external view returns (contract IQuoterV2)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | contract IQuoterV2 | undefined |
 
 ### SWAP_ROUTER
 
@@ -618,6 +652,38 @@ Emitted when a new strategy subscribes or unsubscribes to the executor
 
 ## Errors
 
+### AddressEmptyCode
+
+```solidity
+error AddressEmptyCode(address target)
+```
+
+
+
+*There&#39;s no code at `target` (it is not a contract).*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| target | address | undefined |
+
+### AddressInsufficientBalance
+
+```solidity
+error AddressInsufficientBalance(address account)
+```
+
+
+
+*The ETH balance of the account is not enough to perform the operation.*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | undefined |
+
 ### ContractIsPaused
 
 ```solidity
@@ -629,10 +695,43 @@ Error thrown when the contract is paused
 
 
 
+### FailedInnerCall
+
+```solidity
+error FailedInnerCall()
+```
+
+
+
+*A call to an address target failed. The target may have reverted.*
+
+
+### FeeSplitTotalNot100
+
+```solidity
+error FeeSplitTotalNot100()
+```
+
+
+
+
+
+
+### IntervalNotActive
+
+```solidity
+error IntervalNotActive()
+```
+
+
+
+
+
+
 ### NotAllowedBaseToken
 
 ```solidity
-error NotAllowedBaseToken(address token_)
+error NotAllowedBaseToken(address token)
 ```
 
 
@@ -643,7 +742,18 @@ error NotAllowedBaseToken(address token_)
 
 | Name | Type | Description |
 |---|---|---|
-| token_ | address | undefined |
+| token | address | undefined |
+
+### NotInExecutionWindow
+
+```solidity
+error NotInExecutionWindow()
+```
+
+
+
+
+
 
 ### OwnableInvalidOwner
 
@@ -676,5 +786,54 @@ error OwnableUnauthorizedAccount(address account)
 | Name | Type | Description |
 |---|---|---|
 | account | address | undefined |
+
+### ReentrancyGuardReentrantCall
+
+```solidity
+error ReentrancyGuardReentrantCall()
+```
+
+
+
+*Unauthorized reentrant call.*
+
+
+### SafeERC20FailedOperation
+
+```solidity
+error SafeERC20FailedOperation(address token)
+```
+
+
+
+*An operation with an ERC20 token failed.*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | undefined |
+
+### StrategyAlreadySubscribed
+
+```solidity
+error StrategyAlreadySubscribed()
+```
+
+
+
+
+
+
+### StrategyNotSubscribed
+
+```solidity
+error StrategyNotSubscribed()
+```
+
+
+
+
+
 
 

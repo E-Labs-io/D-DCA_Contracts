@@ -242,22 +242,3 @@ Emitted when a new strategy subscribes or unsubscribes to the executor
 
 
 
-## Errors
-
-### NotAllowedBaseToken
-
-```solidity
-error NotAllowedBaseToken(address token_)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token_ | address | undefined |
-
-

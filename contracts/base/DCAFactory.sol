@@ -36,6 +36,12 @@ contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
     address public immutable SWAP_ROUTER;
 
     /**
+     * @dev The quoter address
+     * @return The quoter address
+     */
+    address public immutable QUOTER;
+
+    /**
      * @dev The executor address
      */
     address private _executorAddress;
@@ -56,14 +62,17 @@ contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
      * @dev Constructor for the DCAFactory
      * @param executorAddress_ The address of the executor
      * @param swapRouter_ The address of the swap router
+     * @param quoter_ The address of the quoter contract
      * @param reinvestLibraryContract_ The address of the reinvest library contract
      */
     constructor(
         address executorAddress_,
         address swapRouter_,
+        address quoter_,
         address reinvestLibraryContract_
     ) Ownable(_msgSender()) {
         SWAP_ROUTER = swapRouter_;
+        QUOTER = quoter_;
         _executorAddress = executorAddress_;
         reInvestLogicContract = reinvestLibraryContract_;
     }
@@ -85,25 +94,63 @@ contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
     }
 
     /**
-     * @dev Creates a new DCAAccount
+     * @dev Creates a new DCAAccount using CREATE2 for deterministic addresses
      * @notice Will create a new DCAAccount with the sender as the initial owner.
      */
     function CreateAccount() public is_active {
+        CreateAccountWithSalt(bytes32(0));
+    }
+
+    /**
+     * @dev Creates a new DCAAccount with a custom salt for CREATE2
+     * @param salt_ The salt for CREATE2 deployment
+     */
+    function CreateAccountWithSalt(bytes32 salt_) public is_active {
         // Create a new DCAAccount with the sender as the initial owner.
         address sender = _msgSender();
-        DCAAccount newAccount = new DCAAccount(
-            _executorAddress,
-            SWAP_ROUTER,
-            sender,
-            reInvestLogicContract
+
+        // Use CREATE2 for deterministic address generation
+        bytes memory bytecode = abi.encodePacked(
+            type(DCAAccount).creationCode,
+            abi.encode(_executorAddress, SWAP_ROUTER, QUOTER, sender, reInvestLogicContract)
         );
 
+        address newAccountAddress;
+        assembly {
+            newAccountAddress := create2(0, add(bytecode, 0x20), mload(bytecode), salt_)
+        }
+        require(newAccountAddress != address(0), "DCAFactory: CREATE2 failed");
+
         // Store the new account's address in the mapping.
-        userDCAAccounts[sender].push(address(newAccount));
+        userDCAAccounts[sender].push(newAccountAddress);
 
         // Emit an event for the frontend to listen to.
-        emit AccountCreated(sender, address(newAccount));
+        emit AccountCreated(sender, newAccountAddress);
         accountsCreated++;
+    }
+
+    /**
+     * @dev Predicts the address of an account that would be created with the given salt
+     * @param salt_ The salt for CREATE2
+     * @param owner_ The owner of the account
+     * @return The predicted address
+     */
+    function predictAccountAddress(bytes32 salt_, address owner_) public view returns (address) {
+        bytes memory bytecode = abi.encodePacked(
+            type(DCAAccount).creationCode,
+            abi.encode(_executorAddress, SWAP_ROUTER, QUOTER, owner_, reInvestLogicContract)
+        );
+
+        bytes32 hash = keccak256(
+            abi.encodePacked(
+                bytes1(0xff),
+                address(this),
+                salt_,
+                keccak256(bytecode)
+            )
+        );
+
+        return address(uint160(uint256(hash)));
     }
 
     /**
