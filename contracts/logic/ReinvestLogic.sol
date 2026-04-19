@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-//DEV
-import "hardhat/console.sol";
+
 import "../library/Codes.sol";
 
 import {IDCAReinvest, IDCADataStructures} from "../interfaces/IDCAReinvest.sol";
-import {LidoStaking} from "../modules/LidoStaking.sol";
 
 /**
  *
@@ -33,8 +31,7 @@ abstract contract DCAReinvestLogic is IDCAReinvest {
         abi.encodePacked(
             ReinvestCodes.FORWARD,
             ReinvestCodes.AAVE,
-            ReinvestCodes.COMPOUND,
-            ReinvestCodes.LIDO_STETH
+            ReinvestCodes.COMPOUND
         );
 
     /**
@@ -62,8 +59,6 @@ abstract contract DCAReinvestLogic is IDCAReinvest {
                 );
         else if (code == ReinvestCodes.AAVE)
             return AaveV3Reinvest._execute(amount_, reinvestData_.reinvestData);
-        else if (code == ReinvestCodes.LIDO_STETH)
-            return LidoStaking._execute(amount_, reinvestData_.reinvestData);
     }
 
     /**
@@ -80,9 +75,7 @@ abstract contract DCAReinvestLogic is IDCAReinvest {
         if (reinvestData_.investCode <= ReinvestCodes.COMPOUND) {
             return
                 CompoundV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
-        }         else if (reinvestData_.investCode == ReinvestCodes.AAVE)
+        } else if (reinvestData_.investCode == ReinvestCodes.AAVE)
             return AaveV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
-        else if (reinvestData_.investCode == ReinvestCodes.LIDO_STETH)
-            return LidoStaking._unwind(amount_, reinvestData_.reinvestData);
     }
 }

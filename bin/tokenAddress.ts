@@ -296,7 +296,6 @@ export type AcceptedProtocolsAndContracts =
   | "compoundV3Usdc"
   | "ccipRouter"
   | "permit2"
-  | "lido"
   | "compoundV3ETH"
   | "quoter";
 
