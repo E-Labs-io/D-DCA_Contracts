@@ -12,4 +12,5 @@ artifacts
 build
 logs
 
-.codegpt.DS_Store
+.codegpt
+.DS_Store
