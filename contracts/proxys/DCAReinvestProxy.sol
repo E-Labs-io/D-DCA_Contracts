@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 //DEV
-import "hardhat/console.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
 import {DCAReinvestLogic, IDCADataStructures} from "../logic/ReinvestLogic.sol";
 

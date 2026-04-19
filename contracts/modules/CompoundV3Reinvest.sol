@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../protocols/compoundV3/CometMainInterface.sol";
 import {ReinvestCodes} from "../library/Codes.sol";
 
-import "hardhat/console.sol";
 /**
  *
  ************************************************
