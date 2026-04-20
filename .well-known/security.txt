@@ -1,0 +1,9 @@
+# Machine-readable security contact per RFC 9116.
+# Copy this file to both the docs site and app site under
+# /.well-known/security.txt so automated scanners can find it.
+
+Contact: mailto:security@ation.capital
+Contact: https://x.com/0xAtion
+Policy: https://github.com/E-Labs-io/D-DCA_Contracts/blob/main/SECURITY.md
+Preferred-Languages: en
+Canonical: https://ation.capital/.well-known/security.txt
