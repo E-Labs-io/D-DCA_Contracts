@@ -37,6 +37,7 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
     error StrategyAlreadyUnsubscribed();
     error InsufficientFundsForSubscription(uint256 required, uint256 available);
     error TransferFailed();
+    error EthTransferFailed(address to, uint256 amount);
 
     constructor(
         address executorAddress_,
@@ -191,7 +192,11 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
         }
         _targetBalances[token_] -= amount_;
         if (token_ == address(0)) {
-            payable(msg.sender).transfer(amount_);
+            // Use call{value} rather than .transfer — .transfer forwards
+            // only 2300 gas which breaks when the recipient is a contract
+            // with any non-trivial fallback (e.g. Safe multisigs).
+            (bool ok, ) = payable(msg.sender).call{value: amount_}("");
+            if (!ok) revert EthTransferFailed(msg.sender, amount_);
         } else {
             IERC20(token_).safeTransfer(msg.sender, amount_);
         }

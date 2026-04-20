@@ -54,6 +54,7 @@ contract DCAExecutor is
     error StrategyAlreadySubscribed();
     error NotAllowedBaseToken(address token);
     error FeeSplitTotalNot100();
+    error EthTransferFailed(address to, uint256 amount);
 
     mapping(Interval => bool) private _activeIntervals;
     mapping(Interval => uint256) internal _totalActiveStrategiesByIntervals;
@@ -197,7 +198,18 @@ contract DCAExecutor is
                     executorFee,
                     50 // 0.5% slippage tolerance
                 );
-                payable(_feeData.executionAddress).transfer(execAmunt);
+                // Use call{value} rather than .transfer — see DCAAccount.
+                // 2300-gas .transfer breaks when executionAddress is a
+                // contract with meaningful fallback logic (multisig, etc.).
+                (bool ok, ) = payable(_feeData.executionAddress).call{
+                    value: execAmunt
+                }("");
+                if (!ok) {
+                    revert EthTransferFailed(
+                        _feeData.executionAddress,
+                        execAmunt
+                    );
+                }
             }
             if (computingFee > 0)
                 _transferFee(_feeData.computingAddress, computingFee, token);

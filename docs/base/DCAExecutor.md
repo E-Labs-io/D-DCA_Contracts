@@ -695,6 +695,23 @@ Error thrown when the contract is paused
 
 
 
+### EthTransferFailed
+
+```solidity
+error EthTransferFailed(address to, uint256 amount)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| to | address | undefined |
+| amount | uint256 | undefined |
+
 ### FailedInnerCall
 
 ```solidity
