@@ -42,6 +42,22 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
+        // Bumped from 0.8.20 in V0.9 — free wins: MCOPY opcode for memory
+        // moves on Cancun-capable chains (Base, Optimism, Ethereum),
+        // cheaper push0 on all EVM targets. Our sources use ^0.8.20 so
+        // they resolve to this compiler.
+        version: "0.8.24",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      {
+        // Retained for vendored Compound V3 interface files which pin to
+        // exactly 0.8.20 (not ^0.8.20). Harmless to keep around — those
+        // files are interface-only.
         version: "0.8.20",
         settings: {
           optimizer: {
