@@ -20,6 +20,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  *
  */
 abstract contract OnlyExecutor is Ownable {
+    // V0.9 require(string) → custom error
+    error NotTheExecutor(address caller, address expected);
+
     /**
      * @notice The address of the executor
      */
@@ -35,10 +38,9 @@ abstract contract OnlyExecutor is Ownable {
      * @notice Modifier to check if the caller is the executor
      */
     modifier onlyExecutor() {
-        require(
-            _executorAddress == msg.sender,
-            "OnlyExecutor : [onlyExecutor] Address is not an executor"
-        );
+        if (_executorAddress != msg.sender) {
+            revert NotTheExecutor(msg.sender, _executorAddress);
+        }
         _;
     }
 

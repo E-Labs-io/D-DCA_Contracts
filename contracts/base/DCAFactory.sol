@@ -26,6 +26,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  *
  */
 contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
+    // V0.9 require(string) → custom errors
+    error Create2Failed();
+    error ExecutorUnchanged();
+
     // Mapping to keep track of accounts created by each user.
     mapping(address => address[]) public userDCAAccounts;
 
@@ -119,7 +123,7 @@ contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
         assembly {
             newAccountAddress := create2(0, add(bytecode, 0x20), mload(bytecode), salt_)
         }
-        require(newAccountAddress != address(0), "DCAFactory: CREATE2 failed");
+        if (newAccountAddress == address(0)) revert Create2Failed();
 
         // Store the new account's address in the mapping.
         userDCAAccounts[sender].push(newAccountAddress);
@@ -171,10 +175,7 @@ contract DCAFactory is OnlyActive, IDCAFactory, Ownable {
     function updateExecutorAddress(
         address _newExecutorAddress
     ) public onlyOwner {
-        require(
-            _newExecutorAddress != _executorAddress,
-            "DCAFactory: updateExecutorAddress - same address"
-        );
+        if (_newExecutorAddress == _executorAddress) revert ExecutorUnchanged();
 
         _executorAddress = _newExecutorAddress;
         emit ExecutorChanged(_newExecutorAddress);

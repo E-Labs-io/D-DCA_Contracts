@@ -298,6 +298,23 @@ event TestCall()
 
 ## Errors
 
+### ApprovalFailed
+
+```solidity
+error ApprovalFailed(address token, address spender)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | undefined |
+| spender | address | undefined |
+
 ### InvalidInitialization
 
 ```solidity

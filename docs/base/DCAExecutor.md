@@ -684,6 +684,23 @@ error AddressInsufficientBalance(address account)
 |---|---|---|
 | account | address | undefined |
 
+### CallerIsNotAccount
+
+```solidity
+error CallerIsNotAccount(address caller, address expected)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| caller | address | undefined |
+| expected | address | undefined |
+
 ### ContractIsPaused
 
 ```solidity
@@ -745,6 +762,17 @@ error IntervalNotActive()
 
 
 
+### InvalidStrategy
+
+```solidity
+error InvalidStrategy()
+```
+
+
+
+
+
+
 ### NotAllowedBaseToken
 
 ```solidity
@@ -761,6 +789,22 @@ error NotAllowedBaseToken(address token)
 |---|---|---|
 | token | address | undefined |
 
+### NotAnAdmin
+
+```solidity
+error NotAnAdmin(address caller)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| caller | address | undefined |
+
 ### NotInExecutionWindow
 
 ```solidity
@@ -771,6 +815,23 @@ error NotInExecutionWindow()
 
 
 
+
+### NotTheExecutor
+
+```solidity
+error NotTheExecutor(address caller, address expected)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| caller | address | undefined |
+| expected | address | undefined |
 
 ### OwnableInvalidOwner
 

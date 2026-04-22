@@ -34,6 +34,9 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     using Intervals for Interval;
     using SafeERC20 for IERC20; // Added using statement for SafeERC20
 
+    // V0.9 require(string) → custom errors
+    error IntervalWindowNotMet();
+    error InvalidStrategyData();
 
     mapping(uint256 => Strategy) internal _strategies;
 
@@ -53,12 +56,11 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @param strategyId_ {uint256} Id of the strategy to check if is in window
      */
     modifier inWindow(uint256 strategyId_) {
-        require(
-            _strategies[strategyId_].interval.isInWindow(
+        if (
+            !_strategies[strategyId_].interval.isInWindow(
                 _lastExecution[strategyId_]
-            ),
-            "DCAAccount : [inWindow] Strategy Interval not met"
-        );
+            )
+        ) revert IntervalWindowNotMet();
         _;
     }
 
@@ -72,10 +74,7 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @notice Emits a StrategyCreated event on completion
      */
     function _newStrategy(Strategy memory newStrategy_) internal {
-        require(
-            newStrategy_.isValid(),
-            "DCAAccount : [SetupStrategy] Invalid strategy data"
-        );
+        if (!newStrategy_.isValid()) revert InvalidStrategyData();
 
         _strategyCount++;
         newStrategy_.strategyId = _strategyCount;

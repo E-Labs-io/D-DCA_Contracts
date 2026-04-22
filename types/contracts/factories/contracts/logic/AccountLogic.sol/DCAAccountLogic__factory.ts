@@ -10,6 +10,32 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "IntervalWindowNotMet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InvalidStrategyData",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "expected",
+        type: "address",
+      },
+    ],
+    name: "NotTheExecutor",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "address",

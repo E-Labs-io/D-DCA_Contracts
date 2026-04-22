@@ -540,6 +540,45 @@ Emitted when the Strategy is confirmed to be subscribed to an Executor
 
 ## Errors
 
+### IntervalWindowNotMet
+
+```solidity
+error IntervalWindowNotMet()
+```
+
+
+
+
+
+
+### InvalidStrategyData
+
+```solidity
+error InvalidStrategyData()
+```
+
+
+
+
+
+
+### NotTheExecutor
+
+```solidity
+error NotTheExecutor(address caller, address expected)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| caller | address | undefined |
+| expected | address | undefined |
+
 ### OwnableInvalidOwner
 
 ```solidity

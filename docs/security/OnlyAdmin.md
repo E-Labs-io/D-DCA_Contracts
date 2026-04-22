@@ -133,6 +133,22 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 
 ## Errors
 
+### NotAnAdmin
+
+```solidity
+error NotAnAdmin(address caller)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| caller | address | undefined |
+
 ### OwnableInvalidOwner
 
 ```solidity

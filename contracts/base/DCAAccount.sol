@@ -38,6 +38,10 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
     error InsufficientFundsForSubscription(uint256 required, uint256 available);
     error TransferFailed();
     error EthTransferFailed(address to, uint256 amount);
+    // V0.9 require(string) → custom errors
+    error NoReinvestBalance();
+    error ReinvestUnwindFailed();
+    error ExecutorUnchanged();
 
     constructor(
         address executorAddress_,
@@ -211,17 +215,10 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
         uint256 strategyId_
     ) public onlyOwner returns (uint256 amountOfTargetReturned) {
         Strategy memory strategy = _strategies[strategyId_];
-        require(
-            strategy.active,
-            "[DCAAccount] : [UnWindReinvest] - Strategy does not exist"
-        );
+        if (!strategy.active) revert StrategyNotActive();
 
         uint256 balance = _reinvestLiquidityTokenBalance[strategyId_];
-
-        require(
-            balance > 0,
-            "[DCAAccount] : [UnWindReinvest] -  No investment to unwind"
-        );
+        if (balance == 0) revert NoReinvestBalance();
 
         bool success;
         (amountOfTargetReturned, success) = _withdrawReinvest(
@@ -229,10 +226,7 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
             strategy.reinvest,
             balance
         );
-        require(
-            success,
-            "[DCAAccount] : [UnWindReinvest] -  Failed to unwind reinvest"
-        );
+        if (!success) revert ReinvestUnwindFailed();
 
         emit ReinvestUnwound(strategyId_, amountOfTargetReturned);
     }
@@ -242,10 +236,8 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
         address liquidityToken_
     ) public onlyOwner returns (uint256 amountOfTargetReturned) {
         Strategy memory strategy = _strategies[strategyId_];
-        require(
-            strategy.active,
-            "[DCAAccount] : [ForceUnwindReinvest] - Strategy does not exist"
-        );
+        if (!strategy.active) revert StrategyNotActive();
+
         bool success;
         (amountOfTargetReturned, success) = _forceWithdrawReinvest(
             strategy.reinvest,
@@ -257,10 +249,7 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
             strategy.targetToken.tokenAddress
         ] += amountOfTargetReturned;
 
-        require(
-            success,
-            "[DCAAccount] : [ForceUnwindReinvest] - Failed to unwind reinvest"
-        );
+        if (!success) revert ReinvestUnwindFailed();
         emit ReinvestUnwound(strategyId_, amountOfTargetReturned);
     }
 
@@ -337,11 +326,7 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
      * @param newAddress_ address of the new default executor contract
      */
     function _changeExecutor(address newAddress_) internal {
-        require(
-            _executor() != newAddress_,
-            "[DCA Account] : [changeExecutor] - Already using this DCA executor"
-        );
-
+        if (_executor() == newAddress_) revert ExecutorUnchanged();
         _changeExecutorAddress(newAddress_);
     }
 

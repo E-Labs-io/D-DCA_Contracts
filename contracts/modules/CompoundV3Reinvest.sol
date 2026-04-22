@@ -24,6 +24,9 @@ import {ReinvestCodes} from "../library/Codes.sol";
  *
  */
 library CompoundV3Reinvest {
+    // V0.9 require(string) → custom error
+    error ApprovalFailed(address token, address spender);
+
     string public constant MODULE_NAME = "Compound V3 Reinvest";
     uint8 public constant MODULE_ID = 0x11;
 
@@ -83,7 +86,7 @@ library CompoundV3Reinvest {
         uint256 oldBalance = _getBalance(compoundContract);
 
         bool allowed = IERC20(tokenAddress_).approve(compoundContract, amount_);
-        require(allowed, "DCAAccount : [Compound Reinvest] - Approval failed");
+        if (!allowed) revert ApprovalFailed(tokenAddress_, compoundContract);
 
         CometMainInterface(compoundContract).supply(tokenAddress_, amount_);
 

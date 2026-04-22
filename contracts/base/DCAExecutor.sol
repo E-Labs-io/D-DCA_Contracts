@@ -55,6 +55,10 @@ contract DCAExecutor is
     error NotAllowedBaseToken(address token);
     error FeeSplitTotalNot100();
     error EthTransferFailed(address to, uint256 amount);
+    // V0.9 migration from require(string) → custom errors. Cheaper
+    // gas on revert and uniform error surface for ethers v6 decoders.
+    error CallerIsNotAccount(address caller, address expected);
+    error InvalidStrategy();
 
     mapping(Interval => bool) private _activeIntervals;
     mapping(Interval => uint256) internal _totalActiveStrategiesByIntervals;
@@ -97,12 +101,11 @@ contract DCAExecutor is
     function Subscribe(
         Strategy calldata strategy_
     ) external override is_active {
-        require(
-            Strategies.isAccountAddress(strategy_, _msgSender()),
-            "DCAexecutor : [Subscribe] Only Account Contract can unsubscribe"
-        );
+        if (!Strategies.isAccountAddress(strategy_, _msgSender())) {
+            revert CallerIsNotAccount(_msgSender(), strategy_.accountAddress);
+        }
         if (!strategy_.isValid()) {
-            revert("DCAexecutor : [Subscribe] Invalid strategy");
+            revert InvalidStrategy();
         }
         if (!isIntervalActive(strategy_.interval)) {
             revert IntervalNotActive();
@@ -130,14 +133,12 @@ contract DCAExecutor is
         uint256 strategyId_,
         Interval interval_
     ) external override {
-        require(
-            _msgSender() == DCAAccountAddress_,
-            "DCAExecutor : [Unsubscribe] Only Account Contract can unsubscribe"
-        );
-        require(
-            _strategies[DCAAccountAddress_][strategyId_],
-            "DCAExecutor : [Unsubscribe] Strategy already unsubscribed"
-        );
+        if (_msgSender() != DCAAccountAddress_) {
+            revert CallerIsNotAccount(_msgSender(), DCAAccountAddress_);
+        }
+        if (!_strategies[DCAAccountAddress_][strategyId_]) {
+            revert StrategyNotSubscribed();
+        }
 
         _unSubscribeAccount(DCAAccountAddress_, strategyId_, interval_);
     }
@@ -231,10 +232,9 @@ contract DCAExecutor is
         uint256 strategyId_,
         Interval interval_
     ) external onlyExecutor {
-        require(
-            _strategies[DCAAccount_][strategyId_],
-            "DCAExecutor: [ForceUnsubscribe] Account already unsubscribed"
-        );
+        if (!_strategies[DCAAccount_][strategyId_]) {
+            revert StrategyNotSubscribed();
+        }
 
         _strategies[DCAAccount_][strategyId_] = false;
         IDCAAccount(DCAAccount_).ExecutorDeactivate(strategyId_);
@@ -249,10 +249,9 @@ contract DCAExecutor is
     function setFeeData(
         IDCADataStructures.FeeDistribution memory fee_
     ) public onlyOwner {
-        require(
-            fee_.checkPercentTotal(),
-            "DCAExecutor : [setFeeData] Total split percents don't equal 100%"
-        );
+        if (!fee_.checkPercentTotal()) {
+            revert FeeSplitTotalNot100();
+        }
         _feeData = fee_;
         emit FeeDataChanged();
     }

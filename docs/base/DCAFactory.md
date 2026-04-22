@@ -440,6 +440,28 @@ Error thrown when the contract is paused
 
 
 
+### Create2Failed
+
+```solidity
+error Create2Failed()
+```
+
+
+
+
+
+
+### ExecutorUnchanged
+
+```solidity
+error ExecutorUnchanged()
+```
+
+
+
+
+
+
 ### OwnableInvalidOwner
 
 ```solidity

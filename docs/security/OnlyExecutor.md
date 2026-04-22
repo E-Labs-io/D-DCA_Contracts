@@ -139,6 +139,23 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 
 ## Errors
 
+### NotTheExecutor
+
+```solidity
+error NotTheExecutor(address caller, address expected)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| caller | address | undefined |
+| expected | address | undefined |
+
 ### OwnableInvalidOwner
 
 ```solidity

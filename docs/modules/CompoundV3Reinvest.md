@@ -47,3 +47,23 @@ function MODULE_NAME() external view returns (string)
 
 
 
+## Errors
+
+### ApprovalFailed
+
+```solidity
+error ApprovalFailed(address token, address spender)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | undefined |
+| spender | address | undefined |
+
+

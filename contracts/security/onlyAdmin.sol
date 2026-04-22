@@ -21,6 +21,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  *
  */
 abstract contract OnlyAdmin is Ownable {
+    // V0.9 require(string) → custom error
+    error NotAnAdmin(address caller);
+
     /**
      * @notice Mapping of admin access addresses
      */
@@ -30,10 +33,9 @@ abstract contract OnlyAdmin is Ownable {
      * @notice Modifier to check if the caller is an admin
      */
     modifier onlyAdmins() {
-        require(
-            _admins[_msgSender()] || (_msgSender() == owner()),
-            "OnlyAdmin : [onlyAdmins] Address is not an admin"
-        );
+        if (!(_admins[_msgSender()] || _msgSender() == owner())) {
+            revert NotAnAdmin(_msgSender());
+        }
         _;
     }
 

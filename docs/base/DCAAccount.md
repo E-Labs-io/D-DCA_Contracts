@@ -754,6 +754,17 @@ error EthTransferFailed(address to, uint256 amount)
 | to | address | undefined |
 | amount | uint256 | undefined |
 
+### ExecutorUnchanged
+
+```solidity
+error ExecutorUnchanged()
+```
+
+
+
+
+
+
 ### FailedInnerCall
 
 ```solidity
@@ -799,6 +810,56 @@ error InsufficientFundsForSubscription(uint256 required, uint256 available)
 | required | uint256 | undefined |
 | available | uint256 | undefined |
 
+### IntervalWindowNotMet
+
+```solidity
+error IntervalWindowNotMet()
+```
+
+
+
+
+
+
+### InvalidStrategyData
+
+```solidity
+error InvalidStrategyData()
+```
+
+
+
+
+
+
+### NoReinvestBalance
+
+```solidity
+error NoReinvestBalance()
+```
+
+
+
+
+
+
+### NotTheExecutor
+
+```solidity
+error NotTheExecutor(address caller, address expected)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| caller | address | undefined |
+| expected | address | undefined |
+
 ### OwnableInvalidOwner
 
 ```solidity
@@ -840,6 +901,17 @@ error ReentrancyGuardReentrantCall()
 
 
 *Unauthorized reentrant call.*
+
+
+### ReinvestUnwindFailed
+
+```solidity
+error ReinvestUnwindFailed()
+```
+
+
+
+
 
 
 ### SafeERC20FailedOperation

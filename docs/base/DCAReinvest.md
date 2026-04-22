@@ -261,6 +261,23 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 
 ## Errors
 
+### ApprovalFailed
+
+```solidity
+error ApprovalFailed(address token, address spender)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | undefined |
+| spender | address | undefined |
+
 ### ContractIsPaused
 
 ```solidity
