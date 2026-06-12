@@ -155,6 +155,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       createdAccount = await factoryFactory.deploy(
         ZeroAddress,
         tokenAddress.swapRouter![forkedChain]! as string,
+        tokenAddress.quoter![forkedChain]! as string,
         addressStore.user.address,
         ZeroAddress,
       );
@@ -210,7 +211,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
 
       const deploymentArgs = DCAExecutorArguments(
         addressStore.deployer.address,
-        "eth",
+        forkedChain,
       );
 
       deploymentArgs[0].executionAddress = addressStore.deployer.address;
@@ -220,6 +221,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
         deploymentArgs[0],
         addressStore.executorEoa.address,
         deploymentArgs[2],
+        deploymentArgs[3],
       );
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);
@@ -396,9 +398,9 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       expect(bal).to.be.greaterThan(wethBalance);
     });
     it("🧪 Should revert withdrawal, No Investment to unwind", async () => {
-      await expect(createdAccount.UnwindReinvest(1)).to.be.revertedWith(
-        "[DCAAccount] : [UnWindReinvest] -  No investment to unwind",
-      );
+      await expect(
+        createdAccount.UnwindReinvest(1),
+      ).to.be.revertedWithCustomError(createdAccount, "NoReinvestBalance");
     });
   });
 

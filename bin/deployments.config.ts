@@ -10,7 +10,7 @@ export default function deploymentConfig() {
     const list: { [chain in MainnetNames]?: number | undefined } = {
       eth: 19493637,
       optimism: 117776650,
-      base: 0,
+      base: 30000000,
     };
 
     return list[masterChain] ?? 0;

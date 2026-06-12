@@ -94,23 +94,6 @@ describe("> DCA Executor Tests", () => {
 
   describe("💡 Deploy and State Checks", () => {
     //  Deploy the Factory
-    it("🧪 Should revert to deploy the executor contract", async () => {
-      const executorFactory = await ethers.getContractFactory(
-        "DCAExecutor",
-        addressStore.deployer.signer,
-      );
-
-      await expect(
-        executorFactory.deploy(
-          { ...FeeData, amountToComputing: 0 },
-          addressStore.executorEoa.address,
-          tokenAddress.swapRouter![forkedChain]! as string,
-          tokenAddress.quoter![forkedChain]! as string,
-        ),
-      ).to.be.revertedWith(
-        "DCAExecutor : [setFeeData] Total split percents don't equal 100%",
-      );
-    });
     it("🧪 Should deploy the executor contract", async () => {
       const executorFactory = await ethers.getContractFactory(
         "DCAExecutor",
@@ -123,6 +106,22 @@ describe("> DCA Executor Tests", () => {
         tokenAddress.quoter![forkedChain]! as string,
       );
       await expect(executorContract.waitForDeployment()).to.be.fulfilled;
+    });
+
+    it("🧪 Should revert to deploy the executor contract with bad fee split", async () => {
+      const executorFactory = await ethers.getContractFactory(
+        "DCAExecutor",
+        addressStore.deployer.signer,
+      );
+
+      await expect(
+        executorFactory.deploy(
+          { ...FeeData, amountToComputing: 0 },
+          addressStore.executorEoa.address,
+          tokenAddress.swapRouter![forkedChain]! as string,
+          tokenAddress.quoter![forkedChain]! as string,
+        ),
+      ).to.be.revertedWithCustomError(executorContract, "FeeSplitTotalNot100");
     });
 
     it("🧪 Should activate the interval", async () => {
@@ -148,9 +147,7 @@ describe("> DCA Executor Tests", () => {
     it("🧪 Should revert trying to execute - not Executor EOA", async () => {
       await expect(
         executorContract.Execute(ZERO_ADDRESS as AddressLike, 1n, 0n),
-      ).to.be.revertedWith(
-        "OnlyExecutor : [onlyExecutor] Address is not an executor",
-      );
+      ).to.be.revertedWithCustomError(executorContract, "NotTheExecutor");
     });
     it("🧪 Return the Executor EOA address", async () => {
       const tx = await executorContract.getExecutorAddress();
@@ -160,11 +157,9 @@ describe("> DCA Executor Tests", () => {
 
   describe("💡 Test Fee Storage & Calculus", () => {
     it("🧪 Should revert updating fee data struct", async () => {
-      expect(
+      await expect(
         executorContract.setFeeData({ ...FeeData, amountToComputing: 0 }),
-      ).to.be.revertedWith(
-        "DCAExecutor : [setFeeData] Total split percents don't equal 100%",
-      );
+      ).to.be.revertedWithCustomError(executorContract, "FeeSplitTotalNot100");
     });
     it("🧪 Should return the current fee data struct", async () => {
       const feeData = await executorContract.getFeeData();
@@ -179,15 +174,15 @@ describe("> DCA Executor Tests", () => {
   });
 
   describe("💡 Test fee receiving and distribution", () => {
-    let bankEthBalance: number = 0;
+    let bankEthBalance: bigint = 0n;
     it("🧪 Should check USDC Balance of Executor to be Zero", async () => {
       expect(await usdcContract.balanceOf(executorContract.target)).to.equal(
         0n,
       );
     });
     it("🧪 Should check USDC/Eth Balance of all fee receiving EAO to be zero", async () => {
-      bankEthBalance = Number(
-        await ethers.provider.getBalance(addressStore.executorBank.address),
+      bankEthBalance = await ethers.provider.getBalance(
+        addressStore.executorBank.address,
       );
       expect(
         await usdcContract.balanceOf(addressStore.comptBank.address),
@@ -235,14 +230,13 @@ describe("> DCA Executor Tests", () => {
   });
 
   describe("💡 Check security and fallback", () => {
-    it("🧪 Should revert on fallback when sending ETH", async () => {
+    it("🧪 Should accept ETH on receive (used for native fee distribution)", async () => {
       const message = {
         to: executorContract.target,
         value: ethers.parseEther("1"),
       };
-      await expect(
-        addressStore.deployer.signer.sendTransaction(message),
-      ).to.be.revertedWith("DCAExecutor : [receive]");
+      await expect(addressStore.deployer.signer.sendTransaction(message)).to.not
+        .be.reverted;
     });
 
     it("🧪 Should revert to distribute fees, not admin", async () => {
@@ -250,9 +244,9 @@ describe("> DCA Executor Tests", () => {
         addressStore.user.signer,
       );
 
-      await expect(connected.DistributeFees(ZERO_ADDRESS)).to.be.revertedWith(
-        "OnlyAdmin : [onlyAdmins] Address is not an admin",
-      );
+      await expect(
+        connected.DistributeFees(ZERO_ADDRESS),
+      ).to.be.revertedWithCustomError(executorContract, "NotAnAdmin");
     });
 
     it("🧪 Should revert on Execution Try, Not Executor", async () => {
@@ -260,17 +254,15 @@ describe("> DCA Executor Tests", () => {
 
       await expect(
         connected.Execute(ZERO_ADDRESS as AddressLike, 0n, 0n),
-      ).to.be.revertedWith(
-        "OnlyExecutor : [onlyExecutor] Address is not an executor",
-      );
+      ).to.be.revertedWithCustomError(executorContract, "NotTheExecutor");
     });
 
     it("🧪 Should revert on Subscription, Not Account Contract", async () => {
       const strat = EMPTY_STRATEGY_OBJECT;
 
-      await expect(executorContract.Subscribe(strat)).to.be.revertedWith(
-        "DCAexecutor : [Subscribe] Only Account Contract can unsubscribe",
-      );
+      await expect(
+        executorContract.Subscribe(strat),
+      ).to.be.revertedWithCustomError(executorContract, "CallerIsNotAccount");
     });
 
     it("🧪 Should change the active stage to false", async () => {
@@ -287,7 +279,7 @@ describe("> DCA Executor Tests", () => {
         executorContract
           .connect(addressStore.user.signer)
           .setBaseTokenAllowance(usdcContract.target, true),
-      ).to.be.revertedWith("OnlyAdmin : [onlyAdmins] Address is not an admin");
+      ).to.be.revertedWithCustomError(executorContract, "NotAnAdmin");
     });
 
     it("🧪 Should revert on Subscription, Not allowed Base Token", async () => {
@@ -302,6 +294,7 @@ describe("> DCA Executor Tests", () => {
       createdAccount = await accountBase.deploy(
         executorContract.target,
         tokenAddress.swapRouter![forkedChain]! as string,
+        tokenAddress.quoter![forkedChain]! as string,
         addressStore.user.address,
         ZeroAddress,
       );
@@ -327,7 +320,7 @@ describe("> DCA Executor Tests", () => {
         executorContract
           .connect(addressStore.user.signer)
           .setIntervalActive(0, true),
-      ).to.be.revertedWith("OnlyAdmin : [onlyAdmins] Address is not an admin");
+      ).to.be.revertedWithCustomError(executorContract, "NotAnAdmin");
     });
 
     it("🧪 Should revert on setActiveState, Not admin", async () => {
@@ -335,7 +328,7 @@ describe("> DCA Executor Tests", () => {
         executorContract
           .connect(addressStore.user.signer)
           .setActiveState(false),
-      ).to.be.revertedWith("OnlyAdmin : [onlyAdmins] Address is not an admin");
+      ).to.be.revertedWithCustomError(executorContract, "NotAnAdmin");
     });
   });
 });

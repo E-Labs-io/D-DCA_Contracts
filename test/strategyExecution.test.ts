@@ -194,7 +194,7 @@ describe("> DCA Strategy Executions Tests", () => {
 
       deploymentArgs = DCAExecutorArguments(
         addressStore.deployer.address,
-        "optimism",
+        forkedChain,
       );
 
       deploymentArgs[0].executionAddress = addressStore.deployer.address;
@@ -309,7 +309,7 @@ describe("> DCA Strategy Executions Tests", () => {
           executorContract
             .connect(addressStore.executorEoa.signer)
             .Execute(createdAccount.target, 1, 0),
-        ).to.be.revertedWith("DCAExecutor : [Execute] Not in execution window");
+        ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should show target WETH balance above 0", async () => {
         const balance = await createdAccount.getTargetBalance(
@@ -479,7 +479,7 @@ describe("> DCA Strategy Executions Tests", () => {
           executorContract
             .connect(addressStore.executorEoa.signer)
             .Execute(createdAccount.target, 2, 0),
-        ).to.be.revertedWith("DCAExecutor : [Execute] Not in execution window");
+        ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
     });
     describe("💡 Should Execute each strategy 3 times", async () => {
@@ -540,14 +540,14 @@ describe("> DCA Strategy Executions Tests", () => {
           executorContract
             .connect(addressStore.executorEoa.signer)
             .Execute(createdAccount.target, 1, 0),
-        ).to.be.revertedWith("DCAExecutor : [Execute] Not in execution window");
+        ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should revert strategy 2 for not in window", async () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
             .Execute(createdAccount.target, 2, 0),
-        ).to.be.revertedWith("DCAExecutor : [Execute] Not in execution window");
+        ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should return total spend of $900", () => {
         expect(totalSpend).to.equal(executions * 100000000);
@@ -602,14 +602,14 @@ describe("> DCA Strategy Executions Tests", () => {
           executorContract
             .connect(addressStore.executorEoa.signer)
             .Execute(createdAccount.target, 1, 0),
-        ).to.be.revertedWith("DCAExecutor : [Execute] Not in execution window");
+        ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should revert strategy 2 for not in window", async () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
             .Execute(createdAccount.target, 2, 0),
-        ).to.be.revertedWith("DCAExecutor : [Execute] Not in execution window");
+        ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should return total spend of $1300", () => {
         expect(totalSpend).to.equal(executions * 100000000);

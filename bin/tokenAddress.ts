@@ -67,7 +67,7 @@ const productionChainAddresses: {
     permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
     universalRouter: "0x198EF79F1F515F02dFE9e3115eD9fC07183f02fC",
     swapRouter: "0x2626664c2603336E57B271c5C0b26F421741e481",
-    quoter: "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a6",
+    quoter: "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a",
     weth: "0x4200000000000000000000000000000000000006",
     wbtc: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
     dai: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
@@ -127,6 +127,10 @@ export const tokenAddress: TokenAddressList = {
     hardhat: productionChainAddresses[forkedNetwork].swapRouter,
     optimism: productionChainAddresses.optimism.swapRouter,
     base: productionChainAddresses.base.swapRouter,
+  },
+  quoter: {
+    base: productionChainAddresses.base.quoter,
+    hardhat: productionChainAddresses[forkedNetwork].quoter,
   },
   universalRouter: {
     eth: productionChainAddresses.eth.universalRouter,

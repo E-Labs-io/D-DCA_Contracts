@@ -177,7 +177,7 @@ describe("> Aave V3 Reinvest Test", () => {
 
       const deploymentArgs = DCAExecutorArguments(
         addressStore.deployer.address,
-        "eth",
+        forkedChain,
       );
 
       deploymentArgs[0].executionAddress = addressStore.deployer.address;
@@ -348,9 +348,9 @@ describe("> Aave V3 Reinvest Test", () => {
       ).to.be.greaterThanOrEqual(strategyBalance);
     });
     it("🧪 Should revert withdrawal, No Investment to unwind", async () => {
-      await expect(createdAccount.UnwindReinvest(1)).to.be.revertedWith(
-        "[DCAAccount] : [UnWindReinvest] -  No investment to unwind",
-      );
+      await expect(
+        createdAccount.UnwindReinvest(1),
+      ).to.be.revertedWithCustomError(createdAccount, "NoReinvestBalance");
     });
     it("🧪 Should force unwind reinvest", async () => {
       const tx = await createdAccount.ForceUnwindReinvestPosition(

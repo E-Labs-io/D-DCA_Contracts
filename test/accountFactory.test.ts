@@ -47,12 +47,14 @@ describe("> DCA Account Factory Tests", () => {
       factoryContract = await factoryFactory.deploy(
         ZeroAddress,
         tokenAddress.swapRouter![forkedChain]! as string,
+        tokenAddress.quoter![forkedChain]! as string,
         ZeroAddress,
       );
       await expect(
         factoryFactory.deploy(
           ZeroAddress,
           tokenAddress.swapRouter![forkedChain]! as string,
+          tokenAddress.quoter![forkedChain]! as string,
           ZeroAddress,
         ),
       ).to.be.fulfilled;

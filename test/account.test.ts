@@ -168,7 +168,7 @@ describe("> DCA Account Tests", () => {
 
       const deploymentArgs = DCAExecutorArguments(
         addressStore.deployer.address,
-        "eth",
+        forkedChain,
       );
 
       deploymentArgs[0].executionAddress = addressStore.deployer.address;
@@ -178,6 +178,7 @@ describe("> DCA Account Tests", () => {
         deploymentArgs[0],
         addressStore.executorEoa.address,
         deploymentArgs[2],
+        deploymentArgs[3],
       );
       await executorContract.waitForDeployment();
       expect(executorContract.target).to.not.equal(ZeroAddress);
@@ -307,9 +308,7 @@ describe("> DCA Account Tests", () => {
           tokenAddress.weth![forkedChain]! as string,
           ethers.parseUnits("100", 6),
         ),
-      ).to.be.revertedWith(
-        "[DCAAccount] : [WithdrawSavings] - Balance of token too low",
-      );
+      ).to.be.revertedWithCustomError(createdAccount, "InsufficientBalance");
     });
   });
   describe("💡 Subscribe strategy tests", () => {
@@ -319,13 +318,16 @@ describe("> DCA Account Tests", () => {
       expect(checker[0]).to.equal(tokenAddress.usdc![forkedChain]);
     });
     it("🧪 Should revert on unsubscribe strategy 1", async () => {
-      await expect(createdAccount.UnsubscribeStrategy(1n)).to.be.revertedWith(
-        "DCAAccount : [UnsubscribeStrategy] Strategy is already Unsubscribed",
-      );
+      await expect(
+        createdAccount.UnsubscribeStrategy(1n),
+      ).to.be.revertedWithCustomError(createdAccount, "StrategyAlreadyUnsubscribed");
     });
     it("🧪 Should revert on SubscribeStrategy not enough funds, ", async () => {
-      await expect(createdAccount.SubscribeStrategy(1n)).to.be.revertedWith(
-        "DCAAccount : [SubscribeStrategy] Need to have 5 executions funded to subscribe",
+      await expect(
+        createdAccount.SubscribeStrategy(1n),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "InsufficientFundsForSubscription",
       );
     });
     it("🧪 Should fund the account with USDC", async function () {
@@ -363,9 +365,9 @@ describe("> DCA Account Tests", () => {
       );
     });
     it("🧪 Should revert on subscribe", async () => {
-      await expect(createdAccount.SubscribeStrategy(1n)).to.be.revertedWith(
-        "DCAAccount : [SubscribeStrategy] Strategy is already Subscribed",
-      );
+      await expect(
+        createdAccount.SubscribeStrategy(1n),
+      ).to.be.revertedWithCustomError(createdAccount, "StrategyAlreadySubscribed");
     });
     it("🧪 Should create new strategy (2), fund & subscribe", async () => {
       const strat: IDCADataStructures.StrategyStruct = newStrat(
@@ -404,7 +406,7 @@ describe("> DCA Account Tests", () => {
         executorContract
           .connect(addressStore.executorEoa.signer)
           .Execute(createdAccount.target, 1, 0),
-      ).to.be.revertedWith("DCAExecutor : [Execute] Strategy not subscribed");
+      ).to.be.revertedWithCustomError(executorContract, "StrategyNotSubscribed");
     });
     it("🧪 Should execute strategy 2", async () => {
       await expect(
@@ -420,7 +422,7 @@ describe("> DCA Account Tests", () => {
         executorContract
           .connect(addressStore.executorEoa.signer)
           .Execute(createdAccount.target, 2, 0),
-      ).to.be.revertedWith("DCAExecutor : [Execute] Not in execution window");
+      ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
     });
     it("🧪 Should show target WETH balance above 0", async () => {
       const balance = await createdAccount.getTargetBalance(
@@ -511,9 +513,7 @@ describe("> DCA Account Tests", () => {
     it("🧪 Should revert on Execute, Not Executor", async () => {
       await expect(
         createdAccount.connect(addressStore.deployer.signer).Execute(1, 0),
-      ).to.be.revertedWith(
-        "OnlyExecutor : [onlyExecutor] Address is not an executor",
-      );
+      ).to.be.revertedWithCustomError(createdAccount, "NotTheExecutor");
     });
     it("🧪 Should revert on SetupStrategy, Not Account owner", async () => {
       await expect(
@@ -568,9 +568,7 @@ describe("> DCA Account Tests", () => {
         createdAccount
           .connect(addressStore.deployer.signer)
           .ExecutorDeactivate(1n),
-      ).to.be.revertedWith(
-        "OnlyExecutor : [onlyExecutor] Address is not an executor",
-      );
+      ).to.be.revertedWithCustomError(createdAccount, "NotTheExecutor");
     });
     it("🧪 Should revert on setStrategyReinvest, Not Owner", async () => {
       let reinvest: IDCADataStructures.ReinvestStruct = {
