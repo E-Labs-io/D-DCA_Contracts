@@ -30,7 +30,7 @@ Allows the account owner to fund the account for strategy&#39;s
 ### Execute
 
 ```solidity
-function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable returns (bool)
+function Execute(uint256 strategyId_, uint16 feeAmount_, uint256 minAmountOut_) external nonpayable returns (bool)
 ```
 
 Triggered by the assigned executor to execute the given strategy
@@ -43,6 +43,7 @@ Triggered by the assigned executor to execute the given strategy
 |---|---|---|
 | strategyId_ | uint256 | Id for the Strategy to be executed |
 | feeAmount_ | uint16 | amount of the strategy amount to be paid via fee (percent) |
+| minAmountOut_ | uint256 | absolute minimum acceptable swap output, computed        off-chain by the executor against a fair market price. Zero        reverts — every execution must state an explicit slippage floor. |
 
 #### Returns
 

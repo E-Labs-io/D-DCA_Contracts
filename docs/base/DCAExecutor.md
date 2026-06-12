@@ -30,7 +30,7 @@ function DEFAULT_POOL_FEE() external view returns (uint24)
 ### DistributeFees
 
 ```solidity
-function DistributeFees(address tokenAddress_) external nonpayable
+function DistributeFees(address tokenAddress_, uint256 minAmountOut_) external nonpayable
 ```
 
 
@@ -42,11 +42,12 @@ function DistributeFees(address tokenAddress_) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | tokenAddress_ | address | The address of the token to distribute fees for |
+| minAmountOut_ | uint256 | undefined |
 
 ### Execute
 
 ```solidity
-function Execute(address DCAAccount_, uint256 strategyId_, enum IDCADataStructures.Interval interval_) external nonpayable
+function Execute(address DCAAccount_, uint256 strategyId_, enum IDCADataStructures.Interval interval_, uint256 minAmountOut_) external nonpayable
 ```
 
 
@@ -60,6 +61,7 @@ function Execute(address DCAAccount_, uint256 strategyId_, enum IDCADataStructur
 | DCAAccount_ | address | The address of the DCAAccount |
 | strategyId_ | uint256 | The id of the strategy to execute |
 | interval_ | enum IDCADataStructures.Interval | The interval of the strategy to execute |
+| minAmountOut_ | uint256 | undefined |
 
 ### ForceUnsubscribe
 
@@ -79,6 +81,23 @@ function ForceUnsubscribe(address DCAAccount_, uint256 strategyId_, enum IDCADat
 | strategyId_ | uint256 | The id of the strategy to unsubscribe |
 | interval_ | enum IDCADataStructures.Interval | The interval of the strategy to unsubscribe |
 
+### MAX_FEE_BPS
+
+```solidity
+function MAX_FEE_BPS() external view returns (uint16)
+```
+
+Hard ceiling on the per-execution fee (bps of strategy         amount; 500 = 5%). Baked into the immutable contract so         a compromised owner key cannot set the fee to 100% and         harvest every subscribed strategy&#39;s full interval amount.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint16 | undefined |
+
 ### QUOTER
 
 ```solidity
@@ -95,6 +114,22 @@ function QUOTER() external view returns (contract IQuoterV2)
 | Name | Type | Description |
 |---|---|---|
 | _0 | contract IQuoterV2 | undefined |
+
+### RescueETH
+
+```solidity
+function RescueETH(address to_) external nonpayable
+```
+
+
+
+*Recovers native ETH stranded on the contract. The executor      only holds ETH transiently during DistributeFees (WETH      unwrap → forward); anything resting here arrived by direct      transfer and has no other exit path on an immutable contract.*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| to_ | address | The address to send the recovered ETH to |
 
 ### SWAP_ROUTER
 
@@ -740,6 +775,23 @@ error FailedInnerCall()
 *A call to an address target failed. The target may have reverted.*
 
 
+### FeeExceedsMaximum
+
+```solidity
+error FeeExceedsMaximum(uint16 requested, uint16 maximum)
+```
+
+Requested per-execution fee exceeds the immutable cap.
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| requested | uint16 | undefined |
+| maximum | uint16 | undefined |
+
 ### FeeSplitTotalNot100
 
 ```solidity
@@ -769,6 +821,17 @@ error InvalidStrategy()
 ```
 
 
+
+
+
+
+### NoMinimumOut
+
+```solidity
+error NoMinimumOut()
+```
+
+Thrown when a swap is attempted without an explicit         minimum-output floor. A zero floor means unlimited         slippage — never acceptable for user funds.
 
 
 
@@ -864,6 +927,24 @@ error OwnableUnauthorizedAccount(address account)
 | Name | Type | Description |
 |---|---|---|
 | account | address | undefined |
+
+### QuoteFailed
+
+```solidity
+error QuoteFailed(address tokenIn, address tokenOut, uint256 amountIn)
+```
+
+Thrown when an on-chain quote cannot be obtained.
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenIn | address | undefined |
+| tokenOut | address | undefined |
+| amountIn | uint256 | undefined |
 
 ### ReentrancyGuardReentrantCall
 

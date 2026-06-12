@@ -20,6 +20,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "NoMinimumOut",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -55,6 +60,32 @@ const _abi = [
       },
     ],
     name: "OwnableUnauthorizedAccount",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenIn",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "tokenOut",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amountIn",
+        type: "uint256",
+      },
+    ],
+    name: "QuoteFailed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "SwapReturnedNothing",
     type: "error",
   },
   {
@@ -251,6 +282,11 @@ const _abi = [
         internalType: "uint16",
         name: "feeAmount_",
         type: "uint16",
+      },
+      {
+        internalType: "uint256",
+        name: "minAmountOut_",
+        type: "uint256",
       },
     ],
     name: "Execute",

@@ -76,11 +76,15 @@ interface IDCAAccount is IDCADataStructures {
      * @notice Triggered by the assigned executor to execute the given strategy
      * @param strategyId_  Id for the Strategy to be executed
      * @param feeAmount_ amount of the strategy amount to be paid via fee (percent)
+     * @param minAmountOut_ absolute minimum acceptable swap output, computed
+     *        off-chain by the executor against a fair market price. Zero
+     *        reverts — every execution must state an explicit slippage floor.
      * @return If the function was successful
      */
     function Execute(
         uint256 strategyId_,
-        uint16 feeAmount_
+        uint16 feeAmount_,
+        uint256 minAmountOut_
     ) external returns (bool);
 
     /**

@@ -37,6 +37,8 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
     // V0.9 require(string) → custom errors
     error IntervalWindowNotMet();
     error InvalidStrategyData();
+    /// @notice The swap executed but returned zero output tokens.
+    error SwapReturnedNothing();
 
     mapping(uint256 => Strategy) internal _strategies;
 
@@ -89,49 +91,77 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
      * @dev logic for executing a strategy
      * @param strategyId_ Strategy Id of the strategy data to execute
      * @param feePercent_ Amount to charge as fee in percent
+     * @param minAmountOut_ absolute minimum acceptable swap output,
+     *        supplied by the executor from an off-chain market quote
      * @notice percent breakdown where 10000 = 100%, 100 = 1%, etc.
+     * @notice V0.9 failure semantics: any failure REVERTS the whole
+     *  transaction rather than returning false. This keeps three
+     *  invariants the old return-false path broke:
+     *    1. the fee can never leave while the ledger still counts it
+     *       (insolvency drift),
+     *    2. the execution window is only consumed by a successful
+     *       execution (_lastExecution set after the swap),
+     *    3. account-side and executor-side window state cannot diverge.
      * @return  if the execution was successful
      */
     function _executeDCATrade(
         uint256 strategyId_,
-        uint16 feePercent_
+        uint16 feePercent_,
+        uint256 minAmountOut_
     ) internal returns (bool) {
-        _lastExecution[strategyId_] = block.timestamp;
         Strategy memory strategy = _strategies[strategyId_];
         uint256 fee = feePercent_.getFee(strategy.amount);
         uint256 tradeAmount = strategy.amount - fee;
         (address baseAddress, address targetAddress) = strategy
             .getTokenAddresses();
 
+        // Commit the full strategy amount up-front (checks-effects-
+        // interactions): caller has already verified the balance covers
+        // strategy.amount. If anything below reverts, this decrement
+        // reverts with it — there is no partial state where the fee has
+        // left the contract but the ledger still counts it.
+        _baseBalances[baseAddress] -= strategy.amount;
+
         if (fee > 0) {
             _transferFee(fee, baseAddress);
         }
 
         _approveSwapSpend(baseAddress, tradeAmount);
-        uint256 amountIn = _swap(baseAddress, targetAddress, tradeAmount, 50); // 0.5% slippage tolerance
+        uint256 amountIn = _swap(
+            baseAddress,
+            targetAddress,
+            tradeAmount,
+            minAmountOut_
+        );
+        if (amountIn == 0) revert SwapReturnedNothing();
+
+        // Window is only consumed by a successful execution — a revert
+        // above leaves _lastExecution untouched so the executor can
+        // retry within the same window.
+        _lastExecution[strategyId_] = block.timestamp;
+
+        uint256 reinvestAmount;
         bool success;
 
-        if (amountIn > 0) {
-            uint256 reinvestAmount;
+        if (strategy.reinvest.active) {
+            (reinvestAmount, success) = _executeReinvest(
+                strategy.reinvest,
+                amountIn
+            );
 
-            if (strategy.reinvest.active) {
-                (reinvestAmount, success) = _executeReinvest(
-                    strategy.reinvest,
-                    amountIn
-                );
+            emit ReinvestExecuted(strategyId_, success, reinvestAmount);
+        }
 
-                emit ReinvestExecuted(strategyId_, success, reinvestAmount);
-            }
+        if (success) {
+            _reinvestLiquidityTokenBalance[strategyId_] += reinvestAmount;
+        } else {
+            // No reinvest configured, or the reinvest module declined:
+            // the swapped tokens stay in the account as target savings.
+            _targetBalances[targetAddress] += amountIn;
+        }
 
-            if (success) {
-                _reinvestLiquidityTokenBalance[strategyId_] += reinvestAmount;
-            } else _targetBalances[targetAddress] += amountIn;
-
-            _baseBalances[baseAddress] -= strategy.amount;
-
-            emit StrategyExecuted(strategyId_, amountIn, success);
-            return true;
-        } else return false;
+        emit StrategyExecuted(strategyId_, amountIn, success);
+        return true;
     }
 
     /**
@@ -202,10 +232,9 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
 
     /**
      * @dev withdraws and unwinds a given amount of the reinvest amount
-     * @notice NOT WORKING YET
      * @param strategyId_ id of the strategy to be withdrawn
      * @param reinvest_ reinvest data struct of the strategy being withdrawn
-     * @param amount_ amount of the target token to withdraw
+     * @param amount_ amount of the liquidity token to unwind
      */
     function _withdrawReinvest(
         uint256 strategyId_,
@@ -223,12 +252,16 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         if (txSuccess) {
             (amount, success) = abi.decode(returnData, (uint256, bool));
 
-            _reinvestLiquidityTokenBalance[strategyId_] -= amount_;
-            _targetBalances[
-                _strategies[strategyId_].targetToken.tokenAddress
-            ] += amount;
-
-            return (amount, success);
+            // Only mutate accounting when the module actually unwound
+            // the position. A delegatecall that succeeds at the EVM
+            // level can still report success=false from the module —
+            // decrementing on that path corrupted the ledger (V0.9 fix).
+            if (success) {
+                _reinvestLiquidityTokenBalance[strategyId_] -= amount_;
+                _targetBalances[
+                    _strategies[strategyId_].targetToken.tokenAddress
+                ] += amount;
+            }
         }
 
         return (amount, success);

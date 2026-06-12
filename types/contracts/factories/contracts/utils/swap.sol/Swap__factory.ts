@@ -11,6 +11,32 @@ import type {
 const _abi = [
   {
     inputs: [],
+    name: "NoMinimumOut",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenIn",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "tokenOut",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amountIn",
+        type: "uint256",
+      },
+    ],
+    name: "QuoteFailed",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "DEFAULT_POOL_FEE",
     outputs: [
       {

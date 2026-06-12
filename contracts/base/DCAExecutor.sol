@@ -59,6 +59,14 @@ contract DCAExecutor is
     // gas on revert and uniform error surface for ethers v6 decoders.
     error CallerIsNotAccount(address caller, address expected);
     error InvalidStrategy();
+    /// @notice Requested per-execution fee exceeds the immutable cap.
+    error FeeExceedsMaximum(uint16 requested, uint16 maximum);
+
+    /// @notice Hard ceiling on the per-execution fee (bps of strategy
+    ///         amount; 500 = 5%). Baked into the immutable contract so
+    ///         a compromised owner key cannot set the fee to 100% and
+    ///         harvest every subscribed strategy's full interval amount.
+    uint16 public constant MAX_FEE_BPS = 500;
 
     mapping(Interval => bool) private _activeIntervals;
     mapping(Interval => uint256) internal _totalActiveStrategiesByIntervals;
@@ -87,11 +95,13 @@ contract DCAExecutor is
         setFeeData(feeDistrobution_);
     }
 
-    /**
-     * @dev Fallback function for the DCAExecutor contract
-     */
-    fallback() external payable {}
+    // V0.9: no fallback() — wrong-selector calls revert loudly. The old
+    // payable fallback converted every ABI mismatch (the off-chain
+    // executor calling a stale 2-arg Execute, for example) into a
+    // silent gas-burning success, hiding integration breakage.
 
+    // receive() must stay payable: DistributeFees unwraps WETH to ETH
+    // mid-transaction and the contract briefly holds it before forwarding.
     receive() external payable {}
 
     /**
@@ -152,7 +162,8 @@ contract DCAExecutor is
     function Execute(
         address DCAAccount_,
         uint256 strategyId_,
-        Interval interval_
+        Interval interval_,
+        uint256 minAmountOut_
     ) external override onlyExecutor is_active nonReentrant {
         if (!_strategies[DCAAccount_][strategyId_]) {
             revert StrategyNotSubscribed();
@@ -171,7 +182,7 @@ contract DCAExecutor is
             revert NotInExecutionWindow();
         }
 
-        _executeStrategy(DCAAccount_, strategyId_);
+        _executeStrategy(DCAAccount_, strategyId_, minAmountOut_);
     }
 
     /**
@@ -179,7 +190,8 @@ contract DCAExecutor is
      * @param tokenAddress_ The address of the token to distribute fees for
      */
     function DistributeFees(
-        address tokenAddress_
+        address tokenAddress_,
+        uint256 minAmountOut_
     ) external override onlyAdmins nonReentrant {
         IERC20 token = IERC20(tokenAddress_);
         uint256 balance = token.balanceOf(address(this));
@@ -192,12 +204,18 @@ contract DCAExecutor is
             ) = _feeData.getFeeSplit(balance);
 
             if (executorFee > 0) {
-                // Convert the UDS to native token
+                // Approve the router to pull the executor share. This
+                // was missing pre-V0.9, so every DistributeFees call
+                // reverted STF inside the router with the default split.
+                _approveSwapSpend(tokenAddress_, executorFee);
+
+                // Convert the executor share to native token. The admin
+                // caller supplies minAmountOut_ from an off-chain quote.
                 uint256 execAmunt = _swap(
                     tokenAddress_,
                     address(0),
                     executorFee,
-                    50 // 0.5% slippage tolerance
+                    minAmountOut_
                 );
                 // Use call{value} rather than .transfer — see DCAAccount.
                 // 2300-gas .transfer breaks when executionAddress is a
@@ -251,6 +269,11 @@ contract DCAExecutor is
     ) public onlyOwner {
         if (!fee_.checkPercentTotal()) {
             revert FeeSplitTotalNot100();
+        }
+        // Immutable safety rail: the per-execution fee can never exceed
+        // MAX_FEE_BPS, whatever happens to the owner key.
+        if (fee_.feeAmount > MAX_FEE_BPS) {
+            revert FeeExceedsMaximum(fee_.feeAmount, MAX_FEE_BPS);
         }
         _feeData = fee_;
         emit FeeDataChanged();
@@ -380,11 +403,13 @@ contract DCAExecutor is
 
     function _executeStrategy(
         address accountAddress_,
-        uint256 strategyId_
+        uint256 strategyId_,
+        uint256 minAmountOut_
     ) internal returns (bool) {
         bool success = IDCAAccount(accountAddress_).Execute(
             strategyId_,
-            _feeData.feeAmount
+            _feeData.feeAmount,
+            minAmountOut_
         );
         if (success) {
             _lastExecution[accountAddress_][strategyId_] = block.timestamp;
@@ -435,6 +460,21 @@ contract DCAExecutor is
     ) external onlyAdmins {
         _allowedBaseTokens[token_] = allowed_;
         emit BaseTokenAllowanceChanged(token_, allowed_);
+    }
+
+    /**
+     * @dev Recovers native ETH stranded on the contract. The executor
+     *      only holds ETH transiently during DistributeFees (WETH
+     *      unwrap → forward); anything resting here arrived by direct
+     *      transfer and has no other exit path on an immutable contract.
+     * @param to_ The address to send the recovered ETH to
+     */
+    function RescueETH(address to_) external onlyOwner nonReentrant {
+        uint256 balance = address(this).balance;
+        if (balance > 0) {
+            (bool ok, ) = payable(to_).call{value: balance}("");
+            if (!ok) revert EthTransferFailed(to_, balance);
+        }
     }
 
     function isTokenAllowedAsBase(address token_) public view returns (bool) {

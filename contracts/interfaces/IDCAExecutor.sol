@@ -78,19 +78,25 @@ interface IDCAExecutor is IDCADataStructures {
      * @param DCAAccount_ {address} Address of the DCAAccount holding the strategy to execute
      * @param strategyId_ {uint256} ID of the strategy to execute
      * @param interval_ {Interval} Interval of the strategy to execute
+     * @param minAmountOut_ {uint256} Absolute minimum acceptable swap output
+     *        for this execution, computed off-chain against a fair market
+     *        price. Zero reverts in the swap layer.
      */
     function Execute(
         address DCAAccount_,
         uint256 strategyId_,
-        Interval interval_
+        Interval interval_,
+        uint256 minAmountOut_
     ) external;
 
     /**
      * @notice Distributes the acuminated fee's from the DCAExecutor
      * @dev will use the in-contract fee's data to split the funds and transfer to needed wallets.
      * @param tokenAddress {address} Address of the token in the fee's pool to be distributed
+     * @param minAmountOut_ {uint256} Minimum acceptable ETH output for the
+     *        executor-share swap (admin supplies an off-chain quote).
      */
-    function DistributeFees(address tokenAddress) external;
+    function DistributeFees(address tokenAddress, uint256 minAmountOut_) external;
 
     /**
      * @notice Used by the Executor service to remove a strategy from the DCAExecutor

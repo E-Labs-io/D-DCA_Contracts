@@ -64,3 +64,35 @@ function SWAP_ROUTER() external view returns (contract ISwapRouter)
 
 
 
+## Errors
+
+### NoMinimumOut
+
+```solidity
+error NoMinimumOut()
+```
+
+Thrown when a swap is attempted without an explicit         minimum-output floor. A zero floor means unlimited         slippage — never acceptable for user funds.
+
+
+
+
+### QuoteFailed
+
+```solidity
+error QuoteFailed(address tokenIn, address tokenOut, uint256 amountIn)
+```
+
+Thrown when an on-chain quote cannot be obtained.
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenIn | address | undefined |
+| tokenOut | address | undefined |
+| amountIn | uint256 | undefined |
+
+

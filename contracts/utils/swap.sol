@@ -25,6 +25,11 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
  *
  */
 abstract contract Swap {
+    /// @notice Thrown when a swap is attempted without an explicit
+    ///         minimum-output floor. A zero floor means unlimited
+    ///         slippage — never acceptable for user funds.
+    error NoMinimumOut();
+
     ISwapRouter public SWAP_ROUTER;
     IQuoterV2 public QUOTER;
 
@@ -38,25 +43,29 @@ abstract contract Swap {
 
     /**
      * @dev swaps from base token for set amount into any amount of target token
+     * @notice Slippage model (V0.9): the caller supplies an ABSOLUTE
+     *  minimum-output amount computed off-chain against a fair market
+     *  price. The previous design derived the floor from a same-block
+     *  on-chain quote, which tracks a sandwich attacker's pool
+     *  manipulation and silently fell back to 0 when quoting failed —
+     *  i.e. it protected nothing precisely when protection mattered.
+     *  A zero floor now reverts rather than executing unprotected.
      * @param baseToken_  token address of the token to swap from
-     * @param targetToken_  token address of the token to receive
+     * @param targetToken_  token address of the token to receive (address(0) = native ETH via WETH unwrap)
      * @param amount_  amount to swap
-     * @param slippageToleranceBps_  slippage tolerance in basis points (1 = 0.01%)
+     * @param minAmountOut_  absolute minimum acceptable output (in target-token units; WETH units for ETH)
      * @return amount  amount returned by the swap
      */
     function _swap(
         address baseToken_,
         address targetToken_,
         uint256 amount_,
-        uint256 slippageToleranceBps_
+        uint256 minAmountOut_
     ) internal returns (uint256 amount) {
+        if (minAmountOut_ == 0) revert NoMinimumOut();
+
         // Get the appropriate pool fee for this token pair
         uint24 poolFee = _getPoolFee(baseToken_, targetToken_);
-
-        // Calculate minimum amount out based on slippage tolerance
-        // First get a quote for the swap to calculate minimum output
-        uint256 estimatedAmountOut = _getQuote(baseToken_, targetToken_, amount_, poolFee);
-        uint256 amountOutMinimum = (estimatedAmountOut * (10000 - slippageToleranceBps_)) / 10000;
 
         // The call to `exactInputSingle` executes the swap.
         if (targetToken_ == address(0)) {
@@ -68,7 +77,7 @@ abstract contract Swap {
                     fee: poolFee,
                     recipient: address(this),
                     amountIn: amount_,
-                    amountOutMinimum: amountOutMinimum,
+                    amountOutMinimum: minAmountOut_,
                     sqrtPriceLimitX96: 0
                 })
             );
@@ -83,7 +92,7 @@ abstract contract Swap {
                         fee: poolFee,
                         recipient: address(this),
                         amountIn: amount_,
-                        amountOutMinimum: amountOutMinimum,
+                        amountOutMinimum: minAmountOut_,
                         sqrtPriceLimitX96: 0
                     })
                 );
@@ -168,14 +177,24 @@ abstract contract Swap {
      * @param fee_ Pool fee
      * @return amountOut Estimated output amount
      */
+    /// @notice Thrown when an on-chain quote cannot be obtained.
+    error QuoteFailed(address tokenIn, address tokenOut, uint256 amountIn);
+
     function _getQuote(
         address tokenIn_,
         address tokenOut_,
         uint256 amountIn_,
         uint24 fee_
     ) internal returns (uint256 amountOut) {
+        // address(0) means native ETH — the actual swap routes through
+        // WETH, so the quote must too. (Previously this path encoded
+        // address(0) directly, which always reverted in the quoter.)
+        address quoteOut = tokenOut_ == address(0)
+            ? SWAP_ROUTER.WETH9()
+            : tokenOut_;
+
         // Build the path for single-hop swap
-        bytes memory path = abi.encodePacked(tokenIn_, fee_, tokenOut_);
+        bytes memory path = abi.encodePacked(tokenIn_, fee_, quoteOut);
 
         try QUOTER.quoteExactInput(path, amountIn_) returns (
             uint256 amountOut_,
@@ -185,9 +204,12 @@ abstract contract Swap {
         ) {
             return amountOut_;
         } catch {
-            // If quoting fails, return 0 - the swap will still work with amountOutMinimum = 0
-            // This is a fallback to maintain functionality
-            return 0;
+            // V0.9: a failed quote REVERTS instead of returning 0.
+            // The old 0-fallback flowed into amountOutMinimum = 0 —
+            // unlimited slippage masked as "maintaining functionality".
+            // NOTE: no longer used in the execution hot path (callers
+            // supply minAmountOut_ directly); retained for estimation.
+            revert QuoteFailed(tokenIn_, tokenOut_, amountIn_);
         }
     }
 }

@@ -159,6 +159,11 @@ const _abi = [
         name: "feeAmount_",
         type: "uint16",
       },
+      {
+        internalType: "uint256",
+        name: "minAmountOut_",
+        type: "uint256",
+      },
     ],
     name: "Execute",
     outputs: [

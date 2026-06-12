@@ -110,6 +110,11 @@ const _abi = [
         name: "tokenAddress",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "minAmountOut_",
+        type: "uint256",
+      },
     ],
     name: "DistributeFees",
     outputs: [],
@@ -132,6 +137,11 @@ const _abi = [
         internalType: "enum IDCADataStructures.Interval",
         name: "interval_",
         type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "minAmountOut_",
+        type: "uint256",
       },
     ],
     name: "Execute",

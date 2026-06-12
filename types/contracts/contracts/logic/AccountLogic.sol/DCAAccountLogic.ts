@@ -136,7 +136,7 @@ export interface DCAAccountLogicInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "Execute",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ExecutorDeactivate",
@@ -467,7 +467,11 @@ export interface DCAAccountLogic extends BaseContract {
   DEFAULT_POOL_FEE: TypedContractMethod<[], [bigint], "view">;
 
   Execute: TypedContractMethod<
-    [strategyId_: BigNumberish, feeAmount_: BigNumberish],
+    [
+      strategyId_: BigNumberish,
+      feeAmount_: BigNumberish,
+      minAmountOut_: BigNumberish
+    ],
     [boolean],
     "nonpayable"
   >;
@@ -589,7 +593,11 @@ export interface DCAAccountLogic extends BaseContract {
   getFunction(
     nameOrSignature: "Execute"
   ): TypedContractMethod<
-    [strategyId_: BigNumberish, feeAmount_: BigNumberish],
+    [
+      strategyId_: BigNumberish,
+      feeAmount_: BigNumberish,
+      minAmountOut_: BigNumberish
+    ],
     [boolean],
     "nonpayable"
   >;

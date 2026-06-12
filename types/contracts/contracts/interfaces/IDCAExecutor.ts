@@ -111,11 +111,11 @@ export interface IDCAExecutorInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "DistributeFees",
-    values: [AddressLike]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "Execute",
-    values: [AddressLike, BigNumberish, BigNumberish]
+    values: [AddressLike, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ForceUnsubscribe",
@@ -288,7 +288,7 @@ export interface IDCAExecutor extends BaseContract {
   ): Promise<this>;
 
   DistributeFees: TypedContractMethod<
-    [tokenAddress: AddressLike],
+    [tokenAddress: AddressLike, minAmountOut_: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -297,7 +297,8 @@ export interface IDCAExecutor extends BaseContract {
     [
       DCAAccount_: AddressLike,
       strategyId_: BigNumberish,
-      interval_: BigNumberish
+      interval_: BigNumberish,
+      minAmountOut_: BigNumberish
     ],
     [void],
     "nonpayable"
@@ -359,14 +360,19 @@ export interface IDCAExecutor extends BaseContract {
 
   getFunction(
     nameOrSignature: "DistributeFees"
-  ): TypedContractMethod<[tokenAddress: AddressLike], [void], "nonpayable">;
+  ): TypedContractMethod<
+    [tokenAddress: AddressLike, minAmountOut_: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "Execute"
   ): TypedContractMethod<
     [
       DCAAccount_: AddressLike,
       strategyId_: BigNumberish,
-      interval_: BigNumberish
+      interval_: BigNumberish,
+      minAmountOut_: BigNumberish
     ],
     [void],
     "nonpayable"

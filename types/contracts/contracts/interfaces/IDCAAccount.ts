@@ -120,7 +120,7 @@ export interface IDCAAccountInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "Execute",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ExecutorDeactivate",
@@ -360,7 +360,11 @@ export interface IDCAAccount extends BaseContract {
   >;
 
   Execute: TypedContractMethod<
-    [strategyId_: BigNumberish, feeAmount_: BigNumberish],
+    [
+      strategyId_: BigNumberish,
+      feeAmount_: BigNumberish,
+      minAmountOut_: BigNumberish
+    ],
     [boolean],
     "nonpayable"
   >;
@@ -449,7 +453,11 @@ export interface IDCAAccount extends BaseContract {
   getFunction(
     nameOrSignature: "Execute"
   ): TypedContractMethod<
-    [strategyId_: BigNumberish, feeAmount_: BigNumberish],
+    [
+      strategyId_: BigNumberish,
+      feeAmount_: BigNumberish,
+      minAmountOut_: BigNumberish
+    ],
     [boolean],
     "nonpayable"
   >;

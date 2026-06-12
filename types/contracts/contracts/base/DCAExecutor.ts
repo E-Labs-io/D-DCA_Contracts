@@ -122,7 +122,9 @@ export interface DCAExecutorInterface extends Interface {
       | "DistributeFees"
       | "Execute"
       | "ForceUnsubscribe"
+      | "MAX_FEE_BPS"
       | "QUOTER"
+      | "RescueETH"
       | "SWAP_ROUTER"
       | "Subscribe"
       | "Unsubscribe"
@@ -167,17 +169,25 @@ export interface DCAExecutorInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "DistributeFees",
-    values: [AddressLike]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "Execute",
-    values: [AddressLike, BigNumberish, BigNumberish]
+    values: [AddressLike, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ForceUnsubscribe",
     values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "MAX_FEE_BPS",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "QUOTER", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "RescueETH",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "SWAP_ROUTER",
     values?: undefined
@@ -282,7 +292,12 @@ export interface DCAExecutorInterface extends Interface {
     functionFragment: "ForceUnsubscribe",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_FEE_BPS",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "QUOTER", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "RescueETH", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "SWAP_ROUTER",
     data: BytesLike
@@ -520,7 +535,7 @@ export interface DCAExecutor extends BaseContract {
   DEFAULT_POOL_FEE: TypedContractMethod<[], [bigint], "view">;
 
   DistributeFees: TypedContractMethod<
-    [tokenAddress_: AddressLike],
+    [tokenAddress_: AddressLike, minAmountOut_: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -529,7 +544,8 @@ export interface DCAExecutor extends BaseContract {
     [
       DCAAccount_: AddressLike,
       strategyId_: BigNumberish,
-      interval_: BigNumberish
+      interval_: BigNumberish,
+      minAmountOut_: BigNumberish
     ],
     [void],
     "nonpayable"
@@ -545,7 +561,11 @@ export interface DCAExecutor extends BaseContract {
     "nonpayable"
   >;
 
+  MAX_FEE_BPS: TypedContractMethod<[], [bigint], "view">;
+
   QUOTER: TypedContractMethod<[], [string], "view">;
+
+  RescueETH: TypedContractMethod<[to_: AddressLike], [void], "nonpayable">;
 
   SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
 
@@ -674,14 +694,19 @@ export interface DCAExecutor extends BaseContract {
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "DistributeFees"
-  ): TypedContractMethod<[tokenAddress_: AddressLike], [void], "nonpayable">;
+  ): TypedContractMethod<
+    [tokenAddress_: AddressLike, minAmountOut_: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "Execute"
   ): TypedContractMethod<
     [
       DCAAccount_: AddressLike,
       strategyId_: BigNumberish,
-      interval_: BigNumberish
+      interval_: BigNumberish,
+      minAmountOut_: BigNumberish
     ],
     [void],
     "nonpayable"
@@ -698,8 +723,14 @@ export interface DCAExecutor extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "MAX_FEE_BPS"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "QUOTER"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "RescueETH"
+  ): TypedContractMethod<[to_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "SWAP_ROUTER"
   ): TypedContractMethod<[], [string], "view">;

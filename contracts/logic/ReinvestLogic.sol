@@ -72,10 +72,19 @@ abstract contract DCAReinvestLogic is IDCAReinvest {
         IDCADataStructures.Reinvest memory reinvestData_,
         uint256 amount_
     ) internal returns (uint256 amount, bool success) {
-        if (reinvestData_.investCode <= ReinvestCodes.COMPOUND) {
+        uint8 code = reinvestData_.investCode;
+
+        // Exact-match dispatch (V0.9 fix). The previous `<= COMPOUND`
+        // range check routed NOT_ACTIVE (0x00) and FORWARD (0x01) into
+        // Compound's unwind. FORWARD has no position to unwind — the
+        // funds were forwarded out at execution time — and unknown
+        // codes must fail closed, not fall into another module.
+        if (code.checkCode(ReinvestCodes.COMPOUND)) {
             return
                 CompoundV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
-        } else if (reinvestData_.investCode == ReinvestCodes.AAVE)
+        } else if (code.checkCode(ReinvestCodes.AAVE)) {
             return AaveV3Reinvest._unwind(amount_, reinvestData_.reinvestData);
+        }
+        return (0, false);
     }
 }

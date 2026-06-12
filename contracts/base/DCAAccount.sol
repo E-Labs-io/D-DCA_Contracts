@@ -53,9 +53,13 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
         _setReinvestAddress(reinvestLibraryContract_);
     }
 
-    fallback() external payable {}
+    // V0.9: no fallback() — wrong-selector calls revert loudly instead
+    // of being silently swallowed. A payable fallback turned every ABI
+    // mismatch (stale client, wrong arg count) into a gas-burning no-op
+    // reported as success.
 
-    // Receive is a variant of fallback that is triggered when msg.data is empty
+    // receive() must stay payable: the account receives native ETH from
+    // WETH unwraps when a strategy's target token is ETH (address(0)).
     receive() external payable {}
 
     /**
@@ -63,10 +67,13 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
      *      Can only be done by the executor.
      * @param strategyId_ the id of the strategy to execute
      * @param feeAmount_ the amount of fee to pay to the executor
+     * @param minAmountOut_ absolute minimum acceptable swap output,
+     *        computed off-chain by the executor (zero reverts)
      */
     function Execute(
         uint256 strategyId_,
-        uint16 feeAmount_
+        uint16 feeAmount_,
+        uint256 minAmountOut_
     ) external override onlyExecutor inWindow(strategyId_) nonReentrant returns (bool) {
         if (!_strategies[strategyId_].isActive()) {
             revert StrategyNotActive();
@@ -77,7 +84,7 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
                 _strategies[strategyId_].amount
             );
         }
-        return _executeDCATrade(strategyId_, feeAmount_);
+        return _executeDCATrade(strategyId_, feeAmount_, minAmountOut_);
     }
 
     /**
@@ -147,6 +154,12 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
     function ExecutorDeactivate(
         uint256 strategyId_
     ) external override onlyExecutor {
+        // Idempotent: deactivating an already-inactive strategy is a
+        // no-op. Without this guard a repeated call corrupts the
+        // active-strategy counter (underflow revert) and lets a
+        // compromised executor key grief arbitrary strategies.
+        if (!_strategies[strategyId_].active) return;
+
         _strategies[strategyId_].active = false;
         _totalActiveStrategies -= 1;
 
@@ -243,13 +256,20 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
             strategy.reinvest,
             liquidityToken_
         );
+        if (!success) revert ReinvestUnwindFailed();
+
+        // The force-unwind liquidated the strategy's entire position
+        // (it reads the live liquidity-token balance, not our records),
+        // so zero the recorded balance — leaving the stale figure made
+        // a later UnwindReinvest attempt a double-unwind against an
+        // already-emptied position (V0.9 fix).
+        _reinvestLiquidityTokenBalance[strategyId_] = 0;
 
         // Update target balance
         _targetBalances[
             strategy.targetToken.tokenAddress
         ] += amountOfTargetReturned;
 
-        if (!success) revert ReinvestUnwindFailed();
         emit ReinvestUnwound(strategyId_, amountOfTargetReturned);
     }
 

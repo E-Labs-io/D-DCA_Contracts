@@ -47,7 +47,7 @@ function DEFAULT_POOL_FEE() external view returns (uint24)
 ### Execute
 
 ```solidity
-function Execute(uint256 strategyId_, uint16 feeAmount_) external nonpayable returns (bool)
+function Execute(uint256 strategyId_, uint16 feeAmount_, uint256 minAmountOut_) external nonpayable returns (bool)
 ```
 
 Triggered by the assigned executor to execute the given strategy
@@ -60,6 +60,7 @@ Triggered by the assigned executor to execute the given strategy
 |---|---|---|
 | strategyId_ | uint256 | Id for the Strategy to be executed |
 | feeAmount_ | uint16 | amount of the strategy amount to be paid via fee (percent) |
+| minAmountOut_ | uint256 | absolute minimum acceptable swap output, computed        off-chain by the executor against a fair market price. Zero        reverts — every execution must state an explicit slippage floor. |
 
 #### Returns
 
@@ -562,6 +563,17 @@ error InvalidStrategyData()
 
 
 
+### NoMinimumOut
+
+```solidity
+error NoMinimumOut()
+```
+
+Thrown when a swap is attempted without an explicit         minimum-output floor. A zero floor means unlimited         slippage — never acceptable for user funds.
+
+
+
+
 ### NotTheExecutor
 
 ```solidity
@@ -610,5 +622,34 @@ error OwnableUnauthorizedAccount(address account)
 | Name | Type | Description |
 |---|---|---|
 | account | address | undefined |
+
+### QuoteFailed
+
+```solidity
+error QuoteFailed(address tokenIn, address tokenOut, uint256 amountIn)
+```
+
+Thrown when an on-chain quote cannot be obtained.
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenIn | address | undefined |
+| tokenOut | address | undefined |
+| amountIn | uint256 | undefined |
+
+### SwapReturnedNothing
+
+```solidity
+error SwapReturnedNothing()
+```
+
+The swap executed but returned zero output tokens.
+
+
+
 
 

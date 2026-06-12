@@ -27,6 +27,7 @@ export interface SwapTestInterface extends Interface {
       | "DEFAULT_POOL_FEE"
       | "QUOTER"
       | "SWAP_ROUTER"
+      | "quoteSwap"
       | "setAllowance"
       | "swapToEthInContract"
       | "swapTokensInContract"
@@ -45,24 +46,28 @@ export interface SwapTestInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "quoteSwap",
+    values: [AddressLike, AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setAllowance",
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "swapToEthInContract",
-    values: [AddressLike, BigNumberish]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "swapTokensInContract",
-    values: [AddressLike, AddressLike, BigNumberish]
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "swapTokensToEthToTarget",
-    values: [AddressLike, BigNumberish, AddressLike]
+    values: [AddressLike, BigNumberish, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "swapTokensToTarget",
-    values: [AddressLike, AddressLike, BigNumberish, AddressLike]
+    values: [AddressLike, AddressLike, BigNumberish, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawETH",
@@ -78,6 +83,7 @@ export interface SwapTestInterface extends Interface {
     functionFragment: "SWAP_ROUTER",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "quoteSwap", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setAllowance",
     data: BytesLike
@@ -153,6 +159,12 @@ export interface SwapTest extends BaseContract {
 
   SWAP_ROUTER: TypedContractMethod<[], [string], "view">;
 
+  quoteSwap: TypedContractMethod<
+    [tokenIn: AddressLike, tokenOut: AddressLike, amountIn: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
+
   setAllowance: TypedContractMethod<
     [tokenAddress: AddressLike, amount: BigNumberish],
     [void],
@@ -160,7 +172,11 @@ export interface SwapTest extends BaseContract {
   >;
 
   swapToEthInContract: TypedContractMethod<
-    [baseTokenAddress: AddressLike, amount: BigNumberish],
+    [
+      baseTokenAddress: AddressLike,
+      amount: BigNumberish,
+      minAmountOut: BigNumberish
+    ],
     [bigint],
     "nonpayable"
   >;
@@ -169,7 +185,8 @@ export interface SwapTest extends BaseContract {
     [
       baseTokenAddress: AddressLike,
       targetTokenAddress: AddressLike,
-      amount: BigNumberish
+      amount: BigNumberish,
+      minAmountOut: BigNumberish
     ],
     [bigint],
     "nonpayable"
@@ -179,7 +196,8 @@ export interface SwapTest extends BaseContract {
     [
       baseTokenAddress: AddressLike,
       amount: BigNumberish,
-      recipient: AddressLike
+      recipient: AddressLike,
+      minAmountOut: BigNumberish
     ],
     [bigint],
     "nonpayable"
@@ -190,7 +208,8 @@ export interface SwapTest extends BaseContract {
       baseTokenAddress: AddressLike,
       targetTokenAddress: AddressLike,
       amount: BigNumberish,
-      recipient: AddressLike
+      recipient: AddressLike,
+      minAmountOut: BigNumberish
     ],
     [bigint],
     "nonpayable"
@@ -216,6 +235,13 @@ export interface SwapTest extends BaseContract {
     nameOrSignature: "SWAP_ROUTER"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "quoteSwap"
+  ): TypedContractMethod<
+    [tokenIn: AddressLike, tokenOut: AddressLike, amountIn: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "setAllowance"
   ): TypedContractMethod<
     [tokenAddress: AddressLike, amount: BigNumberish],
@@ -225,7 +251,11 @@ export interface SwapTest extends BaseContract {
   getFunction(
     nameOrSignature: "swapToEthInContract"
   ): TypedContractMethod<
-    [baseTokenAddress: AddressLike, amount: BigNumberish],
+    [
+      baseTokenAddress: AddressLike,
+      amount: BigNumberish,
+      minAmountOut: BigNumberish
+    ],
     [bigint],
     "nonpayable"
   >;
@@ -235,7 +265,8 @@ export interface SwapTest extends BaseContract {
     [
       baseTokenAddress: AddressLike,
       targetTokenAddress: AddressLike,
-      amount: BigNumberish
+      amount: BigNumberish,
+      minAmountOut: BigNumberish
     ],
     [bigint],
     "nonpayable"
@@ -246,7 +277,8 @@ export interface SwapTest extends BaseContract {
     [
       baseTokenAddress: AddressLike,
       amount: BigNumberish,
-      recipient: AddressLike
+      recipient: AddressLike,
+      minAmountOut: BigNumberish
     ],
     [bigint],
     "nonpayable"
@@ -258,7 +290,8 @@ export interface SwapTest extends BaseContract {
       baseTokenAddress: AddressLike,
       targetTokenAddress: AddressLike,
       amount: BigNumberish,
-      recipient: AddressLike
+      recipient: AddressLike,
+      minAmountOut: BigNumberish
     ],
     [bigint],
     "nonpayable"

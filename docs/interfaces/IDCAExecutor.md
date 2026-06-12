@@ -13,7 +13,7 @@
 ### DistributeFees
 
 ```solidity
-function DistributeFees(address tokenAddress) external nonpayable
+function DistributeFees(address tokenAddress, uint256 minAmountOut_) external nonpayable
 ```
 
 Distributes the acuminated fee&#39;s from the DCAExecutor
@@ -25,11 +25,12 @@ Distributes the acuminated fee&#39;s from the DCAExecutor
 | Name | Type | Description |
 |---|---|---|
 | tokenAddress | address | {address} Address of the token in the fee&#39;s pool to be distributed |
+| minAmountOut_ | uint256 | {uint256} Minimum acceptable ETH output for the        executor-share swap (admin supplies an off-chain quote). |
 
 ### Execute
 
 ```solidity
-function Execute(address DCAAccount_, uint256 strategyId_, enum IDCADataStructures.Interval interval_) external nonpayable
+function Execute(address DCAAccount_, uint256 strategyId_, enum IDCADataStructures.Interval interval_, uint256 minAmountOut_) external nonpayable
 ```
 
 Called by the external Executor service wallet only, triggers the specified strategy
@@ -43,6 +44,7 @@ Called by the external Executor service wallet only, triggers the specified stra
 | DCAAccount_ | address | {address} Address of the DCAAccount holding the strategy to execute |
 | strategyId_ | uint256 | {uint256} ID of the strategy to execute |
 | interval_ | enum IDCADataStructures.Interval | {Interval} Interval of the strategy to execute |
+| minAmountOut_ | uint256 | {uint256} Absolute minimum acceptable swap output        for this execution, computed off-chain against a fair market        price. Zero reverts in the swap layer. |
 
 ### ForceUnsubscribe
 
