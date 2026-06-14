@@ -5,14 +5,18 @@ export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const EMPTY_TOKEN_DATA = [ZERO_ADDRESS, 0n, ""];
 
 export const EMPTY_REINVEST = ["0x", false, 0n, ZERO_ADDRESS];
+// Field order matches the Strategy struct in IDCADataStructures.sol after
+// commit 9021723 moved `active` to be the first field:
+// active, interval, accountAddress, amount, strategyId, baseToken,
+// targetToken, reinvest.
 export const EMPTY_STRATEGY = [
-  ZERO_ADDRESS,
-  EMPTY_TOKEN_DATA,
-  EMPTY_TOKEN_DATA,
-  0n,
-  0n,
-  0n,
   false,
+  0n,
+  ZERO_ADDRESS,
+  0n,
+  0n,
+  EMPTY_TOKEN_DATA,
+  EMPTY_TOKEN_DATA,
   EMPTY_REINVEST,
 ];
 

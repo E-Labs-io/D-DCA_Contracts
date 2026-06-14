@@ -30,6 +30,10 @@ import {
 } from "~/scripts/tests/contractInteraction";
 import { resetFork } from "~/scripts/tests/forking";
 
+// Absolute minimum swap output for happy-path executions. 1 wei is
+// deterministic on the pinned fork; swaps revert NoMinimumOut() if 0.
+const MIN_OUT = 1n;
+
 describe("> DCA Account Tests", () => {
   console.log("🧪 DCA Account Tests : Mounted");
 
@@ -246,7 +250,7 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should return there is 1 strategy on the account", async function () {
       const stratsCheck = await createdAccount.getStrategyData(1);
-      const checker = stratsCheck[0];
+      const checker = stratsCheck.accountAddress;
       expect(checker).to.equal(createdAccount.target);
     });
   });
@@ -314,8 +318,9 @@ describe("> DCA Account Tests", () => {
   describe("💡 Subscribe strategy tests", () => {
     it("🧪 Should prove strategy 1 exists", async function () {
       const strats = await createdAccount.getStrategyData(1);
-      const checker = strats[1];
-      expect(checker[0]).to.equal(tokenAddress.usdc![forkedChain]);
+      expect(strats.baseToken.tokenAddress).to.equal(
+        tokenAddress.usdc![forkedChain],
+      );
     });
     it("🧪 Should revert on unsubscribe strategy 1", async () => {
       await expect(
@@ -405,14 +410,14 @@ describe("> DCA Account Tests", () => {
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 1, 0),
+          .Execute(createdAccount.target, 1, 0, MIN_OUT),
       ).to.be.revertedWithCustomError(executorContract, "StrategyNotSubscribed");
     });
     it("🧪 Should execute strategy 2", async () => {
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 2, 0),
+          .Execute(createdAccount.target, 2, 0, MIN_OUT),
       )
         .to.emit(executorContract, "ExecutedStrategy")
         .withArgs(createdAccount.target, 2);
@@ -421,7 +426,7 @@ describe("> DCA Account Tests", () => {
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 2, 0),
+          .Execute(createdAccount.target, 2, 0, MIN_OUT),
       ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
     });
     it("🧪 Should show target WETH balance above 0", async () => {
@@ -443,7 +448,7 @@ describe("> DCA Account Tests", () => {
   describe("💡 Reinvest Logic Test", () => {
     it("🧪 Should return false on active reinvest strategy 1", async () => {
       const stratData = await createdAccount.getStrategyData(1);
-      expect(stratData[7][1]).to.be.false;
+      expect(stratData.reinvest.active).to.be.false;
     });
     it("🧪 Should subscribe to the executor", async () => {
       await expect(createdAccount.SubscribeStrategy(1n)).to.emit(
@@ -464,7 +469,7 @@ describe("> DCA Account Tests", () => {
       const tx = await createdAccount.setStrategyReinvest(1, reinvest);
       await tx.wait();
       const stratData = await createdAccount.getStrategyData(1);
-      expect(stratData[7][1]).to.be.true;
+      expect(stratData.reinvest.active).to.be.true;
     });
     it("🧪 Should return target3 weth balance of zero", async () => {
       const bal = await wethContract.balanceOf(addressStore.target3.address);
@@ -473,7 +478,7 @@ describe("> DCA Account Tests", () => {
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
-        .Execute(createdAccount.target, 1, 0);
+        .Execute(createdAccount.target, 1, 0, MIN_OUT);
       await expect(tx.wait())
         .to.emit(executorContract, "ExecutedStrategy")
         .withArgs(createdAccount.target, 1);
@@ -512,7 +517,9 @@ describe("> DCA Account Tests", () => {
     });
     it("🧪 Should revert on Execute, Not Executor", async () => {
       await expect(
-        createdAccount.connect(addressStore.deployer.signer).Execute(1, 0),
+        createdAccount
+          .connect(addressStore.deployer.signer)
+          .Execute(1, 0, MIN_OUT),
       ).to.be.revertedWithCustomError(createdAccount, "NotTheExecutor");
     });
     it("🧪 Should revert on SetupStrategy, Not Account owner", async () => {

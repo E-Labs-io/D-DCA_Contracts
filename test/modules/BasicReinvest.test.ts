@@ -22,6 +22,10 @@ import {
 } from "~/scripts/tests/contractInteraction";
 import { resetFork } from "~/scripts/tests/forking";
 
+// Absolute minimum swap output for happy-path executions. 1 wei is
+// deterministic on the pinned fork; swaps revert NoMinimumOut() if 0.
+const MIN_OUT = 1n;
+
 describe("> Basic Reinvest Test", () => {
   console.log("🧪 DCA Reinvest Modula : Basic Tests : Mounted");
 
@@ -212,7 +216,7 @@ describe("> Basic Reinvest Test", () => {
     });
     it("🧪 Should return there is strategy 1 on the account", async function () {
       const strats = await createdAccount.getStrategyData(1);
-      const checker = strats[0];
+      const checker = strats.accountAddress;
       expect(checker).to.equal(createdAccount.target);
     });
   });
@@ -229,7 +233,7 @@ describe("> Basic Reinvest Test", () => {
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
-        .Execute(createdAccount.target, 1, 0);
+        .Execute(createdAccount.target, 1, 0, MIN_OUT);
 
       await expect(tx.wait()).to.be.fulfilled;
     });

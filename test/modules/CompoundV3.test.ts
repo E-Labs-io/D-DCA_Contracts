@@ -23,6 +23,10 @@ import { resetFork } from "~/scripts/tests/forking";
 import { advanceTime } from "~/scripts/tests/timeControl";
 import { decodePackedBytes } from "~/scripts/tests/comparisons";
 
+// Absolute minimum swap output for happy-path executions. 1 wei is
+// deterministic on the pinned fork; swaps revert NoMinimumOut() if 0.
+const MIN_OUT = 1n;
+
 describe("> Compound V3 ETH Reinvest Test", () => {
   console.log("🧪 DCA Reinvest Modula : Compound V3 Tests : Mounted");
 
@@ -306,7 +310,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
 
     it("🧪 Should return there is strategy 1 on the account", async function () {
       const strats = await createdAccount.getStrategyData(1);
-      const checker = strats[0];
+      const checker = strats.accountAddress;
       expect(checker).to.equal(createdAccount.target);
     });
     it("🧪 Should show the reinvest is active on given strategy", async () => {
@@ -323,7 +327,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
-        .Execute(createdAccount.target, 1, 0);
+        .Execute(createdAccount.target, 1, 0, MIN_OUT);
 
       const recipt = await tx.wait();
 
@@ -433,7 +437,7 @@ describe("> Compound V3 ETH Reinvest Test", () => {
         // Strategy 1
         const tx = await executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 1, 0);
+          .Execute(createdAccount.target, 1, 0, MIN_OUT);
 
         const recipt = await tx.wait();
 
@@ -463,10 +467,14 @@ describe("> Compound V3 ETH Reinvest Test", () => {
       const bal = await createdAccount.getReinvestTokenBalance(1);
       expect(Number(bal)).to.equal(reinvestBalance);
 
+      // The live Comet balance accrues interest between executions, so it
+      // drifts above the event-sourced tracked total. Compare with a
+      // tolerance rather than a one-sided floor (an 18-dec token: 1e12 wei
+      // is microscopic relative to a sub-ETH position).
       const trueBalance = Number(
         await getErc20Balance(cWethContract, createdAccount.target),
       );
-      expect(reinvestBalance).to.be.greaterThanOrEqual(trueBalance - 200);
+      expect(reinvestBalance).to.be.closeTo(trueBalance, 1e12);
     });
     it("🧪 Should withdraw the accounts balance of cWeth", async () => {
       const tx = await createdAccount.UnwindReinvest(1);

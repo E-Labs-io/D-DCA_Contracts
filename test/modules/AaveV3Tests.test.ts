@@ -21,6 +21,10 @@ import {
 } from "~/scripts/tests/contractInteraction";
 import { resetFork } from "~/scripts/tests/forking";
 
+// Absolute minimum swap output for happy-path executions. 1 wei is
+// deterministic on the pinned fork; swaps revert NoMinimumOut() if 0.
+const MIN_OUT = 1n;
+
 describe("> Aave V3 Reinvest Test", () => {
   console.log("🧪 DCA Reinvest Modula : Aave V3 Tests : Mounted");
 
@@ -237,12 +241,17 @@ describe("> Aave V3 Reinvest Test", () => {
       ).catch((error) => console.log("approve error: ", error));
 
       const reinvest: IDCADataStructures.ReinvestStruct = {
+        // AaveV3Reinvest.ReinvestDataStruct gained a 4th `pool` field
+        // (moduleCode, token, aToken, pool). The old 3-field encoding
+        // left pool=address(0), so pool.supply() reverted inside the
+        // delegatecall and the reinvest reported success=false.
         reinvestData: abiEncoder.encode(
-          ["uint8", "address", "address"],
+          ["uint8", "address", "address", "address"],
           [
             0x12,
             tokenAddress.weth![forkedChain],
             tokenAddress.aWeth![forkedChain],
+            tokenAddress.aaveV3Pool![forkedChain],
           ],
         ),
         active: true,
@@ -272,7 +281,7 @@ describe("> Aave V3 Reinvest Test", () => {
     });
     it("🧪 Should return there is strategy 1 on the account", async function () {
       const strats = await createdAccount.getStrategyData(1);
-      const checker = strats[0];
+      const checker = strats.accountAddress;
       expect(checker).to.equal(createdAccount.target);
     });
     it("🧪 Should show the reinvest is active on given strategy", async () => {
@@ -289,7 +298,7 @@ describe("> Aave V3 Reinvest Test", () => {
     it("🧪 Should execute strategy 1", async () => {
       const tx = await executorContract
         .connect(addressStore.executorEoa.signer)
-        .Execute(createdAccount.target, 1, 0);
+        .Execute(createdAccount.target, 1, 0, MIN_OUT);
 
       const recipt = await tx.wait();
 

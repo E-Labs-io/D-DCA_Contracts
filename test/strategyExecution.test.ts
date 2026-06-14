@@ -27,6 +27,11 @@ import {
 import { resetFork } from "~/scripts/tests/forking";
 import { advanceTime } from "~/scripts/tests/timeControl";
 
+// Absolute minimum swap output for happy-path executions / fee swaps.
+// 1 wei is deterministic on the pinned fork; swaps revert NoMinimumOut()
+// if this is 0.
+const MIN_OUT = 1n;
+
 describe("> DCA Strategy Executions Tests", () => {
   console.log("🧪 DCA Strategy Executions Tests : Mounted");
 
@@ -265,7 +270,7 @@ describe("> DCA Strategy Executions Tests", () => {
       });
       it("🧪 Should return there is 1 strategy on the account", async function () {
         const stratsCheck = await createdAccount.getStrategyData(1);
-        const checker = stratsCheck[0];
+        const checker = stratsCheck.accountAddress;
         expect(checker).to.equal(createdAccount.target);
       });
       it("🧪 Should fund the account with USDC", async function () {
@@ -297,7 +302,7 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1, 0),
+            .Execute(createdAccount.target, 1, 0, MIN_OUT),
         )
           .to.emit(executorContract, "ExecutedStrategy")
           .withArgs(createdAccount.target, 1);
@@ -308,7 +313,7 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1, 0),
+            .Execute(createdAccount.target, 1, 0, MIN_OUT),
         ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should show target WETH balance above 0", async () => {
@@ -320,7 +325,7 @@ describe("> DCA Strategy Executions Tests", () => {
       describe("💡 Strategy 1 Forward Reinvest Logic Test", () => {
         it("🧪 Should return false on active reinvest strategy 1", async () => {
           const stratData = await createdAccount.getStrategyData(1);
-          expect(stratData[7][1]).to.be.false;
+          expect(stratData.reinvest.active).to.be.false;
         });
         it("🧪 Should add forward reinvest to strategy 1", async () => {
           const reinvest: IDCADataStructures.ReinvestStruct = {
@@ -339,7 +344,7 @@ describe("> DCA Strategy Executions Tests", () => {
           const tx = await createdAccount.setStrategyReinvest(1, reinvest);
           await tx.wait();
           const stratData = await createdAccount.getStrategyData(1);
-          expect(stratData[7][1]).to.be.true;
+          expect(stratData.reinvest.active).to.be.true;
         });
         it("🧪 Should return target3 weth balance of zero", async () => {
           const bal = await wethContract.balanceOf(
@@ -351,7 +356,7 @@ describe("> DCA Strategy Executions Tests", () => {
           await advanceTime(75);
           const tx = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1, 0);
+            .Execute(createdAccount.target, 1, 0, MIN_OUT);
           await expect(tx.wait())
             .to.emit(executorContract, "ExecutedStrategy")
             .withArgs(createdAccount.target, 1);
@@ -380,14 +385,18 @@ describe("> DCA Strategy Executions Tests", () => {
       let reinvestedAmount = 0;
       // Standard USDC > WBTC Strategy
       it("🧪 Should create a new Strategy (2)", async function () {
-        // Create a custom strategy with interval 0
+        // Create a custom strategy with interval 0.
+        // AaveV3Reinvest.ReinvestDataStruct is 4 fields now
+        // (moduleCode, token, aToken, pool); the trailing pool address
+        // is required or pool.supply() reverts and reinvest fails.
         const toBeEncoded = [
           0x12,
           tokenAddress.wbtc![forkedChain],
           tokenAddress.aWbtc![forkedChain],
+          tokenAddress.aaveV3Pool![forkedChain],
         ];
         const reinvestData = abiEncoder.encode(
-          ["uint8", "address", "address"],
+          ["uint8", "address", "address", "address"],
           toBeEncoded,
         );
         const reinvest: IDCADataStructures.ReinvestStruct = {
@@ -437,8 +446,8 @@ describe("> DCA Strategy Executions Tests", () => {
       });
       it("🧪 Should return there that strat 2 and reinvest is active", async function () {
         const stratsCheck = await createdAccount.getStrategyData(2);
-        const stratActive = stratsCheck[6];
-        const reinvestActive = stratsCheck[7][1];
+        const stratActive = stratsCheck.active;
+        const reinvestActive = stratsCheck.reinvest.active;
         expect(stratActive).to.be.true;
         expect(reinvestActive).to.be.true;
       });
@@ -449,7 +458,7 @@ describe("> DCA Strategy Executions Tests", () => {
       it("🧪 Should execute strategy 2", async () => {
         const tx = await executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 2, 0);
+          .Execute(createdAccount.target, 2, 0, MIN_OUT);
 
         await expect(tx.wait()).to.be.fulfilled;
 
@@ -478,7 +487,7 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2, 0),
+            .Execute(createdAccount.target, 2, 0, MIN_OUT),
         ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
     });
@@ -490,7 +499,7 @@ describe("> DCA Strategy Executions Tests", () => {
           // Strategy 1
           const tx1 = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1, 0);
+            .Execute(createdAccount.target, 1, 0, MIN_OUT);
           // Wait for the transaction to be mined
 
           // Check for the ExecutedDCA event from the executorContract
@@ -509,7 +518,7 @@ describe("> DCA Strategy Executions Tests", () => {
           // Strategy 2
           const tx2 = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2, 0);
+            .Execute(createdAccount.target, 2, 0, MIN_OUT);
           // Wait for the transaction to be mined
 
           // Check for the ExecutedDCA event from the executorContract
@@ -539,14 +548,14 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1, 0),
+            .Execute(createdAccount.target, 1, 0, MIN_OUT),
         ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should revert strategy 2 for not in window", async () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2, 0),
+            .Execute(createdAccount.target, 2, 0, MIN_OUT),
         ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should return total spend of $900", () => {
@@ -561,7 +570,7 @@ describe("> DCA Strategy Executions Tests", () => {
           // Strategy 1
           const tx1 = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1, 0);
+            .Execute(createdAccount.target, 1, 0, MIN_OUT);
           // Wait for the transaction to be mined
 
           await expect(tx1.wait())
@@ -576,7 +585,7 @@ describe("> DCA Strategy Executions Tests", () => {
           // Strategy 2
           const tx2 = await executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2, 0);
+            .Execute(createdAccount.target, 2, 0, MIN_OUT);
           // Wait for the transaction to be mined
 
           await expect(tx2.wait())
@@ -601,14 +610,14 @@ describe("> DCA Strategy Executions Tests", () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 1, 0),
+            .Execute(createdAccount.target, 1, 0, MIN_OUT),
         ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should revert strategy 2 for not in window", async () => {
         await expect(
           executorContract
             .connect(addressStore.executorEoa.signer)
-            .Execute(createdAccount.target, 2, 0),
+            .Execute(createdAccount.target, 2, 0, MIN_OUT),
         ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
       });
       it("🧪 Should return total spend of $1300", () => {
@@ -638,7 +647,7 @@ describe("> DCA Strategy Executions Tests", () => {
       expect(Number(bal)).to.equal(totalFee);
     });
     it("🧪 Should distribute the Fees", async () => {
-      await expect(executorContract.DistributeFees(usdcContract.target))
+      await expect(executorContract.DistributeFees(usdcContract.target, MIN_OUT))
         .to.emit(executorContract, "FeesDistributed")
         .withArgs(usdcContract.target, totalFee);
     });
@@ -648,17 +657,21 @@ describe("> DCA Strategy Executions Tests", () => {
       );
       expect(execBal).to.equal(0);
     });
-    it("🧪 Should check correct amount to Executor EOA", async () => {
+    it("🧪 Should pay the Executor EOA its share in native ETH, not USDC", async () => {
+      // V0.9: DistributeFees swaps the executor's share to native token
+      // and forwards it with call{value}; only the computing and admin
+      // shares are paid in USDC. The execution/computing/admin addresses
+      // are all the deployer here, so the deployer's USDC from the
+      // distribution is the computing + admin shares (the executor share
+      // left as ETH). With the default split that is admin 25% only.
+      const expectedUsdc =
+        calculatePercentage(Number(deploymentArgs[0].amountToComputing), totalFee) +
+        calculatePercentage(Number(deploymentArgs[0].amountToAdmin), totalFee);
       expect(
         Number(
           await usdcContract.balanceOf(deploymentArgs[0].executionAddress),
         ),
-      ).to.equal(
-        calculatePercentage(
-          Number(deploymentArgs[0].amountToExecutor),
-          totalFee,
-        ),
-      );
+      ).to.equal(expectedUsdc);
     });
     it("🧪 Should check correct amount to Admin EOA", async () => {
       const newAdminBal = Number(

@@ -20,6 +20,11 @@ import {
 import { resetFork } from "~/scripts/tests/forking";
 import { newStrat } from "~/deploy/deploymentArguments/DCA.arguments";
 
+// Absolute minimum swap output for happy-path executions / fee swaps.
+// 1 wei is deterministic on the pinned fork; swaps revert NoMinimumOut()
+// if this is 0.
+const MIN_OUT = 1n;
+
 describe("> DCA Executor Tests", () => {
   console.log("🧪 DCA Executor Tests : Mounted");
 
@@ -146,7 +151,7 @@ describe("> DCA Executor Tests", () => {
 
     it("🧪 Should revert trying to execute - not Executor EOA", async () => {
       await expect(
-        executorContract.Execute(ZERO_ADDRESS as AddressLike, 1n, 0n),
+        executorContract.Execute(ZERO_ADDRESS as AddressLike, 1n, 0n, MIN_OUT),
       ).to.be.revertedWithCustomError(executorContract, "NotTheExecutor");
     });
     it("🧪 Return the Executor EOA address", async () => {
@@ -205,8 +210,8 @@ describe("> DCA Executor Tests", () => {
       );
     });
     it("🧪 Should Distribute the $100 fee", async () => {
-      await expect(executorContract.DistributeFees(usdcContract.target)).to.be
-        .fulfilled;
+      await expect(executorContract.DistributeFees(usdcContract.target, MIN_OUT))
+        .to.be.fulfilled;
     });
     it("🧪 Should check USDC Balance of all fee receiving EAO to have there split", async () => {
       const totalFee = Number(ethers.parseUnits("100", 6));
@@ -245,7 +250,7 @@ describe("> DCA Executor Tests", () => {
       );
 
       await expect(
-        connected.DistributeFees(ZERO_ADDRESS),
+        connected.DistributeFees(ZERO_ADDRESS, MIN_OUT),
       ).to.be.revertedWithCustomError(executorContract, "NotAnAdmin");
     });
 
@@ -253,7 +258,7 @@ describe("> DCA Executor Tests", () => {
       const connected = executorContract.connect(addressStore.user.signer);
 
       await expect(
-        connected.Execute(ZERO_ADDRESS as AddressLike, 0n, 0n),
+        connected.Execute(ZERO_ADDRESS as AddressLike, 0n, 0n, MIN_OUT),
       ).to.be.revertedWithCustomError(executorContract, "NotTheExecutor");
     });
 

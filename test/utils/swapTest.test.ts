@@ -20,6 +20,10 @@ import {
 
 import { resetFork } from "~/scripts/tests/forking";
 
+// Absolute minimum swap output for happy-path swaps. 1 wei is deterministic
+// on the pinned fork; swaps revert NoMinimumOut() if 0.
+const MIN_OUT = 1n;
+
 describe("> Uniswap Tests Tests", () => {
   console.log("🧪 Swap Contract : Mounted");
 
@@ -120,6 +124,7 @@ describe("> Uniswap Tests Tests", () => {
           usdcContract.target,
           wethContract.target,
           ethers.parseUnits("1000", 6),
+          MIN_OUT,
         ),
       ).to.be.revertedWith("STF");
     });
@@ -147,6 +152,7 @@ describe("> Uniswap Tests Tests", () => {
         usdcContract.target,
         wethContract.target,
         ethers.parseUnits("1000", 6),
+        MIN_OUT,
       );
       await expect(tx.wait()).to.be.fulfilled;
       const bal = await wethContract.balanceOf(addressStore.deployer.address);
@@ -162,6 +168,7 @@ describe("> Uniswap Tests Tests", () => {
           usdcContract.target,
           ethers.parseUnits("1000", 6),
           addressStore.deployer.address,
+          MIN_OUT,
         ),
       ).to.be.revertedWith("STF");
     });
@@ -197,6 +204,7 @@ describe("> Uniswap Tests Tests", () => {
         usdcContract.target,
         ethers.parseUnits("1000", 6),
         addressStore.deployer.address,
+        MIN_OUT,
       );
       await expect(swapTX.wait()).to.be.fulfilled;
     });
@@ -230,27 +238,46 @@ describe("> Uniswap Tests Tests", () => {
     });
 
     it("🧪 Should Withdraw ETH directly from WETH contract", async () => {
-      const ETHBal = Number(
-        await ethers.provider.getBalance(addressStore.deployer.address),
+      const ETHBal = await ethers.provider.getBalance(
+        addressStore.deployer.address,
       );
 
       const tx = await wethContract
         .connect(addressStore.deployer.signer)
         .withdraw(ethers.parseUnits("1", 18));
 
-      await expect(tx.wait()).to.be.fulfilled;
-      expect(tx)
+      const receipt = await tx.wait();
+      await expect(tx)
         .to.emit(wethContract, "Withdrawal")
-        .with(
+        .withArgs(
           addressStore.deployer.address as string,
-          ethers.parseUnits("1", 18).toString(),
+          ethers.parseUnits("1", 18),
         );
 
-      const ETHBal2 = Number(await ethers.provider.getBalance(swapTest.target));
-      expect(ETHBal2).to.equal(ETHBal + Number(ethers.parseUnits("1", 18)));
+      // WETH9.withdraw sends the unwrapped ETH to msg.sender (the
+      // deployer), not to swapTest. Account for gas spent on the tx.
+      const gasCost = receipt!.gasUsed * receipt!.gasPrice;
+      const ETHBal2 = await ethers.provider.getBalance(
+        addressStore.deployer.address,
+      );
+      expect(ETHBal2).to.equal(ETHBal + ethers.parseUnits("1", 18) - gasCost);
     });
 
     it("🧪 Should withdraw ETH", async () => {
+      // Seed swapTest with WETH so it has something to unwrap. The
+      // deployer's WETH was already withdrawn above, so fund from a whale.
+      const wethImpersonater = await ethers.getImpersonatedSigner(
+        productionChainImpersonators[forkedChain]?.weth as string,
+      );
+      const impersonatedWeth = await connectToErc20(
+        tokenAddress.weth![forkedChain]! as string,
+        wethImpersonater,
+      );
+      await impersonatedWeth.transfer(
+        swapTest.target,
+        ethers.parseUnits("1", 18),
+      );
+
       WETHBal = await wethContract.balanceOf(swapTest.target);
       const ETHBal = Number(await ethers.provider.getBalance(swapTest.target));
       const tx = await swapTest.withdrawETH(WETHBal);

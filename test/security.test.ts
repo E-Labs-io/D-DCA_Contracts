@@ -6,12 +6,17 @@ import {
   DCAExecutorArguments,
   newStrat,
 } from "~/deploy/deploymentArguments/DCA.arguments";
-import { tokenAddress } from "~/bin/tokenAddress";
+import { productionChainImpersonators, tokenAddress } from "~/bin/tokenAddress";
 import { resetFork } from "~/scripts/tests/forking";
 import {
   checkEthBalanceAndTransfer,
   connectToErc20,
 } from "~/scripts/tests/contractInteraction";
+
+// Absolute minimum swap output for happy-path executions. 1 wei is
+// deterministic on the pinned fork; tests assert balances/events, not
+// slippage. The swap reverts NoMinimumOut() if this is 0.
+const MIN_OUT = 1n;
 
 describe("> DCA Security Tests", () => {
   console.log("🛡️ DCA Security Tests : Mounted");
@@ -24,10 +29,11 @@ describe("> DCA Security Tests", () => {
 
   before(async function () {
     await resetFork(hre);
-    await preTest();
+    await fundActors();
   });
 
-  async function preTest() {
+  // One-time: impersonate a USDC whale and fund the user/attacker EOAs.
+  async function fundActors() {
     addressStore = await signerStore(ethers, [
       "deployer",
       "executorEoa",
@@ -35,12 +41,15 @@ describe("> DCA Security Tests", () => {
       "attacker",
     ]);
 
+    // Impersonate a real USDC whale, not the token contract itself. The
+    // token contract holds no transferable USDC balance, so the old setup
+    // produced empty funding transfers.
     const usedImpersonater = await ethers.getImpersonatedSigner(
-      tokenAddress.usdc![forkedChain]! as string,
+      productionChainImpersonators[forkedChain]?.usdc as string,
     );
 
     await checkEthBalanceAndTransfer(
-      tokenAddress.usdc![forkedChain]! as string,
+      productionChainImpersonators[forkedChain]?.usdc as string,
       addressStore.deployer.signer,
       { amount: ethers.parseEther("2"), force: true },
     );
@@ -53,14 +62,18 @@ describe("> DCA Security Tests", () => {
     // Fund user and attacker
     await usdcContract.transfer(
       addressStore.user.address,
-      ethers.parseUnits("10000", 6),
+      ethers.parseUnits("100000", 6),
     );
     await usdcContract.transfer(
       addressStore.attacker.address,
       ethers.parseUnits("10000", 6),
     );
+  }
 
-    // Deploy contracts
+  // Per-test: deploy a fresh account + executor so each test starts from a
+  // clean strategy slot. These tests reuse strategyId 1, so a shared
+  // account across tests would collide with StrategyAlreadySubscribed.
+  beforeEach(async function () {
     const factoryFactory = await ethers.getContractFactory(
       "DCAAccount",
       addressStore.deployer.signer,
@@ -97,8 +110,18 @@ describe("> DCA Security Tests", () => {
       .connect(addressStore.user.signer)
       .changeExecutor(executorContract.target);
     await executorContract.setIntervalActive(0, true);
+    await executorContract.setIntervalActive(1, true);
     await executorContract.setBaseTokenAllowance(usdcContract.target, true);
-  }
+
+    // The user seeds strategies via SetupStrategy, which pulls USDC with
+    // safeTransferFrom — approve the fresh account up front.
+    await (
+      await connectToErc20(
+        tokenAddress.usdc![forkedChain]! as string,
+        addressStore.user.signer,
+      )
+    ).approve(createdAccount.target, ethers.parseUnits("1000000", 6));
+  });
 
   describe("🛡️ Reentrancy Protection", () => {
     it("🧪 Should prevent reentrancy attack on Execute function", async () => {
@@ -123,18 +146,26 @@ describe("> DCA Security Tests", () => {
         .connect(addressStore.attacker.signer)
         .transfer(maliciousContract.target as string, ethers.parseUnits("100", 6));
 
+      // Snapshot the attacker balance after seeding the malicious contract
+      // but before execution, so the assertion is independent of the
+      // initial funding amount.
+      const attackerBalanceBefore = await usdcContract.balanceOf(
+        addressStore.attacker.address,
+      );
+
       // Try to execute - should work normally
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 1, 0),
+          .Execute(createdAccount.target, 1, 0, MIN_OUT),
       ).to.not.be.reverted;
 
-      // The malicious contract should not have been able to drain funds due to reentrancy guard
+      // The reentrancy guard must prevent the malicious contract from
+      // draining funds back to the attacker — balance must not increase.
       const attackerBalance = await usdcContract.balanceOf(
         addressStore.attacker.address,
       );
-      expect(attackerBalance).to.be.lt(ethers.parseUnits("9900", 6)); // Should not have gained funds
+      expect(attackerBalance).to.be.lte(attackerBalanceBefore);
     });
 
     it("🧪 Should prevent reentrancy attack on AddFunds function", async () => {
@@ -147,14 +178,22 @@ describe("> DCA Security Tests", () => {
       );
       await maliciousContract.waitForDeployment();
 
-      // Approve and try to add funds - should work but not allow reentrancy
-      await usdcContract
-        .connect(addressStore.attacker.signer)
-        .approve(createdAccount.target, ethers.parseUnits("100", 6));
-
+      // AddFunds is onlyOwner; an attacker call is rejected before the
+      // nonReentrant guard even matters. The owner (user) approved the
+      // account in preTest, so a legitimate AddFunds succeeds under the
+      // guard.
       await expect(
         createdAccount
           .connect(addressStore.attacker.signer)
+          .AddFunds(usdcContract.target, ethers.parseUnits("10", 6)),
+      ).to.be.revertedWithCustomError(
+        createdAccount,
+        "OwnableUnauthorizedAccount",
+      );
+
+      await expect(
+        createdAccount
+          .connect(addressStore.user.signer)
           .AddFunds(usdcContract.target, ethers.parseUnits("10", 6)),
       ).to.not.be.reverted;
     });
@@ -168,26 +207,28 @@ describe("> DCA Security Tests", () => {
         .connect(addressStore.user.signer)
         .SetupStrategy(strat, ethers.parseUnits("100", 6), true);
 
-      // Execute should succeed with 0.5% slippage tolerance
+      // Execute should succeed with a 1 wei minimum output floor
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 1, 0),
+          .Execute(createdAccount.target, 1, 0, MIN_OUT),
       ).to.emit(createdAccount, "StrategyExecuted");
     });
 
     it("🧪 Should handle slippage gracefully when quote fails", async () => {
       // This test would need to simulate a quote failure scenario
-      // For now, we verify the swap still works with amountOutMinimum = 0 fallback
+      // For now, we verify the swap still works with a 1 wei floor.
       const strat = newStrat(createdAccount.target as string, forkedChain);
       await createdAccount
         .connect(addressStore.user.signer)
         .SetupStrategy(strat, ethers.parseUnits("100", 6), true);
 
+      // newStrat always uses strategyId 1; execute that, not a
+      // non-existent strategy 2.
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 2, 0),
+          .Execute(createdAccount.target, 1, 0, MIN_OUT),
       ).to.emit(createdAccount, "StrategyExecuted");
     });
   });
@@ -195,8 +236,10 @@ describe("> DCA Security Tests", () => {
   describe("🛡️ Access Control", () => {
     it("🧪 Should prevent unauthorized Execute calls", async () => {
       await expect(
-        createdAccount.connect(addressStore.attacker.signer).Execute(1, 0),
-      ).to.be.revertedWithCustomError(createdAccount, "OnlyExecutor");
+        createdAccount
+          .connect(addressStore.attacker.signer)
+          .Execute(1, 0, MIN_OUT),
+      ).to.be.revertedWithCustomError(createdAccount, "NotTheExecutor");
     });
 
     it("🧪 Should prevent unauthorized strategy management", async () => {
@@ -281,13 +324,13 @@ describe("> DCA Security Tests", () => {
       // Execute immediately
       await executorContract
         .connect(addressStore.executorEoa.signer)
-        .Execute(createdAccount.target, 1, 0);
+        .Execute(createdAccount.target, 1, 0, MIN_OUT);
 
       // Try to execute again immediately - should fail
       await expect(
         executorContract
           .connect(addressStore.executorEoa.signer)
-          .Execute(createdAccount.target, 1, 0),
+          .Execute(createdAccount.target, 1, 0, MIN_OUT),
       ).to.be.revertedWithCustomError(executorContract, "NotInExecutionWindow");
     });
 
