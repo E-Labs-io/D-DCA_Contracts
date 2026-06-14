@@ -67,21 +67,45 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
         network.name,
       );
 
+      // In-session wiring: overwrite the zero-address placeholders the
+      // argument builders emit when bin/deployedAddress.ts has no entry
+      // for this chain. Slot indices MUST match the constructors:
+      //   DCAAccount  (executor, swapRouter, quoter, owner, reinvestLib)
+      //   DCAFactory  (executor, swapRouter, quoter, reinvestLib)
+      // A previous version of this task wrote reinvest into args[3]/
+      // args[2] — overwriting the account OWNER and the factory QUOTER
+      // respectively — which would have shipped a factory whose every
+      // account had the reinvest library as its quoter. The patch
+      // helper asserts the target slot holds the zero placeholder so a
+      // future constructor reorder fails the deploy loudly instead of
+      // silently corrupting it.
+      const ZERO = "0x0000000000000000000000000000000000000000";
+      const patchArg = (index: number, value: string, label: string) => {
+        if (args[index] !== ZERO) {
+          throw new Error(
+            `deploydca: refusing to overwrite ${deployment} constructor arg[${index}] (${label}) — ` +
+              `expected zero-address placeholder, found ${args[index]}. ` +
+              `Constructor order may have changed; fix the indices in tasks/dca-deploy.ts.`,
+          );
+        }
+        args[index] = value;
+      };
+
       if (deployment === "DCAAccount" || deployment === "DCAFactory") {
         // Find DCAExecutor address from current deployment session
         const executorDeployment = deploymentAddresses.find(
           (d) => d.contractName === "DCAExecutor",
         );
         if (executorDeployment) {
-          args[0] = executorDeployment.deployment;
+          patchArg(0, executorDeployment.deployment as string, "executor");
         }
 
         // Set reinvest address if available
         if (reinvestAddress) {
           if (deployment === "DCAAccount") {
-            args[3] = reinvestAddress;
+            patchArg(4, reinvestAddress, "reinvestLibrary");
           } else if (deployment === "DCAFactory") {
-            args[2] = reinvestAddress;
+            patchArg(3, reinvestAddress, "reinvestLibrary");
           }
         }
       }

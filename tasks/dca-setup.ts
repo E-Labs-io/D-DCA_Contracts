@@ -32,8 +32,11 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     // Wait for the transaction to be mined
     const receipt = await tx.wait();
 
+    // Factory emits AccountCreated(owner, dcaAccount) — the old
+    // "DCAAccountCreated" name never matched, so account discovery
+    // always fell through to the stale configured address.
     const checkArgs: any[] = receipt?.logs.find(
-      (eventLog: any) => eventLog?.fragment?.name == "DCAAccountCreated",
+      (eventLog: any) => eventLog?.fragment?.name == "AccountCreated",
     )!.args!;
 
     if (checkArgs && checkArgs[0] === deployer.address) {
@@ -89,7 +92,8 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
     //  Fund DCAAccount
     console.log(`🟡 [TASK] ${taskId} : Funding Account`);
 
-    const tx = await DCAAccountContract.FundAccount(
+    // V0.9: FundAccount was renamed AddFunds.
+    const tx = await DCAAccountContract.AddFunds(
       usdcAddress,
       hre.ethers.parseUnits("1000", 6),
     );

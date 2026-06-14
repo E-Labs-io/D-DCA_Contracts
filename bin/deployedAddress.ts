@@ -31,6 +31,12 @@ const deployedDCAContracts: {
     DCAFactory: "0x90107ADc242C003c0C142E315650f31D9B985C3D",
     DCAReinvestProxy: "",
   },
+  // V0.9 launch targets. Empty until the deploy lands — the deploydca
+  // task wires in-session addresses itself, but downstream tasks
+  // (setup-strategy, dca-postdeploy) read from here, so commit the
+  // deployed addresses to this file immediately after each deploy.
+  base: {},
+  baseSepolia: {},
 };
 
 export type ContractNames =
