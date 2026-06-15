@@ -23,12 +23,29 @@ task(taskId, taskDescription).setAction(async (_args, hre) => {
   console.log("🟠 Network Config:", networkUrl);
   const netName = network.name as ChainName;
 
-  // Get Ledger deployer — use the provider from HRE config
-  const { signer: deployer } = await getLedgerSigner(
-    networkUrl,
-    2, // wallet index
-    "ledgerlive", // derivation mode
-  );
+  // Signer selection:
+  //  - default: the local key from MASTER_DEPLOYER_KEY (hardhat's first
+  //    configured account). Lets you deploy to a testnet with a funded
+  //    throwaway wallet — no hardware needed.
+  //  - USE_LEDGER=true: the Ledger path (index 2, ledgerlive) for
+  //    mainnet, where a hardware-held owner key is the safer choice.
+  let deployer;
+  if (process.env.USE_LEDGER === "true") {
+    console.log("🔐 Using Ledger signer");
+    ({ signer: deployer } = await getLedgerSigner(
+      networkUrl,
+      2, // wallet index
+      "ledgerlive", // derivation mode
+    ));
+  } else {
+    console.log("🔑 Using local key signer (MASTER_DEPLOYER_KEY)");
+    [deployer] = await hre.ethers.getSigners();
+    if (!deployer) {
+      throw new Error(
+        "No local signer found — set MASTER_DEPLOYER_KEY in .env, or USE_LEDGER=true for the Ledger path",
+      );
+    }
+  }
 
   const deploymentAddresses: DeploymentStore[] = [];
   const delayTime = 20000;
