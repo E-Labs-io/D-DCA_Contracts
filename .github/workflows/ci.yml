@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches: [V0.9, main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      # Compile always runs — catches Solidity + TypeChain breakage.
+      - name: Compile contracts
+        run: npx hardhat compile
+        env:
+          # checkKeys.ts requires these to exist; dummy values are fine
+          # for compile (no network calls).
+          MASTER_DEPLOYER_KEY: "0000000000000000000000000000000000000000000000000000000000000001"
+          ALCHEMY_KEY: ${{ secrets.ALCHEMY_KEY || 'dummy' }}
+      # Fork tests need a real Alchemy key. Runs only when the repo
+      # secret is configured; otherwise compile-only CI still gates.
+      - name: Run test suite (Base fork)
+        if: ${{ secrets.ALCHEMY_KEY != '' }}
+        run: npx hardhat test
+        env:
+          MASTER_DEPLOYER_KEY: "0000000000000000000000000000000000000000000000000000000000000001"
+          ALCHEMY_KEY: ${{ secrets.ALCHEMY_KEY }}
