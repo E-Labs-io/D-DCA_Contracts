@@ -36,7 +36,13 @@ const deployedDCAContracts: {
   // (setup-strategy, dca-postdeploy) read from here, so commit the
   // deployed addresses to this file immediately after each deploy.
   base: {},
-  baseSepolia: {},
+  // V0.9 dress-rehearsal deployment, 2026-06-15 (deployer 0x8414…dde1)
+  baseSepolia: {
+    DCAReinvest: "0x287059427D97beC70aB564637a821d3c7fD37ba5",
+    DCAExecutor: "0x7895825D6CAB2f6aC1DF6846a957D994DA8759C3",
+    DCAAccount: "0xFfF48618A6379d68Baed48373964C347c1eC1A48",
+    DCAFactory: "0xC53f44DE16e6FeED38E767f36645B70661B53b85",
+  },
 };
 
 export type ContractNames =

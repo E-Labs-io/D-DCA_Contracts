@@ -465,7 +465,9 @@ describe("> Compound V3 ETH Reinvest Test", () => {
     });
     it("🧪 Should show balance of cWETH == total from events", async () => {
       const bal = await createdAccount.getReinvestTokenBalance(1);
-      expect(Number(bal)).to.equal(reinvestBalance);
+      // 18-dec values exceed Number's 2^53 precision — exact equality on
+      // Number() flakes by ~100 wei. Tolerance covers float loss only.
+      expect(Number(bal)).to.be.closeTo(reinvestBalance, 1e12);
 
       // The live Comet balance accrues interest between executions, so it
       // drifts above the event-sourced tracked total. Compare with a

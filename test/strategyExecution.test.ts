@@ -641,9 +641,15 @@ describe("> DCA Strategy Executions Tests", () => {
       expect(executorEOABal).to.equal(0);
       expect(adminBal).to.equal(0);
     });
-    it("🧪 Should check USDC Balance of Executor to be .3% of Total Executed", async () => {
+    it("🧪 Should check USDC Balance of Executor matches feeAmount of Total Executed", async () => {
       const bal = await usdcContract.balanceOf(executorContract.target);
-      totalFee = calculatePercentage(30, executions * 100000000);
+      // Derive from the deploy args rather than hardcoding a bps value —
+      // the fee config is operator-tunable and hardcoding broke this
+      // suite when it changed (30 → 50 bps).
+      totalFee = calculatePercentage(
+        Number(deploymentArgs[0].feeAmount),
+        executions * 100000000,
+      );
       expect(Number(bal)).to.equal(totalFee);
     });
     it("🧪 Should distribute the Fees", async () => {

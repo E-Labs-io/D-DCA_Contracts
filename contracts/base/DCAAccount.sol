@@ -104,7 +104,13 @@ contract DCAAccount is DCAAccountLogic, ReentrancyGuard {
             AddFunds(newStrategy_.baseAddress(), seedFunds_);
         }
         if (subscribeToExecutor_) {
-            _subscribeToExecutor(newStrategy_);
+            // Subscribe the STORED strategy, which carries the id assigned
+            // by _newStrategy. Passing the caller's calldata struct here
+            // subscribed whatever strategyId the caller happened to set
+            // (usually 0) — the executor tracked a phantom strategy and
+            // the real one stayed unsubscribed. Caught in the Base Sepolia
+            // dress rehearsal (V0.9).
+            _subscribeToExecutor(_strategies[_strategyCount]);
         }
     }
 

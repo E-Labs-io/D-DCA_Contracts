@@ -14,10 +14,10 @@ export function DCAExecutorArguments(
   networkName: string,
 ): any[] {
   const feeDistrobution_: IDCADataStructures.FeeDistributionStruct = {
-    amountToAdmin: 2500, //  25%
-    amountToComputing: 0, //  45%
-    amountToExecutor: 7500, //  25%
-    feeAmount: 30, //  0.3%
+    amountToAdmin: 3000, //  30%
+    amountToComputing: 0, //  00%
+    amountToExecutor: 7000, //  70%
+    feeAmount: 50, //  0.5%
     executionAddress: "0xe272653f2FF11D1F7bd24cdE149a29f4110d03B1",
     computingAddress: "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
     adminAddress: deployer,

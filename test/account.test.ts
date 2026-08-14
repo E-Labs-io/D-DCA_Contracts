@@ -398,6 +398,47 @@ describe("> DCA Account Tests", () => {
       );
       await expect(createStratTx.wait()).to.be.fulfilled;
     });
+    it("🧪 Should subscribe the ASSIGNED id even when caller supplies a stale strategyId", async () => {
+      // Regression (found in Base Sepolia rehearsal): SetupStrategy used
+      // to subscribe the caller's calldata struct, so a caller-supplied
+      // strategyId of 0 subscribed a phantom strategy while the real one
+      // stayed inactive. It must subscribe the stored strategy instead.
+      const strat: IDCADataStructures.StrategyStruct = newStrat(
+        createdAccount.target as string,
+        forkedChain,
+      );
+      strat.strategyId = 0; // wrong on purpose — contract must ignore this
+      // Top the user up from the whale — earlier tests drain the 20k seed.
+      await (
+        await usdcContract.transfer(
+          addressStore.user.address,
+          ethers.parseUnits("1000", 6),
+        )
+      ).wait();
+      const contract = await ethers.getContractAt(
+        "contracts/tokens/IERC20.sol:IERC20",
+        tokenAddress?.usdc?.[forkedChain]! as string,
+        addressStore.user.signer,
+      );
+      // Small seed — the whale-funded user balance is shared across the
+      // whole suite. 600 USDC covers the 5x-amount subscription check.
+      await (
+        await contract.approve(
+          createdAccount.target,
+          ethers.parseUnits("600", 6),
+        )
+      ).wait();
+      await (
+        await createdAccount.SetupStrategy(
+          strat,
+          ethers.parseUnits("600", 6),
+          true,
+        )
+      ).wait();
+      // This is the 3rd strategy created in this suite → assigned id 3.
+      const stored = await createdAccount.getStrategyData(3);
+      expect(stored.active).to.equal(true);
+    });
     it("🧪 Should unsubscribe strategy 1", async () => {
       await expect(createdAccount.UnsubscribeStrategy(1n)).to.emit(
         createdAccount,

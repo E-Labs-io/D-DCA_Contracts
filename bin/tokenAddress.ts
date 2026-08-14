@@ -131,6 +131,8 @@ export const tokenAddress: TokenAddressList = {
   quoter: {
     base: productionChainAddresses.base.quoter,
     hardhat: productionChainAddresses[forkedNetwork].quoter,
+    // Canonical Uniswap QuoterV2 on Base Sepolia (bytecode verified)
+    baseSepolia: "0xC5290058841028F1614F3A6F0F5816cAd0df5E27",
   },
   universalRouter: {
     eth: productionChainAddresses.eth.universalRouter,
@@ -166,6 +168,8 @@ export const tokenAddress: TokenAddressList = {
     hardhat: productionChainAddresses[forkedNetwork].usdc,
     optimism: productionChainAddresses.optimism.usdc,
     base: productionChainAddresses.base.usdc,
+    // Circle native USDC on Base Sepolia (symbol/decimals verified on-chain)
+    baseSepolia: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
   },
   usdt: {
     eth: productionChainAddresses.eth.usdt,
