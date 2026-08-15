@@ -40,7 +40,18 @@ export default function checkPrivateKeys() {
     return result!;
   };
 
-  const etherscanApis: { [chain in ChainName]?: string } = {
+  // Etherscan V2: ONE key (from etherscan.io) serves every chain.
+  // Falls back to the legacy per-chain keys if the unified key is unset.
+  const unifiedScanKey = process.env.ETHERSCAN_API_KEY;
+  const etherscanApis: { [chain in ChainName]?: string } = unifiedScanKey
+    ? {
+        eth: unifiedScanKey, ethSepolia: unifiedScanKey, ethGoerli: unifiedScanKey,
+        optimism: unifiedScanKey, opGoerli: unifiedScanKey, opSepolia: unifiedScanKey,
+        matic: unifiedScanKey, maticMumbai: unifiedScanKey,
+        arbitrum: unifiedScanKey, arbGoerli: unifiedScanKey, arbSepolia: unifiedScanKey,
+        base: unifiedScanKey, baseSepolia: unifiedScanKey, baseGoerli: unifiedScanKey,
+      }
+    : {
     eth: process.env.ETHERSCAN_API_KEY_ETH!,
     ethSepolia: process.env.ETHERSCAN_API_KEY_ETH!,
     ethGoerli: process.env.ETHERSCAN_API_KEY_ETH!,

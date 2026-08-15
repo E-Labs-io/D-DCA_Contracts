@@ -8,7 +8,8 @@ import "@nomicfoundation/hardhat-verify";
 import "@nomicfoundation/hardhat-ethers";
 import "hardhat-gas-reporter";
 import "tsconfig-paths/register";
-import "hardhat-ethernal";
+// hardhat-ethernal removed: incompatible with hardhat >=2.23 internals
+// and was permanently disabled in config anyway.
 import "@openzeppelin/hardhat-upgrades";
 import "@nomicfoundation/hardhat-chai-matchers";
 
@@ -106,115 +107,12 @@ const config: HardhatUserConfig = {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
   },
   etherscan: {
-    apiKey: etherscanApis,
-    customChains: [
-      {
-        network: "base",
-        chainId: chainIds.base!,
-        urls: {
-          apiURL: "https://api.basescan.org/api",
-          browserURL: "https://basescan.org",
-        },
-      },
-      {
-        network: "baseGoerli",
-        chainId: chainIds.baseGoerli!,
-        urls: {
-          apiURL: "https://api-goerli.basescan.org/api",
-          browserURL: "https://goerli.basescan.org",
-        },
-      },
-      {
-        network: "baseSepolia",
-        chainId: chainIds.baseSepolia!,
-        urls: {
-          apiURL: "https://api-goerli.basescan.org/api",
-          browserURL: "https://sepolia.basescan.org",
-        },
-      },
-
-      {
-        network: "optimism",
-        chainId: 10,
-        urls: {
-          apiURL: "https://api-optimistic.etherscan.io/api",
-          browserURL: "https://optimistic.etherscan.io",
-        },
-      },
-      {
-        network: "opGoerli",
-        chainId: 420,
-        urls: {
-          apiURL: "https://api-goerli-optimistic.etherscan.io/api",
-          browserURL: "https://goerli-optimism.etherscan.io",
-        },
-      },
-      {
-        network: "arbitrum",
-        chainId: 42161,
-        urls: {
-          apiURL: "https://api.arbiscan.io/api",
-          browserURL: "https://arbiscan.io",
-        },
-      },
-      {
-        network: "arbGoerli",
-        chainId: 421613,
-        urls: {
-          apiURL: "https://api-goerli.arbiscan.io/api",
-          browserURL: "https://goerli.arbiscan.io",
-        },
-      },
-      {
-        network: "arbSepolia",
-        chainId: 421614,
-        urls: {
-          apiURL: "https://api-sepolia.arbiscan.io/api",
-          browserURL: "https://sepolia.arbiscan.io/",
-        },
-      },
-
-      {
-        network: "eth",
-        chainId: 1,
-        urls: {
-          apiURL: "https://api.etherscan.io/api",
-          browserURL: "https://etherscan.io",
-        },
-      },
-      {
-        network: "ethSepolia",
-        chainId: 11155111,
-        urls: {
-          apiURL: "https://api-sepolia.etherscan.io/api",
-          browserURL: "https://sepolia.etherscan.io",
-        },
-      },
-      {
-        network: "ethGoerli",
-        chainId: 5,
-        urls: {
-          apiURL: "https://api-goerli.etherscan.io/api",
-          browserURL: "https://goerli.etherscan.io",
-        },
-      },
-      {
-        network: "matic",
-        chainId: 137,
-        urls: {
-          apiURL: "https://api.polygonscan.com/api",
-          browserURL: "https://polygonscan.com/",
-        },
-      },
-      {
-        network: "maticMumbai",
-        chainId: 80001,
-        urls: {
-          apiURL: "https://api-testnet.polygonscan.com/api",
-          browserURL: "https://mumbai.polygonscan.com/",
-        },
-      },
-    ],
+    // Etherscan API V2: one key (from etherscan.io) serves every chain,
+    // routed via api.etherscan.io/v2 with a chainid param. The old
+    // per-explorer customChains entries forced deprecated V1 endpoints
+    // and are gone — hardhat-verify's built-in chain registry covers
+    // base/baseSepolia/optimism/arbitrum/mainnet/sepolia natively.
+    apiKey: process.env.ETHERSCAN_API_KEY || "",
   },
   networks: {
     tenderlyBase: {
@@ -326,18 +224,6 @@ const config: HardhatUserConfig = {
       chainId: 5777,
       gasPrice: gasPrice,
     },
-  },
-  ethernal: {
-    apiToken: process.env.ETHERNAL_API_TOKEN,
-    disableSync: false, // If set to true, plugin will not sync blocks & txs
-    disableTrace: false, // If set to true, plugin won't trace transaction
-    workspace: "hardhat", // Set the workspace to use, will default to the default workspace (latest one used in the dashboard). It is also possible to set it through the ETHERNAL_WORKSPACE env variable
-    uploadAst: true, // If set to true, plugin will upload AST, and you'll be able to use the storage feature (longer sync time though)
-    disabled: deploymentConfig().ethernalDisabled, // If set to true, the plugin will be disabled, nohting will be synced, ethernal.push won't do anything either
-    resetOnStart: "hardhat", // Pass a workspace name to reset it automatically when restarting the node, note that if the workspace doesn't exist it won't error
-    serverSync: false, // Only available on public explorer plans - If set to true, blocks & txs will be synced by the server. For this to work, your chain needs to be accessible from the internet. Also, trace won't be synced for now when this is enabled.
-    skipFirstBlock: false, // If set to true, the first block will be skipped. This is mostly useful to avoid having the first block synced with its tx when starting a mainnet fork
-    verbose: false,
   },
   dodoc: {
     runOnCompile: true,

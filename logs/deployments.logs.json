@@ -1,5 +1,75 @@
 [
   {
+    "timestamp": "15/08/26, 14:00:38",
+    "contractName": "DCAFactory",
+    "contractAddress": "0xd53042EC2BA9Ef26D9ac6D936bc9906Cf98b3495",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "baseSepolia",
+      "chainId": "84532"
+    }
+  },
+  {
+    "timestamp": "15/08/26, 14:00:06",
+    "contractName": "DCAAccount",
+    "contractAddress": "0xE2781EcC5D54814Ca651eA7b4DcDDB69a5514fA3",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "baseSepolia",
+      "chainId": "84532"
+    }
+  },
+  {
+    "timestamp": "15/08/26, 13:59:34",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0x492AA09e58401e984C77f91924ab0B5aaD9fad1D",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "baseSepolia",
+      "chainId": "84532"
+    }
+  },
+  {
+    "timestamp": "15/08/26, 13:59:08",
+    "contractName": "DCAReinvest",
+    "contractAddress": "0x34f222790BEC2838c23CA24E332954A0dF375326",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "baseSepolia",
+      "chainId": "84532"
+    }
+  },
+  {
+    "timestamp": "15/08/26, 13:52:32",
+    "contractName": "DCAReinvest",
+    "contractAddress": "0x88fa192642fCE0cbE99C287766b5C25b0b40430B",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "baseSepolia",
+      "chainId": "84532"
+    }
+  },
+  {
+    "timestamp": "15/08/26, 13:51:58",
+    "contractName": "DCAExecutor",
+    "contractAddress": "0xa17E9595301EcFBF39a7a275300F7bb37483df7f",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "baseSepolia",
+      "chainId": "84532"
+    }
+  },
+  {
+    "timestamp": "15/08/26, 13:51:32",
+    "contractName": "DCAReinvest",
+    "contractAddress": "0xb3B9F8Fb41c70E680Ec46eb9DfF1803B2A31d352",
+    "deployerAddress": "0x8414FDEd1f0033fDfBD87206d69723f2EE72dde1",
+    "network": {
+      "name": "baseSepolia",
+      "chainId": "84532"
+    }
+  },
+  {
     "timestamp": "23/06/25, 13:49:10",
     "contractName": "DCAFactory",
     "contractAddress": "0x2e3B00D7fBE45D2Ed134d6eff4D986c894Ad0DB8",

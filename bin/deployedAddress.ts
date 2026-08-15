@@ -36,12 +36,21 @@ const deployedDCAContracts: {
   // (setup-strategy, dca-postdeploy) read from here, so commit the
   // deployed addresses to this file immediately after each deploy.
   base: {},
-  // V0.9 dress-rehearsal deployment, 2026-06-15 (deployer 0x8414…dde1)
+  // NOTE: deploydca requires this entry to be EMPTY before a fresh
+  // deploy — the argument builders fall back to zero placeholders only
+  // when no entry exists, and the in-session patchArg guard refuses to
+  // overwrite non-zero (stale) addresses. Blank it, deploy, then commit
+  // the new addresses here.
+  //
+  // V0.9 dress-rehearsal deployment #2, 2026-08-15 (deployer
+  // 0x8414…dde1). Redeployed post-rehearsal so on-chain bytecode
+  // includes the SetupStrategy phantom-subscribe fix — the first set
+  // predated it and could not be source-verified against HEAD.
   baseSepolia: {
-    DCAReinvest: "0x287059427D97beC70aB564637a821d3c7fD37ba5",
-    DCAExecutor: "0x7895825D6CAB2f6aC1DF6846a957D994DA8759C3",
-    DCAAccount: "0xFfF48618A6379d68Baed48373964C347c1eC1A48",
-    DCAFactory: "0xC53f44DE16e6FeED38E767f36645B70661B53b85",
+    DCAReinvest: "0x34f222790BEC2838c23CA24E332954A0dF375326",
+    DCAExecutor: "0x492AA09e58401e984C77f91924ab0B5aaD9fad1D",
+    DCAAccount: "0xE2781EcC5D54814Ca651eA7b4DcDDB69a5514fA3",
+    DCAFactory: "0xd53042EC2BA9Ef26D9ac6D936bc9906Cf98b3495",
   },
 };
 
