@@ -379,6 +379,13 @@ describe("> DCA Strategy Executions Tests", () => {
           expect(Number(bal)).to.be.above(0);
           expect(Number(bal)).to.equal(Stat1Total);
         });
+        it("🧪 Should hold NO reinvest position for a forward strategy", async () => {
+          // Regression: forwarded buys leave the account, so crediting
+          // _reinvestLiquidityTokenBalance recorded a phantom position
+          // that grew per execution and made UnwindReinvest a guaranteed
+          // ReinvestUnwindFailed revert (forward has no unwind path).
+          expect(await createdAccount.getReinvestTokenBalance(1)).to.equal(0);
+        });
       });
     });
     describe("💡 Should Create & Execute Strategy 2 (WBTC > aWBTC)", () => {

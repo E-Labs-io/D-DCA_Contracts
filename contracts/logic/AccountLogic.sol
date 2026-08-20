@@ -8,6 +8,7 @@ import {OnlyExecutor} from "../security/onlyExecutor.sol";
 import {IDCAAccount} from "../interfaces/IDCAAccount.sol";
 import {IDCAReinvest} from "../interfaces/IDCAReinvest.sol";
 import {IDCAExecutor} from "../interfaces/IDCAExecutor.sol";
+import {ReinvestCodes} from "../library/Codes.sol";
 
 /**
  *
@@ -153,7 +154,14 @@ abstract contract DCAAccountLogic is Swap, OnlyExecutor, IDCAAccount {
         }
 
         if (success) {
-            _reinvestLiquidityTokenBalance[strategyId_] += reinvestAmount;
+            // Only position-holding modules (Aave/Compound et al.) get a
+            // liquidity balance. FORWARD sends the tokens OUT of the
+            // account — crediting it recorded a phantom position that
+            // grew forever and made UnwindReinvest revert every time
+            // (Forward has no unwind path).
+            if (strategy.reinvest.investCode != ReinvestCodes.FORWARD) {
+                _reinvestLiquidityTokenBalance[strategyId_] += reinvestAmount;
+            }
         } else {
             // No reinvest configured, or the reinvest module declined:
             // the swapped tokens stay in the account as target savings.
